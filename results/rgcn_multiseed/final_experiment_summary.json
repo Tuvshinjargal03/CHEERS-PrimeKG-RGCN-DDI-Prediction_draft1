@@ -1,0 +1,131 @@
+{
+  "project_title": "Effect of Biomedical Knowledge Graph Composition on R-GCN-Based Drug-Drug Interaction Prediction",
+  "dataset": "PrimeKG",
+  "target_relation": "drug_drug",
+  "target_relation_display": "synergistic interaction",
+  "graph_variants": {
+    "G0": "DDI only",
+    "G1": "DDI + Drug-Gene/Protein",
+    "G2": "DDI + Drug-Disease",
+    "G3": "DDI + Drug-Gene/Protein + Drug-Disease"
+  },
+  "random_seeds": [
+    42,
+    43,
+    44
+  ],
+  "num_seeds": 3,
+  "ddi_split": {
+    "train": 1069080,
+    "validation": 133620,
+    "test": 133614
+  },
+  "candidate_drugs": 4278,
+  "evaluation": {
+    "type": "full filtered ranking",
+    "directions_per_test_pair": 2,
+    "ranking_queries": 267228,
+    "metrics": [
+      "MRR",
+      "Hits@1",
+      "Hits@5",
+      "Hits@10"
+    ]
+  },
+  "model": {
+    "architecture": "2-layer R-GCN",
+    "embedding_dim": 128,
+    "hidden_dim": 128,
+    "dropout": 0.2,
+    "learning_rate": 0.001,
+    "weight_decay": 1e-05,
+    "max_epochs": 500,
+    "early_stopping_patience": 10,
+    "train_positives_per_epoch": 100000,
+    "negative_ratio": 1
+  },
+  "final_results_mean_std": {
+    "G0": {
+      "MRR": {
+        "mean": 0.529175,
+        "std": 0.008173
+      },
+      "Hits@1": {
+        "mean": 0.482165,
+        "std": 0.007551
+      },
+      "Hits@5": {
+        "mean": 0.575033,
+        "std": 0.009339
+      },
+      "Hits@10": {
+        "mean": 0.612105,
+        "std": 0.01065
+      }
+    },
+    "G1": {
+      "MRR": {
+        "mean": 0.53366,
+        "std": 0.007662
+      },
+      "Hits@1": {
+        "mean": 0.487017,
+        "std": 0.007901
+      },
+      "Hits@5": {
+        "mean": 0.5776,
+        "std": 0.008149
+      },
+      "Hits@10": {
+        "mean": 0.615398,
+        "std": 0.00784
+      }
+    },
+    "G2": {
+      "MRR": {
+        "mean": 0.52943,
+        "std": 0.008957
+      },
+      "Hits@1": {
+        "mean": 0.482665,
+        "std": 0.007721
+      },
+      "Hits@5": {
+        "mean": 0.574869,
+        "std": 0.010792
+      },
+      "Hits@10": {
+        "mean": 0.612203,
+        "std": 0.011603
+      }
+    },
+    "G3": {
+      "MRR": {
+        "mean": 0.538767,
+        "std": 0.001432
+      },
+      "Hits@1": {
+        "mean": 0.490638,
+        "std": 0.000446
+      },
+      "Hits@5": {
+        "mean": 0.585269,
+        "std": 0.002606
+      },
+      "Hits@10": {
+        "mean": 0.623097,
+        "std": 0.002751
+      }
+    }
+  },
+  "primary_result": {
+    "best_graph": "G3",
+    "mean_MRR": 0.538767,
+    "MRR_std": 0.001432,
+    "absolute_MRR_improvement_vs_G0": 0.009592,
+    "relative_MRR_improvement_percent": 1.81,
+    "seeds_beating_G0": "3/3"
+  },
+  "interpretation": "The graph containing DDI, Drug-Gene/Protein, and Drug-Disease relations (G3) achieved the highest mean performance and the lowest MRR variability across the three random seeds. G3 outperformed the DDI-only baseline in all three seeds across MRR, Hits@1, Hits@5, and Hits@10.",
+  "reporting_caveat": "The experiment uses three random seeds. Results support a robustness comparison, but statistical significance should not be claimed solely from these three runs."
+}

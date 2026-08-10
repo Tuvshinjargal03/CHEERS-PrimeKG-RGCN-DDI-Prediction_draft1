@@ -1,0 +1,57 @@
+{
+  "project": "PrimeKG Graph Composition + R-GCN for DDI Prediction",
+  "frozen_experiment_manifest": "/workspace/primekg_ddi_rgcn/final_release/FINAL_EXPERIMENT_MANIFEST_SHA256.json",
+  "overall_status": "7/7 verification checks passed",
+  "interpretation": "The implemented research prototype passed data, graph, ranking, checkpoint, mapping, reproducibility, and end-to-end inference checks. This verifies technical operation of the experimental system, not clinical validity.",
+  "checks": [
+    {
+      "check": "1/7",
+      "verification": "Target-edge leakage",
+      "what_was_checked": "All G0-G3 message-passing graphs contain only training drug_drug target edges; validation and test DDIs are absent.",
+      "key_result": "Validation leakage = 0; Test leakage = 0; 1,069,080 identical undirected training DDI pairs in every graph.",
+      "status": "PASS"
+    },
+    {
+      "check": "2/7",
+      "verification": "Held-out positive ranking sanity",
+      "what_was_checked": "1,000 held-out test DDI pairs were evaluated in both directions against all 4,278 candidate drugs.",
+      "key_result": "2,000 ranking queries; MRR = 0.502226; Hits@1 = 0.4525; Hits@5 = 0.5465; Hits@10 = 0.5870; median rank = 2.",
+      "status": "PASS"
+    },
+    {
+      "check": "3/7",
+      "verification": "Positive vs unobserved score sanity",
+      "what_was_checked": "5,000 held-out positive DDIs were compared with 5,000 sampled drug pairs absent from the known positive DDI set.",
+      "key_result": "ROC-AUC = 0.9737; positive pairwise win rate = 97.54%; positive median score = 6.497307; unobserved median score = -1.558111.",
+      "status": "PASS"
+    },
+    {
+      "check": "4/7",
+      "verification": "Real entity mapping and prediction",
+      "what_was_checked": "R-GCN node IDs were mapped back to verified PrimeKG entity names and DrugBank identifiers, then real held-out predictions were inspected.",
+      "key_result": "13,094/13,094 graph nodes resolved; 4,278/4,278 candidate drugs resolved; 5/5 inspected held-out targets appeared at their expected Top-10 filtered ranks.",
+      "status": "PASS"
+    },
+    {
+      "check": "5/7",
+      "verification": "Checkpoint reproducibility",
+      "what_was_checked": "A fresh model object loaded G3 Seed 44 from disk and reran full filtered ranking on the complete test set.",
+      "key_result": "133,614 test pairs / 267,228 directional queries; MRR = 0.540359; Hits@1 = 0.490656; Hits@5 = 0.588273; Hits@10 = 0.626229; all reproduced within 1e-6.",
+      "status": "PASS"
+    },
+    {
+      "check": "6/7",
+      "verification": "Graph composition integrity",
+      "what_was_checked": "Relation IDs, relation semantics, active relation sets, and edge counts were independently verified for G0-G3.",
+      "key_result": "G0 = 2,138,160 edges; G1 = 2,189,466; G2 = 2,223,422; G3 = 2,274,728; all compositions exactly match the locked design.",
+      "status": "PASS"
+    },
+    {
+      "check": "7/7",
+      "verification": "Clean end-to-end inference",
+      "what_was_checked": "A completely separate Python process loaded saved graph, checkpoint, drug metadata, and known-positive mask and performed real-name inference.",
+      "key_result": "Standalone exit code = 0; Colchicine correctly resolved to DB01394 / node 3121; known positives and self were filtered; Top-10 unobserved candidate links returned successfully.",
+      "status": "PASS"
+    }
+  ]
+}

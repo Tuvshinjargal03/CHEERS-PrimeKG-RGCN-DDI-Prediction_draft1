@@ -1,0 +1,89 @@
+{
+  "name": "CHEERS PrimeKG R-GCN Portable Application",
+  "purpose": "Portable runtime bundle for the final G3 R-GCN drug-drug link prediction demo.",
+  "graph": "G3",
+  "checkpoint": "G3_seed44_best.pt",
+  "candidate_drugs": 4278,
+  "files": [
+    {
+      "path": "api/__init__.py",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "api/main.py",
+      "size_bytes": 10801,
+      "sha256": "07ebbd95517390dad94f69701dc52b9b1f0361ca53174de7e674a443a99119b8"
+    },
+    {
+      "path": "checkpoints/rgcn_multiseed/G3_seed44_best.pt",
+      "size_bytes": 26446322,
+      "sha256": "d4df7c845fe65b175afdfdc8512fe466451029c682a2a34f9d52a84b35811d50"
+    },
+    {
+      "path": "data/processed/mappings/drug_metadata.parquet",
+      "size_bytes": 132920,
+      "sha256": "05ffad5ec5d741184b4ce91be9029018afa223220e8237e67d07efe62830af5e"
+    },
+    {
+      "path": "data/processed/rgcn_tensors/G3.pt",
+      "size_bytes": 54594810,
+      "sha256": "ee77876d767ac5d92e9657f3dd7c582e02598c2736feb124a3dfbe7d67ead5d3"
+    },
+    {
+      "path": "data/processed/rgcn_tensors/ddi_known_positive_mask.pt",
+      "size_bytes": 18337144,
+      "sha256": "9b00f12fa96fbd7ff78a62b9456ac0f36edc3813e9b97ec9d3db36b7f18049e4"
+    },
+    {
+      "path": "data/processed/rgcn_tensors/drug_node_ids.pt",
+      "size_bytes": 35386,
+      "sha256": "8cce46c93764b68290ef0b723635ed912e355c220ec052f65bdd5a0735e80fb5"
+    },
+    {
+      "path": "final_release/FINAL_VERIFICATION_SUMMARY.json",
+      "size_bytes": 3425,
+      "sha256": "6abe193cbde587b39e49ec42145353b256de570d62de379b834cb795cac80711"
+    },
+    {
+      "path": "final_release/app_requirements.txt",
+      "size_bytes": 67,
+      "sha256": "b9f68a2290619f5816a4823600f1905c15e27cea81a839f10132d7131ec4c35e"
+    },
+    {
+      "path": "results/rgcn_multiseed/final_experiment_summary.json",
+      "size_bytes": 3133,
+      "sha256": "7ab1f146cf3a53dc059ea750ddeb9af6967c99de18068e55e5a6ad7d9ec849bd"
+    },
+    {
+      "path": "src/__init__.py",
+      "size_bytes": 128,
+      "sha256": "73648db69b34e6ac7d88211658a5bd22febe2861858e1b6a37905f58d0d8c027"
+    },
+    {
+      "path": "src/inference.py",
+      "size_bytes": 14438,
+      "sha256": "349e069e29503404e9c9c23106005d1095e9b58d2c88656a05c95730e172f41b"
+    },
+    {
+      "path": "src/rgcn_model.py",
+      "size_bytes": 1850,
+      "sha256": "31d92eeb117afbd285633fcfb8d915ad16944cea5294109c854efc30639b439b"
+    },
+    {
+      "path": "web/app.js",
+      "size_bytes": 23046,
+      "sha256": "a5fcb2a07addaaddcfb107d0c956ae42b7f612328d0d99672bdd650bf952a2a0"
+    },
+    {
+      "path": "web/index.html",
+      "size_bytes": 26985,
+      "sha256": "2e000196030883b83a1d19df007707875a931f9a007a0d451ce06b9e5b5c8041"
+    },
+    {
+      "path": "web/styles.css",
+      "size_bytes": 25755,
+      "sha256": "066330abcdbf617446e6c9b96b99835ce5736e4f74f21200446225366a579b23"
+    }
+  ]
+}

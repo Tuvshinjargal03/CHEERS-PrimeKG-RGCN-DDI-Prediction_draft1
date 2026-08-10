@@ -1,0 +1,60 @@
+# Python environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python caches and test/tool output
+__pycache__/
+*.pyc
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local editor settings
+.vscode/
+.idea/
+*.code-workspace
+
+# Local secrets and environment overrides
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Logs and runtime state
+*.log
+*.pid
+*.pid.lock
+logs/
+tmp/
+temp/
+
+# Python packaging output
+build/
+dist/
+*.egg-info/
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Raw/downloaded biomedical data is not part of the portable repository
+kg.csv
+**/kg.csv
+data/raw/
+data/downloads/
+
+# The verified deployment exports below are intentionally NOT ignored:
+# final_release/lightweight_runtime/
+# final_release/g3_context_runtime/

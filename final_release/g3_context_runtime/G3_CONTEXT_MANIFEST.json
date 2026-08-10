@@ -1,0 +1,11 @@
+{
+  "files": {
+    "g3_drug_context.csv": {
+      "rows": 68284,
+      "sha256": "51439675b3d9b50a1054367e451f1f0d4eede59c432ba72cc34eb6d914b15195"
+    },
+    "g3_context_summary.json": {
+      "sha256": "42332215ab4647d4828709c8bb848263a946ff8e7fd7bd5ae543de5dea9f21c7"
+    }
+  }
+}

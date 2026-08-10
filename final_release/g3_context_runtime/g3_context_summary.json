@@ -1,0 +1,19 @@
+{
+  "graph": "G3",
+  "purpose": "Portable explanation context derived from the exact forward Drug-Gene/Protein and Drug-Disease support relations used in G3.",
+  "interpretation_warning": "These graph relationships are contextual information available to the G3 model. They are not causal explanations of a prediction and do not establish clinical safety or danger.",
+  "total_context_edges": 68284,
+  "drug_gene_protein_edges": 25653,
+  "drug_disease_edges": 42631,
+  "unique_drugs_with_context": 6642,
+  "unique_context_entities": 5148,
+  "relation_counts": {
+    "carrier": 864,
+    "contraindication": 30675,
+    "enzyme": 5317,
+    "indication": 9388,
+    "off-label use": 2568,
+    "target": 16380,
+    "transporter": 3092
+  }
+}

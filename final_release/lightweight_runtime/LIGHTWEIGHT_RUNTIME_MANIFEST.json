@@ -1,0 +1,64 @@
+{
+  "runtime": "NumPy lightweight inference",
+  "source_model": "G3_seed44_best.pt",
+  "graph": "G3",
+  "seed": 44,
+  "best_epoch": 499,
+  "candidate_drugs": 4278,
+  "embedding_dimension": 128,
+  "known_positive_count_for_colchicine": 1488,
+  "verified_example": "Colchicine / DB01394",
+  "verified_top10": [
+    {
+      "rank": 1,
+      "name": "Probenecid",
+      "entity_id": "DB01032"
+    },
+    {
+      "rank": 2,
+      "name": "Hydrocortisone",
+      "entity_id": "DB00741"
+    },
+    {
+      "rank": 3,
+      "name": "Ondansetron",
+      "entity_id": "DB00904"
+    },
+    {
+      "rank": 4,
+      "name": "Sulfinpyrazone",
+      "entity_id": "DB01138"
+    },
+    {
+      "rank": 5,
+      "name": "Melengestrol acetate",
+      "entity_id": "DB14659"
+    },
+    {
+      "rank": 6,
+      "name": "Prednisone acetate",
+      "entity_id": "DB14646"
+    },
+    {
+      "rank": 7,
+      "name": "Coumarin",
+      "entity_id": "DB04665"
+    },
+    {
+      "rank": 8,
+      "name": "Dicoumarol",
+      "entity_id": "DB00266"
+    },
+    {
+      "rank": 9,
+      "name": "Methylprednisolone hemisuccinate",
+      "entity_id": "DB14644"
+    },
+    {
+      "rank": 10,
+      "name": "Oxycodone",
+      "entity_id": "DB00497"
+    }
+  ],
+  "verification": "Pure NumPy inference reproduced the independently verified G3 Colchicine Top-10 ranking."
+}

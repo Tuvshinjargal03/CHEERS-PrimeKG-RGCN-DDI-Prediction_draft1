@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="CHEERS DDI Explorer, a graduation research prototype for knowledge graph-based drug-drug link prediction.">
+    <title>CHEERS DDI Explorer</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <a class="skip-link" href="#mainContent">Skip to main content</a>
+
+    <header class="site-header">
+        <div class="header-inner">
+            <a class="brand" href="#predict" data-nav-target="predict" aria-label="CHEERS DDI Explorer home">
+                <span class="brand-mark" aria-hidden="true">C</span>
+                <span>
+                    <strong>CHEERS DDI Explorer</strong>
+                    <small>Knowledge Graph&ndash;Based Drug&ndash;Drug Link Prediction</small>
+                </span>
+            </a>
+
+            <nav class="primary-nav" aria-label="Main navigation">
+                <button class="nav-button active" type="button" data-section="predict" aria-current="page">Predict</button>
+                <button class="nav-button" type="button" data-section="experiment">Experiment</button>
+                <button class="nav-button" type="button" data-section="verification">Verification</button>
+                <button class="nav-button" type="button" data-section="about">About</button>
+            </nav>
+
+            <div class="runtime-status" aria-live="polite">
+                <span id="apiStatusDot" class="status-dot loading" aria-hidden="true"></span>
+                <span id="apiStatusText">Connecting</span>
+            </div>
+        </div>
+    </header>
+
+    <main id="mainContent" class="main-content">
+        <section id="section-predict" class="page-section active" aria-labelledby="predictHeading">
+            <div class="hero">
+                <div class="hero-copy">
+                    <span class="research-badge">Graduation Research Prototype</span>
+                    <h1 id="predictHeading">Explore potential unobserved drug&ndash;drug links.</h1>
+                    <p>Search for a drug and explore drug&ndash;drug links predicted by our R-GCN model from the PrimeKG biomedical knowledge graph.</p>
+                </div>
+                <div class="model-card" aria-label="Model summary">
+                    <span>Selected research model</span>
+                    <strong>G3 &middot; R-GCN</strong>
+                    <small>Combined biomedical graph context &middot; Seed 44</small>
+                </div>
+            </div>
+
+            <ol class="workflow" aria-label="Prediction workflow">
+                <li><span>1</span><div><strong>Choose a drug</strong><small>Search by name or DrugBank ID</small></div></li>
+                <li><span>2</span><div><strong>Run prediction</strong><small>Score unobserved candidate links</small></div></li>
+                <li><span>3</span><div><strong>Explore results</strong><small>Compare the ranked candidates</small></div></li>
+            </ol>
+
+            <section class="search-card" aria-labelledby="searchHeading">
+                <div class="card-heading">
+                    <div>
+                        <p class="eyebrow">Start here</p>
+                        <h2 id="searchHeading">Choose a query drug</h2>
+                    </div>
+                    <p class="compact-note">Exact selection keeps names and identifiers mapped correctly.</p>
+                </div>
+
+                <div class="search-controls">
+                    <div class="field search-field">
+                        <label for="drugSearch">Search drug</label>
+                        <input id="drugSearch" type="search" autocomplete="off" placeholder="Enter a drug name or DrugBank ID" aria-describedby="searchHelp selectionStatus" aria-autocomplete="list" aria-controls="searchSuggestions" aria-expanded="false">
+                        <div id="searchSuggestions" class="suggestions hidden" role="listbox" aria-label="Drug search results"></div>
+                        <small id="searchHelp">Example: Colchicine or DB01394</small>
+                    </div>
+
+                    <div class="field result-count-field">
+                        <label for="topK">Number of results</label>
+                        <select id="topK">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                        </select>
+                    </div>
+
+                    <button id="predictButton" class="primary-button" type="button" disabled>Find predicted links</button>
+                </div>
+
+                <div class="search-footer">
+                    <div class="examples" aria-label="Example drugs">
+                        <span>Try an example</span>
+                        <button class="example-chip" type="button" data-drug="Colchicine">Colchicine</button>
+                        <button class="example-chip" type="button" data-drug="Prednisone">Prednisone</button>
+                        <button class="example-chip" type="button" data-drug="Betamethasone">Betamethasone</button>
+                    </div>
+                    <p id="selectionStatus" class="selection-status" aria-live="polite">Select a search result to enable prediction.</p>
+                </div>
+            </section>
+
+            <div id="predictionStatus" class="status-region" aria-live="polite">
+                <div id="emptyPanel" class="empty-state">
+                    <span class="empty-icon" aria-hidden="true">&#8599;</span>
+                    <div><strong>Select a drug to explore predicted links.</strong><p>The model will rank candidate pairs that are unobserved in the PrimeKG target relation.</p></div>
+                </div>
+                <div id="loadingPanel" class="loading-panel hidden">
+                    <span class="loader" aria-hidden="true"></span>
+                    <div><strong>Analyzing graph relationships&hellip;</strong><p>Scoring and filtering candidate drugs.</p></div>
+                </div>
+                <div id="errorPanel" class="error-panel hidden" role="alert"></div>
+                <div id="noResultsPanel" class="empty-state hidden"><strong>No unobserved candidates were returned for this drug.</strong></div>
+            </div>
+
+            <section id="predictionResults" class="prediction-results hidden" aria-labelledby="resultTitle">
+                <div class="results-intro">
+                    <div>
+                        <p class="eyebrow">Prediction results</p>
+                        <h2 id="resultTitle">Predicted links</h2>
+                        <p id="resultSubtitle">Ranked candidate drug pairs that are not recorded as known positive links in the PrimeKG target relation.</p>
+                    </div>
+                    <div class="research-note"><strong>Research model predictions</strong><span>These are not confirmed drug interactions.</span></div>
+                </div>
+
+                <div class="result-summary" aria-label="Prediction summary">
+                    <article><span>Query drug</span><strong id="summaryQuery">&mdash;</strong><small id="summaryQueryId">&mdash;</small></article>
+                    <article><span>Candidate drugs</span><strong id="summaryCandidates">&mdash;</strong><small>before filtering</small></article>
+                    <article><span>Results shown</span><strong id="summaryShown">&mdash;</strong><small>ranked candidates</small></article>
+                    <article><span>Model</span><strong id="summaryModel">&mdash;</strong><small id="summaryModelMeta">&mdash;</small></article>
+                </div>
+
+                <div class="filter-summary">
+                    <span><strong id="knownFiltered">&mdash;</strong> known positive candidates filtered</span>
+                    <span><strong id="availableCandidates">&mdash;</strong> unobserved candidates analyzed</span>
+                </div>
+
+                <div id="tableView" class="result-view active">
+                    <div class="panel-heading">
+                        <div><h3>Ranked candidate drugs</h3><p>Ordered by raw model score after known-positive and self-link filtering.</p></div>
+                        <span class="info-tip" tabindex="0" data-tooltip="Raw ranking score produced by the model. It is not a probability.">What is model score?</span>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="result-table">
+                            <caption class="sr-only">Ranked unobserved candidate links</caption>
+                            <thead><tr><th scope="col">Rank</th><th scope="col">Candidate drug</th><th scope="col">DrugBank ID</th><th scope="col">Model score</th><th scope="col">Relative score visualization</th><th scope="col">G3 context</th></tr></thead>
+                            <tbody id="predictionTableBody"></tbody>
+                        </table>
+                    </div>
+                    <p class="chart-disclaimer">Bars show relative score position within the displayed results; they are not probabilities.</p>
+                </div>
+
+                <div class="interpretation-note"><strong>Interpret with care</strong><p>Candidate links are unobserved in the PrimeKG positive set. Raw model scores are ranking values, not probabilities, confidence, or clinical evidence.</p></div>
+
+                <section id="pairContextPanel" class="pair-context-panel hidden" aria-labelledby="pairContextTitle">
+                    <header class="context-header">
+                        <div>
+                            <p class="context-label">Context available to G3</p>
+                            <h2 id="pairContextTitle">Graph context for this pair</h2>
+                            <p id="pairContextSubtitle">Relationships below were present in the G3 knowledge graph used by the model.</p>
+                        </div>
+                        <button id="closeContextButton" class="text-button" type="button">Close context</button>
+                    </header>
+
+                    <div id="contextLoading" class="context-message hidden" aria-live="polite">Loading exported G3 relationships&hellip;</div>
+                    <div id="contextError" class="context-message error hidden" role="alert"></div>
+
+                    <div id="contextContent" class="hidden">
+                        <div class="context-summary" aria-label="Pair context summary">
+                            <div><span id="contextDrugALabel">Drug A context</span><strong id="contextDrugACount">&mdash;</strong><small>relationships</small></div>
+                            <div><span id="contextDrugBLabel">Drug B context</span><strong id="contextDrugBCount">&mdash;</strong><small>relationships</small></div>
+                            <div><span>Shared context</span><strong id="contextSharedCount">&mdash;</strong><small>unique entities</small></div>
+                            <div><span>Gene / protein</span><strong id="contextGeneCount">&mdash;</strong><small>shared entities</small></div>
+                            <div><span>Disease</span><strong id="contextDiseaseCount">&mdash;</strong><small>shared entities</small></div>
+                        </div>
+
+                        <div class="shared-context-heading">
+                            <div>
+                                <h3>Shared contextual entities</h3>
+                                <p>Relation types are shown separately for each drug and are not reinterpreted.</p>
+                            </div>
+                            <div class="context-filters" aria-label="Filter shared context">
+                                <button class="context-filter active" type="button" data-context-group="all">All</button>
+                                <button class="context-filter" type="button" data-context-group="gene/protein">Gene / protein</button>
+                                <button class="context-filter" type="button" data-context-group="disease">Disease</button>
+                            </div>
+                        </div>
+
+                        <div id="sharedContextEmpty" class="context-empty hidden">
+                            <strong>No direct shared G3 support entities were found for this pair.</strong>
+                            <p>Absence of direct shared context does not mean the drugs are unrelated.</p>
+                        </div>
+
+                        <div id="sharedContextTableWrap" class="table-wrap">
+                            <table class="context-table">
+                                <caption class="sr-only">Shared G3 contextual entities and the relation types connecting each drug</caption>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Context entity</th>
+                                        <th scope="col">Type</th>
+                                        <th id="contextDrugAColumn" scope="col">Drug A relation</th>
+                                        <th id="contextDrugBColumn" scope="col">Drug B relation</th>
+                                        <th scope="col">Source</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sharedContextBody"></tbody>
+                            </table>
+                        </div>
+                        <button id="showAllContextButton" class="text-button show-all-context hidden" type="button"></button>
+
+                        <details class="individual-context">
+                            <summary>View individual graph context</summary>
+                            <p>Complete exported G3 support relationships for each drug, grouped by context type.</p>
+                            <div class="individual-context-grid">
+                                <section id="individualDrugA"></section>
+                                <section id="individualDrugB"></section>
+                            </div>
+                        </details>
+
+                        <p id="contextInterpretation" class="context-interpretation"></p>
+                    </div>
+                </section>
+            </section>
+        </section>
+
+        <section id="section-experiment" class="page-section" aria-labelledby="experimentHeading" hidden>
+            <div class="section-intro">
+                <p class="eyebrow">Research experiment</p>
+                <h1 id="experimentHeading">How does biomedical knowledge graph composition affect R-GCN drug&ndash;drug link prediction?</h1>
+                <p>Four graph variants use the same DDI split and model architecture, while changing the biomedical context available during message passing.</p>
+            </div>
+
+            <div class="variant-grid">
+                <article class="variant-card"><div class="variant-top"><span>G0</span><strong>DDI only</strong></div><p>Uses only Drug&ndash;Drug target edges.</p><div class="mini-network one"><i>Drug</i><b>&harr;</b><i>Drug</i></div></article>
+                <article class="variant-card"><div class="variant-top"><span>G1</span><strong>+ Gene/Protein</strong></div><p>Adds Drug&ndash;Gene/Protein relationships to the DDI graph.</p><div class="mini-network"><i>Drug</i><b>&harr;</b><i>Drug</i><em>Gene / Protein</em></div></article>
+                <article class="variant-card"><div class="variant-top"><span>G2</span><strong>+ Disease</strong></div><p>Adds Drug&ndash;Disease relationships to the DDI graph.</p><div class="mini-network"><i>Drug</i><b>&harr;</b><i>Drug</i><em>Disease</em></div></article>
+                <article class="variant-card featured"><span class="best-badge">Best overall</span><div class="variant-top"><span>G3</span><strong>Combined context</strong></div><p>Combines DDI, Drug&ndash;Gene/Protein, and Drug&ndash;Disease relationships.</p><div class="mini-network combined"><i>Drug</i><b>&harr;</b><i>Drug</i><em>Gene / Protein &middot; Disease</em></div></article>
+            </div>
+
+            <div class="experiment-grid">
+                <article class="research-panel chart-panel">
+                    <div class="panel-heading"><div><h2>Mean MRR across three seeds</h2><p>Higher is better. Error values show variation across seeds 42&ndash;44. Axis starts at zero.</p></div></div>
+                    <div id="mrrChart" class="svg-chart" aria-live="polite"></div>
+                </article>
+                <article class="finding-panel">
+                    <p class="eyebrow">Key finding</p>
+                    <h2>G3 achieved the strongest overall performance.</h2>
+                    <p>Combining Drug&ndash;Drug, Drug&ndash;Gene/Protein, and Drug&ndash;Disease context produced the highest mean MRR across seeds 42&ndash;44.</p>
+                    <div class="finding-number"><span>G3 MRR</span><strong id="findingMrr">0.5388 &plusmn; 0.0014</strong></div>
+                    <dl><div><dt>Absolute improvement over G0</dt><dd id="absoluteGain">+0.009592</dd></div><div><dt>Relative improvement over G0</dt><dd id="relativeGain">+1.81%</dd></div></dl>
+                    <small>The gain is modest but consistent across the three evaluated seeds. Statistical significance is not claimed.</small>
+                </article>
+            </div>
+
+            <article class="research-panel performance-panel">
+                <div class="panel-heading"><div><h2>Performance across all ranking metrics</h2><p>Mean filtered-ranking results across seeds 42, 43, and 44.</p></div></div>
+                <div id="performanceChart" class="svg-chart wide-chart" aria-live="polite"></div>
+                <div class="metric-definitions"><p><strong>MRR</strong> Rewards models that rank the correct drug closer to the top.</p><p><strong>Hits@1</strong> Correct target ranked first.</p><p><strong>Hits@5</strong> Correct target appears within the top five.</p><p><strong>Hits@10</strong> Correct target appears within the top ten.</p></div>
+            </article>
+
+            <section aria-labelledby="scaleHeading">
+                <div class="panel-heading section-panel-heading"><div><h2 id="scaleHeading">Experiment scale</h2><p>The same locked evaluation setting was used across graph variants.</p></div></div>
+                <div id="experimentScale" class="scale-grid"><article><span>Training DDI pairs</span><strong>1,069,080</strong></article><article><span>Validation DDI pairs</span><strong>133,620</strong></article><article><span>Test DDI pairs</span><strong>133,614</strong></article><article><span>Candidate drugs</span><strong>4,278</strong></article><article><span>Test ranking queries</span><strong>267,228</strong></article><article><span>Seeds</span><strong>42, 43, 44</strong></article></div>
+            </section>
+        </section>
+
+        <section id="section-verification" class="page-section" aria-labelledby="verificationHeading" hidden>
+            <div class="verification-hero">
+                <div class="verification-count"><strong id="verificationCount">7 / 7</strong><span>checks passed</span></div>
+                <div><p class="eyebrow">Verification record</p><h1 id="verificationHeading">The final model and application runtime were checked before deployment.</h1><p id="verificationInterpretation">Loading the verified checks&hellip;</p></div>
+            </div>
+            <div id="verificationList" class="verification-list" aria-live="polite"><div class="skeleton"></div><div class="skeleton"></div></div>
+            <div class="runtime-verification-note"><strong>Lightweight runtime parity</strong><p>The local NumPy runtime was also verified to reproduce the same Colchicine Top-10 ranking as the exported G3 model.</p></div>
+        </section>
+
+        <section id="section-about" class="page-section" aria-labelledby="aboutHeading" hidden>
+            <div class="section-intro"><p class="eyebrow">About the project</p><h1 id="aboutHeading">A focused study of graph context in DDI link prediction.</h1><p>This application presents the verified graduation-project experiment and a research demonstration of its selected G3 model.</p></div>
+            <div class="about-grid">
+                <article class="about-card wide"><span>Research question</span><h2>How does biomedical knowledge graph composition affect R-GCN drug&ndash;drug link prediction?</h2></article>
+                <article class="about-card"><span>Data</span><h2>PrimeKG</h2><p>The target relation is <code>drug_drug</code>, displayed in PrimeKG as <strong>synergistic interaction</strong>. Candidate drugs are mapped to DrugBank identifiers where available in the verified metadata.</p></article>
+                <article class="about-card"><span>Model</span><h2>Relational Graph Convolutional Network</h2><p>R-GCN learns node representations while accounting for different relationship types in a heterogeneous knowledge graph.</p></article>
+                <article class="about-card"><span>Evaluation</span><h2>Locked, filtered ranking</h2><ul><li>The same DDI train/validation/test split was used for all four graph variants.</li><li>Held-out DDI links were excluded from message-passing adjacency.</li><li>Performance was evaluated using filtered ranking over 4,278 candidate drugs.</li></ul></article>
+                <article class="about-card limitations"><span>Scope &amp; limitations</span><h2>Research interpretation only</h2><ul><li>Results are based on PrimeKG and its synergistic-interaction Drug&ndash;Drug target relation.</li><li>One main GNN architecture was evaluated.</li><li>Robustness evaluation used three seeds; no statistical-significance claim is made.</li><li>Candidate predictions are unobserved PrimeKG links, not confirmed negative or positive clinical interactions.</li><li>This application is not a clinical decision-support tool.</li></ul></article>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div><strong>Research use only</strong><p>Predicted candidates represent unobserved links according to the model and PrimeKG target relation. Model scores are ranking values, not probabilities. Results must not be used for clinical decisions or medication guidance.</p></div>
+        <span>CHEERS &middot; Pusan National University</span>
+    </footer>
+
+    <script src="/static/app.js" defer></script>
+</body>
+</html>
