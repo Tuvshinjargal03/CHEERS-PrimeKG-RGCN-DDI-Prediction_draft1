@@ -25,6 +25,8 @@ from pydantic import BaseModel, Field
 
 from src.g3_context import G3ContextStore
 from src.lightweight_inference import DDIPredictor
+from src.pubmed_literature import PubMedLiteratureService
+from src.safety_evidence import OpenFDALabelEvidenceService
 
 
 # ============================================================
@@ -63,6 +65,19 @@ async def lifespan(app: FastAPI):
         project_dir=PROJECT_DIR
     )
 
+    app.state.drug_metadata_by_id = {
+        row["entity_id"].casefold(): {
+            "drug_id": row["entity_id"],
+            "drug_name": row["entity_name"],
+            "drug_node_id": row["node_id"],
+            "source": row["entity_source"],
+        }
+        for row in app.state.predictor.drug_metadata
+    }
+
+    app.state.label_evidence_service = OpenFDALabelEvidenceService()
+    app.state.literature_service = PubMedLiteratureService()
+
     print(
         "[CHEERS API] Lightweight runtime and G3 context loaded successfully."
     )
@@ -71,6 +86,9 @@ async def lifespan(app: FastAPI):
 
     app.state.predictor = None
     app.state.context_store = None
+    app.state.drug_metadata_by_id = None
+    app.state.label_evidence_service = None
+    app.state.literature_service = None
 
 
 # ============================================================
@@ -165,6 +183,50 @@ def load_json(path: Path):
         return json.load(f)
 
 
+def build_evidence_response(
+    drug_a,
+    drug_b,
+    label_evidence,
+    literature,
+):
+    """Keep external clinical evidence separate from AI prediction output."""
+
+    return {
+        "pair": {
+            "drug_a": drug_a,
+            "drug_b": drug_b,
+        },
+        "ai_context": {
+            "note": (
+                "Clinical evidence below is independent from the "
+                "R-GCN prediction score."
+            ),
+        },
+        "label_evidence": label_evidence,
+        "literature": literature,
+        "limitations": [
+            (
+                "External evidence retrieval is provided for research and "
+                "educational use. Absence of retrieved evidence does not "
+                "establish that a drug combination is safe."
+            ),
+            (
+                "The R-GCN score predicts a PrimeKG drug-drug link and is "
+                "not a clinical risk probability."
+            ),
+            (
+                "openFDA label matching reports only explicit drug-name "
+                "mentions in selected label sections and may miss synonyms, "
+                "products, or records."
+            ),
+            (
+                "PubMed retrieval is a conservative name-based search and "
+                "is not a systematic review."
+            ),
+        ],
+    }
+
+
 # ============================================================
 # Root
 # ============================================================
@@ -210,6 +272,13 @@ def root():
             "pair_context":
                 (
                     "/api/context/pair"
+                    "?drug_a_id=DB01394"
+                    "&drug_b_id=DB01032"
+                ),
+
+            "pair_evidence":
+                (
+                    "/api/evidence/pair"
                     "?drug_a_id=DB01394"
                     "&drug_b_id=DB01032"
                 ),
@@ -548,6 +617,57 @@ def pair_context(
             status_code=404,
             detail=exc.args[0],
         )
+
+
+# ============================================================
+# Independent FDA label and PubMed pair evidence
+# ============================================================
+
+@app.get("/api/evidence/pair")
+def pair_evidence(
+    drug_a_id: str = Query(
+        ...,
+        min_length=1,
+        max_length=100,
+        description="Exact DrugBank ID for the first drug.",
+    ),
+    drug_b_id: str = Query(
+        ...,
+        min_length=1,
+        max_length=100,
+        description="Exact DrugBank ID for the second drug.",
+    ),
+):
+    metadata_by_id = app.state.drug_metadata_by_id
+    drug_a = metadata_by_id.get(drug_a_id.strip().casefold())
+    drug_b = metadata_by_id.get(drug_b_id.strip().casefold())
+
+    if drug_a is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Unknown drug ID: {drug_a_id}.",
+        )
+    if drug_b is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Unknown drug ID: {drug_b_id}.",
+        )
+
+    label_evidence = app.state.label_evidence_service.get_pair_evidence(
+        drug_a_name=drug_a["drug_name"],
+        drug_b_name=drug_b["drug_name"],
+    )
+    literature = app.state.literature_service.search_pair(
+        drug_a_name=drug_a["drug_name"],
+        drug_b_name=drug_b["drug_name"],
+    )
+
+    return build_evidence_response(
+        drug_a=drug_a,
+        drug_b=drug_b,
+        label_evidence=label_evidence,
+        literature=literature,
+    )
 
 
 # ============================================================
