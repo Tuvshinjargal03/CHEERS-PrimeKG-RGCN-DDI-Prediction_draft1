@@ -29,6 +29,7 @@
 - [Final model verification](#final-model-verification)
 - [Lightweight NumPy runtime](#lightweight-numpy-runtime)
 - [G3 graph-context runtime](#g3-graph-context-runtime)
+- [Independent FDA and PubMed evidence](#independent-fda-and-pubmed-evidence)
 - [Web application](#web-application)
 - [API reference](#api-reference)
 - [Local Windows setup](#local-windows-setup)
@@ -59,7 +60,7 @@ Three scopes must be distinguished:
 |---|---|---|
 | Final graduation experiment | Controlled G0–G3 R-GCN graph-composition comparison | Results, selected checkpoint, selected G3 graph artifacts, summaries, and original inference code are included; full preprocessing/retraining workspace is not |
 | Earlier project stages | Broader clinical-inference concept and KGE exploration | Documented historically; not presented as the final R-GCN experiment |
-| Lightweight demonstration | Search, Top-K link ranking, experiment display, verification display, and pair-specific G3 context | Fully supported by the included NumPy/CSV runtime artifacts |
+| Lightweight demonstration | Search, Top-K link ranking, experiment display, verification display, pair-specific G3 context, and independent FDA/PubMed review | Fully supported locally; external evidence retrieval additionally requires network access to openFDA and NCBI |
 
 ## Scientific scope
 
@@ -79,7 +80,7 @@ The model output is a raw bilinear ranking score. It must not be interpreted as:
 - evidence that two drugs are dangerous;
 - a recommendation to prescribe, stop, combine, or change medication.
 
-Likewise, the pair-context feature shows support relationships that were present in G3. It is descriptive graph context, not a causal explanation of a score and not clinical evidence.
+Likewise, the pair-context feature shows support relationships that were present in G3. It is descriptive graph context, not a causal explanation of a score and not clinical evidence. FDA label excerpts and PubMed records are retrieved independently from the model prediction. Failure to retrieve evidence, or retrieval of no evidence, must never be interpreted as evidence of safety.
 
 ## Project evolution
 
@@ -563,6 +564,29 @@ Verify the context export:
 python final_release\verify_g3_context_runtime.py
 ```
 
+## Independent FDA and PubMed evidence
+
+Each ranked candidate retains the separate **Explore context** action and also provides **Review evidence**. Reviewing evidence does not rerun prediction and does not alter the raw R-GCN score.
+
+The evidence endpoint combines two independent retrieval paths:
+
+- openFDA drug-label retrieval, retaining only explicit cross-drug name mentions from selected label sections;
+- a conservative NCBI PubMed query naming both drugs, returning up to five source records.
+
+The application renders source text and bibliographic metadata without LLM summarization. It reports retrieval status explicitly and preserves empty and error states. No evidence result is converted into a label such as safe, dangerous, low risk, or high risk.
+
+```http
+GET /api/evidence/pair?drug_a_id=DB01394&drug_b_id=DB01032
+```
+
+The combined response keeps `ai_context`, `label_evidence`, `literature`, and `limitations` separate. External services are network-dependent and their live results can change over time.
+
+Verify the deterministic schemas, route registration, forbidden-verdict guard, and currently available live services:
+
+```powershell
+python final_release\verify_external_evidence.py
+```
+
 ## Web application
 
 The current local architecture is:
@@ -574,6 +598,9 @@ flowchart LR
     N --> L[Lightweight embeddings and packed mask]
     F --> C[Standard-library G3 context store]
     C --> CSV[G3 support-context CSV]
+    F --> E[Independent evidence services]
+    E --> O[openFDA labels]
+    E --> P[NCBI PubMed]
     F --> R[Experiment and verification JSON]
 ```
 
@@ -584,7 +611,8 @@ Components:
 | Backend | FastAPI | API lifecycle, validation, JSON responses, and static-file serving |
 | Inference | NumPy | Verified candidate scoring, filtering, and Top-K ranking |
 | Context indexing | Python standard library | CSV loading, per-drug indexes, shared-entity calculation, relation preservation |
-| Frontend | HTML, CSS, vanilla JavaScript | Search, results, charts, verification, and pair-context exploration |
+| Evidence retrieval | Python standard library | Independent openFDA label and NCBI PubMed requests with bounded timeouts and explicit status values |
+| Frontend | HTML, CSS, vanilla JavaScript | Search, results, charts, verification, pair-context exploration, and separate evidence review |
 
 The local demonstration requires no React, Node.js, npm, external CDN runtime, PyTorch, PyG, CUDA, or GPU.
 
@@ -599,7 +627,8 @@ Main functionality:
 - graph-composition experiment information;
 - verification information;
 - pair-specific G3 context exploration;
-- relation-preserving shared-context and individual-context tables.
+- relation-preserving shared-context and individual-context tables;
+- independent openFDA label and PubMed literature review with explicit empty/error states.
 
 ## API reference
 
@@ -616,6 +645,7 @@ The implementation in `api/main.py` is the source of truth.
 | GET | `/api/drugs/search` | Autocomplete search | query `q`; optional `limit` 1–50 | matching drug name, DrugBank ID, and node ID |
 | POST | `/api/predict` | Rank unobserved candidate links | JSON body with `drug` and `top_k` 1–50 | query metadata, model metadata, filtering counts, ranked predictions, disclaimer |
 | GET | `/api/context/pair` | Retrieve real G3 support context for a pair | exact `drug_a_id` and `drug_b_id` | complete per-drug context, shared entities, separate relation lists, interpretation warning |
+| GET | `/api/evidence/pair` | Retrieve independent external evidence for a pair | exact `drug_a_id` and `drug_b_id` | pair identity, model-independence notice, openFDA results, PubMed records, limitations |
 | GET | `/docs` | Interactive OpenAPI documentation | none | FastAPI Swagger UI |
 
 Prediction request:
@@ -676,14 +706,17 @@ From PowerShell:
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install -r final_release\lightweight_requirements.txt
+python -m pip install -r final_release\app_requirements.txt
 ```
 
-Run both independent checks:
+`app_requirements.txt` is the full local application environment. It includes `lightweight_requirements.txt`, which intentionally contains only NumPy for standalone lightweight scoring and export verification.
+
+Run all three independent checks:
 
 ```powershell
 python final_release\verify_lightweight_runtime.py
 python final_release\verify_g3_context_runtime.py
+python final_release\verify_external_evidence.py
 ```
 
 Start the application:
@@ -774,6 +807,8 @@ This tree reflects the actual portable folder after repository documentation was
 │   ├── app_requirements.txt
 │   ├── FINAL_VERIFICATION_SUMMARY.json
 │   ├── lightweight_requirements.txt
+│   ├── PORTABLE_APP_MANIFEST_V2.json
+│   ├── verify_external_evidence.py
 │   ├── verify_g3_context_runtime.py
 │   └── verify_lightweight_runtime.py
 ├── results/
@@ -784,13 +819,16 @@ This tree reflects the actual portable folder after repository documentation was
 │   ├── g3_context.py
 │   ├── inference.py
 │   ├── lightweight_inference.py
-│   └── rgcn_model.py
+│   ├── pubmed_literature.py
+│   ├── rgcn_model.py
+│   └── safety_evidence.py
 ├── web/
 │   ├── app.js
 │   ├── index.html
 │   └── styles.css
 ├── .gitignore
 ├── PORTABLE_APP_MANIFEST.json
+├── THIRD_PARTY_NOTICES.md
 └── README.md
 ```
 
@@ -801,14 +839,15 @@ For the complete lightweight web demonstration:
 - `api/main.py`;
 - `src/lightweight_inference.py`;
 - `src/g3_context.py`;
+- `src/safety_evidence.py` and `src/pubmed_literature.py`;
 - `web/index.html`, `web/styles.css`, and `web/app.js`;
 - all files under `final_release/lightweight_runtime/`;
 - all files under `final_release/g3_context_runtime/`;
 - `results/rgcn_multiseed/final_experiment_summary.json`;
 - `final_release/FINAL_VERIFICATION_SUMMARY.json`;
-- `final_release/lightweight_requirements.txt`.
+- `final_release/app_requirements.txt` and its included `lightweight_requirements.txt`.
 
-The two verification scripts are not required for serving requests, but they should be retained to validate the export.
+The three verification scripts are not required for serving requests, but they should be retained to validate the export and evidence response contracts.
 
 ### Included research/archive files
 
@@ -822,7 +861,7 @@ The following are preserved original PyTorch/research artifacts and are not load
 - `src/inference.py`;
 - `src/rgcn_model.py`.
 
-`final_release/app_requirements.txt` is the earlier application requirement list. Use `final_release/lightweight_requirements.txt` for the current NumPy application.
+Use `final_release/app_requirements.txt` for the complete web application. Use `final_release/lightweight_requirements.txt` only for standalone NumPy scoring or the lightweight export verifier.
 
 ## Reproducibility levels
 
@@ -877,8 +916,11 @@ Those materials were retained in the university experiment workspace. The includ
 | `final_release/g3_context_runtime/G3_CONTEXT_MANIFEST.json` | SHA256 checks for the context CSV and summary |
 | `final_release/verify_lightweight_runtime.py` | independent Top-10 export check |
 | `final_release/verify_g3_context_runtime.py` | independent edge-count and shared-context check |
+| `final_release/verify_external_evidence.py` | deterministic evidence-schema and live-service availability check |
 | `final_release/FINAL_VERIFICATION_SUMMARY.json` | seven-check final model record |
+| `final_release/PORTABLE_APP_MANIFEST_V2.json` | current portable release inventory with SHA256 hashes |
 | `results/rgcn_multiseed/final_experiment_summary.json` | final graph-composition results |
+| `THIRD_PARTY_NOTICES.md` | PrimeKG software and published-dataset license metadata |
 
 The G3 context manifest currently matches its files.
 
@@ -895,7 +937,7 @@ The following training-workspace audit files are **not present** in this portabl
 - `FINAL_EXPERIMENT_MANIFEST_AMENDMENT_01.json`;
 - `FINAL_EXPERIMENT_FREEZE_AMENDMENT_01.txt`.
 
-### Legacy portable manifest warning
+### Portable manifests
 
 `PORTABLE_APP_MANIFEST.json` predates the current NumPy/context/frontend updates. Eleven entries still match, but its hashes/sizes are stale for:
 
@@ -905,7 +947,7 @@ The following training-workspace audit files are **not present** in this portabl
 - `web/index.html`;
 - `web/styles.css`.
 
-It should not be presented as a current integrity manifest. Before the first public commit, either generate a clearly versioned replacement/amendment or retain this file explicitly as a historical snapshot.
+It must not be presented as a current integrity manifest and is retained only as a historical snapshot. `final_release/PORTABLE_APP_MANIFEST_V2.json` is the current release inventory. Because the V2 manifest intentionally does not hash itself, its `generated_at_utc` field and every listed file hash can be verified independently without a self-referential checksum.
 
 ## What should be committed
 
@@ -914,7 +956,7 @@ It should not be presented as a current integrity manifest. Before the first pub
 - `README.md` and `.gitignore`;
 - `api/`, `src/`, and `web/`;
 - required lightweight runtime and G3 context runtime exports;
-- both independent verification scripts;
+- all three independent verification scripts;
 - final experiment and verification summaries;
 - current requirements;
 - valid manifests and any clearly labeled historical manifests.
@@ -943,11 +985,12 @@ Two included archive artifacts exceed 25 MB:
 
 No file exceeds GitHub's normal 100 MB per-file limit. Nevertheless, committing binary model/tensor artifacts directly makes repository history permanently large. If they are retained for academic reproducibility, Git LFS or a versioned release/archive is preferable. If the repository is intended only for Level-1 demonstration, they can be distributed separately with checksums—but they must not be deleted merely to reduce repository size.
 
-Also decide:
+Release decisions and verified third-party status:
 
-- how to license the code;
-- whether PrimeKG-derived metadata/context may be redistributed under the applicable data terms;
-- whether to replace/amend the stale legacy portable manifest.
+- **Still requires Team CHEERS approval:** choose a license for original CHEERS code. No project license is currently granted.
+- **Verified source metadata:** the official PrimeKG code repository is MIT-licensed, while the published Harvard Dataverse PrimeKG dataset record reports CC0 1.0. PrimeKG also warns that original upstream data sources can have separate terms; see `THIRD_PARTY_NOTICES.md`.
+- **Completed:** the stale legacy manifest is retained as history and replaced operationally by the versioned V2 manifest.
+- **Recommended packaging choice:** use Git LFS or versioned release assets for the two archival `.pt` files if the full academic archive is published. They are not required by the Level-1 NumPy application and were not deleted or rewritten here.
 
 ## Limitations
 
@@ -976,14 +1019,12 @@ Also decide:
 - external DDI validation;
 - calibrated classification where scientifically appropriate;
 - additional biomedical data sources;
-- source-backed drug-safety evidence;
-- DailyMed or openFDA evidence retrieval;
-- PubMed literature retrieval;
-- evidence-grounded AI summaries;
+- broader DailyMed/openFDA coverage and synonym-aware label matching;
+- systematic, protocol-driven literature review beyond the current conservative PubMed lookup;
 - pair-level explanatory paths;
 - stronger UI communication of relation semantics.
 
-DailyMed/openFDA, PubMed, external safety evidence, and LLM-generated summaries are future work and are not implemented in the current application.
+The current application already retrieves bounded openFDA label evidence and PubMed records. It deliberately displays source-backed text without LLM summarization and does not convert retrieved or missing evidence into clinical conclusions.
 
 ## Safety and responsible use
 

@@ -11,6 +11,8 @@ const state = {
     pairContext: null,
     contextFilter: "all",
     contextExpanded: false,
+    pairEvidence: null,
+    evidenceRequestId: 0,
 };
 
 const GRAPH_VARIANTS = ["G0", "G1", "G2", "G3"];
@@ -269,6 +271,7 @@ function renderPrediction(result) {
     $("#knownFiltered").textContent = formatNumber(result.known_positive_candidates_filtered);
     $("#availableCandidates").textContent = formatNumber(result.available_unobserved_candidates);
     resetPairContext();
+    resetPairEvidence();
     renderPredictionTable(result.predictions);
     $("#predictionResults").classList.remove("hidden");
     $("#predictionResults").scrollIntoView({ behavior: "smooth", block: "start" });
@@ -297,10 +300,14 @@ function renderPredictionTable(predictions) {
             <td class="drug-id">${escapeHtml(item.entity_id)}</td>
             <td class="score-number">${score.toFixed(4)}</td>
             <td><div class="relative-score" aria-label="Relative position for model score ${score.toFixed(4)}"><i class="score-zero" style="left:${geometry.zero}%"></i><i class="score-fill ${score < 0 ? "negative" : ""}" style="left:${geometry.left}%;width:${geometry.width}%"></i></div></td>
-            <td><button class="context-action" type="button">Explore context</button></td>`;
+            <td><div class="pair-actions"><button class="context-action" type="button">Explore context</button><button class="evidence-action" type="button" data-entity-id="${escapeHtml(item.entity_id)}">Review evidence</button></div></td>`;
         row.querySelector(".context-action").addEventListener(
             "click",
             () => loadPairContext(item)
+        );
+        row.querySelector(".evidence-action").addEventListener(
+            "click",
+            () => loadPairEvidence(item)
         );
         tbody.appendChild(row);
     });
@@ -353,6 +360,12 @@ function eventTargetButton(entityId) {
     const rows = Array.from($("#predictionTableBody").querySelectorAll("tr"));
     const row = rows.find((item) => item.querySelector(".drug-id")?.textContent === entityId);
     return row ? row.querySelector(".context-action") : null;
+}
+
+function evidenceTargetButton(entityId) {
+    const rows = Array.from($("#predictionTableBody").querySelectorAll("tr"));
+    const row = rows.find((item) => item.querySelector(".drug-id")?.textContent === entityId);
+    return row ? row.querySelector(".evidence-action") : null;
 }
 
 function renderPairContext(data) {
@@ -479,6 +492,319 @@ $("#showAllContextButton").addEventListener("click", () => {
 });
 
 $("#closeContextButton").addEventListener("click", resetPairContext);
+
+function resetPairEvidence() {
+    state.pairEvidence = null;
+    state.evidenceRequestId += 1;
+    $("#pairEvidencePanel").classList.add("hidden");
+    $("#pairEvidencePanel").removeAttribute("aria-busy");
+    $("#evidenceLoading").classList.add("hidden");
+    $("#evidenceError").classList.add("hidden");
+    $("#evidenceContent").classList.add("hidden");
+    $$(".evidence-action").forEach((button) => {
+        button.disabled = false;
+        button.textContent = "Review evidence";
+        button.classList.remove("active");
+    });
+}
+
+function setEvidenceActionsLoading(loading, entityId) {
+    $$(".evidence-action").forEach((button) => {
+        button.disabled = loading;
+        button.textContent = (
+            loading && button.dataset.entityId === entityId
+                ? "Retrieving..."
+                : "Review evidence"
+        );
+    });
+}
+
+async function loadPairEvidence(candidate) {
+    const query = state.lastPrediction && state.lastPrediction.query;
+    if (!query) return;
+
+    const requestId = state.evidenceRequestId + 1;
+    state.evidenceRequestId = requestId;
+
+    const panel = $("#pairEvidencePanel");
+    panel.classList.remove("hidden");
+    panel.setAttribute("aria-busy", "true");
+    $("#evidencePairNames").textContent = `${query.name} + ${candidate.name}`;
+    const rawScore = Number(candidate.raw_score);
+    $("#evidenceModelScore").textContent = Number.isFinite(rawScore)
+        ? rawScore.toFixed(4)
+        : "\u2014";
+    $("#evidenceLoading").textContent = "Retrieving FDA and PubMed evidence...";
+    $("#evidenceLoading").classList.remove("hidden");
+    $("#evidenceError").classList.add("hidden");
+    $("#evidenceContent").classList.add("hidden");
+    $$(".evidence-action").forEach((button) => button.classList.remove("active"));
+    evidenceTargetButton(candidate.entity_id)?.classList.add("active");
+    setEvidenceActionsLoading(true, candidate.entity_id);
+
+    try {
+        const path = (
+            `/api/evidence/pair?drug_a_id=${encodeURIComponent(query.entity_id)}`
+            + `&drug_b_id=${encodeURIComponent(candidate.entity_id)}`
+        );
+        const data = await apiGet(path);
+        if (requestId !== state.evidenceRequestId) return;
+        state.pairEvidence = data;
+        renderPairEvidence(data);
+        $("#evidenceContent").classList.remove("hidden");
+    } catch (_) {
+        if (requestId !== state.evidenceRequestId) return;
+        $("#evidenceError").textContent = (
+            "Evidence could not be retrieved. Prediction results and graph "
+            + "context remain available."
+        );
+        $("#evidenceError").classList.remove("hidden");
+    } finally {
+        if (requestId !== state.evidenceRequestId) return;
+        $("#evidenceLoading").classList.add("hidden");
+        panel.removeAttribute("aria-busy");
+        setEvidenceActionsLoading(false, candidate.entity_id);
+        panel.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+}
+
+function appendEvidenceState(container, title, detail, variant = "") {
+    const block = document.createElement("div");
+    block.className = ["evidence-state", variant].filter(Boolean).join(" ");
+    const heading = document.createElement("strong");
+    heading.textContent = title;
+    block.appendChild(heading);
+    if (detail) {
+        const explanation = document.createElement("p");
+        explanation.textContent = detail;
+        block.appendChild(explanation);
+    }
+    container.appendChild(block);
+}
+
+function formatLabelSection(section) {
+    const labels = {
+        drug_interactions: "Drug interactions",
+        contraindications: "Contraindications",
+        boxed_warning: "Boxed warning",
+        warnings: "Warnings",
+        warnings_and_cautions: "Warnings and cautions",
+        precautions: "Precautions",
+    };
+    if (labels[section]) return labels[section];
+    const readable = String(section || "").replaceAll("_", " ");
+    return readable ? readable[0].toUpperCase() + readable.slice(1) : "Label section";
+}
+
+function appendEvidenceMetadata(container, entries) {
+    const metadata = document.createElement("div");
+    metadata.className = "evidence-metadata";
+    entries.filter(([, value]) => value !== null && value !== undefined && value !== "").forEach(([label, value]) => {
+        const item = document.createElement("span");
+        const itemLabel = document.createElement("strong");
+        itemLabel.textContent = `${label}:`;
+        item.appendChild(itemLabel);
+        item.appendChild(document.createTextNode(` ${value}`));
+        metadata.appendChild(item);
+    });
+    if (metadata.childElementCount) container.appendChild(metadata);
+}
+
+function renderFdaEvidence(labelEvidence) {
+    const summary = $("#fdaEvidenceSummary");
+    const list = $("#fdaEvidenceList");
+    summary.innerHTML = "";
+    list.innerHTML = "";
+    list.classList.add("hidden");
+
+    const evidenceItems = Array.isArray(labelEvidence?.pair_evidence)
+        ? labelEvidence.pair_evidence
+        : [];
+    const statuses = [
+        labelEvidence?.drug_a?.status,
+        labelEvidence?.drug_b?.status,
+    ].filter(Boolean);
+    const unavailable = statuses.length < 2 || statuses.includes("error");
+    const hasEvidence = labelEvidence?.evidence_found === true && evidenceItems.length > 0;
+
+    if (hasEvidence) {
+        appendEvidenceState(
+            summary,
+            "Explicit cross-drug label mention retrieved",
+            "The other drug name appeared explicitly in retrieved label text. Review the source excerpt and section below."
+        );
+        if (unavailable) {
+            appendEvidenceState(
+                summary,
+                "Some FDA label records could not be retrieved.",
+                "Displayed excerpts come only from records that were returned.",
+                "partial"
+            );
+        }
+        evidenceItems.forEach((item, index) => {
+            const details = document.createElement("details");
+            details.className = "evidence-item";
+            details.open = index === 0;
+
+            const itemSummary = document.createElement("summary");
+            const title = document.createElement("span");
+            title.className = "evidence-item-title";
+            title.textContent = `${item.source_drug} label mentions ${item.mentioned_drug}`;
+            const subtitle = document.createElement("span");
+            subtitle.className = "evidence-item-subtitle";
+            subtitle.textContent = [formatLabelSection(item.section), item.source]
+                .filter(Boolean)
+                .join(" - ");
+            itemSummary.append(title, subtitle);
+            details.appendChild(itemSummary);
+
+            const body = document.createElement("div");
+            body.className = "evidence-item-body";
+            if (item.snippet) {
+                const snippet = document.createElement("blockquote");
+                snippet.className = "evidence-snippet";
+                snippet.textContent = item.snippet;
+                body.appendChild(snippet);
+            }
+            appendEvidenceMetadata(body, [
+                ["Source drug", item.source_drug],
+                ["Mentioned drug", item.mentioned_drug],
+                ["FDA label section", formatLabelSection(item.section)],
+                ["Source", item.source],
+                ["SPL Set ID", item.spl_set_id],
+                ["Application number", item.application_number],
+                ["Effective time", item.effective_time],
+            ]);
+            details.appendChild(body);
+            list.appendChild(details);
+        });
+        list.classList.remove("hidden");
+        return;
+    }
+
+    if (unavailable) {
+        appendEvidenceState(
+            summary,
+            "FDA label evidence could not be retrieved.",
+            "An unavailable response does not indicate the absence of an interaction.",
+            "error"
+        );
+        return;
+    }
+
+    appendEvidenceState(
+        summary,
+        "No explicit cross-drug mention was retrieved from the FDA label records checked.",
+        "This does not establish that the combination is safe. Drug labels may use alternative names, drug classes, or wording not captured by this retrieval method."
+    );
+}
+
+function validPubMedUrl(value) {
+    if (!value) return null;
+    try {
+        const url = new URL(value);
+        if (url.protocol !== "https:" || url.hostname !== "pubmed.ncbi.nlm.nih.gov") return null;
+        return url.href;
+    } catch (_) {
+        return null;
+    }
+}
+
+function renderPubMedLiterature(literature) {
+    const list = $("#pubmedEvidenceList");
+    list.innerHTML = "";
+    list.classList.remove("hidden");
+    const papers = Array.isArray(literature?.papers) ? literature.papers : [];
+
+    if (!["ok", "no_results"].includes(literature?.status)) {
+        appendEvidenceState(
+            list,
+            "PubMed literature could not be retrieved.",
+            "An unavailable response does not indicate that relevant literature is absent.",
+            "error"
+        );
+        return;
+    }
+
+    if (!papers.length) {
+        appendEvidenceState(
+            list,
+            "No related PubMed articles were retrieved using this search.",
+            "This does not mean that no relevant literature exists."
+        );
+        return;
+    }
+
+    papers.forEach((paper) => {
+        const article = document.createElement("article");
+        article.className = "literature-item";
+        const title = document.createElement("h4");
+        title.textContent = paper.title || `PMID ${paper.pmid}`;
+        article.appendChild(title);
+
+        const bibliographicParts = [];
+        if (Array.isArray(paper.authors) && paper.authors.length) {
+            bibliographicParts.push(paper.authors.join(", "));
+        }
+        if (paper.journal) bibliographicParts.push(paper.journal);
+        if (paper.publication_date) bibliographicParts.push(paper.publication_date);
+        if (bibliographicParts.length) {
+            const bibliographicLine = document.createElement("p");
+            bibliographicLine.textContent = bibliographicParts.join(" - ");
+            article.appendChild(bibliographicLine);
+        }
+
+        const footer = document.createElement("div");
+        footer.className = "literature-item-footer";
+        if (paper.pmid) {
+            const pmid = document.createElement("span");
+            pmid.textContent = `PMID ${paper.pmid}`;
+            footer.appendChild(pmid);
+        }
+        if (paper.source) {
+            const source = document.createElement("span");
+            source.textContent = `Source: ${paper.source}`;
+            footer.appendChild(source);
+        }
+        const pubmedUrl = validPubMedUrl(paper.url);
+        if (pubmedUrl) {
+            const link = document.createElement("a");
+            link.className = "pubmed-link";
+            link.href = pubmedUrl;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            link.textContent = paper.pmid
+                ? `View PMID ${paper.pmid} on PubMed`
+                : "View article on PubMed";
+            footer.appendChild(link);
+        }
+        article.appendChild(footer);
+        list.appendChild(article);
+    });
+}
+
+function renderEvidenceLimitations(limitations) {
+    const section = $("#evidenceLimitations");
+    const list = $("#evidenceLimitationsList");
+    const items = Array.isArray(limitations)
+        ? limitations.filter((item) => typeof item === "string" && item.trim())
+        : [];
+    list.innerHTML = "";
+    items.forEach((item) => {
+        const entry = document.createElement("li");
+        entry.textContent = item;
+        list.appendChild(entry);
+    });
+    section.classList.toggle("hidden", items.length === 0);
+}
+
+function renderPairEvidence(data) {
+    renderFdaEvidence(data?.label_evidence || {});
+    renderPubMedLiterature(data?.literature || {});
+    renderEvidenceLimitations(data?.limitations || []);
+}
+
+$("#closeEvidenceButton").addEventListener("click", resetPairEvidence);
 
 function svgNode(name, attributes = {}) {
     const element = document.createElementNS("http://www.w3.org/2000/svg", name);
