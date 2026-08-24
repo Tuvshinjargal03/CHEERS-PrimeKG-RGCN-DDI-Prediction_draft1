@@ -295,28 +295,28 @@
 
             <div class="experiment-grid">
                 <article class="research-panel chart-panel">
-                    <div class="panel-heading"><div><h2>Mean MRR across three seeds</h2><p>Higher is better. Error values show variation across seeds 42&ndash;44. Axis starts at zero.</p></div></div>
+                    <div class="panel-heading"><div><h2>Mean MRR across five seeds</h2><p>Higher is better. Error values show variation across seeds 42&ndash;46. Axis starts at zero.</p></div></div>
                     <div id="mrrChart" class="svg-chart" aria-live="polite"></div>
                 </article>
                 <article class="finding-panel">
                     <p class="eyebrow">Key finding</p>
                     <h2>G3 achieved the strongest overall performance.</h2>
-                    <p>Combining Drug&ndash;Drug, Drug&ndash;Gene/Protein, and Drug&ndash;Disease context produced the highest mean MRR across seeds 42&ndash;44.</p>
-                    <div class="finding-number"><span>G3 MRR</span><strong id="findingMrr">0.5388 &plusmn; 0.0014</strong></div>
-                    <dl><div><dt>Absolute improvement over G0</dt><dd id="absoluteGain">+0.009592</dd></div><div><dt>Relative improvement over G0</dt><dd id="relativeGain">+1.81%</dd></div></dl>
-                    <small>The gain is modest but consistent across the three evaluated seeds. Statistical significance is not claimed.</small>
+                    <p>Combining Drug&ndash;Drug, Drug&ndash;Gene/Protein, and Drug&ndash;Disease context produced the highest mean MRR across seeds 42&ndash;46.</p>
+                    <div class="finding-number"><span>G3 MRR</span><strong id="findingMrr">0.5342 &plusmn; 0.0063</strong></div>
+                    <dl><div><dt>Absolute improvement over G0</dt><dd id="absoluteGain">+0.006924</dd></div><div><dt>Relative improvement over G0</dt><dd id="relativeGain">+1.31%</dd></div></dl>
+                    <small>The gain is modest but consistent across the five evaluated seeds. Statistical significance is not claimed.</small>
                 </article>
             </div>
 
             <article class="research-panel performance-panel">
-                <div class="panel-heading"><div><h2>Performance across all ranking metrics</h2><p>Mean filtered-ranking results across seeds 42, 43, and 44.</p></div></div>
+                <div class="panel-heading"><div><h2>Performance across all ranking metrics</h2><p>Mean filtered-ranking results across seeds 42, 43, 44, 45, and 46.</p></div></div>
                 <div id="performanceChart" class="svg-chart wide-chart" aria-live="polite"></div>
                 <div class="metric-definitions"><p><strong>MRR</strong> Rewards models that rank the correct drug closer to the top.</p><p><strong>Hits@1</strong> Correct target ranked first.</p><p><strong>Hits@5</strong> Correct target appears within the top five.</p><p><strong>Hits@10</strong> Correct target appears within the top ten.</p></div>
             </article>
 
             <section aria-labelledby="scaleHeading">
                 <div class="panel-heading section-panel-heading"><div><h2 id="scaleHeading">Experiment scale</h2><p>The same locked evaluation setting was used across graph variants.</p></div></div>
-                <div id="experimentScale" class="scale-grid"><article><span>Training DDI pairs</span><strong>1,069,080</strong></article><article><span>Validation DDI pairs</span><strong>133,620</strong></article><article><span>Test DDI pairs</span><strong>133,614</strong></article><article><span>Candidate drugs</span><strong>4,278</strong></article><article><span>Test ranking queries</span><strong>267,228</strong></article><article><span>Seeds</span><strong>42, 43, 44</strong></article></div>
+                <div id="experimentScale" class="scale-grid"><article><span>Training DDI pairs</span><strong>1,069,080</strong></article><article><span>Validation DDI pairs</span><strong>133,620</strong></article><article><span>Test DDI pairs</span><strong>133,614</strong></article><article><span>Candidate drugs</span><strong>4,278</strong></article><article><span>Test ranking queries</span><strong>267,228</strong></article><article><span>Seeds</span><strong>42, 43, 44, 45, 46</strong></article></div>
             </section>
         </section>
 
@@ -336,7 +336,7 @@
                 <article class="about-card"><span>Data</span><h2>PrimeKG</h2><p>The target relation is <code>drug_drug</code>, displayed in PrimeKG as <strong>synergistic interaction</strong>. Candidate drugs are mapped to DrugBank identifiers where available in the verified metadata.</p></article>
                 <article class="about-card"><span>Model</span><h2>Relational Graph Convolutional Network</h2><p>R-GCN learns node representations while accounting for different relationship types in a heterogeneous knowledge graph.</p></article>
                 <article class="about-card"><span>Evaluation</span><h2>Locked, filtered ranking</h2><ul><li>The same DDI train/validation/test split was used for all four graph variants.</li><li>Held-out DDI links were excluded from message-passing adjacency.</li><li>Performance was evaluated using filtered ranking over 4,278 candidate drugs.</li></ul></article>
-                <article class="about-card limitations"><span>Scope &amp; limitations</span><h2>Research interpretation only</h2><ul><li>Results are based on PrimeKG and its synergistic-interaction Drug&ndash;Drug target relation.</li><li>One main GNN architecture was evaluated.</li><li>Robustness evaluation used three seeds; no statistical-significance claim is made.</li><li>Candidate predictions are unobserved PrimeKG links, not confirmed negative or positive clinical interactions.</li><li>This application is not a clinical decision-support tool.</li></ul></article>
+                <article class="about-card limitations"><span>Scope &amp; limitations</span><h2>Research interpretation only</h2><ul><li>Results are based on PrimeKG and its synergistic-interaction Drug&ndash;Drug target relation.</li><li>One main GNN architecture was evaluated.</li><li>Robustness evaluation used five seeds; no statistical-significance claim is made.</li><li>Candidate predictions are unobserved PrimeKG links, not confirmed negative or positive clinical interactions.</li><li>This application is not a clinical decision-support tool.</li></ul></article>
             </div>
         </section>
     </main>

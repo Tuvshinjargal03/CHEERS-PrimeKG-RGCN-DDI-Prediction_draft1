@@ -410,7 +410,8 @@ def model_information():
 def experiment_results():
 
     summary_path = (
-        RESULT_DIR
+        PROJECT_DIR
+        / "results/live_5seed"
         / "final_experiment_summary.json"
     )
 
@@ -444,28 +445,28 @@ def experiment_results():
                     "+ Drug-Disease"
                 ),
 
-            "three_seed_mrr":
-                "0.5388 ± 0.0014",
+            "five_seed_mrr":
+                "0.5342 ± 0.0063",
 
             "baseline_G0_mrr":
-                "0.5292 ± 0.0082",
+                "0.5273 ± 0.0064",
 
             "absolute_mrr_gain":
-                0.009592,
+                0.006924,
 
             "relative_mrr_gain_percent":
-                1.81,
+                1.31,
 
             "consistency":
                 (
                     "G3 exceeded G0 in all "
-                    "three seeds across MRR, "
+                    "five seeds across MRR, "
                     "Hits@1, Hits@5, and Hits@10."
                 ),
         },
 
         "reporting_note": (
-            "Three seeds provide robustness evidence, "
+            "Five seeds provide robustness evidence, "
             "but statistical significance is not claimed."
         ),
     }
