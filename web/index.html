@@ -139,7 +139,7 @@
                     <div class="table-wrap">
                         <table class="result-table">
                             <caption class="sr-only">Ranked unobserved candidate links</caption>
-                            <thead><tr><th scope="col">Rank</th><th scope="col">Candidate drug</th><th scope="col">DrugBank ID</th><th scope="col">Model score</th><th scope="col">Relative score visualization</th><th scope="col">G3 context</th></tr></thead>
+                            <thead><tr><th scope="col">Rank</th><th scope="col">Candidate drug</th><th scope="col">DrugBank ID</th><th scope="col">Model score</th><th scope="col">Relative score visualization</th><th scope="col">Pair investigation</th></tr></thead>
                             <tbody id="predictionTableBody"></tbody>
                         </table>
                     </div>
@@ -153,7 +153,7 @@
                         <div>
                             <p class="context-label">Context available to G3</p>
                             <h2 id="pairContextTitle">Graph context for this pair</h2>
-                            <p id="pairContextSubtitle">Relationships below were present in the G3 knowledge graph used by the model.</p>
+                            <p id="pairContextSubtitle">These are PrimeKG support relationships available to G3. Shared entities are not causal explanations of the predicted drug pair and do not establish clinical safety or harm.</p>
                         </div>
                         <button id="closeContextButton" class="text-button" type="button">Close context</button>
                     </header>
@@ -214,6 +214,66 @@
                         </details>
 
                         <p id="contextInterpretation" class="context-interpretation"></p>
+                    </div>
+                </section>
+
+                <section id="pairEvidencePanel" class="pair-evidence-panel hidden" aria-labelledby="pairEvidenceTitle">
+                    <header class="evidence-header">
+                        <div>
+                            <p class="evidence-label">Pair evidence</p>
+                            <h2 id="pairEvidenceTitle">Clinical evidence for this pair</h2>
+                            <p id="evidencePairNames" class="evidence-pair-names">Select Review evidence for a ranked candidate.</p>
+                        </div>
+                        <button id="closeEvidenceButton" class="text-button" type="button">Close evidence</button>
+                    </header>
+
+                    <div class="evidence-model-context" aria-label="Research model context">
+                        <div>
+                            <span>Research model</span>
+                            <strong>G3 R-GCN pair ranking</strong>
+                        </div>
+                        <div>
+                            <span>Model score</span>
+                            <strong id="evidenceModelScore">&mdash;</strong>
+                            <small>Raw ranking score; not a probability or clinical risk estimate.</small>
+                        </div>
+                    </div>
+
+                    <div id="evidenceLoading" class="evidence-message hidden" role="status" aria-live="polite">Retrieving FDA and PubMed evidence...</div>
+                    <div id="evidenceError" class="evidence-message error hidden" role="alert" aria-live="assertive"></div>
+
+                    <div id="evidenceContent" class="hidden">
+                        <aside class="evidence-source-notice" aria-labelledby="evidenceSourceNoticeTitle">
+                            <strong id="evidenceSourceNoticeTitle">Independent evidence sources</strong>
+                            <p>FDA label evidence and PubMed literature are retrieved independently from the R-GCN model. They are not used to calculate the model score.</p>
+                        </aside>
+
+                        <section class="evidence-section" aria-labelledby="fdaEvidenceHeading">
+                            <header class="evidence-section-header">
+                                <div>
+                                    <p class="evidence-source-label">Source-backed label text</p>
+                                    <h3 id="fdaEvidenceHeading">FDA label evidence</h3>
+                                </div>
+                            </header>
+                            <div id="fdaEvidenceSummary"></div>
+                            <div id="fdaEvidenceList" class="evidence-list"></div>
+                        </section>
+
+                        <section class="evidence-section" aria-labelledby="pubmedEvidenceHeading">
+                            <header class="evidence-section-header">
+                                <div>
+                                    <p class="evidence-source-label">Source-backed article metadata</p>
+                                    <h3 id="pubmedEvidenceHeading">Related PubMed literature</h3>
+                                    <p>Articles were retrieved using both drug names. Presence of an article does not by itself establish the severity or clinical significance of an interaction.</p>
+                                </div>
+                            </header>
+                            <div id="pubmedEvidenceList" class="literature-list"></div>
+                        </section>
+
+                        <section id="evidenceLimitations" class="evidence-limitations" aria-labelledby="evidenceLimitationsHeading">
+                            <h3 id="evidenceLimitationsHeading">Retrieval limitations</h3>
+                            <ul id="evidenceLimitationsList"></ul>
+                        </section>
                     </div>
                 </section>
             </section>
