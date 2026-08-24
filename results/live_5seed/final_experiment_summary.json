@@ -1,0 +1,133 @@
+{
+  "project_title": "Effect of Biomedical Knowledge Graph Composition on R-GCN-Based Drug-Drug Interaction Prediction",
+  "dataset": "PrimeKG",
+  "target_relation": "drug_drug",
+  "target_relation_display": "synergistic interaction",
+  "graph_variants": {
+    "G0": "DDI only",
+    "G1": "DDI + Drug-Gene/Protein",
+    "G2": "DDI + Drug-Disease",
+    "G3": "DDI + Drug-Gene/Protein + Drug-Disease"
+  },
+  "random_seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "num_seeds": 5,
+  "ddi_split": {
+    "train": 1069080,
+    "validation": 133620,
+    "test": 133614
+  },
+  "candidate_drugs": 4278,
+  "evaluation": {
+    "type": "full filtered ranking",
+    "directions_per_test_pair": 2,
+    "ranking_queries": 267228,
+    "metrics": [
+      "MRR",
+      "Hits@1",
+      "Hits@5",
+      "Hits@10"
+    ]
+  },
+  "model": {
+    "architecture": "2-layer R-GCN",
+    "embedding_dim": 128,
+    "hidden_dim": 128,
+    "dropout": 0.2,
+    "learning_rate": 0.001,
+    "weight_decay": 1e-05,
+    "max_epochs": 500,
+    "early_stopping_patience": 10,
+    "train_positives_per_epoch": 100000,
+    "negative_ratio": 1
+  },
+  "final_results_mean_std": {
+    "G0": {
+      "MRR": {
+        "mean": 0.527284,
+        "std": 0.006373
+      },
+      "Hits@1": {
+        "mean": 0.480464,
+        "std": 0.005801
+      },
+      "Hits@5": {
+        "mean": 0.572694,
+        "std": 0.007746
+      },
+      "Hits@10": {
+        "mean": 0.609447,
+        "std": 0.009457
+      }
+    },
+    "G1": {
+      "MRR": {
+        "mean": 0.530969,
+        "std": 0.007414
+      },
+      "Hits@1": {
+        "mean": 0.484194,
+        "std": 0.00701
+      },
+      "Hits@5": {
+        "mean": 0.575418,
+        "std": 0.007907
+      },
+      "Hits@10": {
+        "mean": 0.612683,
+        "std": 0.007986
+      }
+    },
+    "G2": {
+      "MRR": {
+        "mean": 0.526776,
+        "std": 0.007482
+      },
+      "Hits@1": {
+        "mean": 0.480197,
+        "std": 0.006691
+      },
+      "Hits@5": {
+        "mean": 0.571716,
+        "std": 0.008899
+      },
+      "Hits@10": {
+        "mean": 0.608608,
+        "std": 0.009758
+      }
+    },
+    "G3": {
+      "MRR": {
+        "mean": 0.534209,
+        "std": 0.006288
+      },
+      "Hits@1": {
+        "mean": 0.48629,
+        "std": 0.005899
+      },
+      "Hits@5": {
+        "mean": 0.580468,
+        "std": 0.007
+      },
+      "Hits@10": {
+        "mean": 0.618074,
+        "std": 0.007312
+      }
+    }
+  },
+  "primary_result": {
+    "best_graph": "G3",
+    "mean_MRR": 0.534209,
+    "MRR_std": 0.006288,
+    "absolute_MRR_improvement_vs_G0": 0.006924,
+    "relative_MRR_improvement_percent": 1.31,
+    "seeds_beating_G0": "5/5"
+  },
+  "interpretation": "G3 provides the strongest overall five-seed performance and the most consistent improvement over the DDI-only G0 baseline. G3 outperformed G0 in all five seeds across MRR, Hits@1, Hits@5, and Hits@10.",
+  "reporting_caveat": "The experiment uses five random seeds. Results provide robustness evidence, but statistical significance is not claimed."
+}

@@ -339,19 +339,19 @@ Robustness was evaluated with seeds **42, 43, and 44**. Values are mean ± sampl
 
 | Graph | MRR | Hits@1 | Hits@5 | Hits@10 |
 |---|---:|---:|---:|---:|
-| G0 | 0.529175 ± 0.008173 | 0.482165 ± 0.007551 | 0.575033 ± 0.009339 | 0.612105 ± 0.010650 |
-| G1 | 0.533660 ± 0.007662 | 0.487017 ± 0.007901 | 0.577600 ± 0.008149 | 0.615398 ± 0.007840 |
-| G2 | 0.529430 ± 0.008957 | 0.482665 ± 0.007721 | 0.574869 ± 0.010792 | 0.612203 ± 0.011603 |
-| **G3** | **0.538767 ± 0.001432** | **0.490638 ± 0.000446** | **0.585269 ± 0.002606** | **0.623097 ± 0.002751** |
+| G0 | 0.527284 ± 0.006373 | 0.480464 ± 0.005801 | 0.572694 ± 0.007746 | 0.609447 ± 0.009457 |
+| G1 | 0.530969 ± 0.007414 | 0.484194 ± 0.007010 | 0.575418 ± 0.007907 | 0.612683 ± 0.007986 |
+| G2 | 0.526776 ± 0.007482 | 0.480197 ± 0.006691 | 0.571716 ± 0.008899 | 0.608608 ± 0.009758 |
+| **G3** | **0.534209 ± 0.006288** | **0.486290 ± 0.005899** | **0.580468 ± 0.007000** | **0.618074 ± 0.007312** |
 
 Main comparison:
 
 - G3 ranked first by mean MRR.
-- Absolute G3-versus-G0 MRR improvement: **+0.009592**.
-- Relative MRR improvement: **+1.81%**.
-- G3 exceeded G0 for MRR, Hits@1, Hits@5, and Hits@10 in all three evaluated seeds.
+- Absolute G3-versus-G0 MRR improvement: **+0.006924**.
+- Relative MRR improvement: **+1.31%**.
+- G3 exceeded G0 for MRR, Hits@1, Hits@5, and Hits@10 in all five evaluated seeds.
 
-**The gain was modest but consistent across the three evaluated seeds.** Only three seeds were evaluated, so statistical significance is not claimed.
+**The gain was modest but consistent across the five evaluated seeds.** Five seeds were evaluated, so statistical significance is not claimed.
 
 ## Interpretation of graph composition
 
@@ -807,7 +807,8 @@ This tree reflects the actual portable folder after repository documentation was
 │   ├── app_requirements.txt
 │   ├── FINAL_VERIFICATION_SUMMARY.json
 │   ├── lightweight_requirements.txt
-│   ├── PORTABLE_APP_MANIFEST_V2.json
+│   ├── PORTABLE_APP_MANIFEST_V2.json  # historical
+│   ├── PORTABLE_APP_MANIFEST_V3.json  # current
 │   ├── verify_external_evidence.py
 │   ├── verify_g3_context_runtime.py
 │   └── verify_lightweight_runtime.py
@@ -918,8 +919,10 @@ Those materials were retained in the university experiment workspace. The includ
 | `final_release/verify_g3_context_runtime.py` | independent edge-count and shared-context check |
 | `final_release/verify_external_evidence.py` | deterministic evidence-schema and live-service availability check |
 | `final_release/FINAL_VERIFICATION_SUMMARY.json` | seven-check final model record |
-| `final_release/PORTABLE_APP_MANIFEST_V2.json` | current portable release inventory with SHA256 hashes |
-| `results/rgcn_multiseed/final_experiment_summary.json` | final graph-composition results |
+| `final_release/PORTABLE_APP_MANIFEST_V2.json` | historical evidence-UI release inventory |
+| `final_release/PORTABLE_APP_MANIFEST_V3.json` | current five-seed portable release inventory with SHA256 hashes |
+| `results/rgcn_multiseed/final_experiment_summary.json` | original three-seed experiment snapshot |
+| `results/live_5seed/final_experiment_summary.json` | current five-seed graph-composition results used by the application |
 | `THIRD_PARTY_NOTICES.md` | PrimeKG software and published-dataset license metadata |
 
 The G3 context manifest currently matches its files.
@@ -947,7 +950,7 @@ The following training-workspace audit files are **not present** in this portabl
 - `web/index.html`;
 - `web/styles.css`.
 
-It must not be presented as a current integrity manifest and is retained only as a historical snapshot. `final_release/PORTABLE_APP_MANIFEST_V2.json` is the current release inventory. Because the V2 manifest intentionally does not hash itself, its `generated_at_utc` field and every listed file hash can be verified independently without a self-referential checksum.
+It must not be presented as a current integrity manifest and is retained only as a historical snapshot. `final_release/PORTABLE_APP_MANIFEST_V2.json` records the evidence-UI release state before the five-seed synchronization and is retained as a historical snapshot. `final_release/PORTABLE_APP_MANIFEST_V3.json` is the current release inventory. The V3 manifest intentionally does not hash itself, so its `generated_at_utc` field and every listed file hash can be verified independently without a self-referential checksum.
 
 ## What should be committed
 
@@ -989,7 +992,7 @@ Release decisions and verified third-party status:
 
 - **Still requires Team CHEERS approval:** choose a license for original CHEERS code. No project license is currently granted.
 - **Verified source metadata:** the official PrimeKG code repository is MIT-licensed, while the published Harvard Dataverse PrimeKG dataset record reports CC0 1.0. PrimeKG also warns that original upstream data sources can have separate terms; see `THIRD_PARTY_NOTICES.md`.
-- **Completed:** the stale legacy manifest is retained as history and replaced operationally by the versioned V2 manifest.
+- **Completed:** earlier manifests are retained as historical release records, while the versioned V3 manifest is the current operational integrity inventory.
 - **Recommended packaging choice:** use Git LFS or versioned release assets for the two archival `.pt` files if the full academic archive is published. They are not required by the Level-1 NumPy application and were not deleted or rewritten here.
 
 ## Limitations
@@ -997,7 +1000,7 @@ Release decisions and verified third-party status:
 - The final experiment uses PrimeKG only.
 - The target is PrimeKG's synergistic-interaction `drug_drug` relation, not every clinical DDI type.
 - One principal GNN architecture was evaluated.
-- Robustness evaluation used only three seeds.
+- Robustness evaluation used five seeds.
 - Statistical significance is not claimed.
 - Evaluation is transductive; held-out entities remain known.
 - Sampled unobserved negatives are not confirmed non-interactions.
