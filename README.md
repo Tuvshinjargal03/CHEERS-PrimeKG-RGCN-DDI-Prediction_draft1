@@ -1,4 +1,4 @@
-# CHEERS: PrimeKG Graph Composition + R-GCN for Drug–Drug Link Prediction
+Get-Content README.md | Select-String "^#"# CHEERS: PrimeKG Graph Composition + R-GCN for Drug–Drug Link Prediction
 
 > **Research use only.** CHEERS is an academic graduation-project prototype, not a clinical decision-support system. Its predictions are unobserved links under the PrimeKG `drug_drug` target relation. Model scores are ranking values—not probabilities, calibrated confidence, clinical risk, interaction severity, or evidence that a drug pair is safe or dangerous.
 
@@ -352,6 +352,98 @@ Main comparison:
 - G3 exceeded G0 for MRR, Hits@1, Hits@5, and Hits@10 in all five evaluated seeds.
 
 **The gain was modest but consistent across the five evaluated seeds.** Five seeds were evaluated, so statistical significance is not claimed.
+
+## Relation-level ablation study
+
+After the G0-G3 graph-composition experiments, we performed a finer-grained relation-level ablation study to investigate which individual biomedical relation types contribute to R-GCN drug-drug interaction prediction.
+
+The DDI-only graph (**G0**) was used as the baseline. Each ablation variant retained the same DDI backbone and added exactly one biomedical relation type.
+
+| Variant | Biomedical relation | Original edges | Directed edges |
+|---|---|---:|---:|
+| A1 | Target | 16,380 | 32,760 |
+| A2 | Enzyme | 5,317 | 10,634 |
+| A3 | Transporter | 3,092 | 6,184 |
+| A4 | Carrier | 864 | 1,728 |
+| A5 | Indication | 9,388 | 18,776 |
+| A6 | Contraindication | 30,675 | 61,350 |
+| A7 | Off-label use | 2,568 | 5,136 |
+
+All relation variants were trained and evaluated using the same DDI train/validation/test setup as the G0 baseline. To account for randomness in model initialization and training, each experiment was repeated using seeds **42, 43, and 44**.
+
+### Evaluation against G0
+
+For each seed, the contribution of a biomedical relation was measured using the paired MRR difference:
+
+**Delta MRR = MRR(Ai, seed) - MRR(G0, seed)**
+
+A positive Delta MRR indicates that adding the biomedical relation improved ranking performance relative to the DDI-only baseline under the same seed.
+
+Across seeds 42, 43, and 44, the G0 baseline achieved:
+
+**MRR = 0.529118 ± 0.008136**
+
+The three-seed relation-level results were:
+
+| Variant | Relation | Mean MRR | Mean Delta MRR vs G0 | Positive seeds |
+|---|---|---:|---:|---:|
+| A5 | Indication | 0.535659 ± 0.008666 | +0.006542 ± 0.009709 | 2/3 |
+| A4 | Carrier | 0.535263 ± 0.005680 | +0.006145 ± 0.004079 | 3/3 |
+| A1 | Target | 0.535154 ± 0.009967 | +0.006036 ± 0.013416 | 2/3 |
+| A3 | Transporter | 0.532645 ± 0.010348 | +0.003528 ± 0.003327 | 3/3 |
+| A2 | Enzyme | 0.527979 ± 0.002269 | -0.001138 ± 0.008076 | 1/3 |
+| A6 | Contraindication | 0.525807 ± 0.003087 | -0.003311 ± 0.007487 | 1/3 |
+| A7 | Off-label use | 0.510576 ± 0.038774 | -0.018541 ± 0.030788 | 1/3 |
+
+### Interpretation
+
+The experiment shows that adding biomedical knowledge does **not** uniformly improve DDI prediction.
+
+**Indication** achieved the highest mean MRR (0.535659) and the largest mean improvement over G0 (+0.006542), although it improved over G0 in only two of the three seeds.
+
+**Carrier** produced a similar mean improvement (+0.006145) and was positive in all three seeds. This is notable because carrier was the smallest biomedical relation tested, with only 864 original edges.
+
+**Transporter** also improved over G0 in all three seeds, although its average gain (+0.003528) was smaller.
+
+**Target** achieved a relatively strong mean improvement (+0.006036), but its effect was less consistent across seeds, with one negative seed.
+
+**Enzyme** and **contraindication** did not improve average MRR relative to G0.
+
+**Off-label use** showed the weakest and least stable result. Seed 44 produced a substantial decrease in MRR, resulting in a large standard deviation across the three runs.
+
+These results suggest that the predictive contribution of a biomedical relation is not determined simply by its number of edges. Relation semantics and the structural information introduced into the knowledge graph also appear to matter.
+
+Because only three seeds were evaluated, these results should be interpreted as evidence of relative trends rather than definitive statistical significance.
+
+### Relation-ablation figure
+
+![Three-seed relation-level ablation results](figures/relation_ablation_delta_mrr_3seed.png)
+
+The figure reports paired Delta MRR values relative to the corresponding G0 seed. Values above zero indicate improvement over the DDI-only baseline.
+
+### Reproducibility
+
+Relation-ablation graph construction:
+
+[`notebooks/07_build_relation_ablations.ipynb`](notebooks/07_build_relation_ablations.ipynb)
+
+R-GCN training and evaluation:
+
+[`notebooks/08_train_relation_ablations.ipynb`](notebooks/08_train_relation_ablations.ipynb)
+
+Three-seed aggregate results:
+
+[`results/relation_ablation/final/relation_ablation_3seed_summary.csv`](results/relation_ablation/final/relation_ablation_3seed_summary.csv)
+
+Paired seed-wise comparison against G0:
+
+[`results/relation_ablation/final/relation_ablation_paired_deltas_vs_G0.csv`](results/relation_ablation/final/relation_ablation_paired_deltas_vs_G0.csv)
+
+Per-seed JSON metrics for all A1-A7 experiments are available under:
+
+`results/relation_ablation/`
+
+Large generated artifacts such as trained model checkpoints, graph tensors, and raw PrimeKG data are intentionally excluded from the repository.
 
 ## Interpretation of graph composition
 
