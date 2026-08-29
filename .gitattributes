@@ -1,0 +1,6 @@
+.gitattributes text eol=lf
+scripts/evaluate_classification_metrics.py text eol=lf
+data/processed/rgcn_tensors/ddi_test_negatives.pt binary
+results/classification_metrics_5seed/*.csv binary
+results/classification_metrics_5seed/*.json -text
+results/classification_metrics_5seed/*.sha256 -text
