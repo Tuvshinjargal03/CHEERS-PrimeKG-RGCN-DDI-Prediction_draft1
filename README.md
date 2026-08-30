@@ -1,4 +1,4 @@
-Get-Content README.md | Select-String "^#"# CHEERS: PrimeKG Graph Composition + R-GCN for Drug–Drug Link Prediction
+# CHEERS: PrimeKG Graph Composition + R-GCN for Drug–Drug Link Prediction
 
 > **Research use only.** CHEERS is an academic graduation-project prototype, not a clinical decision-support system. Its predictions are unobserved links under the PrimeKG `drug_drug` target relation. Model scores are ranking values—not probabilities, calibrated confidence, clinical risk, interaction severity, or evidence that a drug pair is safe or dangerous.
 
@@ -25,6 +25,8 @@ Get-Content README.md | Select-String "^#"# CHEERS: PrimeKG Graph Composition + 
 - [Training and model selection](#training-and-model-selection)
 - [Filtered ranking evaluation](#filtered-ranking-evaluation)
 - [Multi-seed results](#multi-seed-results)
+- [Complementary five-seed classification](#complementary-five-seed-classification)
+- [Relation-level ablation study](#relation-level-ablation-study)
 - [Interpretation of graph composition](#interpretation-of-graph-composition)
 - [Final model verification](#final-model-verification)
 - [Lightweight NumPy runtime](#lightweight-numpy-runtime)
@@ -60,7 +62,7 @@ Three scopes must be distinguished:
 |---|---|---|
 | Final graduation experiment | Controlled G0–G3 R-GCN graph-composition comparison | Results, selected checkpoint, selected G3 graph artifacts, summaries, and original inference code are included; full preprocessing/retraining workspace is not |
 | Earlier project stages | Broader clinical-inference concept and KGE exploration | Documented historically; not presented as the final R-GCN experiment |
-| Lightweight demonstration | Search, Top-K link ranking, experiment display, verification display, pair-specific G3 context, and independent FDA/PubMed review | Fully supported locally; external evidence retrieval additionally requires network access to openFDA and NCBI |
+| Lightweight demonstration | React dashboards, relation analysis, Top-K ranking, interactive G3 context, methodology, and independent FDA/PubMed review | Fully supported locally; external evidence retrieval additionally requires network access to openFDA and NCBI |
 
 ## Scientific scope
 
@@ -116,7 +118,7 @@ flowchart LR
     G1 --> R
     G2 --> R
     G3 --> R
-    R --> M[Compare MRR and Hits@K across seeds 42–44]
+    R --> M[Compare MRR and Hits@K across seeds 42–46]
 ```
 
 The same target split, architecture, decoder, and model-selection rule were used for all graph variants. This isolates graph composition as the experimental variable.
@@ -335,7 +337,7 @@ Metrics:
 
 ## Multi-seed results
 
-Robustness was evaluated with seeds **42, 43, and 44**. Values are mean ± sample standard deviation.
+Robustness was evaluated with seeds **42, 43, 44, 45, and 46**. Values are mean ± sample standard deviation.
 
 | Graph | MRR | Hits@1 | Hits@5 | Hits@10 |
 |---|---:|---:|---:|---:|
@@ -352,6 +354,19 @@ Main comparison:
 - G3 exceeded G0 for MRR, Hits@1, Hits@5, and Hits@10 in all five evaluated seeds.
 
 **The gain was modest but consistent across the five evaluated seeds.** Five seeds were evaluated, so statistical significance is not claimed.
+
+## Complementary five-seed classification
+
+Binary discrimination metrics complement the primary full filtered-ranking evaluation. For each graph and seed, the classification threshold was selected by maximizing F1 on the validation split only and was then frozen for held-out test evaluation. The test set contains 133,614 positive DDI pairs and 133,614 fixed sampled-unobserved pairs.
+
+| Graph | Accuracy | Precision | Recall | F1 |
+|---|---:|---:|---:|---:|
+| G0 | 0.919181 ± 0.002974 | 0.935422 ± 0.003051 | 0.900533 ± 0.003844 | 0.917643 ± 0.003075 |
+| G1 | 0.921896 ± 0.002155 | 0.936814 ± 0.002077 | 0.904826 ± 0.004422 | 0.920536 ± 0.002335 |
+| G2 | 0.919909 ± 0.001713 | 0.935307 ± 0.002079 | 0.902233 ± 0.004752 | 0.918463 ± 0.001958 |
+| **G3** | **0.922718 ± 0.003036** | **0.937268 ± 0.001843** | **0.906082 ± 0.005880** | **0.921403 ± 0.003300** |
+
+These values are five-seed means ± sample standard deviations. Raw model scores are not probabilities, and sampled-unobserved pairs are not confirmed non-interactions. Complete per-seed confusion counts, validation thresholds, and aggregate files are preserved under `results/classification_metrics_5seed/`.
 
 ## Relation-level ablation study
 
@@ -510,7 +525,7 @@ The G3 seed-44 checkpoint was loaded into a fresh model and the complete test ev
 | Hits@5 | 0.588273 |
 | Hits@10 | 0.626229 |
 
-Differences from the stored seed-44 results were approximately (3 × 10^{-7}) or less. These are seed-44 checkpoint metrics; they are distinct from the three-seed mean table above.
+Differences from the stored seed-44 results were approximately (3 × 10^{-7}) or less. These are seed-44 checkpoint metrics; they are distinct from the five-seed mean table above.
 
 ### 6. Graph-composition integrity
 
@@ -681,11 +696,16 @@ python final_release\verify_external_evidence.py
 
 ## Web application
 
-The current local architecture is:
+The repository contains two local frontend paths:
+
+- `frontend/` is the current React/Vite graduation-project interface. It provides the Overview, Experiments, Relation Analysis, DDI Predictor, Graph Explorer, Evidence, and Methodology pages.
+- `web/` is the earlier no-build vanilla interface that FastAPI still serves at `/` for compatibility.
+
+The current React development architecture is:
 
 ```mermaid
 flowchart LR
-    B[Browser: HTML, CSS, vanilla JavaScript] --> F[FastAPI]
+    B[Browser: React + Vite] --> F[FastAPI API]
     F --> N[NumPy inference]
     N --> L[Lightweight embeddings and packed mask]
     F --> C[Standard-library G3 context store]
@@ -704,9 +724,10 @@ Components:
 | Inference | NumPy | Verified candidate scoring, filtering, and Top-K ranking |
 | Context indexing | Python standard library | CSV loading, per-drug indexes, shared-entity calculation, relation preservation |
 | Evidence retrieval | Python standard library | Independent openFDA label and NCBI PubMed requests with bounded timeouts and explicit status values |
-| Frontend | HTML, CSS, vanilla JavaScript | Search, results, charts, verification, pair-context exploration, and separate evidence review |
+| Current frontend | React, Vite, Recharts, Cytoscape, Lucide | Experiment and classification dashboards, relation analysis, prediction, interactive graph context, evidence review, and methodology |
+| Compatibility frontend | HTML, CSS, vanilla JavaScript | Earlier no-build local demonstration served directly by FastAPI |
 
-The local demonstration requires no React, Node.js, npm, external CDN runtime, PyTorch, PyG, CUDA, or GPU.
+The backend and compatibility frontend require no React, Node.js, npm, external CDN runtime, PyTorch, PyG, CUDA, or GPU. Developing or building the current React interface requires Node.js and npm; model inference remains CPU-only NumPy.
 
 Main functionality:
 
@@ -717,9 +738,9 @@ Main functionality:
 - raw model-score ranking;
 - known-positive and self-pair filtering;
 - graph-composition experiment information;
-- verification information;
-- pair-specific G3 context exploration;
-- relation-preserving shared-context and individual-context tables;
+- complementary five-seed classification metrics;
+- three-seed single-relation follow-up analysis;
+- pair-specific interactive G3 context exploration with relation-preserving edges;
 - independent openFDA label and PubMed literature review with explicit empty/error states.
 
 ## API reference
@@ -728,11 +749,13 @@ The implementation in `api/main.py` is the source of truth.
 
 | Method | Path | Purpose | Inputs | Main output |
 |---|---|---|---|---|
-| GET | `/` | Serve the web application | none | `web/index.html` |
+| GET | `/` | Serve the compatibility web application | none | `web/index.html` |
 | GET | `/api` | API landing metadata | none | project identity, status, route index, disclaimer |
 | GET | `/api/health` | Runtime readiness | none | model-loaded status, CPU device, graph, seed, epoch, candidate count |
 | GET | `/api/model` | Model metadata | none | architecture, decoder, graph composition, dimensions, target relation |
 | GET | `/api/experiment` | Final experiment summary | none | included result JSON plus restrained primary finding |
+| GET | `/api/classification` | Complementary five-seed classification | none | frozen per-seed and aggregate Accuracy, Precision, Recall, and F1 with threshold and negative-class notes |
+| GET | `/api/relation-analysis` | Three-seed single-relation follow-up | none | ranked artifact-backed relation results, paired seed deltas, G0 baseline, and interpretation caveat |
 | GET | `/api/verification` | Seven-check verification record | none | included verification JSON |
 | GET | `/api/drugs/search` | Autocomplete search | query `q`; optional `limit` 1–50 | matching drug name, DrugBank ID, and node ID |
 | POST | `/api/predict` | Rank unobserved candidate links | JSON body with `drug` and `top_k` 1–50 | query metadata, model metadata, filtering counts, ranked predictions, disclaimer |
@@ -811,16 +834,27 @@ python final_release\verify_g3_context_runtime.py
 python final_release\verify_external_evidence.py
 ```
 
-Start the application:
+Start the FastAPI backend in one PowerShell terminal:
 
 ```powershell
-python -m uvicorn api.main:app --host 127.0.0.1 --port 8000
+python -m uvicorn api.main:app --host 127.0.0.1 --port 8001
+```
+
+Start the current React interface in a second terminal:
+
+```powershell
+cd frontend
+npm ci
+npm run dev
 ```
 
 Open:
 
-- application: <http://127.0.0.1:8000>
-- API documentation: <http://127.0.0.1:8000/docs>
+- React application: <http://127.0.0.1:5173>
+- API documentation: <http://127.0.0.1:8001/docs>
+- compatibility frontend served by FastAPI: <http://127.0.0.1:8001>
+
+The Vite development server proxies `/api` to `http://127.0.0.1:8001`. A production React bundle can be created with `npm run build`; `api/main.py` does not currently serve `frontend/dist/` automatically.
 
 ## University training environment
 
@@ -852,7 +886,14 @@ Full retraining requires the original PrimeKG source data, preprocessing outputs
 
 ## Original notebook pipeline
 
-The notebooks belong to the university training workspace and are **not included** in this portable repository.
+The portable repository includes the two relation-ablation notebooks used for the A1–A7 follow-up:
+
+| Included notebook | Purpose |
+|---|---|
+| `07_build_relation_ablations.ipynb` | Construct the seven DDI-plus-one-relation graph variants |
+| `08_train_relation_ablations.ipynb` | Train/evaluate seeds 42–44 and produce the frozen follow-up results |
+
+The earlier notebooks below remain in the university training workspace and are **not included** in this portable repository:
 
 | Notebook | Purpose |
 |---|---|
@@ -864,7 +905,7 @@ The notebooks belong to the university training workspace and are **not included
 | `05_repeat_seeds.ipynb` | seeds 42–44, robustness evaluation, and mean ± SD generation |
 | `06_finalize_project.ipynb` | verification summaries, experiment freeze, portable application packaging, NumPy export, and G3 context export |
 
-The absence of these notebooks and the raw/preprocessing artifacts means this repository should not claim complete from-scratch retraining.
+The included relation notebooks do not replace the missing raw PrimeKG source, preprocessing artifacts, G0–G3 construction pipeline, or original training notebooks. This repository therefore should not claim complete from-scratch retraining.
 
 ## Repository structure
 
@@ -872,53 +913,31 @@ This tree reflects the actual portable folder after repository documentation was
 
 ```text
 .
-├── api/
-│   ├── __init__.py
-│   └── main.py
-├── checkpoints/
-│   └── rgcn_multiseed/
-│       └── G3_seed44_best.pt
-├── data/
-│   └── processed/
-│       ├── mappings/
-│       │   └── drug_metadata.parquet
-│       └── rgcn_tensors/
-│           ├── G3.pt
-│           ├── ddi_known_positive_mask.pt
-│           └── drug_node_ids.pt
+├── api/                         # FastAPI application
+├── checkpoints/                 # selected archival G3 checkpoint
+├── data/processed/              # selected mappings/tensors for archival inspection
+├── figures/                     # relation-ablation figure exports
 ├── final_release/
-│   ├── g3_context_runtime/
-│   │   ├── G3_CONTEXT_MANIFEST.json
-│   │   ├── g3_context_summary.json
-│   │   └── g3_drug_context.csv
-│   ├── lightweight_runtime/
-│   │   ├── LIGHTWEIGHT_RUNTIME_MANIFEST.json
-│   │   ├── ddi_runtime_embeddings.npz
-│   │   ├── drug_metadata.csv
-│   │   └── known_positive_mask_packed.npz
-│   ├── app_requirements.txt
-│   ├── FINAL_VERIFICATION_SUMMARY.json
-│   ├── lightweight_requirements.txt
+│   ├── g3_context_runtime/      # portable G3 support-context export
+│   ├── lightweight_runtime/     # verified NumPy scoring export
 │   ├── PORTABLE_APP_MANIFEST_V2.json  # historical
-│   ├── PORTABLE_APP_MANIFEST_V3.json  # current
-│   ├── verify_external_evidence.py
-│   ├── verify_g3_context_runtime.py
-│   └── verify_lightweight_runtime.py
+│   ├── PORTABLE_APP_MANIFEST_V3.json  # historical
+│   └── PORTABLE_APP_MANIFEST_V4.json  # current
+├── frontend/                    # current React/Vite interface
+│   ├── public/
+│   └── src/
+│       ├── components/
+│       ├── lib/
+│       └── pages/
+├── notebooks/                   # included A1–A7 relation follow-up notebooks
 ├── results/
-│   └── rgcn_multiseed/
-│       └── final_experiment_summary.json
-├── src/
-│   ├── __init__.py
-│   ├── g3_context.py
-│   ├── inference.py
-│   ├── lightweight_inference.py
-│   ├── pubmed_literature.py
-│   ├── rgcn_model.py
-│   └── safety_evidence.py
-├── web/
-│   ├── app.js
-│   ├── index.html
-│   └── styles.css
+│   ├── classification_metrics_5seed/
+│   ├── live_5seed/
+│   ├── relation_ablation/
+│   └── rgcn_multiseed/          # historical three-seed snapshot
+├── scripts/                     # evaluation utilities
+├── src/                         # inference, context, evidence, and R-GCN modules
+├── web/                         # compatibility vanilla frontend
 ├── .gitignore
 ├── PORTABLE_APP_MANIFEST.json
 ├── THIRD_PARTY_NOTICES.md
@@ -933,10 +952,13 @@ For the complete lightweight web demonstration:
 - `src/lightweight_inference.py`;
 - `src/g3_context.py`;
 - `src/safety_evidence.py` and `src/pubmed_literature.py`;
-- `web/index.html`, `web/styles.css`, and `web/app.js`;
+- `frontend/package.json`, `frontend/package-lock.json`, `frontend/vite.config.js`, and `frontend/src/` for the current React interface;
+- `web/index.html`, `web/styles.css`, and `web/app.js` for the FastAPI-served compatibility interface;
 - all files under `final_release/lightweight_runtime/`;
 - all files under `final_release/g3_context_runtime/`;
-- `results/rgcn_multiseed/final_experiment_summary.json`;
+- `results/live_5seed/final_experiment_summary.json`;
+- `results/classification_metrics_5seed/classification_metrics_5seed_summary.json`;
+- the two CSV files under `results/relation_ablation/final/`;
 - `final_release/FINAL_VERIFICATION_SUMMARY.json`;
 - `final_release/app_requirements.txt` and its included `lightweight_requirements.txt`.
 
@@ -969,6 +991,8 @@ Requires:
 - FastAPI;
 - Uvicorn;
 - Pydantic.
+
+The current React interface additionally requires Node.js and npm for local development or production bundling. The compatibility frontend at `/` does not.
 
 Does not require:
 
@@ -1012,9 +1036,12 @@ Those materials were retained in the university experiment workspace. The includ
 | `final_release/verify_external_evidence.py` | deterministic evidence-schema and live-service availability check |
 | `final_release/FINAL_VERIFICATION_SUMMARY.json` | seven-check final model record |
 | `final_release/PORTABLE_APP_MANIFEST_V2.json` | historical evidence-UI release inventory |
-| `final_release/PORTABLE_APP_MANIFEST_V3.json` | current five-seed portable release inventory with SHA256 hashes |
+| `final_release/PORTABLE_APP_MANIFEST_V3.json` | historical five-seed pre-React release inventory |
+| `final_release/PORTABLE_APP_MANIFEST_V4.json` | current post-React repository inventory with SHA256 hashes |
 | `results/rgcn_multiseed/final_experiment_summary.json` | original three-seed experiment snapshot |
 | `results/live_5seed/final_experiment_summary.json` | current five-seed graph-composition results used by the application |
+| `results/classification_metrics_5seed/` | frozen five-seed classification metrics, per-seed counts, and SHA256 manifest |
+| `results/relation_ablation/final/` | frozen three-seed single-relation summary and paired deltas versus G0 |
 | `THIRD_PARTY_NOTICES.md` | PrimeKG software and published-dataset license metadata |
 
 The G3 context manifest currently matches its files.
@@ -1042,17 +1069,18 @@ The following training-workspace audit files are **not present** in this portabl
 - `web/index.html`;
 - `web/styles.css`.
 
-It must not be presented as a current integrity manifest and is retained only as a historical snapshot. `final_release/PORTABLE_APP_MANIFEST_V2.json` records the evidence-UI release state before the five-seed synchronization and is retained as a historical snapshot. `final_release/PORTABLE_APP_MANIFEST_V3.json` is the current release inventory. The V3 manifest intentionally does not hash itself, so its `generated_at_utc` field and every listed file hash can be verified independently without a self-referential checksum.
+It must not be presented as a current integrity manifest and is retained only as a historical snapshot. `final_release/PORTABLE_APP_MANIFEST_V2.json` records the evidence-UI release state before five-seed synchronization. V3 records the five-seed state before the React interface and new API endpoints; its README and API hashes no longer match the post-React repository. `final_release/PORTABLE_APP_MANIFEST_V4.json` is the current post-React repository inventory. V4 intentionally does not hash itself, so its metadata and every listed file hash can be verified without a self-referential checksum.
 
 ## What should be committed
 
 ### Commit
 
 - `README.md` and `.gitignore`;
-- `api/`, `src/`, and `web/`;
+- `api/`, `src/`, `frontend/`, and `web/`;
 - required lightweight runtime and G3 context runtime exports;
 - all three independent verification scripts;
-- final experiment and verification summaries;
+- five-seed experiment/classification results, relation-ablation results, and verification summaries;
+- the two relation-ablation notebooks and their exported figures;
 - current requirements;
 - valid manifests and any clearly labeled historical manifests.
 
@@ -1084,7 +1112,7 @@ Release decisions and verified third-party status:
 
 - **Still requires Team CHEERS approval:** choose a license for original CHEERS code. No project license is currently granted.
 - **Verified source metadata:** the official PrimeKG code repository is MIT-licensed, while the published Harvard Dataverse PrimeKG dataset record reports CC0 1.0. PrimeKG also warns that original upstream data sources can have separate terms; see `THIRD_PARTY_NOTICES.md`.
-- **Completed:** earlier manifests are retained as historical release records, while the versioned V3 manifest is the current operational integrity inventory.
+- **Completed:** earlier manifests are retained as historical release records, while the versioned V4 manifest is the current operational integrity inventory.
 - **Recommended packaging choice:** use Git LFS or versioned release assets for the two archival `.pt` files if the full academic archive is published. They are not required by the Level-1 NumPy application and were not deleted or rewritten here.
 
 ## Limitations
@@ -1096,7 +1124,7 @@ Release decisions and verified third-party status:
 - Statistical significance is not claimed.
 - Evaluation is transductive; held-out entities remain known.
 - Sampled unobserved negatives are not confirmed non-interactions.
-- The study performs coarse relation-family ablation, not per-relation ablation.
+- The single-relation follow-up used only three seeds and does not establish statistical significance.
 - Knowledge-graph incompleteness and source bias can affect training and evaluation.
 - Raw model scores are not calibrated probabilities.
 - Graph context is not a causal explanation of a prediction.
@@ -1107,8 +1135,8 @@ Release decisions and verified third-party status:
 
 ## Future work
 
-- per-relation ablation;
-- more seeds and bootstrap uncertainty estimates;
+- extend the single-relation follow-up to five or more seeds;
+- bootstrap uncertainty estimates and protocol-defined significance testing;
 - stronger GNN and knowledge-graph baselines;
 - inductive and cold-start evaluation;
 - external DDI validation;

@@ -261,6 +261,9 @@ def root():
             "experiment":
                 "/api/experiment",
 
+            "classification":
+                "/api/classification",
+
             "relation_analysis":
                 "/api/relation-analysis",
 

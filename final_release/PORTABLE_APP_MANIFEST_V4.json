@@ -1,0 +1,651 @@
+{
+    "name":  "CHEERS PrimeKG R-GCN Portable Application",
+    "manifest_version":  4,
+    "generated_at_utc":  "2026-08-30T01:40:32Z",
+    "purpose":  "Current complete tracked-file SHA256 inventory for the post-React repository, Level-1 application, five-seed evaluations, and included research archive.",
+    "integrity_algorithm":  "SHA256",
+    "self_excluded":  true,
+    "legacy_manifest":  "PORTABLE_APP_MANIFEST.json and final_release/PORTABLE_APP_MANIFEST_V2.json/V3.json are historical.",
+    "level_1_runtime_note":  "The React/Vite interface uses the NumPy/FastAPI API, five-seed experiment and classification summaries, and three-seed relation-analysis summaries. External evidence retrieval requires network access to openFDA and NCBI.",
+    "project_license_status":  "No CHEERS project license selected; see THIRD_PARTY_NOTICES.md.",
+    "file_count":  91,
+    "files":  [
+                  {
+                      "path":  ".gitattributes",
+                      "size_bytes":  291,
+                      "sha256":  "3ddbae4caedf90a7dcff6b0f02be8b162290faddf1927079373703efeab5a8e9",
+                      "category":  "repository_config",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  ".github/workflows/static.yml",
+                      "size_bytes":  1297,
+                      "sha256":  "d864f511f9bb35654adfe8a3dcd5656187e067c89eb9fa4b8e7d97163adb9d00",
+                      "category":  "repository_config",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  ".gitignore",
+                      "size_bytes":  802,
+                      "sha256":  "8063ff2189010e274395d76b1d9f9d641be1cc35f566c207cc2e6cbd772e79f8",
+                      "category":  "repository_config",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "PORTABLE_APP_MANIFEST.json",
+                      "size_bytes":  2967,
+                      "sha256":  "b748a60da4ee0c0fb21034f9cadff333c5238046b2f4762336978a9bdce96660",
+                      "category":  "historical_manifest",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "README.md",
+                      "size_bytes":  52734,
+                      "sha256":  "cb4b4447ddf3c35f17f8d6dbf1e98f3625cdd33808af450734d8e75827ce2b66",
+                      "category":  "documentation",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "THIRD_PARTY_NOTICES.md",
+                      "size_bytes":  1504,
+                      "sha256":  "3231f8739765d1f7ef072589259b0032ef633286f57fef551502c2d33c2da0eb",
+                      "category":  "documentation",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "api/__init__.py",
+                      "size_bytes":  0,
+                      "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "api/main.py",
+                      "size_bytes":  22280,
+                      "sha256":  "ecab53734d3961d231e6a001915a323a4e2e42df81150d5e392d5dfc44f7e338",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "checkpoints/rgcn_multiseed/G3_seed44_best.pt",
+                      "size_bytes":  26446322,
+                      "sha256":  "d4df7c845fe65b175afdfdc8512fe466451029c682a2a34f9d52a84b35811d50",
+                      "category":  "research_archive",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "data/processed/mappings/drug_metadata.parquet",
+                      "size_bytes":  132920,
+                      "sha256":  "05ffad5ec5d741184b4ce91be9029018afa223220e8237e67d07efe62830af5e",
+                      "category":  "research_archive",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "data/processed/rgcn_tensors/G3.pt",
+                      "size_bytes":  54594810,
+                      "sha256":  "ee77876d767ac5d92e9657f3dd7c582e02598c2736feb124a3dfbe7d67ead5d3",
+                      "category":  "research_archive",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "data/processed/rgcn_tensors/ddi_known_positive_mask.pt",
+                      "size_bytes":  18337144,
+                      "sha256":  "9b00f12fa96fbd7ff78a62b9456ac0f36edc3813e9b97ec9d3db36b7f18049e4",
+                      "category":  "research_archive",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "data/processed/rgcn_tensors/ddi_test_negatives.pt",
+                      "size_bytes":  2139283,
+                      "sha256":  "ec2f5e91dbc88adb01742358a4076c24edc11c116863f1bf9f30264ebc5baffd",
+                      "category":  "research_archive",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "data/processed/rgcn_tensors/drug_node_ids.pt",
+                      "size_bytes":  35386,
+                      "sha256":  "8cce46c93764b68290ef0b723635ed912e355c220ec052f65bdd5a0735e80fb5",
+                      "category":  "research_archive",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "figures/relation_ablation_delta_mrr_3seed.pdf",
+                      "size_bytes":  17904,
+                      "sha256":  "9b9137359f2897925bf66a993cad6a1887cc1201bc376d5a084b30051c90f321",
+                      "category":  "research_archive",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "figures/relation_ablation_delta_mrr_3seed.png",
+                      "size_bytes":  128939,
+                      "sha256":  "3dbfcfbeda3248312dc8f667ae6ba0dea577c28aa3af83d492f497b41e3ace1f",
+                      "category":  "research_archive",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "final_release/FINAL_VERIFICATION_SUMMARY.json",
+                      "size_bytes":  3425,
+                      "sha256":  "6abe193cbde587b39e49ec42145353b256de570d62de379b834cb795cac80711",
+                      "category":  "research_record",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "final_release/PORTABLE_APP_MANIFEST_V2.json",
+                      "size_bytes":  8217,
+                      "sha256":  "6f2ca3c0ed9cbe0c2b6982932557594e792a9c5ad83dd55919a772dc32983ff3",
+                      "category":  "historical_manifest",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "final_release/PORTABLE_APP_MANIFEST_V3.json",
+                      "size_bytes":  10510,
+                      "sha256":  "b5da36b235d1f44eba0fda49679a2bf545ca15bc02b564cf6a0f7baed6c81a93",
+                      "category":  "historical_manifest",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "final_release/app_requirements.txt",
+                      "size_bytes":  104,
+                      "sha256":  "b22397f71b12d6d07b6fef462ca995ce11cb4ce803037306c4ef5fef3661521a",
+                      "category":  "dependency_spec",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "final_release/g3_context_runtime/G3_CONTEXT_MANIFEST.json",
+                      "size_bytes":  282,
+                      "sha256":  "b02593089ed010cda875cc8655d35f792a80798441372e2fdb94675fb376a4ac",
+                      "category":  "runtime_artifact",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "final_release/g3_context_runtime/g3_context_summary.json",
+                      "size_bytes":  734,
+                      "sha256":  "42332215ab4647d4828709c8bb848263a946ff8e7fd7bd5ae543de5dea9f21c7",
+                      "category":  "runtime_artifact",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "final_release/g3_context_runtime/g3_drug_context.csv",
+                      "size_bytes":  6028240,
+                      "sha256":  "51439675b3d9b50a1054367e451f1f0d4eede59c432ba72cc34eb6d914b15195",
+                      "category":  "runtime_artifact",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "final_release/lightweight_requirements.txt",
+                      "size_bytes":  15,
+                      "sha256":  "48fb15820d59a384f39c743742907be99a3968d17985428ec35cb1808edaa880",
+                      "category":  "dependency_spec",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "final_release/lightweight_runtime/LIGHTWEIGHT_RUNTIME_MANIFEST.json",
+                      "size_bytes":  1340,
+                      "sha256":  "11453461bc90a9f338de69d554cdb65416f70a6a14d5ce8ea89673cc7e7d74b9",
+                      "category":  "runtime_artifact",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "final_release/lightweight_runtime/ddi_runtime_embeddings.npz",
+                      "size_bytes":  2066111,
+                      "sha256":  "1bde47026e0d6fcfbb2de772b62280bd67df1fc7a3404672bfcdfc2b603de442",
+                      "category":  "runtime_artifact",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "final_release/lightweight_runtime/drug_metadata.csv",
+                      "size_bytes":  201884,
+                      "sha256":  "8020ae748baa567d08487c148ba851763fcac54601c183dd6803b587974d857b",
+                      "category":  "runtime_artifact",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "final_release/lightweight_runtime/known_positive_mask_packed.npz",
+                      "size_bytes":  535260,
+                      "sha256":  "c87cc2e0ab2eac70c2aa98fc995853bf5c6e97ef0ef7881568b550d924120d37",
+                      "category":  "runtime_artifact",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "final_release/verify_external_evidence.py",
+                      "size_bytes":  7840,
+                      "sha256":  "856444238cca95c6ea0671d1cab2fd4a79e2fa85b9da9a08dfb8a3e49823457b",
+                      "category":  "verification",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "final_release/verify_g3_context_runtime.py",
+                      "size_bytes":  2496,
+                      "sha256":  "2813226dac6e1138a71e7c3e54fabf3836af70681ce648863da906e903636306",
+                      "category":  "verification",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "final_release/verify_lightweight_runtime.py",
+                      "size_bytes":  2592,
+                      "sha256":  "811a6dd02a8e43d1bd8e880768c0df7167a4649364fc04fafc75e3dfbf4a9ef6",
+                      "category":  "verification",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "frontend/.gitignore",
+                      "size_bytes":  253,
+                      "sha256":  "fe718e7babb14f3cbad2d97f08889b9ce5215ed3fe0e43b2b8cfbfb3b9b844e8",
+                      "category":  "repository_config",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "frontend/eslint.config.js",
+                      "size_bytes":  568,
+                      "sha256":  "0197d9a843aaae267303c4d1ab1a43afad1afacc7646cdf6cf94a5af6b815fb8",
+                      "category":  "application_code",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "frontend/index.html",
+                      "size_bytes":  360,
+                      "sha256":  "67b571f16b69fd5e27feab5053d062dfae38e97ddb820f26881f05374582d2d7",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "frontend/package-lock.json",
+                      "size_bytes":  99135,
+                      "sha256":  "a3c9e1bb815d0917b6c87b5558a7769c8f72a3eac51c60e7b7e6ed50d88d1cb8",
+                      "category":  "dependency_spec",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "frontend/package.json",
+                      "size_bytes":  726,
+                      "sha256":  "6f37dd30e46f3bfbc80e4fc52b83ac1161088ca3c71f62dd899acc80ad5daf0c",
+                      "category":  "dependency_spec",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "frontend/public/favicon.svg",
+                      "size_bytes":  9522,
+                      "sha256":  "61bc9a161de58248288e6905425d7180f0624c2865007b97d763fdac12043a66",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "frontend/src/App.jsx",
+                      "size_bytes":  5949,
+                      "sha256":  "85230ea8c8ae4588905f91fbb5327cdd8944d71bb52396afb3cf66e15dabf2a1",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "frontend/src/components/DrugAutocomplete.jsx",
+                      "size_bytes":  3842,
+                      "sha256":  "6dbb64b36685e25fb23f44aae6c7b02d2f338e71918790857c8b178539f90820",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "frontend/src/index.css",
+                      "size_bytes":  30881,
+                      "sha256":  "47c651c2eb16405cda48799c8639cdfdcabbddae7362dee59981a140cbc22e0e",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "frontend/src/lib/api.js",
+                      "size_bytes":  1288,
+                      "sha256":  "d60690afd0151cd2538d613a489532277e062cda38ed6678b365c085f8a1dc5c",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "frontend/src/main.jsx",
+                      "size_bytes":  229,
+                      "sha256":  "4b4b864dbe45253425d0c925337180ec07e204295179f80f59551216f466f618",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "frontend/src/pages/DDIPredictor.jsx",
+                      "size_bytes":  5448,
+                      "sha256":  "6ab8e15c3621a76fecd3baecb89d2c87f7084908c6f943f7127a31fc247e4267",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "frontend/src/pages/Evidence.jsx",
+                      "size_bytes":  8462,
+                      "sha256":  "eba1714a2633e449fc804fdb1d729eaa08b095f53e606966f34f03233df29744",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "frontend/src/pages/Experiments.jsx",
+                      "size_bytes":  9794,
+                      "sha256":  "40f9e1c04bb4b960df00fcfc87cdd32df5551fd73367dbe51ba177a8204cfcaf",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "frontend/src/pages/GraphExplorer.jsx",
+                      "size_bytes":  14699,
+                      "sha256":  "95c5af4772f89b965c7bce6f93b17958d9f5b33110effc12e51f6b5febe62072",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "frontend/src/pages/Methodology.jsx",
+                      "size_bytes":  6382,
+                      "sha256":  "4702913016dacab6753ed77788f770c46c9e1e37541ee17e9a0a027eb6208b99",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "frontend/src/pages/RelationAnalysis.jsx",
+                      "size_bytes":  7576,
+                      "sha256":  "197fce7ed7b5467dd0a904d38cb96e81eac02cd4b7831b1656be3d198c4b2d29",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "frontend/vite.config.js",
+                      "size_bytes":  268,
+                      "sha256":  "dddea634e85339a1430a2409314ff7b20f69cc9b908273d58748ad0514441b08",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "notebooks/07_build_relation_ablations.ipynb",
+                      "size_bytes":  23781,
+                      "sha256":  "6ddbddc0abe1496d8ce9d0688ea952c17b5cccd9fcf806f6dbdbacd891f04548",
+                      "category":  "research_archive",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "notebooks/08_train_relation_ablations.ipynb",
+                      "size_bytes":  1168643,
+                      "sha256":  "e53eeb63223dcc86d5d7e4d0e7c1bb020561e1d765c95b3197c91b65b3cd6eca",
+                      "category":  "research_archive",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/classification_metrics_5seed/CLASSIFICATION_METRICS_5SEED_MANIFEST.sha256",
+                      "size_bytes":  544,
+                      "sha256":  "46328aa9a81d55a31fddae03017c14c4e70186bdd5094d2a70c318332ea61bb9",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/classification_metrics_5seed/classification_metrics_5seed_summary.csv",
+                      "size_bytes":  761,
+                      "sha256":  "580db49d4956286836dd2cb0bacbf926dc1a14fb47938c2c068894dc28cd9201",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/classification_metrics_5seed/classification_metrics_5seed_summary.json",
+                      "size_bytes":  9030,
+                      "sha256":  "30b7142d2c2a2e6e72cb263bf4df435e0cf212524bb5032909cc884eb2970513",
+                      "category":  "research_record",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "results/classification_metrics_5seed/classification_metrics_per_seed.csv",
+                      "size_bytes":  2982,
+                      "sha256":  "7c52e0855570fe00a7c90413d901d2ec042481d54f640d4db828c992ef1b849a",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/live_5seed/final_experiment_summary.json",
+                      "size_bytes":  3169,
+                      "sha256":  "e96b597f431800e8a460ddad7c1a19cb61af5eb99e4965b452d66113dd8e3709",
+                      "category":  "research_record",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "results/relation_ablation/A1_target_seed42_metrics.json",
+                      "size_bytes":  324,
+                      "sha256":  "b3c58c0382e001fc51ed150207da9bc2c041d9ab7ed3fd85b666c9d4f05dd995",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/relation_ablation/A1_target_seed43_metrics.json",
+                      "size_bytes":  327,
+                      "sha256":  "8367f058473839810809b16828d05172b637da8335e91a2867d44441097698b7",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/relation_ablation/A1_target_seed44_metrics.json",
+                      "size_bytes":  325,
+                      "sha256":  "cc591b30941e090fe5eb2a2437e071b1b034b27b5f74457da52c64c784445c74",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/relation_ablation/A2_enzyme_seed42_metrics.json",
+                      "size_bytes":  326,
+                      "sha256":  "e131335a538cbf84b7abe92d3876ebafec044bc2aeb71eeb566dcb70e3a9accc",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/relation_ablation/A2_enzyme_seed43_metrics.json",
+                      "size_bytes":  325,
+                      "sha256":  "ef30d12a032f41c0ed9b4a0bbdb7515f170c0ccca02fc8b158695bdce1f67672",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/relation_ablation/A2_enzyme_seed44_metrics.json",
+                      "size_bytes":  326,
+                      "sha256":  "aca4a608994bca3c361b61aaa3b9ec57224006a4176a8e194582b7e6b0dc7754",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/relation_ablation/A3_transporter_seed42_metrics.json",
+                      "size_bytes":  330,
+                      "sha256":  "34e22696f83c638e2e75c394d22a2f2742e97680168f09902416059b2b047634",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/relation_ablation/A3_transporter_seed43_metrics.json",
+                      "size_bytes":  331,
+                      "sha256":  "092bde3da4095c8e9dcacc8a78b01e1ce41ffc37330a01aa8a5684f4b822ef77",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/relation_ablation/A3_transporter_seed44_metrics.json",
+                      "size_bytes":  327,
+                      "sha256":  "a5acc1843391b9211c627022b447d89421f8b7cafe5ecb84bb43843dab21db7e",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/relation_ablation/A4_carrier_seed42_metrics.json",
+                      "size_bytes":  327,
+                      "sha256":  "df5a5a3a50888aa0685073a5d5f500cfdc2c0b78a4bc9d3782a268ebdca590fc",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/relation_ablation/A4_carrier_seed43_metrics.json",
+                      "size_bytes":  326,
+                      "sha256":  "f89535e443a9a76912ddfbd7d2fe31ac9ded6db5687ac48cb88be98f3dfdfc42",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/relation_ablation/A4_carrier_seed44_metrics.json",
+                      "size_bytes":  324,
+                      "sha256":  "3529649255490aacd27d800e375b6459bed8a75fd6970c286e2a3ef5d37185f9",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/relation_ablation/A5_indication_seed42_metrics.json",
+                      "size_bytes":  328,
+                      "sha256":  "07cee2b660580ec1ede731b33901d57002e67fde4f85b89d403e7c548461f758",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/relation_ablation/A5_indication_seed43_metrics.json",
+                      "size_bytes":  330,
+                      "sha256":  "a70c61ea96fb21003b6a8b3b5c952562bd041cdad5a6dc555d442b28339c1e5e",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/relation_ablation/A5_indication_seed44_metrics.json",
+                      "size_bytes":  328,
+                      "sha256":  "d5d9ac13da22de318b797e78f059dd5ac4f8235fda24c4159294c033c70b0f5d",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/relation_ablation/A6_contraindication_seed42_metrics.json",
+                      "size_bytes":  336,
+                      "sha256":  "ae05232f22c9cd8d2234fffd43bca08d5400ef5998a41dd50847db0df68c85c9",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/relation_ablation/A6_contraindication_seed43_metrics.json",
+                      "size_bytes":  335,
+                      "sha256":  "82478284de7285344e558d6ebf433fa1d40266c5b82607b0f17affeb37e42fdd",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/relation_ablation/A6_contraindication_seed44_metrics.json",
+                      "size_bytes":  332,
+                      "sha256":  "a2be74ec4d6a66160c653994340dfb33903b2c3c8f567b87ea647306caae9b8a",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/relation_ablation/A7_off_label_seed42_metrics.json",
+                      "size_bytes":  326,
+                      "sha256":  "7404e93a35702710e6a27a477225cbaa6475abfbb6a83dbd55449028e933d0b6",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/relation_ablation/A7_off_label_seed43_metrics.json",
+                      "size_bytes":  328,
+                      "sha256":  "4be04cb6c42ccfb0a2c236465597817fa3991b0d2c97e50c509fc54df8488bb9",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/relation_ablation/A7_off_label_seed44_metrics.json",
+                      "size_bytes":  330,
+                      "sha256":  "d601ae67f60b208e301a07fb834b4be0f43a05e5b3e114aae43f176a79c3aca7",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "results/relation_ablation/final/relation_ablation_3seed_summary.csv",
+                      "size_bytes":  3457,
+                      "sha256":  "d03b08bede079c0b288a9a37b7c6e22ebe967ea475519ff654f434a3cee068f5",
+                      "category":  "research_record",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "results/relation_ablation/final/relation_ablation_paired_deltas_vs_G0.csv",
+                      "size_bytes":  1644,
+                      "sha256":  "af8984a9e31874515527a454a463c56b327193af4541bf57721b3f587a704bb5",
+                      "category":  "research_record",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "results/rgcn_multiseed/final_experiment_summary.json",
+                      "size_bytes":  3133,
+                      "sha256":  "7ab1f146cf3a53dc059ea750ddeb9af6967c99de18068e55e5a6ad7d9ec849bd",
+                      "category":  "research_record",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "scripts/evaluate_classification_metrics.py",
+                      "size_bytes":  20923,
+                      "sha256":  "cd2833eff951c26694c554828427abf0edeaa485415e3a82af2d30d281719714",
+                      "category":  "verification",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "src/__init__.py",
+                      "size_bytes":  434,
+                      "sha256":  "43f88cfb8534fdcc9284929edf9ccf9472152a877a45856fd79483388d6c9fc6",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "src/g3_context.py",
+                      "size_bytes":  9015,
+                      "sha256":  "c8bf5c86ffd27686253c019d0fa89247bdfe84a2bf2f190822a83f8b8f151ca8",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "src/inference.py",
+                      "size_bytes":  14438,
+                      "sha256":  "349e069e29503404e9c9c23106005d1095e9b58d2c88656a05c95730e172f41b",
+                      "category":  "research_archive",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "src/lightweight_inference.py",
+                      "size_bytes":  9539,
+                      "sha256":  "bf338536d5cf01b56d4452cb688a30bb20398670d82380e7e45c40a4f576c581",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "src/pubmed_literature.py",
+                      "size_bytes":  11164,
+                      "sha256":  "a89d41979867daed3518a9d87a7bcd5e58f91035cfe08def987bc33473178fda",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "src/rgcn_model.py",
+                      "size_bytes":  1850,
+                      "sha256":  "31d92eeb117afbd285633fcfb8d915ad16944cea5294109c854efc30639b439b",
+                      "category":  "research_archive",
+                      "required_for_level_1":  false
+                  },
+                  {
+                      "path":  "src/safety_evidence.py",
+                      "size_bytes":  13230,
+                      "sha256":  "3d5817b0347a3d72d6bebf2926734f224b8d2420a4528bceb6cb56dbe4c6d639",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "web/app.js",
+                      "size_bytes":  41742,
+                      "sha256":  "4a6c5bd92a347fb37fb9594f37047422272bb8778118fc1d2fb02a05d2cfd240",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "web/index.html",
+                      "size_bytes":  26922,
+                      "sha256":  "af54c3148258684f24603849aa74f7c8ca62ce24768b75d5d2a3a27ebef3d105",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  },
+                  {
+                      "path":  "web/styles.css",
+                      "size_bytes":  34628,
+                      "sha256":  "c8732ac436fb0a58b63607ba084bcf56bb657a5eb34183c0355f7da1e588b788",
+                      "category":  "application_code",
+                      "required_for_level_1":  true
+                  }
+              ]
+}
