@@ -15,6 +15,7 @@ probabilities.
 
 from contextlib import asynccontextmanager
 from pathlib import Path
+import csv
 import json
 
 from fastapi import FastAPI, HTTPException, Query
@@ -260,6 +261,9 @@ def root():
             "experiment":
                 "/api/experiment",
 
+            "relation_analysis":
+                "/api/relation-analysis",
+
             "verification":
                 "/api/verification",
 
@@ -470,6 +474,192 @@ def experiment_results():
             "but statistical significance is not claimed."
         ),
     }
+
+
+# ============================================================
+# Complementary classification metrics
+# ============================================================
+
+@app.get("/api/classification")
+def classification_results():
+
+    summary_path = (
+        PROJECT_DIR
+        / "results/classification_metrics_5seed"
+        / "classification_metrics_5seed_summary.json"
+    )
+
+    try:
+
+        summary = load_json(
+            summary_path
+        )
+
+    except FileNotFoundError:
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Classification metrics summary "
+                "file is unavailable."
+            ),
+        )
+
+    return {
+        "summary": summary,
+        "interpretation": (
+            "Accuracy, Precision, Recall, and F1 are reported as "
+            "complementary binary discrimination metrics. "
+            "MRR and Hits@K remain the primary link-ranking metrics."
+        ),
+        "negative_class_note": (
+            "Negative examples are sampled unobserved DDI pairs, "
+            "not confirmed non-interactions."
+        ),
+        "threshold_note": (
+            "The classification threshold is selected separately "
+            "for each graph and seed by maximizing validation F1, "
+            "then frozen for test evaluation."
+        ),
+    }
+
+
+# ============================================================
+# Secondary relation-level analysis
+# ============================================================
+
+@app.get("/api/relation-analysis")
+def relation_analysis_results():
+    """Return the frozen three-seed single-relation follow-up analysis."""
+
+    result_dir = (
+        PROJECT_DIR
+        / "results/relation_ablation/final"
+    )
+    summary_path = (
+        result_dir
+        / "relation_ablation_3seed_summary.csv"
+    )
+    paired_path = (
+        result_dir
+        / "relation_ablation_paired_deltas_vs_G0.csv"
+    )
+
+    try:
+        with summary_path.open(
+            "r",
+            encoding="utf-8-sig",
+            newline="",
+        ) as summary_file:
+            summary_rows = list(
+                csv.DictReader(summary_file)
+            )
+
+        with paired_path.open(
+            "r",
+            encoding="utf-8-sig",
+            newline="",
+        ) as paired_file:
+            paired_rows = list(
+                csv.DictReader(paired_file)
+            )
+
+    except FileNotFoundError as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Relation-ablation result artifact "
+                f"is unavailable: {exc.filename}"
+            ),
+        )
+
+    if not summary_rows:
+        raise HTTPException(
+            status_code=500,
+            detail="Relation-ablation summary contains no data rows.",
+        )
+
+    summary_rows.sort(
+        key=lambda row: float(row["DeltaMRR_mean"]),
+        reverse=True,
+    )
+
+    family_by_graph = {
+        "A1_target": "Drug-Gene/Protein",
+        "A2_enzyme": "Drug-Gene/Protein",
+        "A3_transporter": "Drug-Gene/Protein",
+        "A4_carrier": "Drug-Gene/Protein",
+        "A5_indication": "Drug-Disease",
+        "A6_contraindication": "Drug-Disease",
+        "A7_off_label": "Drug-Disease",
+    }
+
+    deltas_by_graph = {}
+    for row in paired_rows:
+        graph = row["graph"]
+        deltas_by_graph.setdefault(graph, []).append({
+            "seed": int(row["seed"]),
+            "relation_mrr": float(row["relation_MRR"]),
+            "g0_mrr": float(row["G0_MRR"]),
+            "delta_mrr": float(row["delta_MRR"]),
+        })
+
+    results = []
+    for rank, row in enumerate(summary_rows, start=1):
+        graph = row["graph"]
+        if graph not in family_by_graph:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Unexpected relation-ablation graph: {graph}.",
+            )
+        seed_deltas = sorted(
+            deltas_by_graph.get(graph, []),
+            key=lambda item: item["seed"],
+        )
+        if len(seed_deltas) != 3:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Expected three paired seed rows for {graph}.",
+            )
+
+        wins = int(row["PositiveSeeds"])
+        results.append({
+            "rank": rank,
+            "graph": graph,
+            "relation": row["Relation"],
+            "family": family_by_graph[graph],
+            "biomedical_edges": int(row["BiomedicalEdges"]),
+            "biomedical_directed_edges": int(row["BiomedicalDirectedEdges"]),
+            "mrr_mean": float(row["MRR_mean"]),
+            "mrr_std": float(row["MRR_std"]),
+            "delta_mrr_mean": float(row["DeltaMRR_mean"]),
+            "delta_mrr_std": float(row["DeltaMRR_std"]),
+            "delta_mrr_min": float(row["DeltaMRR_min"]),
+            "delta_mrr_max": float(row["DeltaMRR_max"]),
+            "wins_vs_g0": wins,
+            "losses_vs_g0": 3 - wins,
+            "seed_deltas": seed_deltas,
+        })
+
+    return {
+        "study_type": "secondary follow-up analysis",
+        "construction": (
+            "Each variant retains the G0 DDI-only backbone and adds "
+            "one biomedical relation together with its reverse edges."
+        ),
+        "seeds": [42, 43, 44],
+        "baseline": {
+            "graph": "G0",
+            "mrr_mean": float(summary_rows[0]["G0_MRR_mean"]),
+            "mrr_std": float(summary_rows[0]["G0_MRR_std"]),
+        },
+        "results": results,
+        "caveat": (
+            "Only three seeds were evaluated. These results show relative "
+            "trends and do not establish statistical significance."
+        ),
+    }
+
 
 
 # ============================================================
