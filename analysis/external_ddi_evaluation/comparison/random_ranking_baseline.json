@@ -1,0 +1,26 @@
+{
+  "scope": "Descriptive uniform-random ranking baseline computed from each saved query's filtered available-candidate count; no model scoring.",
+  "formula": {
+    "MRR": "mean(H_n / n), where n is the target-restored available-candidate count and H_n is the nth harmonic number",
+    "Hits@K": "mean(min(K, n) / n)"
+  },
+  "ddinter": {
+    "directional_queries": 98210,
+    "mean_available_candidates": 3283.562193259342,
+    "MRR": 0.0026952987312293436,
+    "Hits@1": 0.00031206790677216025,
+    "Hits@5": 0.0015603395338608013,
+    "Hits@10": 0.0031206790677216025,
+    "source_per_query_sha256": "fa067911127d37815eefcea69277a30707b3aaf3fa622379a4fd7ffda2502d9e"
+  },
+  "kaggle": {
+    "directional_queries": 77020,
+    "mean_available_candidates": 3298.9906517787585,
+    "MRR": 0.0026928068432650817,
+    "Hits@1": 0.00031183149761075516,
+    "Hits@5": 0.0015591574880537756,
+    "Hits@10": 0.003118314976107551,
+    "source_per_query_sha256": "dc2ea07489dd5b56695620376879efc77c7e62a46930a5278ec9eb91fb3f5b9d"
+  },
+  "interpretation": "Observed external metrics exceed this descriptive random baseline but remain weak relative to the internal PrimeKG benchmark. No significance claim is made."
+}

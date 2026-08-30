@@ -52,19 +52,19 @@
 <line x1="960" y1="135" x2="960" y2="635" stroke="#263238" stroke-width="1.4"/>
 <line x1="960" y1="635" x2="1350" y2="635" stroke="#263238" stroke-width="1.4"/>
 <line x1="960" y1="635.00" x2="1350" y2="635.00" stroke="#D7DDE3" stroke-width="1"/>
-<text x="948" y="640.00" text-anchor="end" class="axis">0.00</text>
+<text x="948" y="640.00" text-anchor="end" class="axis">0.000</text>
 <line x1="960" y1="551.67" x2="1350" y2="551.67" stroke="#D7DDE3" stroke-width="1"/>
-<text x="948" y="556.67" text-anchor="end" class="axis">0.01</text>
+<text x="948" y="556.67" text-anchor="end" class="axis">0.005</text>
 <line x1="960" y1="468.33" x2="1350" y2="468.33" stroke="#D7DDE3" stroke-width="1"/>
-<text x="948" y="473.33" text-anchor="end" class="axis">0.01</text>
+<text x="948" y="473.33" text-anchor="end" class="axis">0.010</text>
 <line x1="960" y1="385.00" x2="1350" y2="385.00" stroke="#D7DDE3" stroke-width="1"/>
-<text x="948" y="390.00" text-anchor="end" class="axis">0.01</text>
+<text x="948" y="390.00" text-anchor="end" class="axis">0.015</text>
 <line x1="960" y1="301.67" x2="1350" y2="301.67" stroke="#D7DDE3" stroke-width="1"/>
-<text x="948" y="306.67" text-anchor="end" class="axis">0.02</text>
+<text x="948" y="306.67" text-anchor="end" class="axis">0.020</text>
 <line x1="960" y1="218.33" x2="1350" y2="218.33" stroke="#D7DDE3" stroke-width="1"/>
-<text x="948" y="223.33" text-anchor="end" class="axis">0.03</text>
+<text x="948" y="223.33" text-anchor="end" class="axis">0.025</text>
 <line x1="960" y1="135.00" x2="1350" y2="135.00" stroke="#D7DDE3" stroke-width="1"/>
-<text x="948" y="140.00" text-anchor="end" class="axis">0.03</text>
+<text x="948" y="140.00" text-anchor="end" class="axis">0.030</text>
 <text x="1008.75" y="663" text-anchor="middle" class="label">MRR</text>
 <rect x="971.75" y="364.38" width="34" height="270.62" rx="3" fill="#E08B32"/>
 <text x="988.75" y="358.38" text-anchor="middle" class="value">0.016</text>

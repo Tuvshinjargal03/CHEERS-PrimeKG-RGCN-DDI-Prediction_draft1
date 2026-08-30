@@ -8,6 +8,7 @@ does not mean newly discovered or clinically novel.
 
 from __future__ import annotations
 
+import argparse
 import csv
 import hashlib
 import json
@@ -18,15 +19,33 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
-import torch
-
-
-PROJECT = Path(r"D:\PNU\graduation\real\CHEERS_PrimeKG_RGCN_Final_App")
-DDINTER = Path(r"D:\PNU\graduation\all\datasets\ddi\ddinter")
-OUTPUT = PROJECT / "analysis" / "ddinter_external_evaluation_preparation"
-REAL_WORKSPACE = Path(r"D:\PNU\graduation\real")
+PACKAGE = Path(__file__).resolve().parents[2]
+PROJECT = PACKAGE.parents[1]
+DDINTER = Path()
+OUTPUT = PACKAGE / "ddinter/preparation/reproduction_run"
 SEEDS = (42, 43, 44, 45, 46)
 GRAPHS = ("G0", "G1", "G2", "G3")
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--project-root", type=Path, default=PROJECT)
+    parser.add_argument("--ddinter-dir", type=Path, required=True)
+    parser.add_argument("--output-dir", type=Path, default=OUTPUT)
+    parser.add_argument(
+        "--checkpoint",
+        type=Path,
+        default=None,
+        help="Explicit G3 seed-44 checkpoint path (defaults under --project-root).",
+    )
+    parser.add_argument("--ddi-val", type=Path, default=None)
+    parser.add_argument("--ddi-test", type=Path, default=None)
+    parser.add_argument(
+        "--verify-inputs-only",
+        action="store_true",
+        help="Verify source/crosswalk/frozen-cohort invariants without PyTorch or writes.",
+    )
+    return parser.parse_args()
 
 
 def normalized_name(value: str) -> str:
@@ -166,6 +185,12 @@ def deduplicate(rows: list[dict[str, str]]) -> tuple[list[dict[str, str]], int]:
 def load_primekg_sets(
     candidates: list[dict[str, object]],
 ) -> tuple[set[tuple[int, int]], set[tuple[int, int]], dict[str, object]]:
+    try:
+        import torch
+    except ImportError as exc:
+        raise RuntimeError(
+            "A full preparation rebuild requires PyTorch; --verify-inputs-only does not."
+        ) from exc
     tensor_dir = PROJECT / "data/processed/rgcn_tensors"
     drug_obj = torch.load(tensor_dir / "drug_node_ids.pt", map_location="cpu", weights_only=False)
     node_ids = drug_obj["drug_node_ids"].long()
@@ -266,8 +291,14 @@ def map_pairs(
     return all_rows, novel_rows, counts
 
 
-def checkpoint_inventory() -> tuple[list[dict[str, object]], list[dict[str, object]]]:
-    discovered = sorted(REAL_WORKSPACE.rglob("G3_seed44_best.pt"))
+def checkpoint_inventory(
+    checkpoint_path: Path, split_paths: list[Path]
+) -> tuple[list[dict[str, object]], list[dict[str, object]]]:
+    try:
+        import torch
+    except ImportError as exc:
+        raise RuntimeError("Checkpoint inspection requires PyTorch") from exc
+    discovered = [checkpoint_path] if checkpoint_path.is_file() else []
     inventory: list[dict[str, object]] = []
     for path in discovered:
         stat = path.stat()
@@ -298,8 +329,9 @@ def checkpoint_inventory() -> tuple[list[dict[str, object]], list[dict[str, obje
             }
         )
 
-    for name in ("ddi_val.pt", "ddi_test.pt"):
-        for path in sorted(Path(r"D:\PNU").rglob(name)):
+    for path in split_paths:
+        if path is not None and path.is_file():
+            name = path.name
             stat = path.stat()
             try:
                 obj = torch.load(path, map_location="cpu", weights_only=False)
@@ -353,7 +385,91 @@ def checkpoint_inventory() -> tuple[list[dict[str, object]], list[dict[str, obje
     return inventory, matrix
 
 
+def verify_inputs_without_writing() -> dict[str, object]:
+    """Verify tracked preparation inputs and the frozen cohort without rebuilding it."""
+
+    provenance = json.loads((PACKAGE / "SOURCE_PROVENANCE.json").read_text(encoding="utf-8"))
+    for entry in provenance["ddinter"]["files"]:
+        source = DDINTER / entry["filename"]
+        if (
+            not source.is_file()
+            or source.stat().st_size != int(entry["size_bytes"])
+            or sha256(source) != entry["sha256"]
+        ):
+            raise ValueError(f"DDInter raw-source provenance failed: {source}")
+    candidates, by_name = candidate_drugs()
+    physical_rows, id_to_name = read_ddinter()
+    crosswalk_rows, _ = build_crosswalk(id_to_name, by_name)
+    deduped, duplicate_count = deduplicate(physical_rows)
+    frozen_crosswalk = list(
+        csv.DictReader(
+            (PACKAGE / "ddinter/preparation/ddinter_drug_crosswalk.csv").open(
+                encoding="utf-8", newline=""
+            )
+        )
+    )
+    rebuilt = {
+        (str(row["DDInter_ID"]), str(row["DDInter_name"]), str(row["DrugBank_ID"]),
+         str(row["PrimeKG_name"]), str(row["PrimeKG_node"]),
+         str(row["mapping_confidence_category"]))
+        for row in crosswalk_rows
+    }
+    frozen = {
+        (row["DDInter_ID"], row["DDInter_name"], row["DrugBank_ID"], row["PrimeKG_name"],
+         row["PrimeKG_node"], row["mapping_confidence_category"])
+        for row in frozen_crosswalk
+    }
+    if rebuilt != frozen:
+        raise ValueError("Rebuilt exact-name crosswalk differs from tracked frozen crosswalk")
+
+    cohort_path = PACKAGE / "ddinter/preparation/ddinter_primekg_novel_pairs.csv"
+    cohort = list(csv.DictReader(cohort_path.open(encoding="utf-8", newline="")))
+    if len(cohort) != 49_105 or sha256(cohort_path) != "a63c11610075734b18cbc4fa35f19015caebeadacfa29f83f855aa3711ceca36":
+        raise ValueError("Frozen DDInter cohort count/hash differs")
+    filter_path = PACKAGE / "ddinter/preparation/ddinter_mapped_positive_filter_pairs.csv"
+    filter_rows = list(csv.DictReader(filter_path.open(encoding="utf-8", newline="")))
+    filter_pairs = {
+        tuple(sorted((int(row["PrimeKG_node_A"]), int(row["PrimeKG_node_B"]))))
+        for row in filter_rows
+    }
+    if len(filter_rows) != 138_358 or len(filter_pairs) != 138_358:
+        raise ValueError("Tracked DDInter positive-filter universe is not 138,358 unique pairs")
+    candidate_nodes = {int(row["node_id"]) for row in candidates}
+    if any(a == b or a not in candidate_nodes or b not in candidate_nodes for a, b in filter_pairs):
+        raise ValueError("DDInter positive-filter universe contains invalid endpoints")
+    return {
+        "source_files": 8,
+        "physical_rows": len(physical_rows),
+        "unique_symmetric_pairs": len(deduped),
+        "duplicate_rows_across_partitions": duplicate_count,
+        "exact_name_mappings": sum(
+            row["mapping_confidence_category"] == "exact-name match"
+            for row in crosswalk_rows
+        ),
+        "frozen_cohort_pairs": len(cohort),
+        "mapped_positive_filter_pairs": len(filter_pairs),
+    }
+
+
 def main() -> None:
+    global PROJECT, DDINTER, OUTPUT
+    args = parse_args()
+    PROJECT = args.project_root.resolve()
+    DDINTER = args.ddinter_dir.resolve()
+    OUTPUT = args.output_dir.resolve()
+    if args.verify_inputs_only:
+        print(json.dumps(verify_inputs_without_writing(), indent=2))
+        print("DDInter preparation inputs and frozen outputs verified; no files written.")
+        return
+    expected_outputs = [
+        OUTPUT / "ddinter_drug_crosswalk.csv",
+        OUTPUT / "ddinter_deduplicated_pairs.csv",
+        OUTPUT / "ddinter_mapped_pair_review.csv",
+        OUTPUT / "ddinter_primekg_novel_pairs.csv",
+        OUTPUT / "preparation_summary.json",
+    ]
+    if any(path.exists() for path in expected_outputs):
+        raise FileExistsError("DDInter preparation outputs already exist; refusing to overwrite")
     OUTPUT.mkdir(parents=True, exist_ok=True)
     candidates, by_name = candidate_drugs()
     physical_rows, id_to_name = read_ddinter()
@@ -361,7 +477,10 @@ def main() -> None:
     deduped, duplicate_count = deduplicate(physical_rows)
     known, train, primekg = load_primekg_sets(candidates)
     mapped_rows, novel_rows, pair_counts = map_pairs(deduped, crosswalk, known, train)
-    inventory, feasibility = checkpoint_inventory()
+    checkpoint = args.checkpoint or PROJECT / "checkpoints/rgcn_multiseed/G3_seed44_best.pt"
+    inventory, feasibility = checkpoint_inventory(
+        checkpoint.resolve(), [path.resolve() for path in (args.ddi_val, args.ddi_test) if path]
+    )
 
     crosswalk_fields = [
         "DDInter_ID", "DDInter_name", "DrugBank_ID", "PrimeKG_name", "PrimeKG_node",
@@ -475,42 +594,21 @@ def main() -> None:
         json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )
 
-    protocol = """# Proposed DDInter external-evaluation protocol
+    protocol = """# DDInter external-evaluation protocol
 
-This directory contains preparation outputs only. No model was run for external scoring.
+This reproduction directory contains preparation outputs only. The historical proposal
+was subsequently executed as a frozen G3 seed-44 pilot; preparation itself does not
+train, encode, score, or evaluate a model.
 
-## Primary cohort
+The executed protocol retained DDInter pairs absent from the complete PrimeKG-known DDI
+snapshot, evaluated both directions against 4,278 candidate drugs, filtered self plus
+PrimeKG-known and mapped DDInter-positive partners, restored the current target, and
+used optimistic strict rank. MRR and Hits@1/5/10 were reported overall, with severity
+used only for descriptive stratification.
 
-Use only rows in `ddinter_primekg_novel_pairs.csv`. Here, **novel** means absent from
-the complete known-positive DDI set in this PrimeKG snapshot. It does not mean newly
-discovered or clinically novel. The crosswalk uses no fuzzy matching. Exact normalized-
-name matches are fallback mappings and should be reviewed before final freezing.
-
-## Ranking queries
-
-For each retained positive pair, evaluate both A-to-B and B-to-A. Rank against the same
-4,278 candidate drugs used by the main experiment. For each query, filter all complete
-PrimeKG-known positive partners, every other mapped DDInter-positive partner, and the
-self candidate, then restore the target candidate before ranking.
-
-Report MRR and Hits@1, Hits@5, and Hits@10 overall and separately for Major, Moderate,
-Minor, and Unknown severity. Add a sensitivity analysis excluding Unknown. DDInter
-severity is descriptive stratification only and must not be treated as a positive or
-negative class.
-
-## Fair comparison
-
-Use the same frozen external pair list and filtering universe for every graph and seed.
-Compute per-seed metrics, graph-level mean and sample standard deviation, and paired
-per-seed graph differences. Do not claim statistical significance from five seeds alone.
-
-## Remaining gates
-
-1. Review or replace exact-name fallback mappings with an authoritative DDInter-to-
-   DrugBank crosswalk where available.
-2. Restore `ddi_val.pt` and `ddi_test.pt` to report split-specific overlap.
-3. Restore the missing G0-G3 seed checkpoints for the intended comparison.
-4. Re-hash and freeze the final reviewed crosswalk and pair cohort before evaluation.
+The broader proposed multi-seed G0-G3 external comparison was not executed and is not
+claimed. PrimeKG-absent is snapshot-relative, raw scores are not probabilities, and the
+results do not establish clinical, causal, or statistical conclusions.
 """
     (OUTPUT / "EVALUATION_PROTOCOL.md").write_text(protocol, encoding="utf-8")
 
