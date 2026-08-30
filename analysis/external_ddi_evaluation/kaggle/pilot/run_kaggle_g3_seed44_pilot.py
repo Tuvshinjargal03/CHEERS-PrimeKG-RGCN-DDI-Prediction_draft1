@@ -8,6 +8,7 @@ the verified G3 seed-44 NumPy runtime. It performs no training or graph encoding
 
 from __future__ import annotations
 
+import argparse
 import csv
 import hashlib
 import json
@@ -19,14 +20,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
-import torch
-
-
-PROJECT = Path(r"D:\PNU\graduation\real\CHEERS_PrimeKG_RGCN_Final_App")
-KAGGLE_SOURCE = Path(
-    r"D:\PNU\graduation\all\datasets\ddi\kaggle\db_drug_interactions.csv"
-)
-OUTPUT = PROJECT / "analysis/kaggle_external_evaluation_pilot"
+PACKAGE = Path(__file__).resolve().parents[2]
+PROJECT = PACKAGE.parents[1]
+DEFAULT_OUTPUT = PACKAGE / "kaggle/pilot/reproduction_run"
+FROZEN_COHORT = PACKAGE / "kaggle/pilot/kaggle_g3_seed44_cohort.csv"
+FROZEN_OVERALL = PACKAGE / "kaggle/pilot/kaggle_g3_seed44_overall_metrics.json"
 RUNTIME = PROJECT / "final_release/lightweight_runtime"
 EMBEDDINGS = RUNTIME / "ddi_runtime_embeddings.npz"
 KNOWN_MASK = RUNTIME / "known_positive_mask_packed.npz"
@@ -34,10 +32,7 @@ METADATA = RUNTIME / "drug_metadata.csv"
 RUNTIME_MANIFEST = RUNTIME / "LIGHTWEIGHT_RUNTIME_MANIFEST.json"
 CHECKPOINT = PROJECT / "checkpoints/rgcn_multiseed/G3_seed44_best.pt"
 G3_GRAPH = PROJECT / "data/processed/rgcn_tensors/G3.pt"
-DDINTER_RESULT = (
-    PROJECT
-    / "analysis/ddinter_external_evaluation_pilot/ddinter_g3_seed44_overall_metrics.json"
-)
+DDINTER_RESULT = PACKAGE / "ddinter/pilot/ddinter_g3_seed44_overall_metrics.json"
 
 EXPECTED_HASHES = {
     "kaggle_source": "95d8399aa9c7479001f90400fbd91c6260cbfe517b22d5153a2b031f39b11328",
@@ -47,6 +42,8 @@ EXPECTED_HASHES = {
     "checkpoint": "d4df7c845fe65b175afdfdc8512fe466451029c682a2a34f9d52a84b35811d50",
     "g3_graph": "ee77876d767ac5d92e9657f3dd7c582e02598c2736feb124a3dfbe7d67ead5d3",
     "ddinter_result": "ee51e20a2805c0af0e66972fa4eac79c45fa18a2f5e62e71e030e2f1e9c75a7c",
+    "frozen_cohort": "82392958acc919fef4383e1025933c4610996706fb50d5356241bf690da83b64",
+    "frozen_overall": "f2ffc24d0e886354f8793b17d090a22e8465e3a4252c4eba33f5a6dad87e9834",
 }
 CANDIDATE_COUNT = 4_278
 INTERNAL_METRICS = {
@@ -55,6 +52,28 @@ INTERNAL_METRICS = {
     "Hits@5": 0.580468,
     "Hits@10": 0.618074,
 }
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--kaggle-source",
+        type=Path,
+        required=True,
+        help="Path to the hash-pinned db_drug_interactions.csv source file.",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=DEFAULT_OUTPUT,
+        help=f"Fresh reproduction output directory (default: {DEFAULT_OUTPUT}).",
+    )
+    parser.add_argument(
+        "--verify-inputs-only",
+        action="store_true",
+        help="Verify hashes, runtime identity, cohort reconstruction, and filters without scoring or writing.",
+    )
+    return parser.parse_args()
 
 
 def normalized_name(value: str) -> str:
@@ -74,15 +93,17 @@ def read_csv(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
-def verify_hashes() -> dict[str, str]:
+def verify_hashes(kaggle_source: Path) -> dict[str, str]:
     paths = {
-        "kaggle_source": KAGGLE_SOURCE,
+        "kaggle_source": kaggle_source,
         "embeddings": EMBEDDINGS,
         "known_mask": KNOWN_MASK,
         "metadata": METADATA,
         "checkpoint": CHECKPOINT,
         "g3_graph": G3_GRAPH,
         "ddinter_result": DDINTER_RESULT,
+        "frozen_cohort": FROZEN_COHORT,
+        "frozen_overall": FROZEN_OVERALL,
     }
     actual = {name: sha256(path) for name, path in paths.items()}
     failures = {
@@ -127,26 +148,6 @@ def load_runtime() -> tuple[
     return embeddings, relation, node_ids, known_matrix, metadata
 
 
-def load_training_mask(node_ids: np.ndarray) -> np.ndarray:
-    graph = torch.load(G3_GRAPH, map_location="cpu", weights_only=False)
-    if int(graph["num_nodes"]) != 13_094 or int(graph["num_relations"]) != 15:
-        raise ValueError("Unexpected G3 graph dimensions")
-    ddi_edges = graph["edge_index"][:, graph["edge_type"] == 0].numpy()
-    source_local = np.searchsorted(node_ids, ddi_edges[0])
-    target_local = np.searchsorted(node_ids, ddi_edges[1])
-    if not np.array_equal(node_ids[source_local], ddi_edges[0]):
-        raise ValueError("Training source endpoint outside candidate vocabulary")
-    if not np.array_equal(node_ids[target_local], ddi_edges[1]):
-        raise ValueError("Training target endpoint outside candidate vocabulary")
-    train = np.zeros((CANDIDATE_COUNT, CANDIDATE_COUNT), dtype=bool)
-    train[source_local, target_local] = True
-    if not np.array_equal(train, train.T):
-        raise ValueError("Training DDI mask is not symmetric")
-    if int(np.triu(train, 1).sum()) != 1_069_080:
-        raise ValueError("Unexpected PrimeKG training-pair count")
-    return train
-
-
 def candidate_name_index(metadata: list[dict[str, str]]) -> dict[str, list[dict[str, str]]]:
     index: dict[str, list[dict[str, str]]] = defaultdict(list)
     for row in metadata:
@@ -156,9 +157,16 @@ def candidate_name_index(metadata: list[dict[str, str]]) -> dict[str, list[dict[
 
 def rebuild_cohort(
     metadata: list[dict[str, str]], node_to_local: dict[int, int],
-    known: np.ndarray, train: np.ndarray,
+    known: np.ndarray, kaggle_source: Path,
 ) -> tuple[list[dict[str, object]], dict[int, set[int]], dict[str, object]]:
-    raw_rows = read_csv(KAGGLE_SOURCE)
+    raw_rows = read_csv(kaggle_source)
+    frozen_rows = read_csv(FROZEN_COHORT)
+    frozen_by_pair = {
+        tuple(sorted((int(row["PrimeKG_node_A"]), int(row["PrimeKG_node_B"])))): row
+        for row in frozen_rows
+    }
+    if len(frozen_rows) != 38_510 or len(frozen_by_pair) != len(frozen_rows):
+        raise ValueError("Frozen Kaggle cohort is not 38,510 unique symmetric pairs")
     required = {"Drug 1", "Drug 2", "Interaction Description"}
     if not raw_rows or not required.issubset(raw_rows[0]):
         raise ValueError("Kaggle source schema is invalid")
@@ -209,8 +217,7 @@ def rebuild_cohort(
         if local_pair in mapped_pairs:
             raise ValueError("Multiple Kaggle name pairs collapsed to one model pair")
         mapped_pairs.add(local_pair)
-        pair_records.append(
-            {
+        record = {
                 "Drug_A": names[key_a],
                 "DrugBank_ID_A": match_a["entity_id"],
                 "PrimeKG_node_A": int(match_a["node_id"]),
@@ -221,22 +228,51 @@ def rebuild_cohort(
                 "mapping_method_B": "exact normalized-name",
                 "source_row_count": len(rows),
                 "unique_description_count": len({row["Interaction Description"] for row in rows}),
-                "PrimeKG_train_overlap": bool(train[local_a, local_b]),
+                # Training overlap is descriptive only and is not part of ranking/filtering.
+                "PrimeKG_train_overlap": False,
                 "PrimeKG_known_overlap": bool(known[local_a, local_b]),
                 "local_A": local_a,
                 "local_B": local_b,
             }
-        )
+        if not record["PrimeKG_known_overlap"]:
+            node_pair = tuple(sorted((int(record["PrimeKG_node_A"]), int(record["PrimeKG_node_B"]))))
+            frozen = frozen_by_pair.get(node_pair)
+            if frozen is None:
+                raise ValueError("Rebuilt PrimeKG-absent pair is missing from frozen cohort")
+            record["PrimeKG_train_overlap"] = frozen["PrimeKG_train_overlap"].casefold() == "true"
+            if int(frozen["source_row_count"]) != record["source_row_count"]:
+                raise ValueError("Frozen cohort source-row count differs from rebuilt source")
+            if int(frozen["unique_description_count"]) != record["unique_description_count"]:
+                raise ValueError("Frozen cohort description count differs from rebuilt source")
+        pair_records.append(record)
 
     if len(grouped) != 191_135:
         raise ValueError(f"Unexpected unique Kaggle pair count: {len(grouped)}")
-    training_overlap = sum(bool(row["PrimeKG_train_overlap"]) for row in pair_records)
     known_overlap = sum(bool(row["PrimeKG_known_overlap"]) for row in pair_records)
     cohort = [row for row in pair_records if not bool(row["PrimeKG_known_overlap"])]
+    rebuilt_pairs = {
+        tuple(sorted((int(row["PrimeKG_node_A"]), int(row["PrimeKG_node_B"]))))
+        for row in cohort
+    }
+    if rebuilt_pairs != set(frozen_by_pair):
+        raise ValueError("Rebuilt PrimeKG-absent cohort differs from frozen cohort")
+    # Use the tracked cohort's stable row order and exact descriptive fields.
+    cohort = []
+    for frozen in frozen_rows:
+        node_a = int(frozen["PrimeKG_node_A"])
+        node_b = int(frozen["PrimeKG_node_B"])
+        cohort.append(
+            {
+                **frozen,
+                "local_A": node_to_local[node_a],
+                "local_B": node_to_local[node_b],
+            }
+        )
     partners: dict[int, set[int]] = defaultdict(set)
     for local_a, local_b in mapped_pairs:
         partners[local_a].add(local_b)
         partners[local_b].add(local_a)
+    frozen_summary = json.loads(FROZEN_OVERALL.read_text(encoding="utf-8"))["cohort_rebuild"]
     summary = {
         "physical_rows": len(raw_rows),
         "unique_symmetric_pairs": len(grouped),
@@ -254,10 +290,16 @@ def rebuild_cohort(
         },
         "mapped_model_pairs": len(mapped_pairs),
         "self_pairs_excluded": self_pairs,
-        "training_overlap": training_overlap,
+        "training_overlap": int(frozen_summary["training_overlap"]),
+        "training_overlap_provenance": (
+            "Recorded from the frozen original pilot; descriptive only and unused by scoring/filtering."
+        ),
         "complete_known_positive_overlap": known_overlap,
         "absent_from_complete_primekg_snapshot": len(cohort),
     }
+    comparable = {key: value for key, value in summary.items() if key != "training_overlap_provenance"}
+    if comparable != frozen_summary:
+        raise ValueError("Rebuilt Kaggle cohort summary differs from frozen pilot")
     return cohort, partners, summary
 
 
@@ -392,24 +434,22 @@ def write_csv(path: Path, fields: list[str], rows: list[dict[str, object]]) -> N
 
 
 def main() -> None:
+    args = parse_args()
+    output = args.output_dir.resolve()
     expected_outputs = [
-        OUTPUT / "kaggle_g3_seed44_cohort.csv",
-        OUTPUT / "kaggle_g3_seed44_per_query.csv",
-        OUTPUT / "kaggle_g3_seed44_overall_metrics.json",
-        OUTPUT / "kaggle_g3_seed44_tie_diagnostics.json",
-        OUTPUT / "COMPARISON_NOTES.md",
-        OUTPUT / "SHA256SUMS.sha256",
+        output / "kaggle_g3_seed44_cohort.csv",
+        output / "kaggle_g3_seed44_per_query.csv",
+        output / "kaggle_g3_seed44_overall_metrics.json",
+        output / "kaggle_g3_seed44_tie_diagnostics.json",
+        output / "COMPARISON_NOTES.md",
+        output / "SHA256SUMS.sha256",
     ]
-    if any(path.exists() for path in expected_outputs):
-        raise FileExistsError("Kaggle pilot outputs already exist; refusing to overwrite")
-    OUTPUT.mkdir(parents=True, exist_ok=True)
-    input_hashes = verify_hashes()
+    input_hashes = verify_hashes(args.kaggle_source.resolve())
     embeddings, relation, node_ids, known, metadata = load_runtime()
     node_to_local = {int(node): index for index, node in enumerate(node_ids.tolist())}
-    train = load_training_mask(node_ids)
-    if not np.all(~train | known):
-        raise ValueError("PrimeKG training mask is not a subset of complete known positives")
-    cohort, partners, cohort_summary = rebuild_cohort(metadata, node_to_local, known, train)
+    cohort, partners, cohort_summary = rebuild_cohort(
+        metadata, node_to_local, known, args.kaggle_source.resolve()
+    )
     if len(cohort) == 0:
         raise ValueError("PrimeKG-absent Kaggle cohort is empty")
     runtime_manifest = json.loads(RUNTIME_MANIFEST.read_text(encoding="utf-8"))
@@ -420,6 +460,13 @@ def main() -> None:
     ):
         raise ValueError("Runtime identity differs from G3 seed 44 epoch 499")
     print(json.dumps(cohort_summary, indent=2))
+    if args.verify_inputs_only:
+        print("Kaggle inputs, frozen cohort equivalence, filter universe, and G3 seed-44 runtime verified; no scoring or files written.")
+        return
+
+    if any(path.exists() for path in expected_outputs):
+        raise FileExistsError("Kaggle reproduction outputs already exist; refusing to overwrite")
+    output.mkdir(parents=True, exist_ok=True)
 
     result_rows = evaluate(cohort, partners, embeddings, relation, node_ids, known)
     output_verification = validate_results(cohort, result_rows)
@@ -497,12 +544,12 @@ def main() -> None:
         "available_candidates_after_filtering", "target_tie_count",
         "tied_competitor_count", "unique_available_scores",
     ]
-    write_csv(OUTPUT / "kaggle_g3_seed44_cohort.csv", cohort_fields, cohort)
-    write_csv(OUTPUT / "kaggle_g3_seed44_per_query.csv", per_query_fields, result_rows)
-    (OUTPUT / "kaggle_g3_seed44_overall_metrics.json").write_text(
+    write_csv(output / "kaggle_g3_seed44_cohort.csv", cohort_fields, cohort)
+    write_csv(output / "kaggle_g3_seed44_per_query.csv", per_query_fields, result_rows)
+    (output / "kaggle_g3_seed44_overall_metrics.json").write_text(
         json.dumps(overall, indent=2) + "\n", encoding="utf-8"
     )
-    (OUTPUT / "kaggle_g3_seed44_tie_diagnostics.json").write_text(
+    (output / "kaggle_g3_seed44_tie_diagnostics.json").write_text(
         json.dumps(tie_diagnostics, indent=2) + "\n", encoding="utf-8"
     )
 
@@ -530,12 +577,12 @@ The three cohorts are descriptively informative but not statistically interchang
 No causal, clinical, or multi-seed generalization claim is made. No training, graph
 encoding, threshold tuning, or probability conversion was performed.
 """
-    (OUTPUT / "COMPARISON_NOTES.md").write_text(notes, encoding="utf-8")
+    (output / "COMPARISON_NOTES.md").write_text(notes, encoding="utf-8")
     generated = sorted(
-        path for path in OUTPUT.iterdir()
+        path for path in output.iterdir()
         if path.is_file() and path.name != "SHA256SUMS.sha256"
     )
-    (OUTPUT / "SHA256SUMS.sha256").write_text(
+    (output / "SHA256SUMS.sha256").write_text(
         "\n".join(f"{sha256(path)}  {path.name}" for path in generated) + "\n",
         encoding="ascii",
     )

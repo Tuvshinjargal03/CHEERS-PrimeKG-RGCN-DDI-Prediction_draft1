@@ -1,0 +1,1615 @@
+DDInter_ID,DDInter_name,normalized_DDInter_name,PrimeKG_name,normalized_PrimeKG_name,DrugBank_ID,equal_after_normalization,route_or_formulation_qualifier_detected,lexical_attention_reason,suspicious_lexical_case,review_status
+DDInter1,Abacavir,abacavir,Abacavir,abacavir,DB01048,true,false,,false,accepted_exact_normalized_name
+DDInter100,Anthrax vaccine,anthrax vaccine,Anthrax vaccine,anthrax vaccine,DB11003,true,false,,false,accepted_exact_normalized_name
+DDInter1000,Ivosidenib,ivosidenib,Ivosidenib,ivosidenib,DB14568,true,false,,false,accepted_exact_normalized_name
+DDInter1001,Ixabepilone,ixabepilone,Ixabepilone,ixabepilone,DB04845,true,false,,false,accepted_exact_normalized_name
+DDInter1002,Ixazomib,ixazomib,Ixazomib,ixazomib,DB09570,true,false,,false,accepted_exact_normalized_name
+DDInter1003,Ixekizumab,ixekizumab,Ixekizumab,ixekizumab,DB11569,true,false,,false,accepted_exact_normalized_name
+DDInter1004,Kanamycin,kanamycin,Kanamycin,kanamycin,DB01172,true,false,,false,accepted_exact_normalized_name
+DDInter1005,Kaolin,kaolin,Kaolin,kaolin,DB01575,true,false,,false,accepted_exact_normalized_name
+DDInter1007,Ketamine,ketamine,Ketamine,ketamine,DB01221,true,false,,false,accepted_exact_normalized_name
+DDInter1008,Ketoconazole,ketoconazole,Ketoconazole,ketoconazole,DB01026,true,false,,false,accepted_exact_normalized_name
+DDInter1009,Ketoprofen,ketoprofen,Ketoprofen,ketoprofen,DB01009,true,false,,false,accepted_exact_normalized_name
+DDInter101,Anti-inhibitor coagulant complex,anti-inhibitor coagulant complex,Anti-inhibitor coagulant complex,anti-inhibitor coagulant complex,DB13151,true,false,,false,accepted_exact_normalized_name
+DDInter1010,Ketorolac,ketorolac,Ketorolac,ketorolac,DB00465,true,false,,false,accepted_exact_normalized_name
+DDInter1012,Ketotifen,ketotifen,Ketotifen,ketotifen,DB00920,true,false,,false,accepted_exact_normalized_name
+DDInter1013,Labetalol,labetalol,Labetalol,labetalol,DB00598,true,false,,false,accepted_exact_normalized_name
+DDInter1014,Lacosamide,lacosamide,Lacosamide,lacosamide,DB06218,true,false,,false,accepted_exact_normalized_name
+DDInter1016,Lactitol,lactitol,Lactitol,lactitol,DB12942,true,false,,false,accepted_exact_normalized_name
+DDInter1018,Lactulose,lactulose,Lactulose,lactulose,DB00581,true,false,,false,accepted_exact_normalized_name
+DDInter1019,Lamivudine,lamivudine,Lamivudine,lamivudine,DB00709,true,false,,false,accepted_exact_normalized_name
+DDInter102,"Antihemophilic factor, human recombinant","antihemophilic factor, human recombinant","Antihemophilic factor, human recombinant","antihemophilic factor, human recombinant",DB00025,true,true,parenthetical_or_comma_exact_match;qualifier_preserved_exactly:recombinant,false,accepted_exact_normalized_name
+DDInter1020,Lamotrigine,lamotrigine,Lamotrigine,lamotrigine,DB00555,true,false,,false,accepted_exact_normalized_name
+DDInter1021,Lanreotide,lanreotide,Lanreotide,lanreotide,DB06791,true,false,,false,accepted_exact_normalized_name
+DDInter1022,Lansoprazole,lansoprazole,Lansoprazole,lansoprazole,DB00448,true,false,,false,accepted_exact_normalized_name
+DDInter1023,Lanthanum carbonate,lanthanum carbonate,Lanthanum carbonate,lanthanum carbonate,DB06792,true,false,,false,accepted_exact_normalized_name
+DDInter1024,Lapatinib,lapatinib,Lapatinib,lapatinib,DB01259,true,false,,false,accepted_exact_normalized_name
+DDInter1026,Larotrectinib,larotrectinib,Larotrectinib,larotrectinib,DB14723,true,false,,false,accepted_exact_normalized_name
+DDInter1027,Lasmiditan,lasmiditan,Lasmiditan,lasmiditan,DB11732,true,false,,false,accepted_exact_normalized_name
+DDInter1028,Latanoprost,latanoprost,Latanoprost,latanoprost,DB00654,true,false,,false,accepted_exact_normalized_name
+DDInter103,Antilymphocyte immunoglobulin (horse),antilymphocyte immunoglobulin (horse),Antilymphocyte immunoglobulin (horse),antilymphocyte immunoglobulin (horse),DB09312,true,false,parenthetical_or_comma_exact_match,false,accepted_exact_normalized_name
+DDInter1031,Ledipasvir,ledipasvir,Ledipasvir,ledipasvir,DB09027,true,false,,false,accepted_exact_normalized_name
+DDInter1032,Lefamulin,lefamulin,Lefamulin,lefamulin,DB12825,true,false,,false,accepted_exact_normalized_name
+DDInter1033,Leflunomide,leflunomide,Leflunomide,leflunomide,DB01097,true,false,,false,accepted_exact_normalized_name
+DDInter1034,Lemborexant,lemborexant,Lemborexant,lemborexant,DB11951,true,false,,false,accepted_exact_normalized_name
+DDInter1035,Lenalidomide,lenalidomide,Lenalidomide,lenalidomide,DB00480,true,false,,false,accepted_exact_normalized_name
+DDInter1036,Lenvatinib,lenvatinib,Lenvatinib,lenvatinib,DB09078,true,false,,false,accepted_exact_normalized_name
+DDInter1037,Lepirudin,lepirudin,Lepirudin,lepirudin,DB00001,true,false,,false,accepted_exact_normalized_name
+DDInter1038,Lesinurad,lesinurad,Lesinurad,lesinurad,DB11560,true,false,,false,accepted_exact_normalized_name
+DDInter1039,Letermovir,letermovir,Letermovir,letermovir,DB12070,true,false,,false,accepted_exact_normalized_name
+DDInter104,Antithrombin Alfa,antithrombin alfa,Antithrombin Alfa,antithrombin alfa,DB11166,true,false,,false,accepted_exact_normalized_name
+DDInter1040,Letrozole,letrozole,Letrozole,letrozole,DB01006,true,false,,false,accepted_exact_normalized_name
+DDInter1041,Leucovorin,leucovorin,Leucovorin,leucovorin,DB00650,true,false,,false,accepted_exact_normalized_name
+DDInter1042,Leuprolide,leuprolide,Leuprolide,leuprolide,DB00007,true,false,,false,accepted_exact_normalized_name
+DDInter1043,Levacetylmethadol,levacetylmethadol,Levacetylmethadol,levacetylmethadol,DB01227,true,false,,false,accepted_exact_normalized_name
+DDInter1044,Levamisole,levamisole,Levamisole,levamisole,DB00848,true,false,,false,accepted_exact_normalized_name
+DDInter1045,Levamlodipine,levamlodipine,Levamlodipine,levamlodipine,DB09237,true,false,,false,accepted_exact_normalized_name
+DDInter1046,Levetiracetam,levetiracetam,Levetiracetam,levetiracetam,DB01202,true,false,,false,accepted_exact_normalized_name
+DDInter1049,Levobunolol,levobunolol,Levobunolol,levobunolol,DB01210,true,false,,false,accepted_exact_normalized_name
+DDInter105,Antithrombin III human,antithrombin iii human,Antithrombin III human,antithrombin iii human,DB11598,true,false,,false,accepted_exact_normalized_name
+DDInter1051,Levobupivacaine,levobupivacaine,Levobupivacaine,levobupivacaine,DB01002,true,false,,false,accepted_exact_normalized_name
+DDInter1052,Levocarnitine,levocarnitine,Levocarnitine,levocarnitine,DB00583,true,false,,false,accepted_exact_normalized_name
+DDInter1053,Levocetirizine,levocetirizine,Levocetirizine,levocetirizine,DB06282,true,false,,false,accepted_exact_normalized_name
+DDInter1054,Levodopa,levodopa,Levodopa,levodopa,DB01235,true,false,,false,accepted_exact_normalized_name
+DDInter1055,Levofloxacin,levofloxacin,Levofloxacin,levofloxacin,DB01137,true,false,,false,accepted_exact_normalized_name
+DDInter1056,Levoleucovorin,levoleucovorin,Levoleucovorin,levoleucovorin,DB11596,true,false,,false,accepted_exact_normalized_name
+DDInter1057,Levomefolic acid,levomefolic acid,Levomefolic acid,levomefolic acid,DB11256,true,false,,false,accepted_exact_normalized_name
+DDInter1059,Levomilnacipran,levomilnacipran,Levomilnacipran,levomilnacipran,DB08918,true,false,,false,accepted_exact_normalized_name
+DDInter106,Antithymocyte immunoglobulin (rabbit),antithymocyte immunoglobulin (rabbit),Antithymocyte immunoglobulin (rabbit),antithymocyte immunoglobulin (rabbit),DB00098,true,false,parenthetical_or_comma_exact_match,false,accepted_exact_normalized_name
+DDInter1060,Levonordefrin,levonordefrin,Levonordefrin,levonordefrin,DB06707,true,false,,false,accepted_exact_normalized_name
+DDInter1061,Levonorgestrel,levonorgestrel,Levonorgestrel,levonorgestrel,DB00367,true,false,,false,accepted_exact_normalized_name
+DDInter1062,Levorphanol,levorphanol,Levorphanol,levorphanol,DB00854,true,false,,false,accepted_exact_normalized_name
+DDInter1063,Levosalbutamol,levosalbutamol,Levosalbutamol,levosalbutamol,DB13139,true,false,,false,accepted_exact_normalized_name
+DDInter1064,Levothyroxine,levothyroxine,Levothyroxine,levothyroxine,DB00451,true,false,,false,accepted_exact_normalized_name
+DDInter1066,Lidocaine,lidocaine,Lidocaine,lidocaine,DB00281,true,false,,false,accepted_exact_normalized_name
+DDInter1069,Linaclotide,linaclotide,Linaclotide,linaclotide,DB08890,true,false,,false,accepted_exact_normalized_name
+DDInter107,Apalutamide,apalutamide,Apalutamide,apalutamide,DB11901,true,false,,false,accepted_exact_normalized_name
+DDInter1070,Linagliptin,linagliptin,Linagliptin,linagliptin,DB08882,true,false,,false,accepted_exact_normalized_name
+DDInter1071,Lincomycin,lincomycin,Lincomycin,lincomycin,DB01627,true,false,,false,accepted_exact_normalized_name
+DDInter1072,Lindane,lindane,Lindane,lindane,DB00431,true,false,,false,accepted_exact_normalized_name
+DDInter1073,Linezolid,linezolid,Linezolid,linezolid,DB00601,true,false,,false,accepted_exact_normalized_name
+DDInter1074,Liothyronine,liothyronine,Liothyronine,liothyronine,DB00279,true,false,,false,accepted_exact_normalized_name
+DDInter1075,Liotrix,liotrix,Liotrix,liotrix,DB01583,true,false,,false,accepted_exact_normalized_name
+DDInter1076,Lipoic acid,lipoic acid,Lipoic acid,lipoic acid,DB00166,true,false,,false,accepted_exact_normalized_name
+DDInter1077,Liraglutide,liraglutide,Liraglutide,liraglutide,DB06655,true,false,,false,accepted_exact_normalized_name
+DDInter1078,Lisdexamfetamine,lisdexamfetamine,Lisdexamfetamine,lisdexamfetamine,DB01255,true,false,,false,accepted_exact_normalized_name
+DDInter1079,Lisinopril,lisinopril,Lisinopril,lisinopril,DB00722,true,false,,false,accepted_exact_normalized_name
+DDInter108,Apixaban,apixaban,Apixaban,apixaban,DB06605,true,false,,false,accepted_exact_normalized_name
+DDInter1081,Lithium carbonate,lithium carbonate,Lithium carbonate,lithium carbonate,DB14509,true,false,,false,accepted_exact_normalized_name
+DDInter1082,Lixisenatide,lixisenatide,Lixisenatide,lixisenatide,DB09265,true,false,,false,accepted_exact_normalized_name
+DDInter1083,Lofexidine,lofexidine,Lofexidine,lofexidine,DB04948,true,false,,false,accepted_exact_normalized_name
+DDInter1084,Lomefloxacin,lomefloxacin,Lomefloxacin,lomefloxacin,DB00978,true,false,,false,accepted_exact_normalized_name
+DDInter1085,Lomitapide,lomitapide,Lomitapide,lomitapide,DB08827,true,false,,false,accepted_exact_normalized_name
+DDInter1086,Lomustine,lomustine,Lomustine,lomustine,DB01206,true,false,,false,accepted_exact_normalized_name
+DDInter1087,Lonafarnib,lonafarnib,Lonafarnib,lonafarnib,DB06448,true,false,,false,accepted_exact_normalized_name
+DDInter1088,Loperamide,loperamide,Loperamide,loperamide,DB00836,true,false,,false,accepted_exact_normalized_name
+DDInter1089,Lopinavir,lopinavir,Lopinavir,lopinavir,DB01601,true,false,,false,accepted_exact_normalized_name
+DDInter109,Apomorphine,apomorphine,Apomorphine,apomorphine,DB00714,true,false,,false,accepted_exact_normalized_name
+DDInter1090,Loracarbef,loracarbef,Loracarbef,loracarbef,DB00447,true,false,,false,accepted_exact_normalized_name
+DDInter1091,Loratadine,loratadine,Loratadine,loratadine,DB00455,true,false,,false,accepted_exact_normalized_name
+DDInter1092,Lorazepam,lorazepam,Lorazepam,lorazepam,DB00186,true,false,,false,accepted_exact_normalized_name
+DDInter1093,Lorcaserin,lorcaserin,Lorcaserin,lorcaserin,DB04871,true,false,,false,accepted_exact_normalized_name
+DDInter1094,Lorlatinib,lorlatinib,Lorlatinib,lorlatinib,DB12130,true,false,,false,accepted_exact_normalized_name
+DDInter1095,Losartan,losartan,Losartan,losartan,DB00678,true,false,,false,accepted_exact_normalized_name
+DDInter1098,Lovastatin,lovastatin,Lovastatin,lovastatin,DB00227,true,false,,false,accepted_exact_normalized_name
+DDInter1099,Loxapine,loxapine,Loxapine,loxapine,DB00408,true,false,,false,accepted_exact_normalized_name
+DDInter11,Acarbose,acarbose,Acarbose,acarbose,DB00284,true,false,,false,accepted_exact_normalized_name
+DDInter110,Apraclonidine,apraclonidine,Apraclonidine,apraclonidine,DB00964,true,false,,false,accepted_exact_normalized_name
+DDInter1100,Lubiprostone,lubiprostone,Lubiprostone,lubiprostone,DB01046,true,false,,false,accepted_exact_normalized_name
+DDInter1101,Lumacaftor,lumacaftor,Lumacaftor,lumacaftor,DB09280,true,false,,false,accepted_exact_normalized_name
+DDInter1102,Lumateperone,lumateperone,Lumateperone,lumateperone,DB06077,true,false,,false,accepted_exact_normalized_name
+DDInter1103,Lumefantrine,lumefantrine,Lumefantrine,lumefantrine,DB06708,true,false,,false,accepted_exact_normalized_name
+DDInter1104,Lurasidone,lurasidone,Lurasidone,lurasidone,DB08815,true,false,,false,accepted_exact_normalized_name
+DDInter1105,Lurbinectedin,lurbinectedin,Lurbinectedin,lurbinectedin,DB12674,true,false,,false,accepted_exact_normalized_name
+DDInter1106,Lusutrombopag,lusutrombopag,Lusutrombopag,lusutrombopag,DB13125,true,false,,false,accepted_exact_normalized_name
+DDInter1108,Lutetium Lu 177 dotatate,lutetium lu 177 dotatate,Lutetium Lu 177 dotatate,lutetium lu 177 dotatate,DB13985,true,false,,false,accepted_exact_normalized_name
+DDInter111,Apremilast,apremilast,Apremilast,apremilast,DB05676,true,false,,false,accepted_exact_normalized_name
+DDInter1110,Macimorelin,macimorelin,Macimorelin,macimorelin,DB13074,true,false,,false,accepted_exact_normalized_name
+DDInter1111,Macitentan,macitentan,Macitentan,macitentan,DB08932,true,false,,false,accepted_exact_normalized_name
+DDInter1112,Magaldrate,magaldrate,Magaldrate,magaldrate,DB08938,true,false,,false,accepted_exact_normalized_name
+DDInter1113,Magnesium carbonate,magnesium carbonate,Magnesium carbonate,magnesium carbonate,DB09481,true,false,,false,accepted_exact_normalized_name
+DDInter1114,Magnesium chloride,magnesium chloride,Magnesium chloride,magnesium chloride,DB09407,true,false,,false,accepted_exact_normalized_name
+DDInter1115,Magnesium citrate,magnesium citrate,Magnesium citrate,magnesium citrate,DB11110,true,false,,false,accepted_exact_normalized_name
+DDInter1116,Magnesium gluconate,magnesium gluconate,Magnesium gluconate,magnesium gluconate,DB13749,true,false,,false,accepted_exact_normalized_name
+DDInter1117,Magnesium glycinate,magnesium glycinate,Magnesium glycinate,magnesium glycinate,DB11189,true,false,,false,accepted_exact_normalized_name
+DDInter1118,Magnesium hydroxide,magnesium hydroxide,Magnesium hydroxide,magnesium hydroxide,DB09104,true,false,,false,accepted_exact_normalized_name
+DDInter1119,Magnesium oxide,magnesium oxide,Magnesium oxide,magnesium oxide,DB01377,true,false,,false,accepted_exact_normalized_name
+DDInter112,Aprepitant,aprepitant,Aprepitant,aprepitant,DB00673,true,false,,false,accepted_exact_normalized_name
+DDInter1120,Magnesium sulfate,magnesium sulfate,Magnesium sulfate,magnesium sulfate,DB00653,true,false,,false,accepted_exact_normalized_name
+DDInter1123,Mannitol,mannitol,Mannitol,mannitol,DB00742,true,false,,false,accepted_exact_normalized_name
+DDInter1124,Maprotiline,maprotiline,Maprotiline,maprotiline,DB00934,true,false,,false,accepted_exact_normalized_name
+DDInter1125,Maraviroc,maraviroc,Maraviroc,maraviroc,DB04835,true,false,,false,accepted_exact_normalized_name
+DDInter1126,Mazindol,mazindol,Mazindol,mazindol,DB00579,true,false,,false,accepted_exact_normalized_name
+DDInter1128,Mebendazole,mebendazole,Mebendazole,mebendazole,DB00643,true,false,,false,accepted_exact_normalized_name
+DDInter113,Aprotinin,aprotinin,Aprotinin,aprotinin,DB06692,true,false,,false,accepted_exact_normalized_name
+DDInter1130,Mecamylamine,mecamylamine,Mecamylamine,mecamylamine,DB00657,true,false,,false,accepted_exact_normalized_name
+DDInter1131,Mecasermin,mecasermin,Mecasermin,mecasermin,DB01277,true,false,,false,accepted_exact_normalized_name
+DDInter1133,Mechlorethamine,mechlorethamine,Mechlorethamine,mechlorethamine,DB00888,true,false,,false,accepted_exact_normalized_name
+DDInter1134,Meclizine,meclizine,Meclizine,meclizine,DB00737,true,false,,false,accepted_exact_normalized_name
+DDInter1135,Meclofenamic acid,meclofenamic acid,Meclofenamic acid,meclofenamic acid,DB00939,true,false,,false,accepted_exact_normalized_name
+DDInter1137,Medroxyprogesterone acetate,medroxyprogesterone acetate,Medroxyprogesterone acetate,medroxyprogesterone acetate,DB00603,true,false,,false,accepted_exact_normalized_name
+DDInter1139,Mefenamic acid,mefenamic acid,Mefenamic acid,mefenamic acid,DB00784,true,false,,false,accepted_exact_normalized_name
+DDInter114,Arbutamine,arbutamine,Arbutamine,arbutamine,DB01102,true,false,,false,accepted_exact_normalized_name
+DDInter1140,Mefloquine,mefloquine,Mefloquine,mefloquine,DB00358,true,false,,false,accepted_exact_normalized_name
+DDInter1141,Megestrol acetate,megestrol acetate,Megestrol acetate,megestrol acetate,DB00351,true,false,,false,accepted_exact_normalized_name
+DDInter1142,Melatonin,melatonin,Melatonin,melatonin,DB01065,true,false,,false,accepted_exact_normalized_name
+DDInter1143,Meloxicam,meloxicam,Meloxicam,meloxicam,DB00814,true,false,,false,accepted_exact_normalized_name
+DDInter1144,Melphalan,melphalan,Melphalan,melphalan,DB01042,true,false,,false,accepted_exact_normalized_name
+DDInter1146,Memantine,memantine,Memantine,memantine,DB01043,true,false,,false,accepted_exact_normalized_name
+DDInter1149,Mepenzolate,mepenzolate,Mepenzolate,mepenzolate,DB04843,true,false,,false,accepted_exact_normalized_name
+DDInter115,Ardeparin,ardeparin,Ardeparin,ardeparin,DB00407,true,false,,false,accepted_exact_normalized_name
+DDInter1150,Meperidine,meperidine,Meperidine,meperidine,DB00454,true,false,,false,accepted_exact_normalized_name
+DDInter1151,Mephentermine,mephentermine,Mephentermine,mephentermine,DB01365,true,false,,false,accepted_exact_normalized_name
+DDInter1152,Mephenytoin,mephenytoin,Mephenytoin,mephenytoin,DB00532,true,false,,false,accepted_exact_normalized_name
+DDInter1153,Mepivacaine,mepivacaine,Mepivacaine,mepivacaine,DB00961,true,false,,false,accepted_exact_normalized_name
+DDInter1154,Meprobamate,meprobamate,Meprobamate,meprobamate,DB00371,true,false,,false,accepted_exact_normalized_name
+DDInter1155,Mepyramine,mepyramine,Mepyramine,mepyramine,DB06691,true,false,,false,accepted_exact_normalized_name
+DDInter1156,Mercaptopurine,mercaptopurine,Mercaptopurine,mercaptopurine,DB01033,true,false,,false,accepted_exact_normalized_name
+DDInter1157,Meropenem,meropenem,Meropenem,meropenem,DB00760,true,false,,false,accepted_exact_normalized_name
+DDInter1158,Mesalazine,mesalazine,Mesalazine,mesalazine,DB00244,true,false,,false,accepted_exact_normalized_name
+DDInter1159,Mesoridazine,mesoridazine,Mesoridazine,mesoridazine,DB00933,true,false,,false,accepted_exact_normalized_name
+DDInter116,Arformoterol,arformoterol,Arformoterol,arformoterol,DB01274,true,false,,false,accepted_exact_normalized_name
+DDInter1160,Mestranol,mestranol,Mestranol,mestranol,DB01357,true,false,,false,accepted_exact_normalized_name
+DDInter1161,Metamfetamine,metamfetamine,Metamfetamine,metamfetamine,DB01577,true,false,,false,accepted_exact_normalized_name
+DDInter1162,Metaraminol,metaraminol,Metaraminol,metaraminol,DB00610,true,false,,false,accepted_exact_normalized_name
+DDInter1163,Metaxalone,metaxalone,Metaxalone,metaxalone,DB00660,true,false,,false,accepted_exact_normalized_name
+DDInter1164,Metformin,metformin,Metformin,metformin,DB00331,true,false,,false,accepted_exact_normalized_name
+DDInter1165,Methacholine,methacholine,Methacholine,methacholine,DB06709,true,false,,false,accepted_exact_normalized_name
+DDInter1166,Methadone,methadone,Methadone,methadone,DB00333,true,false,,false,accepted_exact_normalized_name
+DDInter1167,Methazolamide,methazolamide,Methazolamide,methazolamide,DB00703,true,false,,false,accepted_exact_normalized_name
+DDInter1168,Methdilazine,methdilazine,Methdilazine,methdilazine,DB00902,true,false,,false,accepted_exact_normalized_name
+DDInter1169,Methenamine,methenamine,Methenamine,methenamine,DB06799,true,false,,false,accepted_exact_normalized_name
+DDInter117,Argatroban,argatroban,Argatroban,argatroban,DB00278,true,false,,false,accepted_exact_normalized_name
+DDInter1170,Methimazole,methimazole,Methimazole,methimazole,DB00763,true,false,,false,accepted_exact_normalized_name
+DDInter1171,Methionine,methionine,Methionine,methionine,DB00134,true,false,,false,accepted_exact_normalized_name
+DDInter1172,Methocarbamol,methocarbamol,Methocarbamol,methocarbamol,DB00423,true,false,,false,accepted_exact_normalized_name
+DDInter1173,Methohexital,methohexital,Methohexital,methohexital,DB00474,true,false,,false,accepted_exact_normalized_name
+DDInter1174,Methotrexate,methotrexate,Methotrexate,methotrexate,DB00563,true,false,,false,accepted_exact_normalized_name
+DDInter1175,Methotrimeprazine,methotrimeprazine,Methotrimeprazine,methotrimeprazine,DB01403,true,false,,false,accepted_exact_normalized_name
+DDInter1176,Methoxamine,methoxamine,Methoxamine,methoxamine,DB00723,true,false,,false,accepted_exact_normalized_name
+DDInter1177,Methoxsalen,methoxsalen,Methoxsalen,methoxsalen,DB00553,true,false,,false,accepted_exact_normalized_name
+DDInter1179,Methoxyflurane,methoxyflurane,Methoxyflurane,methoxyflurane,DB01028,true,false,,false,accepted_exact_normalized_name
+DDInter118,Aripiprazole,aripiprazole,Aripiprazole,aripiprazole,DB01238,true,false,,false,accepted_exact_normalized_name
+DDInter1180,Methscopolamine,methscopolamine,Methscopolamine,methscopolamine,DB11315,true,false,,false,accepted_exact_normalized_name
+DDInter1181,Methsuximide,methsuximide,Methsuximide,methsuximide,DB05246,true,false,,false,accepted_exact_normalized_name
+DDInter1184,Methylcellulose,methylcellulose,Methylcellulose,methylcellulose,DB11228,true,false,,false,accepted_exact_normalized_name
+DDInter1185,Methyldopa,methyldopa,Methyldopa,methyldopa,DB00968,true,false,,false,accepted_exact_normalized_name
+DDInter1186,Methylene blue,methylene blue,Methylene blue,methylene blue,DB09241,true,false,,false,accepted_exact_normalized_name
+DDInter1187,Methylergometrine,methylergometrine,Methylergometrine,methylergometrine,DB00353,true,false,,false,accepted_exact_normalized_name
+DDInter1188,Methylnaltrexone,methylnaltrexone,Methylnaltrexone,methylnaltrexone,DB06800,true,false,,false,accepted_exact_normalized_name
+DDInter1189,Methylphenidate,methylphenidate,Methylphenidate,methylphenidate,DB00422,true,false,,false,accepted_exact_normalized_name
+DDInter119,Armodafinil,armodafinil,Armodafinil,armodafinil,DB06413,true,false,,false,accepted_exact_normalized_name
+DDInter1190,Methylphenobarbital,methylphenobarbital,Methylphenobarbital,methylphenobarbital,DB00849,true,false,,false,accepted_exact_normalized_name
+DDInter1191,Methylprednisolone,methylprednisolone,Methylprednisolone,methylprednisolone,DB00959,true,false,,false,accepted_exact_normalized_name
+DDInter1193,Methyltestosterone,methyltestosterone,Methyltestosterone,methyltestosterone,DB06710,true,false,,false,accepted_exact_normalized_name
+DDInter1194,Methysergide,methysergide,Methysergide,methysergide,DB00247,true,false,,false,accepted_exact_normalized_name
+DDInter1195,Meticillin,meticillin,Meticillin,meticillin,DB01603,true,false,,false,accepted_exact_normalized_name
+DDInter1197,Metoclopramide,metoclopramide,Metoclopramide,metoclopramide,DB01233,true,false,,false,accepted_exact_normalized_name
+DDInter1198,Metocurine,metocurine,Metocurine,metocurine,DB01336,true,false,,false,accepted_exact_normalized_name
+DDInter1199,Metolazone,metolazone,Metolazone,metolazone,DB00524,true,false,,false,accepted_exact_normalized_name
+DDInter12,Acebutolol,acebutolol,Acebutolol,acebutolol,DB01193,true,false,,false,accepted_exact_normalized_name
+DDInter120,Arsenic trioxide,arsenic trioxide,Arsenic trioxide,arsenic trioxide,DB01169,true,false,,false,accepted_exact_normalized_name
+DDInter1200,Metoprolol,metoprolol,Metoprolol,metoprolol,DB00264,true,false,,false,accepted_exact_normalized_name
+DDInter1201,Metreleptin,metreleptin,Metreleptin,metreleptin,DB09046,true,false,,false,accepted_exact_normalized_name
+DDInter1202,Metronidazole,metronidazole,Metronidazole,metronidazole,DB00916,true,false,,false,accepted_exact_normalized_name
+DDInter1204,Metyrapone,metyrapone,Metyrapone,metyrapone,DB01011,true,false,,false,accepted_exact_normalized_name
+DDInter1205,Metyrosine,metyrosine,Metyrosine,metyrosine,DB00765,true,false,,false,accepted_exact_normalized_name
+DDInter1206,Mexiletine,mexiletine,Mexiletine,mexiletine,DB00379,true,false,,false,accepted_exact_normalized_name
+DDInter1207,Mezlocillin,mezlocillin,Mezlocillin,mezlocillin,DB00948,true,false,,false,accepted_exact_normalized_name
+DDInter1208,Micafungin,micafungin,Micafungin,micafungin,DB01141,true,false,,false,accepted_exact_normalized_name
+DDInter1209,Miconazole,miconazole,Miconazole,miconazole,DB01110,true,false,,false,accepted_exact_normalized_name
+DDInter121,Artemether,artemether,Artemether,artemether,DB06697,true,false,,false,accepted_exact_normalized_name
+DDInter1212,Midazolam,midazolam,Midazolam,midazolam,DB00683,true,false,,false,accepted_exact_normalized_name
+DDInter1213,Midodrine,midodrine,Midodrine,midodrine,DB00211,true,false,,false,accepted_exact_normalized_name
+DDInter1214,Midostaurin,midostaurin,Midostaurin,midostaurin,DB06595,true,false,,false,accepted_exact_normalized_name
+DDInter1215,Mifepristone,mifepristone,Mifepristone,mifepristone,DB00834,true,false,,false,accepted_exact_normalized_name
+DDInter1216,Migalastat,migalastat,Migalastat,migalastat,DB05018,true,false,,false,accepted_exact_normalized_name
+DDInter1217,Miglitol,miglitol,Miglitol,miglitol,DB00491,true,false,,false,accepted_exact_normalized_name
+DDInter122,Artesunate,artesunate,Artesunate,artesunate,DB09274,true,false,,false,accepted_exact_normalized_name
+DDInter1220,Milnacipran,milnacipran,Milnacipran,milnacipran,DB04896,true,false,,false,accepted_exact_normalized_name
+DDInter1221,Milrinone,milrinone,Milrinone,milrinone,DB00235,true,false,,false,accepted_exact_normalized_name
+DDInter1222,Miltefosine,miltefosine,Miltefosine,miltefosine,DB09031,true,false,,false,accepted_exact_normalized_name
+DDInter1223,Mineral oil,mineral oil,Mineral oil,mineral oil,DB11057,true,false,,false,accepted_exact_normalized_name
+DDInter1224,Minocycline,minocycline,Minocycline,minocycline,DB01017,true,false,,false,accepted_exact_normalized_name
+DDInter1226,Minoxidil,minoxidil,Minoxidil,minoxidil,DB00350,true,false,,false,accepted_exact_normalized_name
+DDInter1228,Mipomersen,mipomersen,Mipomersen,mipomersen,DB05528,true,false,,false,accepted_exact_normalized_name
+DDInter1229,Mirabegron,mirabegron,Mirabegron,mirabegron,DB08893,true,false,,false,accepted_exact_normalized_name
+DDInter123,Articaine,articaine,Articaine,articaine,DB09009,true,false,,false,accepted_exact_normalized_name
+DDInter1230,Mirtazapine,mirtazapine,Mirtazapine,mirtazapine,DB00370,true,false,,false,accepted_exact_normalized_name
+DDInter1231,Misoprostol,misoprostol,Misoprostol,misoprostol,DB00929,true,false,,false,accepted_exact_normalized_name
+DDInter1232,Mitomycin,mitomycin,Mitomycin,mitomycin,DB00305,true,false,,false,accepted_exact_normalized_name
+DDInter1233,Mitotane,mitotane,Mitotane,mitotane,DB00648,true,false,,false,accepted_exact_normalized_name
+DDInter1234,Mitoxantrone,mitoxantrone,Mitoxantrone,mitoxantrone,DB01204,true,false,,false,accepted_exact_normalized_name
+DDInter1235,Mivacurium,mivacurium,Mivacurium,mivacurium,DB01226,true,false,,false,accepted_exact_normalized_name
+DDInter1236,Modafinil,modafinil,Modafinil,modafinil,DB00745,true,false,,false,accepted_exact_normalized_name
+DDInter1237,Moexipril,moexipril,Moexipril,moexipril,DB00691,true,false,,false,accepted_exact_normalized_name
+DDInter1238,Mogamulizumab,mogamulizumab,Mogamulizumab,mogamulizumab,DB12498,true,false,,false,accepted_exact_normalized_name
+DDInter1239,Molindone,molindone,Molindone,molindone,DB01618,true,false,,false,accepted_exact_normalized_name
+DDInter124,Ascorbic acid,ascorbic acid,Ascorbic acid,ascorbic acid,DB00126,true,false,,false,accepted_exact_normalized_name
+DDInter1240,Monomethyl fumarate,monomethyl fumarate,Monomethyl fumarate,monomethyl fumarate,DB14219,true,false,,false,accepted_exact_normalized_name
+DDInter1241,Monopotassium phosphate,monopotassium phosphate,Monopotassium phosphate,monopotassium phosphate,DB09413,true,false,,false,accepted_exact_normalized_name
+DDInter1242,Montelukast,montelukast,Montelukast,montelukast,DB00471,true,false,,false,accepted_exact_normalized_name
+DDInter1243,Moricizine,moricizine,Moricizine,moricizine,DB00680,true,false,,false,accepted_exact_normalized_name
+DDInter1244,Morphine,morphine,Morphine,morphine,DB00295,true,false,,false,accepted_exact_normalized_name
+DDInter1246,Moxetumomab Pasudotox,moxetumomab pasudotox,Moxetumomab Pasudotox,moxetumomab pasudotox,DB12688,true,false,,false,accepted_exact_normalized_name
+DDInter1247,Moxifloxacin,moxifloxacin,Moxifloxacin,moxifloxacin,DB00218,true,false,,false,accepted_exact_normalized_name
+DDInter1249,Mupirocin,mupirocin,Mupirocin,mupirocin,DB00410,true,false,,false,accepted_exact_normalized_name
+DDInter125,Asenapine,asenapine,Asenapine,asenapine,DB06216,true,false,,false,accepted_exact_normalized_name
+DDInter1250,Muromonab,muromonab,Muromonab,muromonab,DB00075,true,false,,false,accepted_exact_normalized_name
+DDInter1251,Mycophenolate mofetil,mycophenolate mofetil,Mycophenolate mofetil,mycophenolate mofetil,DB00688,true,false,,false,accepted_exact_normalized_name
+DDInter1252,Mycophenolic acid,mycophenolic acid,Mycophenolic acid,mycophenolic acid,DB01024,true,false,,false,accepted_exact_normalized_name
+DDInter1253,Nabilone,nabilone,Nabilone,nabilone,DB00486,true,false,,false,accepted_exact_normalized_name
+DDInter1254,Nabumetone,nabumetone,Nabumetone,nabumetone,DB00461,true,false,,false,accepted_exact_normalized_name
+DDInter1255,Nadolol,nadolol,Nadolol,nadolol,DB01203,true,false,,false,accepted_exact_normalized_name
+DDInter1256,Nafcillin,nafcillin,Nafcillin,nafcillin,DB00607,true,false,,false,accepted_exact_normalized_name
+DDInter1257,Nalbuphine,nalbuphine,Nalbuphine,nalbuphine,DB00844,true,false,,false,accepted_exact_normalized_name
+DDInter1258,Naldemedine,naldemedine,Naldemedine,naldemedine,DB11691,true,false,,false,accepted_exact_normalized_name
+DDInter1259,Nalidixic acid,nalidixic acid,Nalidixic acid,nalidixic acid,DB00779,true,false,,false,accepted_exact_normalized_name
+DDInter126,Asparaginase Erwinia chrysanthemi,asparaginase erwinia chrysanthemi,Asparaginase Erwinia chrysanthemi,asparaginase erwinia chrysanthemi,DB08886,true,false,,false,accepted_exact_normalized_name
+DDInter1260,Nalmefene,nalmefene,Nalmefene,nalmefene,DB06230,true,false,,false,accepted_exact_normalized_name
+DDInter1261,Naloxegol,naloxegol,Naloxegol,naloxegol,DB09049,true,false,,false,accepted_exact_normalized_name
+DDInter1262,Naloxone,naloxone,Naloxone,naloxone,DB01183,true,false,,false,accepted_exact_normalized_name
+DDInter1263,Naltrexone,naltrexone,Naltrexone,naltrexone,DB00704,true,false,,false,accepted_exact_normalized_name
+DDInter1266,Naproxen,naproxen,Naproxen,naproxen,DB00788,true,false,,false,accepted_exact_normalized_name
+DDInter1267,Naratriptan,naratriptan,Naratriptan,naratriptan,DB00952,true,false,,false,accepted_exact_normalized_name
+DDInter1268,Natalizumab,natalizumab,Natalizumab,natalizumab,DB00108,true,false,,false,accepted_exact_normalized_name
+DDInter1269,Nateglinide,nateglinide,Nateglinide,nateglinide,DB00731,true,false,,false,accepted_exact_normalized_name
+DDInter127,Asparaginase Escherichia coli,asparaginase escherichia coli,Asparaginase Escherichia coli,asparaginase escherichia coli,DB00023,true,false,,false,accepted_exact_normalized_name
+DDInter1271,Nebivolol,nebivolol,Nebivolol,nebivolol,DB04861,true,false,,false,accepted_exact_normalized_name
+DDInter1272,Necitumumab,necitumumab,Necitumumab,necitumumab,DB09559,true,false,,false,accepted_exact_normalized_name
+DDInter1273,Nedocromil,nedocromil,Nedocromil,nedocromil,DB00716,true,false,,false,accepted_exact_normalized_name
+DDInter1274,Nefazodone,nefazodone,Nefazodone,nefazodone,DB01149,true,false,,false,accepted_exact_normalized_name
+DDInter1275,Nelarabine,nelarabine,Nelarabine,nelarabine,DB01280,true,false,,false,accepted_exact_normalized_name
+DDInter1276,Nelfinavir,nelfinavir,Nelfinavir,nelfinavir,DB00220,true,false,,false,accepted_exact_normalized_name
+DDInter1277,Neomycin,neomycin,Neomycin,neomycin,DB00994,true,false,,false,accepted_exact_normalized_name
+DDInter1279,Neostigmine,neostigmine,Neostigmine,neostigmine,DB01400,true,false,,false,accepted_exact_normalized_name
+DDInter128,Astemizole,astemizole,Astemizole,astemizole,DB00637,true,false,,false,accepted_exact_normalized_name
+DDInter1281,Neratinib,neratinib,Neratinib,neratinib,DB11828,true,false,,false,accepted_exact_normalized_name
+DDInter1282,Nesiritide,nesiritide,Nesiritide,nesiritide,DB04899,true,false,,false,accepted_exact_normalized_name
+DDInter1283,Netilmicin,netilmicin,Netilmicin,netilmicin,DB00955,true,false,,false,accepted_exact_normalized_name
+DDInter1284,Netupitant,netupitant,Netupitant,netupitant,DB09048,true,false,,false,accepted_exact_normalized_name
+DDInter1285,Nevirapine,nevirapine,Nevirapine,nevirapine,DB00238,true,false,,false,accepted_exact_normalized_name
+DDInter1286,Niacin,niacin,Niacin,niacin,DB00627,true,false,,false,accepted_exact_normalized_name
+DDInter1287,Nicardipine,nicardipine,Nicardipine,nicardipine,DB00622,true,false,,false,accepted_exact_normalized_name
+DDInter1288,Niclosamide,niclosamide,Niclosamide,niclosamide,DB06803,true,false,,false,accepted_exact_normalized_name
+DDInter1289,Nicotinamide,nicotinamide,Nicotinamide,nicotinamide,DB02701,true,false,,false,accepted_exact_normalized_name
+DDInter129,Atazanavir,atazanavir,Atazanavir,atazanavir,DB01072,true,false,,false,accepted_exact_normalized_name
+DDInter1290,Nicotine,nicotine,Nicotine,nicotine,DB00184,true,false,,false,accepted_exact_normalized_name
+DDInter1291,Nifedipine,nifedipine,Nifedipine,nifedipine,DB01115,true,false,,false,accepted_exact_normalized_name
+DDInter1293,Nilotinib,nilotinib,Nilotinib,nilotinib,DB04868,true,false,,false,accepted_exact_normalized_name
+DDInter1294,Nilutamide,nilutamide,Nilutamide,nilutamide,DB00665,true,false,,false,accepted_exact_normalized_name
+DDInter1295,Nimodipine,nimodipine,Nimodipine,nimodipine,DB00393,true,false,,false,accepted_exact_normalized_name
+DDInter1296,Nintedanib,nintedanib,Nintedanib,nintedanib,DB09079,true,false,,false,accepted_exact_normalized_name
+DDInter1297,Niraparib,niraparib,Niraparib,niraparib,DB11793,true,false,,false,accepted_exact_normalized_name
+DDInter1298,Nisoldipine,nisoldipine,Nisoldipine,nisoldipine,DB00401,true,false,,false,accepted_exact_normalized_name
+DDInter13,Acenocoumarol,acenocoumarol,Acenocoumarol,acenocoumarol,DB01418,true,false,,false,accepted_exact_normalized_name
+DDInter130,Atenolol,atenolol,Atenolol,atenolol,DB00335,true,false,,false,accepted_exact_normalized_name
+DDInter1301,Nitrazepam,nitrazepam,Nitrazepam,nitrazepam,DB01595,true,false,,false,accepted_exact_normalized_name
+DDInter1302,Nitric Oxide,nitric oxide,Nitric Oxide,nitric oxide,DB00435,true,false,,false,accepted_exact_normalized_name
+DDInter1303,Nitrofurantoin,nitrofurantoin,Nitrofurantoin,nitrofurantoin,DB00698,true,false,,false,accepted_exact_normalized_name
+DDInter1304,Nitroglycerin,nitroglycerin,Nitroglycerin,nitroglycerin,DB00727,true,false,,false,accepted_exact_normalized_name
+DDInter1305,Nitroprusside,nitroprusside,Nitroprusside,nitroprusside,DB00325,true,false,,false,accepted_exact_normalized_name
+DDInter1306,Nitrous acid,nitrous acid,Nitrous acid,nitrous acid,DB09112,true,false,,false,accepted_exact_normalized_name
+DDInter1307,Nitrous oxide,nitrous oxide,Nitrous oxide,nitrous oxide,DB06690,true,false,,false,accepted_exact_normalized_name
+DDInter1308,Nivolumab,nivolumab,Nivolumab,nivolumab,DB09035,true,false,,false,accepted_exact_normalized_name
+DDInter1309,Nizatidine,nizatidine,Nizatidine,nizatidine,DB00585,true,false,,false,accepted_exact_normalized_name
+DDInter131,Atezolizumab,atezolizumab,Atezolizumab,atezolizumab,DB11595,true,false,,false,accepted_exact_normalized_name
+DDInter1310,Norelgestromin,norelgestromin,Norelgestromin,norelgestromin,DB06713,true,false,,false,accepted_exact_normalized_name
+DDInter1311,Norepinephrine,norepinephrine,Norepinephrine,norepinephrine,DB00368,true,false,,false,accepted_exact_normalized_name
+DDInter1312,Norethisterone,norethisterone,Norethisterone,norethisterone,DB00717,true,false,,false,accepted_exact_normalized_name
+DDInter1313,Norfloxacin,norfloxacin,Norfloxacin,norfloxacin,DB01059,true,false,,false,accepted_exact_normalized_name
+DDInter1314,Norgestimate,norgestimate,Norgestimate,norgestimate,DB00957,true,false,,false,accepted_exact_normalized_name
+DDInter1315,Norgestrel,norgestrel,Norgestrel,norgestrel,DB09389,true,false,,false,accepted_exact_normalized_name
+DDInter1316,Nortriptyline,nortriptyline,Nortriptyline,nortriptyline,DB00540,true,false,,false,accepted_exact_normalized_name
+DDInter1317,Novobiocin,novobiocin,Novobiocin,novobiocin,DB01051,true,false,,false,accepted_exact_normalized_name
+DDInter1318,Nystatin,nystatin,Nystatin,nystatin,DB00646,true,false,,false,accepted_exact_normalized_name
+DDInter1319,Obeticholic acid,obeticholic acid,Obeticholic acid,obeticholic acid,DB05990,true,false,,false,accepted_exact_normalized_name
+DDInter132,Atomoxetine,atomoxetine,Atomoxetine,atomoxetine,DB00289,true,false,,false,accepted_exact_normalized_name
+DDInter1320,Obinutuzumab,obinutuzumab,Obinutuzumab,obinutuzumab,DB08935,true,false,,false,accepted_exact_normalized_name
+DDInter1321,Ocrelizumab,ocrelizumab,Ocrelizumab,ocrelizumab,DB11988,true,false,,false,accepted_exact_normalized_name
+DDInter1323,Octreotide,octreotide,Octreotide,octreotide,DB00104,true,false,,false,accepted_exact_normalized_name
+DDInter1324,Ofatumumab,ofatumumab,Ofatumumab,ofatumumab,DB06650,true,false,,false,accepted_exact_normalized_name
+DDInter1325,Ofloxacin,ofloxacin,Ofloxacin,ofloxacin,DB01165,true,false,,false,accepted_exact_normalized_name
+DDInter1326,Olanzapine,olanzapine,Olanzapine,olanzapine,DB00334,true,false,,false,accepted_exact_normalized_name
+DDInter1327,Olaparib,olaparib,Olaparib,olaparib,DB09074,true,false,,false,accepted_exact_normalized_name
+DDInter1328,Olaratumab,olaratumab,Olaratumab,olaratumab,DB06043,true,false,,false,accepted_exact_normalized_name
+DDInter1329,Oliceridine,oliceridine,Oliceridine,oliceridine,DB14881,true,false,,false,accepted_exact_normalized_name
+DDInter133,Atorvastatin,atorvastatin,Atorvastatin,atorvastatin,DB01076,true,false,,false,accepted_exact_normalized_name
+DDInter1330,Olmesartan,olmesartan,Olmesartan,olmesartan,DB00275,true,false,,false,accepted_exact_normalized_name
+DDInter1331,Olodaterol,olodaterol,Olodaterol,olodaterol,DB09080,true,false,,false,accepted_exact_normalized_name
+DDInter1334,Olsalazine,olsalazine,Olsalazine,olsalazine,DB01250,true,false,,false,accepted_exact_normalized_name
+DDInter1335,Omacetaxine mepesuccinate,omacetaxine mepesuccinate,Omacetaxine mepesuccinate,omacetaxine mepesuccinate,DB04865,true,false,,false,accepted_exact_normalized_name
+DDInter1336,Omadacycline,omadacycline,Omadacycline,omadacycline,DB12455,true,false,,false,accepted_exact_normalized_name
+DDInter1337,Omalizumab,omalizumab,Omalizumab,omalizumab,DB00043,true,false,,false,accepted_exact_normalized_name
+DDInter1339,Omega-3 fatty acids,omega-3 fatty acids,Omega-3 fatty acids,omega-3 fatty acids,DB11133,true,false,,false,accepted_exact_normalized_name
+DDInter134,Atovaquone,atovaquone,Atovaquone,atovaquone,DB01117,true,false,,false,accepted_exact_normalized_name
+DDInter1340,Omeprazole,omeprazole,Omeprazole,omeprazole,DB00338,true,false,,false,accepted_exact_normalized_name
+DDInter1341,Onasemnogene abeparvovec,onasemnogene abeparvovec,Onasemnogene abeparvovec,onasemnogene abeparvovec,DB15528,true,false,,false,accepted_exact_normalized_name
+DDInter1342,Ondansetron,ondansetron,Ondansetron,ondansetron,DB00904,true,false,,false,accepted_exact_normalized_name
+DDInter1343,Opicapone,opicapone,Opicapone,opicapone,DB11632,true,false,,false,accepted_exact_normalized_name
+DDInter1344,Opium,opium,Opium,opium,DB11130,true,false,,false,accepted_exact_normalized_name
+DDInter1346,Orciprenaline,orciprenaline,Orciprenaline,orciprenaline,DB00816,true,false,,false,accepted_exact_normalized_name
+DDInter1347,Oritavancin,oritavancin,Oritavancin,oritavancin,DB04911,true,false,,false,accepted_exact_normalized_name
+DDInter1348,Orlistat,orlistat,Orlistat,orlistat,DB01083,true,false,,false,accepted_exact_normalized_name
+DDInter1349,Orphenadrine,orphenadrine,Orphenadrine,orphenadrine,DB01173,true,false,,false,accepted_exact_normalized_name
+DDInter135,Atracurium,atracurium,Atracurium,atracurium,DB13295,true,false,,false,accepted_exact_normalized_name
+DDInter1350,Oseltamivir,oseltamivir,Oseltamivir,oseltamivir,DB00198,true,false,,false,accepted_exact_normalized_name
+DDInter1351,Osilodrostat,osilodrostat,Osilodrostat,osilodrostat,DB11837,true,false,,false,accepted_exact_normalized_name
+DDInter1352,Osimertinib,osimertinib,Osimertinib,osimertinib,DB09330,true,false,,false,accepted_exact_normalized_name
+DDInter1353,Ospemifene,ospemifene,Ospemifene,ospemifene,DB04938,true,false,,false,accepted_exact_normalized_name
+DDInter1354,Oxacillin,oxacillin,Oxacillin,oxacillin,DB00713,true,false,,false,accepted_exact_normalized_name
+DDInter1355,Oxaliplatin,oxaliplatin,Oxaliplatin,oxaliplatin,DB00526,true,false,,false,accepted_exact_normalized_name
+DDInter1356,Oxamniquine,oxamniquine,Oxamniquine,oxamniquine,DB01096,true,false,,false,accepted_exact_normalized_name
+DDInter1357,Oxandrolone,oxandrolone,Oxandrolone,oxandrolone,DB00621,true,false,,false,accepted_exact_normalized_name
+DDInter1358,Oxaprozin,oxaprozin,Oxaprozin,oxaprozin,DB00991,true,false,,false,accepted_exact_normalized_name
+DDInter1359,Oxazepam,oxazepam,Oxazepam,oxazepam,DB00842,true,false,,false,accepted_exact_normalized_name
+DDInter136,Atropine,atropine,Atropine,atropine,DB00572,true,false,,false,accepted_exact_normalized_name
+DDInter1360,Oxcarbazepine,oxcarbazepine,Oxcarbazepine,oxcarbazepine,DB00776,true,false,,false,accepted_exact_normalized_name
+DDInter1362,Oxitriptan,oxitriptan,Oxitriptan,oxitriptan,DB02959,true,false,,false,accepted_exact_normalized_name
+DDInter1363,Oxtriphylline,oxtriphylline,Oxtriphylline,oxtriphylline,DB01303,true,false,,false,accepted_exact_normalized_name
+DDInter1365,Oxybutynin,oxybutynin,Oxybutynin,oxybutynin,DB01062,true,false,,false,accepted_exact_normalized_name
+DDInter1366,Oxycodone,oxycodone,Oxycodone,oxycodone,DB00497,true,false,,false,accepted_exact_normalized_name
+DDInter1371,Oxymetholone,oxymetholone,Oxymetholone,oxymetholone,DB06412,true,false,,false,accepted_exact_normalized_name
+DDInter1372,Oxymorphone,oxymorphone,Oxymorphone,oxymorphone,DB01192,true,false,,false,accepted_exact_normalized_name
+DDInter1374,Oxytetracycline,oxytetracycline,Oxytetracycline,oxytetracycline,DB00595,true,false,,false,accepted_exact_normalized_name
+DDInter1375,Oxytocin,oxytocin,Oxytocin,oxytocin,DB00107,true,false,,false,accepted_exact_normalized_name
+DDInter1376,Ozanimod,ozanimod,Ozanimod,ozanimod,DB12612,true,false,,false,accepted_exact_normalized_name
+DDInter1377,Paclitaxel,paclitaxel,Paclitaxel,paclitaxel,DB01229,true,false,,false,accepted_exact_normalized_name
+DDInter1379,Palbociclib,palbociclib,Palbociclib,palbociclib,DB09073,true,false,,false,accepted_exact_normalized_name
+DDInter1380,Palifermin,palifermin,Palifermin,palifermin,DB00039,true,false,,false,accepted_exact_normalized_name
+DDInter1381,Paliperidone,paliperidone,Paliperidone,paliperidone,DB01267,true,false,,false,accepted_exact_normalized_name
+DDInter1382,Palonosetron,palonosetron,Palonosetron,palonosetron,DB00377,true,false,,false,accepted_exact_normalized_name
+DDInter1383,Pamidronic acid,pamidronic acid,Pamidronic acid,pamidronic acid,DB00282,true,false,,false,accepted_exact_normalized_name
+DDInter1384,Pancrelipase,pancrelipase,Pancrelipase,pancrelipase,DB00085,true,false,,false,accepted_exact_normalized_name
+DDInter1385,Pancuronium,pancuronium,Pancuronium,pancuronium,DB01337,true,false,,false,accepted_exact_normalized_name
+DDInter1386,Panitumumab,panitumumab,Panitumumab,panitumumab,DB01269,true,false,,false,accepted_exact_normalized_name
+DDInter1387,Panobinostat,panobinostat,Panobinostat,panobinostat,DB06603,true,false,,false,accepted_exact_normalized_name
+DDInter1388,Pantoprazole,pantoprazole,Pantoprazole,pantoprazole,DB00213,true,false,,false,accepted_exact_normalized_name
+DDInter1389,Papaverine,papaverine,Papaverine,papaverine,DB01113,true,false,,false,accepted_exact_normalized_name
+DDInter139,Auranofin,auranofin,Auranofin,auranofin,DB00995,true,false,,false,accepted_exact_normalized_name
+DDInter1391,Paraldehyde,paraldehyde,Paraldehyde,paraldehyde,DB09117,true,false,,false,accepted_exact_normalized_name
+DDInter1392,Paramethadione,paramethadione,Paramethadione,paramethadione,DB00617,true,false,,false,accepted_exact_normalized_name
+DDInter1393,Parathyroid hormone,parathyroid hormone,Parathyroid hormone,parathyroid hormone,DB05829,true,false,,false,accepted_exact_normalized_name
+DDInter1394,Paricalcitol,paricalcitol,Paricalcitol,paricalcitol,DB00910,true,false,,false,accepted_exact_normalized_name
+DDInter1395,Paritaprevir,paritaprevir,Paritaprevir,paritaprevir,DB09297,true,false,,false,accepted_exact_normalized_name
+DDInter1396,Paromomycin,paromomycin,Paromomycin,paromomycin,DB01421,true,false,,false,accepted_exact_normalized_name
+DDInter1397,Paroxetine,paroxetine,Paroxetine,paroxetine,DB00715,true,false,,false,accepted_exact_normalized_name
+DDInter1398,Pasireotide,pasireotide,Pasireotide,pasireotide,DB06663,true,false,,false,accepted_exact_normalized_name
+DDInter1399,Patiromer,patiromer,Patiromer,patiromer,DB09263,true,false,,false,accepted_exact_normalized_name
+DDInter14,Acetaminophen,acetaminophen,Acetaminophen,acetaminophen,DB00316,true,false,,false,accepted_exact_normalized_name
+DDInter140,Aurothioglucose,aurothioglucose,Aurothioglucose,aurothioglucose,DB09121,true,false,,false,accepted_exact_normalized_name
+DDInter1400,Pazopanib,pazopanib,Pazopanib,pazopanib,DB06589,true,false,,false,accepted_exact_normalized_name
+DDInter1402,Pegademase,pegademase,Pegademase,pegademase,DB00061,true,false,,false,accepted_exact_normalized_name
+DDInter1404,Pegaspargase,pegaspargase,Pegaspargase,pegaspargase,DB00059,true,false,,false,accepted_exact_normalized_name
+DDInter1405,Pegfilgrastim,pegfilgrastim,Pegfilgrastim,pegfilgrastim,DB00019,true,false,,false,accepted_exact_normalized_name
+DDInter1406,Peginesatide,peginesatide,Peginesatide,peginesatide,DB08894,true,false,,false,accepted_exact_normalized_name
+DDInter1407,Peginterferon alfa-2a,peginterferon alfa-2a,Peginterferon alfa-2a,peginterferon alfa-2a,DB00008,true,false,,false,accepted_exact_normalized_name
+DDInter1408,Peginterferon alfa-2b,peginterferon alfa-2b,Peginterferon alfa-2b,peginterferon alfa-2b,DB00022,true,false,,false,accepted_exact_normalized_name
+DDInter1409,Peginterferon beta-1a,peginterferon beta-1a,Peginterferon beta-1a,peginterferon beta-1a,DB09122,true,false,,false,accepted_exact_normalized_name
+DDInter141,Avanafil,avanafil,Avanafil,avanafil,DB06237,true,false,,false,accepted_exact_normalized_name
+DDInter1410,Pegloticase,pegloticase,Pegloticase,pegloticase,DB09208,true,false,,false,accepted_exact_normalized_name
+DDInter1411,Pegvaliase,pegvaliase,Pegvaliase,pegvaliase,DB12839,true,false,,false,accepted_exact_normalized_name
+DDInter1412,Pegvisomant,pegvisomant,Pegvisomant,pegvisomant,DB00082,true,false,,false,accepted_exact_normalized_name
+DDInter1413,Pembrolizumab,pembrolizumab,Pembrolizumab,pembrolizumab,DB09037,true,false,,false,accepted_exact_normalized_name
+DDInter1414,Pemetrexed,pemetrexed,Pemetrexed,pemetrexed,DB00642,true,false,,false,accepted_exact_normalized_name
+DDInter1415,Pemigatinib,pemigatinib,Pemigatinib,pemigatinib,DB15102,true,false,,false,accepted_exact_normalized_name
+DDInter1417,Penbutolol,penbutolol,Penbutolol,penbutolol,DB01359,true,false,,false,accepted_exact_normalized_name
+DDInter1419,Penicillamine,penicillamine,Penicillamine,penicillamine,DB00859,true,false,,false,accepted_exact_normalized_name
+DDInter142,Avapritinib,avapritinib,Avapritinib,avapritinib,DB15233,true,false,,false,accepted_exact_normalized_name
+DDInter1420,Pentamidine,pentamidine,Pentamidine,pentamidine,DB00738,true,false,,false,accepted_exact_normalized_name
+DDInter1421,Pentazocine,pentazocine,Pentazocine,pentazocine,DB00652,true,false,,false,accepted_exact_normalized_name
+DDInter1423,Pentobarbital,pentobarbital,Pentobarbital,pentobarbital,DB00312,true,false,,false,accepted_exact_normalized_name
+DDInter1424,Pentosan polysulfate,pentosan polysulfate,Pentosan polysulfate,pentosan polysulfate,DB00686,true,false,,false,accepted_exact_normalized_name
+DDInter1425,Pentostatin,pentostatin,Pentostatin,pentostatin,DB00552,true,false,,false,accepted_exact_normalized_name
+DDInter1426,Pentoxifylline,pentoxifylline,Pentoxifylline,pentoxifylline,DB00806,true,false,,false,accepted_exact_normalized_name
+DDInter1428,Perampanel,perampanel,Perampanel,perampanel,DB08883,true,false,,false,accepted_exact_normalized_name
+DDInter1429,Perflutren,perflutren,Perflutren,perflutren,DB00556,true,false,,false,accepted_exact_normalized_name
+DDInter143,Avatrombopag,avatrombopag,Avatrombopag,avatrombopag,DB11995,true,false,,false,accepted_exact_normalized_name
+DDInter1430,Pergolide,pergolide,Pergolide,pergolide,DB01186,true,false,,false,accepted_exact_normalized_name
+DDInter1431,Perindopril,perindopril,Perindopril,perindopril,DB00790,true,false,,false,accepted_exact_normalized_name
+DDInter1432,Perphenazine,perphenazine,Perphenazine,perphenazine,DB00850,true,false,,false,accepted_exact_normalized_name
+DDInter1434,Pertuzumab,pertuzumab,Pertuzumab,pertuzumab,DB06366,true,false,,false,accepted_exact_normalized_name
+DDInter1435,Pexidartinib,pexidartinib,Pexidartinib,pexidartinib,DB12978,true,false,,false,accepted_exact_normalized_name
+DDInter1437,Phenacemide,phenacemide,Phenacemide,phenacemide,DB01121,true,false,,false,accepted_exact_normalized_name
+DDInter1438,Phenazopyridine,phenazopyridine,Phenazopyridine,phenazopyridine,DB01438,true,false,,false,accepted_exact_normalized_name
+DDInter1439,Phendimetrazine,phendimetrazine,Phendimetrazine,phendimetrazine,DB01579,true,false,,false,accepted_exact_normalized_name
+DDInter144,Avelumab,avelumab,Avelumab,avelumab,DB11945,true,false,,false,accepted_exact_normalized_name
+DDInter1440,Phenelzine,phenelzine,Phenelzine,phenelzine,DB00780,true,false,,false,accepted_exact_normalized_name
+DDInter1441,Phenindamine,phenindamine,Phenindamine,phenindamine,DB01619,true,false,,false,accepted_exact_normalized_name
+DDInter1442,Phenobarbital,phenobarbital,Phenobarbital,phenobarbital,DB01174,true,false,,false,accepted_exact_normalized_name
+DDInter1443,Phenolphthalein,phenolphthalein,Phenolphthalein,phenolphthalein,DB04824,true,false,,false,accepted_exact_normalized_name
+DDInter1444,Phenoxybenzamine,phenoxybenzamine,Phenoxybenzamine,phenoxybenzamine,DB00925,true,false,,false,accepted_exact_normalized_name
+DDInter1445,Phenoxymethylpenicillin,phenoxymethylpenicillin,Phenoxymethylpenicillin,phenoxymethylpenicillin,DB00417,true,false,,false,accepted_exact_normalized_name
+DDInter1446,Phensuximide,phensuximide,Phensuximide,phensuximide,DB00832,true,false,,false,accepted_exact_normalized_name
+DDInter1447,Phentermine,phentermine,Phentermine,phentermine,DB00191,true,false,,false,accepted_exact_normalized_name
+DDInter1448,Phentolamine,phentolamine,Phentolamine,phentolamine,DB00692,true,false,,false,accepted_exact_normalized_name
+DDInter1451,Phenylbutazone,phenylbutazone,Phenylbutazone,phenylbutazone,DB00812,true,false,,false,accepted_exact_normalized_name
+DDInter1452,Phenylbutyric acid,phenylbutyric acid,Phenylbutyric acid,phenylbutyric acid,DB06819,true,false,,false,accepted_exact_normalized_name
+DDInter1453,Phenylephrine,phenylephrine,Phenylephrine,phenylephrine,DB00388,true,false,,false,accepted_exact_normalized_name
+DDInter1458,Phenylpropanolamine,phenylpropanolamine,Phenylpropanolamine,phenylpropanolamine,DB00397,true,false,,false,accepted_exact_normalized_name
+DDInter1460,Phenytoin,phenytoin,Phenytoin,phenytoin,DB00252,true,false,,false,accepted_exact_normalized_name
+DDInter1461,Phylloquinone,phylloquinone,Phylloquinone,phylloquinone,DB01022,true,false,,false,accepted_exact_normalized_name
+DDInter1462,Physostigmine,physostigmine,Physostigmine,physostigmine,DB00981,true,false,,false,accepted_exact_normalized_name
+DDInter1464,Picosulfuric acid,picosulfuric acid,Picosulfuric acid,picosulfuric acid,DB09268,true,false,,false,accepted_exact_normalized_name
+DDInter1465,Pilocarpine,pilocarpine,Pilocarpine,pilocarpine,DB01085,true,false,,false,accepted_exact_normalized_name
+DDInter1467,Pimavanserin,pimavanserin,Pimavanserin,pimavanserin,DB05316,true,false,,false,accepted_exact_normalized_name
+DDInter1468,Pimecrolimus,pimecrolimus,Pimecrolimus,pimecrolimus,DB00337,true,false,,false,accepted_exact_normalized_name
+DDInter147,Axitinib,axitinib,Axitinib,axitinib,DB06626,true,false,,false,accepted_exact_normalized_name
+DDInter1470,Pimozide,pimozide,Pimozide,pimozide,DB01100,true,false,,false,accepted_exact_normalized_name
+DDInter1471,Pindolol,pindolol,Pindolol,pindolol,DB00960,true,false,,false,accepted_exact_normalized_name
+DDInter1472,Pioglitazone,pioglitazone,Pioglitazone,pioglitazone,DB01132,true,false,,false,accepted_exact_normalized_name
+DDInter1473,Pipecuronium,pipecuronium,Pipecuronium,pipecuronium,DB01338,true,false,,false,accepted_exact_normalized_name
+DDInter1474,Piperacillin,piperacillin,Piperacillin,piperacillin,DB00319,true,false,,false,accepted_exact_normalized_name
+DDInter1475,Piperazine,piperazine,Piperazine,piperazine,DB00592,true,false,,false,accepted_exact_normalized_name
+DDInter1476,Pirbuterol,pirbuterol,Pirbuterol,pirbuterol,DB01291,true,false,,false,accepted_exact_normalized_name
+DDInter1477,Pirfenidone,pirfenidone,Pirfenidone,pirfenidone,DB04951,true,false,,false,accepted_exact_normalized_name
+DDInter1478,Piroxicam,piroxicam,Piroxicam,piroxicam,DB00554,true,false,,false,accepted_exact_normalized_name
+DDInter1479,Pitavastatin,pitavastatin,Pitavastatin,pitavastatin,DB08860,true,false,,false,accepted_exact_normalized_name
+DDInter148,Azacitidine,azacitidine,Azacitidine,azacitidine,DB00928,true,false,,false,accepted_exact_normalized_name
+DDInter1480,Pitolisant,pitolisant,Pitolisant,pitolisant,DB11642,true,false,,false,accepted_exact_normalized_name
+DDInter1481,Plantago seed,plantago seed,Plantago seed,plantago seed,DB11097,true,false,,false,accepted_exact_normalized_name
+DDInter1482,Plazomicin,plazomicin,Plazomicin,plazomicin,DB12615,true,false,,false,accepted_exact_normalized_name
+DDInter1483,Plecanatide,plecanatide,Plecanatide,plecanatide,DB13170,true,false,,false,accepted_exact_normalized_name
+DDInter1484,Plicamycin,plicamycin,Plicamycin,plicamycin,DB06810,true,false,,false,accepted_exact_normalized_name
+DDInter1485,Polatuzumab vedotin,polatuzumab vedotin,Polatuzumab vedotin,polatuzumab vedotin,DB12240,true,false,,false,accepted_exact_normalized_name
+DDInter1489,Polymyxin B,polymyxin b,Polymyxin B,polymyxin b,DB00781,true,false,,false,accepted_exact_normalized_name
+DDInter149,Azatadine,azatadine,Azatadine,azatadine,DB00719,true,false,,false,accepted_exact_normalized_name
+DDInter1490,Polythiazide,polythiazide,Polythiazide,polythiazide,DB01324,true,false,,false,accepted_exact_normalized_name
+DDInter1491,Pomalidomide,pomalidomide,Pomalidomide,pomalidomide,DB08910,true,false,,false,accepted_exact_normalized_name
+DDInter1492,Ponatinib,ponatinib,Ponatinib,ponatinib,DB08901,true,false,,false,accepted_exact_normalized_name
+DDInter1493,Porfimer sodium,porfimer sodium,Porfimer sodium,porfimer sodium,DB00707,true,false,,false,accepted_exact_normalized_name
+DDInter1494,Posaconazole,posaconazole,Posaconazole,posaconazole,DB01263,true,false,,false,accepted_exact_normalized_name
+DDInter1495,Potassium acetate,potassium acetate,Potassium acetate,potassium acetate,DB14498,true,false,,false,accepted_exact_normalized_name
+DDInter1496,Potassium bicarbonate,potassium bicarbonate,Potassium bicarbonate,potassium bicarbonate,DB11098,true,false,,false,accepted_exact_normalized_name
+DDInter1497,Potassium chloride,potassium chloride,Potassium chloride,potassium chloride,DB00761,true,false,,false,accepted_exact_normalized_name
+DDInter1498,Potassium citrate,potassium citrate,Potassium citrate,potassium citrate,DB09125,true,false,,false,accepted_exact_normalized_name
+DDInter1499,Potassium gluconate,potassium gluconate,Potassium gluconate,potassium gluconate,DB13620,true,false,,false,accepted_exact_normalized_name
+DDInter15,Acetazolamide,acetazolamide,Acetazolamide,acetazolamide,DB00819,true,false,,false,accepted_exact_normalized_name
+DDInter150,Azathioprine,azathioprine,Azathioprine,azathioprine,DB00993,true,false,,false,accepted_exact_normalized_name
+DDInter1500,Potassium Iodide,potassium iodide,Potassium Iodide,potassium iodide,DB06715,true,false,,false,accepted_exact_normalized_name
+DDInter1501,Potassium perchlorate,potassium perchlorate,Potassium perchlorate,potassium perchlorate,DB09418,true,false,,false,accepted_exact_normalized_name
+DDInter1502,Pralatrexate,pralatrexate,Pralatrexate,pralatrexate,DB06813,true,false,,false,accepted_exact_normalized_name
+DDInter1503,Pralidoxime,pralidoxime,Pralidoxime,pralidoxime,DB00733,true,false,,false,accepted_exact_normalized_name
+DDInter1505,Pramipexole,pramipexole,Pramipexole,pramipexole,DB00413,true,false,,false,accepted_exact_normalized_name
+DDInter1506,Pramlintide,pramlintide,Pramlintide,pramlintide,DB01278,true,false,,false,accepted_exact_normalized_name
+DDInter1508,Prasugrel,prasugrel,Prasugrel,prasugrel,DB06209,true,false,,false,accepted_exact_normalized_name
+DDInter1509,Pravastatin,pravastatin,Pravastatin,pravastatin,DB00175,true,false,,false,accepted_exact_normalized_name
+DDInter151,Azelaic acid,azelaic acid,Azelaic acid,azelaic acid,DB00548,true,false,,false,accepted_exact_normalized_name
+DDInter1510,Praziquantel,praziquantel,Praziquantel,praziquantel,DB01058,true,false,,false,accepted_exact_normalized_name
+DDInter1511,Prazosin,prazosin,Prazosin,prazosin,DB00457,true,false,,false,accepted_exact_normalized_name
+DDInter1513,Prednisolone,prednisolone,Prednisolone,prednisolone,DB00860,true,false,,false,accepted_exact_normalized_name
+DDInter1515,Prednisone,prednisone,Prednisone,prednisone,DB00635,true,false,,false,accepted_exact_normalized_name
+DDInter1516,Pregabalin,pregabalin,Pregabalin,pregabalin,DB00230,true,false,,false,accepted_exact_normalized_name
+DDInter1517,Pretomanid,pretomanid,Pretomanid,pretomanid,DB05154,true,false,,false,accepted_exact_normalized_name
+DDInter1518,Prilocaine,prilocaine,Prilocaine,prilocaine,DB00750,true,false,,false,accepted_exact_normalized_name
+DDInter1520,Primaquine,primaquine,Primaquine,primaquine,DB01087,true,false,,false,accepted_exact_normalized_name
+DDInter1521,Primidone,primidone,Primidone,primidone,DB00794,true,false,,false,accepted_exact_normalized_name
+DDInter1522,Probenecid,probenecid,Probenecid,probenecid,DB01032,true,false,,false,accepted_exact_normalized_name
+DDInter1523,Probucol,probucol,Probucol,probucol,DB01599,true,false,,false,accepted_exact_normalized_name
+DDInter1524,Procainamide,procainamide,Procainamide,procainamide,DB01035,true,false,,false,accepted_exact_normalized_name
+DDInter1525,Procaine,procaine,Procaine,procaine,DB00721,true,false,,false,accepted_exact_normalized_name
+DDInter1526,Procarbazine,procarbazine,Procarbazine,procarbazine,DB01168,true,false,,false,accepted_exact_normalized_name
+DDInter1527,Prochlorperazine,prochlorperazine,Prochlorperazine,prochlorperazine,DB00433,true,false,,false,accepted_exact_normalized_name
+DDInter1528,Procyclidine,procyclidine,Procyclidine,procyclidine,DB00387,true,false,,false,accepted_exact_normalized_name
+DDInter1529,Progesterone,progesterone,Progesterone,progesterone,DB00396,true,false,,false,accepted_exact_normalized_name
+DDInter153,Azelastine,azelastine,Azelastine,azelastine,DB00972,true,false,,false,accepted_exact_normalized_name
+DDInter1531,Proguanil,proguanil,Proguanil,proguanil,DB01131,true,false,,false,accepted_exact_normalized_name
+DDInter1532,Promazine,promazine,Promazine,promazine,DB00420,true,false,,false,accepted_exact_normalized_name
+DDInter1533,Promethazine,promethazine,Promethazine,promethazine,DB01069,true,false,,false,accepted_exact_normalized_name
+DDInter1534,Propafenone,propafenone,Propafenone,propafenone,DB01182,true,false,,false,accepted_exact_normalized_name
+DDInter1535,Propantheline,propantheline,Propantheline,propantheline,DB00782,true,false,,false,accepted_exact_normalized_name
+DDInter1537,Propiomazine,propiomazine,Propiomazine,propiomazine,DB00777,true,false,,false,accepted_exact_normalized_name
+DDInter1538,Propofol,propofol,Propofol,propofol,DB00818,true,false,,false,accepted_exact_normalized_name
+DDInter1539,Propranolol,propranolol,Propranolol,propranolol,DB00571,true,false,,false,accepted_exact_normalized_name
+DDInter1541,Propylthiouracil,propylthiouracil,Propylthiouracil,propylthiouracil,DB00550,true,false,,false,accepted_exact_normalized_name
+DDInter1542,Protein C,protein c,Protein C,protein c,DB11312,true,false,,false,accepted_exact_normalized_name
+DDInter1543,Protriptyline,protriptyline,Protriptyline,protriptyline,DB00344,true,false,,false,accepted_exact_normalized_name
+DDInter1544,Prucalopride,prucalopride,Prucalopride,prucalopride,DB06480,true,false,,false,accepted_exact_normalized_name
+DDInter1545,Pseudoephedrine,pseudoephedrine,Pseudoephedrine,pseudoephedrine,DB00852,true,false,,false,accepted_exact_normalized_name
+DDInter1546,Pyrantel,pyrantel,Pyrantel,pyrantel,DB11156,true,false,,false,accepted_exact_normalized_name
+DDInter1547,Pyrazinamide,pyrazinamide,Pyrazinamide,pyrazinamide,DB00339,true,false,,false,accepted_exact_normalized_name
+DDInter1548,Pyridostigmine,pyridostigmine,Pyridostigmine,pyridostigmine,DB00545,true,false,,false,accepted_exact_normalized_name
+DDInter1549,Pyridoxine,pyridoxine,Pyridoxine,pyridoxine,DB00165,true,false,,false,accepted_exact_normalized_name
+DDInter1550,Pyrimethamine,pyrimethamine,Pyrimethamine,pyrimethamine,DB00205,true,false,,false,accepted_exact_normalized_name
+DDInter1551,Pyrophosphoric acid,pyrophosphoric acid,Pyrophosphoric acid,pyrophosphoric acid,DB04160,true,false,,false,accepted_exact_normalized_name
+DDInter1552,Quazepam,quazepam,Quazepam,quazepam,DB01589,true,false,,false,accepted_exact_normalized_name
+DDInter1553,Quetiapine,quetiapine,Quetiapine,quetiapine,DB01224,true,false,,false,accepted_exact_normalized_name
+DDInter1554,Quinapril,quinapril,Quinapril,quinapril,DB00881,true,false,,false,accepted_exact_normalized_name
+DDInter1555,Quinestrol,quinestrol,Quinestrol,quinestrol,DB04575,true,false,,false,accepted_exact_normalized_name
+DDInter1556,Quinidine,quinidine,Quinidine,quinidine,DB00908,true,false,,false,accepted_exact_normalized_name
+DDInter1557,Quinine,quinine,Quinine,quinine,DB00468,true,false,,false,accepted_exact_normalized_name
+DDInter1558,Quinupristin,quinupristin,Quinupristin,quinupristin,DB01369,true,false,,false,accepted_exact_normalized_name
+DDInter1559,Rabeprazole,rabeprazole,Rabeprazole,rabeprazole,DB01129,true,false,,false,accepted_exact_normalized_name
+DDInter156,Azilsartan medoxomil,azilsartan medoxomil,Azilsartan medoxomil,azilsartan medoxomil,DB08822,true,false,,false,accepted_exact_normalized_name
+DDInter1560,Racepinephrine,racepinephrine,Racepinephrine,racepinephrine,DB11124,true,false,,false,accepted_exact_normalized_name
+DDInter1561,Radium Ra 223 dichloride,radium ra 223 dichloride,Radium Ra 223 dichloride,radium ra 223 dichloride,DB08913,true,false,,false,accepted_exact_normalized_name
+DDInter1562,Raloxifene,raloxifene,Raloxifene,raloxifene,DB00481,true,false,,false,accepted_exact_normalized_name
+DDInter1563,Raltegravir,raltegravir,Raltegravir,raltegravir,DB06817,true,false,,false,accepted_exact_normalized_name
+DDInter1564,Ramelteon,ramelteon,Ramelteon,ramelteon,DB00980,true,false,,false,accepted_exact_normalized_name
+DDInter1565,Ramipril,ramipril,Ramipril,ramipril,DB00178,true,false,,false,accepted_exact_normalized_name
+DDInter1566,Ramucirumab,ramucirumab,Ramucirumab,ramucirumab,DB05578,true,false,,false,accepted_exact_normalized_name
+DDInter1568,Ranitidine,ranitidine,Ranitidine,ranitidine,DB00863,true,false,,false,accepted_exact_normalized_name
+DDInter157,Azithromycin,azithromycin,Azithromycin,azithromycin,DB00207,true,false,,false,accepted_exact_normalized_name
+DDInter1570,Ranolazine,ranolazine,Ranolazine,ranolazine,DB00243,true,false,,false,accepted_exact_normalized_name
+DDInter1571,Rapacuronium,rapacuronium,Rapacuronium,rapacuronium,DB04834,true,false,,false,accepted_exact_normalized_name
+DDInter1572,Rasagiline,rasagiline,Rasagiline,rasagiline,DB01367,true,false,,false,accepted_exact_normalized_name
+DDInter1573,Rasburicase,rasburicase,Rasburicase,rasburicase,DB00049,true,false,,false,accepted_exact_normalized_name
+DDInter1574,Ravulizumab,ravulizumab,Ravulizumab,ravulizumab,DB11580,true,false,,false,accepted_exact_normalized_name
+DDInter1575,Regadenoson,regadenoson,Regadenoson,regadenoson,DB06213,true,false,,false,accepted_exact_normalized_name
+DDInter1576,Regorafenib,regorafenib,Regorafenib,regorafenib,DB08896,true,false,,false,accepted_exact_normalized_name
+DDInter1577,Relugolix,relugolix,Relugolix,relugolix,DB11853,true,false,,false,accepted_exact_normalized_name
+DDInter1578,Remdesivir,remdesivir,Remdesivir,remdesivir,DB14761,true,false,,false,accepted_exact_normalized_name
+DDInter1579,Remifentanil,remifentanil,Remifentanil,remifentanil,DB00899,true,false,,false,accepted_exact_normalized_name
+DDInter158,Aztreonam,aztreonam,Aztreonam,aztreonam,DB00355,true,false,,false,accepted_exact_normalized_name
+DDInter1580,Remimazolam,remimazolam,Remimazolam,remimazolam,DB12404,true,false,,false,accepted_exact_normalized_name
+DDInter1581,Repaglinide,repaglinide,Repaglinide,repaglinide,DB00912,true,false,,false,accepted_exact_normalized_name
+DDInter1582,Reserpine,reserpine,Reserpine,reserpine,DB00206,true,false,,false,accepted_exact_normalized_name
+DDInter1585,Reteplase,reteplase,Reteplase,reteplase,DB00015,true,false,,false,accepted_exact_normalized_name
+DDInter1586,Revefenacin,revefenacin,Revefenacin,revefenacin,DB11855,true,false,,false,accepted_exact_normalized_name
+DDInter1587,Ribavirin,ribavirin,Ribavirin,ribavirin,DB00811,true,false,,false,accepted_exact_normalized_name
+DDInter1588,Ribociclib,ribociclib,Ribociclib,ribociclib,DB11730,true,false,,false,accepted_exact_normalized_name
+DDInter1589,Rifabutin,rifabutin,Rifabutin,rifabutin,DB00615,true,false,,false,accepted_exact_normalized_name
+DDInter159,Bacampicillin,bacampicillin,Bacampicillin,bacampicillin,DB01602,true,false,,false,accepted_exact_normalized_name
+DDInter1590,Rifampicin,rifampicin,Rifampicin,rifampicin,DB01045,true,false,,false,accepted_exact_normalized_name
+DDInter1591,Rifamycin,rifamycin,Rifamycin,rifamycin,DB11753,true,false,,false,accepted_exact_normalized_name
+DDInter1592,Rifapentine,rifapentine,Rifapentine,rifapentine,DB01201,true,false,,false,accepted_exact_normalized_name
+DDInter1593,Rifaximin,rifaximin,Rifaximin,rifaximin,DB01220,true,false,,false,accepted_exact_normalized_name
+DDInter1594,Rilonacept,rilonacept,Rilonacept,rilonacept,DB06372,true,false,,false,accepted_exact_normalized_name
+DDInter1595,Rilpivirine,rilpivirine,Rilpivirine,rilpivirine,DB08864,true,false,,false,accepted_exact_normalized_name
+DDInter1596,Riluzole,riluzole,Riluzole,riluzole,DB00740,true,false,,false,accepted_exact_normalized_name
+DDInter1597,Rimantadine,rimantadine,Rimantadine,rimantadine,DB00478,true,false,,false,accepted_exact_normalized_name
+DDInter1598,Rimegepant,rimegepant,Rimegepant,rimegepant,DB12457,true,false,,false,accepted_exact_normalized_name
+DDInter16,Acetohexamide,acetohexamide,Acetohexamide,acetohexamide,DB00414,true,false,,false,accepted_exact_normalized_name
+DDInter160,Bacillus calmette-guerin substrain tice live antigen,bacillus calmette-guerin substrain tice live antigen,Bacillus calmette-guerin substrain tice live antigen,bacillus calmette-guerin substrain tice live antigen,DB10343,true,false,,false,accepted_exact_normalized_name
+DDInter1600,Riociguat,riociguat,Riociguat,riociguat,DB08931,true,false,,false,accepted_exact_normalized_name
+DDInter1601,Ripretinib,ripretinib,Ripretinib,ripretinib,DB14840,true,false,,false,accepted_exact_normalized_name
+DDInter1602,Risankizumab,risankizumab,Risankizumab,risankizumab,DB14762,true,false,,false,accepted_exact_normalized_name
+DDInter1603,Risdiplam,risdiplam,Risdiplam,risdiplam,DB15305,true,false,,false,accepted_exact_normalized_name
+DDInter1604,Risedronic acid,risedronic acid,Risedronic acid,risedronic acid,DB00884,true,false,,false,accepted_exact_normalized_name
+DDInter1605,Risperidone,risperidone,Risperidone,risperidone,DB00734,true,false,,false,accepted_exact_normalized_name
+DDInter1606,Ritodrine,ritodrine,Ritodrine,ritodrine,DB00867,true,false,,false,accepted_exact_normalized_name
+DDInter1607,Ritonavir,ritonavir,Ritonavir,ritonavir,DB00503,true,false,,false,accepted_exact_normalized_name
+DDInter1608,Rituximab,rituximab,Rituximab,rituximab,DB00073,true,false,,false,accepted_exact_normalized_name
+DDInter1609,Rivaroxaban,rivaroxaban,Rivaroxaban,rivaroxaban,DB06228,true,false,,false,accepted_exact_normalized_name
+DDInter161,Bacitracin,bacitracin,Bacitracin,bacitracin,DB00626,true,false,,false,accepted_exact_normalized_name
+DDInter1610,Rivastigmine,rivastigmine,Rivastigmine,rivastigmine,DB00989,true,false,,false,accepted_exact_normalized_name
+DDInter1611,Rizatriptan,rizatriptan,Rizatriptan,rizatriptan,DB00953,true,false,,false,accepted_exact_normalized_name
+DDInter1612,Rocuronium,rocuronium,Rocuronium,rocuronium,DB00728,true,false,,false,accepted_exact_normalized_name
+DDInter1613,Rofecoxib,rofecoxib,Rofecoxib,rofecoxib,DB00533,true,false,,false,accepted_exact_normalized_name
+DDInter1614,Roflumilast,roflumilast,Roflumilast,roflumilast,DB01656,true,false,,false,accepted_exact_normalized_name
+DDInter1615,Rolapitant,rolapitant,Rolapitant,rolapitant,DB09291,true,false,,false,accepted_exact_normalized_name
+DDInter1616,Romidepsin,romidepsin,Romidepsin,romidepsin,DB06176,true,false,,false,accepted_exact_normalized_name
+DDInter1617,Romiplostim,romiplostim,Romiplostim,romiplostim,DB05332,true,false,,false,accepted_exact_normalized_name
+DDInter1618,Romosozumab,romosozumab,Romosozumab,romosozumab,DB11866,true,false,,false,accepted_exact_normalized_name
+DDInter1619,Ropinirole,ropinirole,Ropinirole,ropinirole,DB00268,true,false,,false,accepted_exact_normalized_name
+DDInter162,Baclofen,baclofen,Baclofen,baclofen,DB00181,true,false,,false,accepted_exact_normalized_name
+DDInter1620,Ropivacaine,ropivacaine,Ropivacaine,ropivacaine,DB00296,true,false,,false,accepted_exact_normalized_name
+DDInter1621,Rosiglitazone,rosiglitazone,Rosiglitazone,rosiglitazone,DB00412,true,false,,false,accepted_exact_normalized_name
+DDInter1622,Rosuvastatin,rosuvastatin,Rosuvastatin,rosuvastatin,DB01098,true,false,,false,accepted_exact_normalized_name
+DDInter1623,Rotavirus vaccine,rotavirus vaccine,Rotavirus vaccine,rotavirus vaccine,DB10276,true,false,,false,accepted_exact_normalized_name
+DDInter1624,Rotigotine,rotigotine,Rotigotine,rotigotine,DB05271,true,false,,false,accepted_exact_normalized_name
+DDInter1625,Rubella virus vaccine,rubella virus vaccine,Rubella virus vaccine,rubella virus vaccine,DB10317,true,false,,false,accepted_exact_normalized_name
+DDInter1626,Rucaparib,rucaparib,Rucaparib,rucaparib,DB12332,true,false,,false,accepted_exact_normalized_name
+DDInter1627,Rufinamide,rufinamide,Rufinamide,rufinamide,DB06201,true,false,,false,accepted_exact_normalized_name
+DDInter1628,Ruxolitinib,ruxolitinib,Ruxolitinib,ruxolitinib,DB08877,true,false,,false,accepted_exact_normalized_name
+DDInter1629,Sacituzumab govitecan,sacituzumab govitecan,Sacituzumab govitecan,sacituzumab govitecan,DB12893,true,false,,false,accepted_exact_normalized_name
+DDInter163,Baloxavir marboxil,baloxavir marboxil,Baloxavir marboxil,baloxavir marboxil,DB13997,true,false,,false,accepted_exact_normalized_name
+DDInter1630,Sacubitril,sacubitril,Sacubitril,sacubitril,DB09292,true,false,,false,accepted_exact_normalized_name
+DDInter1631,Safinamide,safinamide,Safinamide,safinamide,DB06654,true,false,,false,accepted_exact_normalized_name
+DDInter1632,Salbutamol,salbutamol,Salbutamol,salbutamol,DB01001,true,false,,false,accepted_exact_normalized_name
+DDInter1635,Salmeterol,salmeterol,Salmeterol,salmeterol,DB00938,true,false,,false,accepted_exact_normalized_name
+DDInter1636,Salmon calcitonin,salmon calcitonin,Salmon calcitonin,salmon calcitonin,DB00017,true,false,,false,accepted_exact_normalized_name
+DDInter1637,Salsalate,salsalate,Salsalate,salsalate,DB01399,true,false,,false,accepted_exact_normalized_name
+DDInter1639,Sapropterin,sapropterin,Sapropterin,sapropterin,DB00360,true,false,,false,accepted_exact_normalized_name
+DDInter164,Balsalazide,balsalazide,Balsalazide,balsalazide,DB01014,true,false,,false,accepted_exact_normalized_name
+DDInter1640,Saquinavir,saquinavir,Saquinavir,saquinavir,DB01232,true,false,,false,accepted_exact_normalized_name
+DDInter1641,Sarecycline,sarecycline,Sarecycline,sarecycline,DB12035,true,false,,false,accepted_exact_normalized_name
+DDInter1642,Sargramostim,sargramostim,Sargramostim,sargramostim,DB00020,true,false,,false,accepted_exact_normalized_name
+DDInter1643,Sarilumab,sarilumab,Sarilumab,sarilumab,DB11767,true,false,,false,accepted_exact_normalized_name
+DDInter1646,Saxagliptin,saxagliptin,Saxagliptin,saxagliptin,DB06335,true,false,,false,accepted_exact_normalized_name
+DDInter1647,Scopolamine,scopolamine,Scopolamine,scopolamine,DB00747,true,false,,false,accepted_exact_normalized_name
+DDInter165,Baricitinib,baricitinib,Baricitinib,baricitinib,DB11817,true,false,,false,accepted_exact_normalized_name
+DDInter1650,Secobarbital,secobarbital,Secobarbital,secobarbital,DB00418,true,false,,false,accepted_exact_normalized_name
+DDInter1651,Secretin human,secretin human,Secretin human,secretin human,DB09532,true,false,,false,accepted_exact_normalized_name
+DDInter1652,Secukinumab,secukinumab,Secukinumab,secukinumab,DB09029,true,false,,false,accepted_exact_normalized_name
+DDInter1653,Selegiline,selegiline,Selegiline,selegiline,DB01037,true,false,,false,accepted_exact_normalized_name
+DDInter1654,Selenium,selenium,Selenium,selenium,DB11135,true,false,,false,accepted_exact_normalized_name
+DDInter1656,Selexipag,selexipag,Selexipag,selexipag,DB11362,true,false,,false,accepted_exact_normalized_name
+DDInter1657,Selinexor,selinexor,Selinexor,selinexor,DB11942,true,false,,false,accepted_exact_normalized_name
+DDInter1658,Selpercatinib,selpercatinib,Selpercatinib,selpercatinib,DB15685,true,false,,false,accepted_exact_normalized_name
+DDInter1659,Selumetinib,selumetinib,Selumetinib,selumetinib,DB11689,true,false,,false,accepted_exact_normalized_name
+DDInter166,Basiliximab,basiliximab,Basiliximab,basiliximab,DB00074,true,false,,false,accepted_exact_normalized_name
+DDInter1660,Semaglutide,semaglutide,Semaglutide,semaglutide,DB13928,true,false,,false,accepted_exact_normalized_name
+DDInter1662,Sertraline,sertraline,Sertraline,sertraline,DB01104,true,false,,false,accepted_exact_normalized_name
+DDInter1663,Sevelamer,sevelamer,Sevelamer,sevelamer,DB00658,true,false,,false,accepted_exact_normalized_name
+DDInter1664,Sevoflurane,sevoflurane,Sevoflurane,sevoflurane,DB01236,true,false,,false,accepted_exact_normalized_name
+DDInter1665,Sibutramine,sibutramine,Sibutramine,sibutramine,DB01105,true,false,,false,accepted_exact_normalized_name
+DDInter1666,Sildenafil,sildenafil,Sildenafil,sildenafil,DB00203,true,false,,false,accepted_exact_normalized_name
+DDInter1667,Silodosin,silodosin,Silodosin,silodosin,DB06207,true,false,,false,accepted_exact_normalized_name
+DDInter1668,Siltuximab,siltuximab,Siltuximab,siltuximab,DB09036,true,false,,false,accepted_exact_normalized_name
+DDInter167,Bazedoxifene,bazedoxifene,Bazedoxifene,bazedoxifene,DB06401,true,false,,false,accepted_exact_normalized_name
+DDInter1673,Simeprevir,simeprevir,Simeprevir,simeprevir,DB06290,true,false,,false,accepted_exact_normalized_name
+DDInter1675,Simvastatin,simvastatin,Simvastatin,simvastatin,DB00641,true,false,,false,accepted_exact_normalized_name
+DDInter1676,Siponimod,siponimod,Siponimod,siponimod,DB12371,true,false,,false,accepted_exact_normalized_name
+DDInter1677,Sipuleucel-T,sipuleucel-t,Sipuleucel-T,sipuleucel-t,DB06688,true,false,,false,accepted_exact_normalized_name
+DDInter1678,Sirolimus,sirolimus,Sirolimus,sirolimus,DB00877,true,false,,false,accepted_exact_normalized_name
+DDInter1679,Sitagliptin,sitagliptin,Sitagliptin,sitagliptin,DB01261,true,false,,false,accepted_exact_normalized_name
+DDInter168,Beclomethasone dipropionate,beclomethasone dipropionate,Beclomethasone dipropionate,beclomethasone dipropionate,DB00394,true,false,,false,accepted_exact_normalized_name
+DDInter1681,Sodium acetate,sodium acetate,Sodium acetate,sodium acetate,DB09395,true,false,,false,accepted_exact_normalized_name
+DDInter1682,Sodium aurothiomalate,sodium aurothiomalate,Sodium aurothiomalate,sodium aurothiomalate,DB09276,true,false,,false,accepted_exact_normalized_name
+DDInter1683,Sodium bicarbonate,sodium bicarbonate,Sodium bicarbonate,sodium bicarbonate,DB01390,true,false,,false,accepted_exact_normalized_name
+DDInter1685,Sodium chloride,sodium chloride,Sodium chloride,sodium chloride,DB09153,true,false,,false,accepted_exact_normalized_name
+DDInter1686,Sodium citrate,sodium citrate,Sodium citrate,sodium citrate,DB09154,true,false,,false,accepted_exact_normalized_name
+DDInter1687,Sodium ferric gluconate complex,sodium ferric gluconate complex,Sodium ferric gluconate complex,sodium ferric gluconate complex,DB09517,true,false,,false,accepted_exact_normalized_name
+DDInter1690,Sodium oxybate,sodium oxybate,Sodium oxybate,sodium oxybate,DB09072,true,false,,false,accepted_exact_normalized_name
+DDInter1691,"Sodium phosphate, monobasic","sodium phosphate, monobasic","Sodium phosphate, monobasic","sodium phosphate, monobasic",DB09449,true,false,parenthetical_or_comma_exact_match,false,accepted_exact_normalized_name
+DDInter1693,Sodium sulfate,sodium sulfate,Sodium sulfate,sodium sulfate,DB09472,true,false,,false,accepted_exact_normalized_name
+DDInter1694,Sodium zirconium cyclosilicate,sodium zirconium cyclosilicate,Sodium zirconium cyclosilicate,sodium zirconium cyclosilicate,DB14048,true,false,,false,accepted_exact_normalized_name
+DDInter1695,Sofosbuvir,sofosbuvir,Sofosbuvir,sofosbuvir,DB08934,true,false,,false,accepted_exact_normalized_name
+DDInter1696,Solifenacin,solifenacin,Solifenacin,solifenacin,DB01591,true,false,,false,accepted_exact_normalized_name
+DDInter1697,Solriamfetol,solriamfetol,Solriamfetol,solriamfetol,DB14754,true,false,,false,accepted_exact_normalized_name
+DDInter1698,Somapacitan,somapacitan,Somapacitan,somapacitan,DB15093,true,false,,false,accepted_exact_normalized_name
+DDInter1699,Somatotropin,somatotropin,Somatotropin,somatotropin,DB00052,true,false,,false,accepted_exact_normalized_name
+DDInter17,Acetohydroxamic acid,acetohydroxamic acid,Acetohydroxamic acid,acetohydroxamic acid,DB00551,true,false,,false,accepted_exact_normalized_name
+DDInter170,Bedaquiline,bedaquiline,Bedaquiline,bedaquiline,DB08903,true,false,,false,accepted_exact_normalized_name
+DDInter1700,Somatrem,somatrem,Somatrem,somatrem,DB09098,true,false,,false,accepted_exact_normalized_name
+DDInter1701,Sonidegib,sonidegib,Sonidegib,sonidegib,DB09143,true,false,,false,accepted_exact_normalized_name
+DDInter1702,Sorafenib,sorafenib,Sorafenib,sorafenib,DB00398,true,false,,false,accepted_exact_normalized_name
+DDInter1703,Sorbitol,sorbitol,Sorbitol,sorbitol,DB01638,true,false,,false,accepted_exact_normalized_name
+DDInter1704,Sotalol,sotalol,Sotalol,sotalol,DB00489,true,false,,false,accepted_exact_normalized_name
+DDInter1705,Sparfloxacin,sparfloxacin,Sparfloxacin,sparfloxacin,DB01208,true,false,,false,accepted_exact_normalized_name
+DDInter1706,Spectinomycin,spectinomycin,Spectinomycin,spectinomycin,DB00919,true,false,,false,accepted_exact_normalized_name
+DDInter1707,Spironolactone,spironolactone,Spironolactone,spironolactone,DB00421,true,false,,false,accepted_exact_normalized_name
+DDInter1708,St. John's Wort,st. john's wort,St. John's Wort,st. john's wort,DB01323,true,false,,false,accepted_exact_normalized_name
+DDInter1709,Stanozolol,stanozolol,Stanozolol,stanozolol,DB06718,true,false,,false,accepted_exact_normalized_name
+DDInter1710,Stavudine,stavudine,Stavudine,stavudine,DB00649,true,false,,false,accepted_exact_normalized_name
+DDInter1711,Stiripentol,stiripentol,Stiripentol,stiripentol,DB09118,true,false,,false,accepted_exact_normalized_name
+DDInter1712,Streptokinase,streptokinase,Streptokinase,streptokinase,DB00086,true,false,,false,accepted_exact_normalized_name
+DDInter1713,Streptomycin,streptomycin,Streptomycin,streptomycin,DB01082,true,false,,false,accepted_exact_normalized_name
+DDInter1714,Streptozocin,streptozocin,Streptozocin,streptozocin,DB00428,true,false,,false,accepted_exact_normalized_name
+DDInter1716,Succinylcholine,succinylcholine,Succinylcholine,succinylcholine,DB00202,true,false,,false,accepted_exact_normalized_name
+DDInter1717,Sucralfate,sucralfate,Sucralfate,sucralfate,DB00364,true,false,,false,accepted_exact_normalized_name
+DDInter1718,Sufentanil,sufentanil,Sufentanil,sufentanil,DB00708,true,false,,false,accepted_exact_normalized_name
+DDInter1719,Sugammadex,sugammadex,Sugammadex,sugammadex,DB06206,true,false,,false,accepted_exact_normalized_name
+DDInter172,Belatacept,belatacept,Belatacept,belatacept,DB06681,true,false,,false,accepted_exact_normalized_name
+DDInter1721,Sulfadiazine,sulfadiazine,Sulfadiazine,sulfadiazine,DB00359,true,false,,false,accepted_exact_normalized_name
+DDInter1722,Sulfadoxine,sulfadoxine,Sulfadoxine,sulfadoxine,DB01299,true,false,,false,accepted_exact_normalized_name
+DDInter1723,Sulfamethizole,sulfamethizole,Sulfamethizole,sulfamethizole,DB00576,true,false,,false,accepted_exact_normalized_name
+DDInter1724,Sulfamethoxazole,sulfamethoxazole,Sulfamethoxazole,sulfamethoxazole,DB01015,true,false,,false,accepted_exact_normalized_name
+DDInter1725,Sulfasalazine,sulfasalazine,Sulfasalazine,sulfasalazine,DB00795,true,false,,false,accepted_exact_normalized_name
+DDInter1726,Sulfinpyrazone,sulfinpyrazone,Sulfinpyrazone,sulfinpyrazone,DB01138,true,false,,false,accepted_exact_normalized_name
+DDInter1727,Sulfisoxazole,sulfisoxazole,Sulfisoxazole,sulfisoxazole,DB00263,true,false,,false,accepted_exact_normalized_name
+DDInter1729,Sulindac,sulindac,Sulindac,sulindac,DB00605,true,false,,false,accepted_exact_normalized_name
+DDInter173,Belimumab,belimumab,Belimumab,belimumab,DB08879,true,false,,false,accepted_exact_normalized_name
+DDInter1730,Sumatriptan,sumatriptan,Sumatriptan,sumatriptan,DB00669,true,false,,false,accepted_exact_normalized_name
+DDInter1731,Sunitinib,sunitinib,Sunitinib,sunitinib,DB01268,true,false,,false,accepted_exact_normalized_name
+DDInter1733,Suvorexant,suvorexant,Suvorexant,suvorexant,DB09034,true,false,,false,accepted_exact_normalized_name
+DDInter1734,Tacrine,tacrine,Tacrine,tacrine,DB00382,true,false,,false,accepted_exact_normalized_name
+DDInter1735,Tacrolimus,tacrolimus,Tacrolimus,tacrolimus,DB00864,true,false,,false,accepted_exact_normalized_name
+DDInter1736,Tadalafil,tadalafil,Tadalafil,tadalafil,DB00820,true,false,,false,accepted_exact_normalized_name
+DDInter1737,Tafamidis,tafamidis,Tafamidis,tafamidis,DB11644,true,false,,false,accepted_exact_normalized_name
+DDInter1738,Tafasitamab,tafasitamab,Tafasitamab,tafasitamab,DB15044,true,false,,false,accepted_exact_normalized_name
+DDInter1739,Tafenoquine,tafenoquine,Tafenoquine,tafenoquine,DB06608,true,false,,false,accepted_exact_normalized_name
+DDInter174,Belinostat,belinostat,Belinostat,belinostat,DB05015,true,false,,false,accepted_exact_normalized_name
+DDInter1741,Tagraxofusp,tagraxofusp,Tagraxofusp,tagraxofusp,DB14731,true,false,,false,accepted_exact_normalized_name
+DDInter1742,Talazoparib,talazoparib,Talazoparib,talazoparib,DB11760,true,false,,false,accepted_exact_normalized_name
+DDInter1743,Talimogene laherparepvec,talimogene laherparepvec,Talimogene laherparepvec,talimogene laherparepvec,DB13896,true,false,,false,accepted_exact_normalized_name
+DDInter1744,Tamoxifen,tamoxifen,Tamoxifen,tamoxifen,DB00675,true,false,,false,accepted_exact_normalized_name
+DDInter1745,Tamsulosin,tamsulosin,Tamsulosin,tamsulosin,DB00706,true,false,,false,accepted_exact_normalized_name
+DDInter1746,Tapentadol,tapentadol,Tapentadol,tapentadol,DB06204,true,false,,false,accepted_exact_normalized_name
+DDInter1747,Tasimelteon,tasimelteon,Tasimelteon,tasimelteon,DB09071,true,false,,false,accepted_exact_normalized_name
+DDInter1748,Tazarotene,tazarotene,Tazarotene,tazarotene,DB00799,true,false,,false,accepted_exact_normalized_name
+DDInter1750,Tazemetostat,tazemetostat,Tazemetostat,tazemetostat,DB12887,true,false,,false,accepted_exact_normalized_name
+DDInter1752,Tedizolid,tedizolid,Tedizolid,tedizolid,DB14569,true,false,,false,accepted_exact_normalized_name
+DDInter1753,Teduglutide,teduglutide,Teduglutide,teduglutide,DB08900,true,false,,false,accepted_exact_normalized_name
+DDInter1754,Tegaserod,tegaserod,Tegaserod,tegaserod,DB01079,true,false,,false,accepted_exact_normalized_name
+DDInter1755,Telaprevir,telaprevir,Telaprevir,telaprevir,DB05521,true,false,,false,accepted_exact_normalized_name
+DDInter1756,Telavancin,telavancin,Telavancin,telavancin,DB06402,true,false,,false,accepted_exact_normalized_name
+DDInter1757,Telbivudine,telbivudine,Telbivudine,telbivudine,DB01265,true,false,,false,accepted_exact_normalized_name
+DDInter1758,Telithromycin,telithromycin,Telithromycin,telithromycin,DB00976,true,false,,false,accepted_exact_normalized_name
+DDInter1759,Telmisartan,telmisartan,Telmisartan,telmisartan,DB00966,true,false,,false,accepted_exact_normalized_name
+DDInter176,Bempedoic acid,bempedoic acid,Bempedoic acid,bempedoic acid,DB11936,true,false,,false,accepted_exact_normalized_name
+DDInter1761,Temazepam,temazepam,Temazepam,temazepam,DB00231,true,false,,false,accepted_exact_normalized_name
+DDInter1762,Temozolomide,temozolomide,Temozolomide,temozolomide,DB00853,true,false,,false,accepted_exact_normalized_name
+DDInter1763,Temsirolimus,temsirolimus,Temsirolimus,temsirolimus,DB06287,true,false,,false,accepted_exact_normalized_name
+DDInter1764,Tenecteplase,tenecteplase,Tenecteplase,tenecteplase,DB00031,true,false,,false,accepted_exact_normalized_name
+DDInter1765,Teniposide,teniposide,Teniposide,teniposide,DB00444,true,false,,false,accepted_exact_normalized_name
+DDInter1766,Teprotumumab,teprotumumab,Teprotumumab,teprotumumab,DB06343,true,false,,false,accepted_exact_normalized_name
+DDInter1767,Terazosin,terazosin,Terazosin,terazosin,DB01162,true,false,,false,accepted_exact_normalized_name
+DDInter1768,Terbinafine,terbinafine,Terbinafine,terbinafine,DB00857,true,false,,false,accepted_exact_normalized_name
+DDInter1769,Terbutaline,terbutaline,Terbutaline,terbutaline,DB00871,true,false,,false,accepted_exact_normalized_name
+DDInter177,Benazepril,benazepril,Benazepril,benazepril,DB00542,true,false,,false,accepted_exact_normalized_name
+DDInter1770,Terfenadine,terfenadine,Terfenadine,terfenadine,DB00342,true,false,,false,accepted_exact_normalized_name
+DDInter1771,Teriflunomide,teriflunomide,Teriflunomide,teriflunomide,DB08880,true,false,,false,accepted_exact_normalized_name
+DDInter1772,Teriparatide,teriparatide,Teriparatide,teriparatide,DB06285,true,false,,false,accepted_exact_normalized_name
+DDInter1773,Tesamorelin,tesamorelin,Tesamorelin,tesamorelin,DB08869,true,false,,false,accepted_exact_normalized_name
+DDInter1774,Testolactone,testolactone,Testolactone,testolactone,DB00894,true,false,,false,accepted_exact_normalized_name
+DDInter1775,Testosterone,testosterone,Testosterone,testosterone,DB00624,true,false,,false,accepted_exact_normalized_name
+DDInter1778,Tetrabenazine,tetrabenazine,Tetrabenazine,tetrabenazine,DB04844,true,false,,false,accepted_exact_normalized_name
+DDInter1779,Tetracaine,tetracaine,Tetracaine,tetracaine,DB09085,true,false,,false,accepted_exact_normalized_name
+DDInter178,Bendamustine,bendamustine,Bendamustine,bendamustine,DB06769,true,false,,false,accepted_exact_normalized_name
+DDInter1782,Tetracosactide,tetracosactide,Tetracosactide,tetracosactide,DB01284,true,false,,false,accepted_exact_normalized_name
+DDInter1783,Tetracycline,tetracycline,Tetracycline,tetracycline,DB00759,true,false,,false,accepted_exact_normalized_name
+DDInter1785,Tetraferric tricitrate decahydrate,tetraferric tricitrate decahydrate,Tetraferric tricitrate decahydrate,tetraferric tricitrate decahydrate,DB14520,true,false,,false,accepted_exact_normalized_name
+DDInter1789,Thalidomide,thalidomide,Thalidomide,thalidomide,DB01041,true,false,,false,accepted_exact_normalized_name
+DDInter179,Bendroflumethiazide,bendroflumethiazide,Bendroflumethiazide,bendroflumethiazide,DB00436,true,false,,false,accepted_exact_normalized_name
+DDInter1791,Theophylline,theophylline,Theophylline,theophylline,DB00277,true,false,,false,accepted_exact_normalized_name
+DDInter1792,Thiabendazole,thiabendazole,Thiabendazole,thiabendazole,DB00730,true,false,,false,accepted_exact_normalized_name
+DDInter1793,Thiethylperazine,thiethylperazine,Thiethylperazine,thiethylperazine,DB00372,true,false,,false,accepted_exact_normalized_name
+DDInter1795,Thiopental,thiopental,Thiopental,thiopental,DB00599,true,false,,false,accepted_exact_normalized_name
+DDInter1796,Thioridazine,thioridazine,Thioridazine,thioridazine,DB00679,true,false,,false,accepted_exact_normalized_name
+DDInter1797,Thiotepa,thiotepa,Thiotepa,thiotepa,DB04572,true,false,,false,accepted_exact_normalized_name
+DDInter1798,Thiothixene,thiothixene,Thiothixene,thiothixene,DB01623,true,false,,false,accepted_exact_normalized_name
+DDInter1799,"Thyroid, porcine","thyroid, porcine","Thyroid, porcine","thyroid, porcine",DB09100,true,false,parenthetical_or_comma_exact_match,false,accepted_exact_normalized_name
+DDInter18,Acetylcholine,acetylcholine,Acetylcholine,acetylcholine,DB03128,true,false,,false,accepted_exact_normalized_name
+DDInter1800,Thyrotropin alfa,thyrotropin alfa,Thyrotropin alfa,thyrotropin alfa,DB00024,true,false,,false,accepted_exact_normalized_name
+DDInter1801,Tiagabine,tiagabine,Tiagabine,tiagabine,DB00906,true,false,,false,accepted_exact_normalized_name
+DDInter1802,Ticagrelor,ticagrelor,Ticagrelor,ticagrelor,DB08816,true,false,,false,accepted_exact_normalized_name
+DDInter1803,Ticarcillin,ticarcillin,Ticarcillin,ticarcillin,DB01607,true,false,,false,accepted_exact_normalized_name
+DDInter1804,Ticlopidine,ticlopidine,Ticlopidine,ticlopidine,DB00208,true,false,,false,accepted_exact_normalized_name
+DDInter1805,Tigecycline,tigecycline,Tigecycline,tigecycline,DB00560,true,false,,false,accepted_exact_normalized_name
+DDInter1806,Tildrakizumab,tildrakizumab,Tildrakizumab,tildrakizumab,DB14004,true,false,,false,accepted_exact_normalized_name
+DDInter1808,Tiludronic acid,tiludronic acid,Tiludronic acid,tiludronic acid,DB01133,true,false,,false,accepted_exact_normalized_name
+DDInter1809,Timolol,timolol,Timolol,timolol,DB00373,true,false,,false,accepted_exact_normalized_name
+DDInter181,Benzatropine,benzatropine,Benzatropine,benzatropine,DB00245,true,false,,false,accepted_exact_normalized_name
+DDInter1811,Tinidazole,tinidazole,Tinidazole,tinidazole,DB00911,true,false,,false,accepted_exact_normalized_name
+DDInter1812,Tinzaparin,tinzaparin,Tinzaparin,tinzaparin,DB06822,true,false,,false,accepted_exact_normalized_name
+DDInter1813,Tioconazole,tioconazole,Tioconazole,tioconazole,DB01007,true,false,,false,accepted_exact_normalized_name
+DDInter1814,Tioguanine,tioguanine,Tioguanine,tioguanine,DB00352,true,false,,false,accepted_exact_normalized_name
+DDInter1815,Tiotropium,tiotropium,Tiotropium,tiotropium,DB01409,true,false,,false,accepted_exact_normalized_name
+DDInter1816,Tipiracil,tipiracil,Tipiracil,tipiracil,DB09343,true,false,,false,accepted_exact_normalized_name
+DDInter1817,Tipranavir,tipranavir,Tipranavir,tipranavir,DB00932,true,false,,false,accepted_exact_normalized_name
+DDInter1818,Tirofiban,tirofiban,Tirofiban,tirofiban,DB00775,true,false,,false,accepted_exact_normalized_name
+DDInter182,Benzhydrocodone,benzhydrocodone,Benzhydrocodone,benzhydrocodone,DB15465,true,false,,false,accepted_exact_normalized_name
+DDInter1820,Tivozanib,tivozanib,Tivozanib,tivozanib,DB11800,true,false,,false,accepted_exact_normalized_name
+DDInter1821,Tizanidine,tizanidine,Tizanidine,tizanidine,DB00697,true,false,,false,accepted_exact_normalized_name
+DDInter1822,Tobramycin,tobramycin,Tobramycin,tobramycin,DB00684,true,false,,false,accepted_exact_normalized_name
+DDInter1823,Tocainide,tocainide,Tocainide,tocainide,DB01056,true,false,,false,accepted_exact_normalized_name
+DDInter1824,Tocilizumab,tocilizumab,Tocilizumab,tocilizumab,DB06273,true,false,,false,accepted_exact_normalized_name
+DDInter1825,Tofacitinib,tofacitinib,Tofacitinib,tofacitinib,DB08895,true,false,,false,accepted_exact_normalized_name
+DDInter1826,Tolazamide,tolazamide,Tolazamide,tolazamide,DB00839,true,false,,false,accepted_exact_normalized_name
+DDInter1827,Tolazoline,tolazoline,Tolazoline,tolazoline,DB00797,true,false,,false,accepted_exact_normalized_name
+DDInter1828,Tolbutamide,tolbutamide,Tolbutamide,tolbutamide,DB01124,true,false,,false,accepted_exact_normalized_name
+DDInter1829,Tolcapone,tolcapone,Tolcapone,tolcapone,DB00323,true,false,,false,accepted_exact_normalized_name
+DDInter183,Benznidazole,benznidazole,Benznidazole,benznidazole,DB11989,true,false,,false,accepted_exact_normalized_name
+DDInter1830,Tolevamer,tolevamer,Tolevamer,tolevamer,DB01344,true,false,,false,accepted_exact_normalized_name
+DDInter1831,Tolmetin,tolmetin,Tolmetin,tolmetin,DB00500,true,false,,false,accepted_exact_normalized_name
+DDInter1832,Tolterodine,tolterodine,Tolterodine,tolterodine,DB01036,true,false,,false,accepted_exact_normalized_name
+DDInter1833,Tolvaptan,tolvaptan,Tolvaptan,tolvaptan,DB06212,true,false,,false,accepted_exact_normalized_name
+DDInter1834,Topiramate,topiramate,Topiramate,topiramate,DB00273,true,false,,false,accepted_exact_normalized_name
+DDInter1835,Topotecan,topotecan,Topotecan,topotecan,DB01030,true,false,,false,accepted_exact_normalized_name
+DDInter1836,Torasemide,torasemide,Torasemide,torasemide,DB00214,true,false,,false,accepted_exact_normalized_name
+DDInter1837,Toremifene,toremifene,Toremifene,toremifene,DB00539,true,false,,false,accepted_exact_normalized_name
+DDInter1838,Tositumomab,tositumomab,Tositumomab,tositumomab,DB00081,true,false,,false,accepted_exact_normalized_name
+DDInter1840,Trabectedin,trabectedin,Trabectedin,trabectedin,DB05109,true,false,,false,accepted_exact_normalized_name
+DDInter1841,Tramadol,tramadol,Tramadol,tramadol,DB00193,true,false,,false,accepted_exact_normalized_name
+DDInter1842,Trametinib,trametinib,Trametinib,trametinib,DB08911,true,false,,false,accepted_exact_normalized_name
+DDInter1843,Trandolapril,trandolapril,Trandolapril,trandolapril,DB00519,true,false,,false,accepted_exact_normalized_name
+DDInter1844,Tranexamic acid,tranexamic acid,Tranexamic acid,tranexamic acid,DB00302,true,false,,false,accepted_exact_normalized_name
+DDInter1845,Tranylcypromine,tranylcypromine,Tranylcypromine,tranylcypromine,DB00752,true,false,,false,accepted_exact_normalized_name
+DDInter1846,Trastuzumab,trastuzumab,Trastuzumab,trastuzumab,DB00072,true,false,,false,accepted_exact_normalized_name
+DDInter1847,Trastuzumab deruxtecan,trastuzumab deruxtecan,Trastuzumab deruxtecan,trastuzumab deruxtecan,DB14962,true,false,,false,accepted_exact_normalized_name
+DDInter1848,Trastuzumab emtansine,trastuzumab emtansine,Trastuzumab emtansine,trastuzumab emtansine,DB05773,true,false,,false,accepted_exact_normalized_name
+DDInter1849,Travoprost,travoprost,Travoprost,travoprost,DB00287,true,false,,false,accepted_exact_normalized_name
+DDInter1851,Trazodone,trazodone,Trazodone,trazodone,DB00656,true,false,,false,accepted_exact_normalized_name
+DDInter1852,Treprostinil,treprostinil,Treprostinil,treprostinil,DB00374,true,false,,false,accepted_exact_normalized_name
+DDInter1853,Tretinoin,tretinoin,Tretinoin,tretinoin,DB00755,true,false,,false,accepted_exact_normalized_name
+DDInter1855,Triamcinolone,triamcinolone,Triamcinolone,triamcinolone,DB00620,true,false,,false,accepted_exact_normalized_name
+DDInter1859,Triamterene,triamterene,Triamterene,triamterene,DB00384,true,false,,false,accepted_exact_normalized_name
+DDInter1860,Triazolam,triazolam,Triazolam,triazolam,DB00897,true,false,,false,accepted_exact_normalized_name
+DDInter1861,Trichlormethiazide,trichlormethiazide,Trichlormethiazide,trichlormethiazide,DB01021,true,false,,false,accepted_exact_normalized_name
+DDInter1863,Triclabendazole,triclabendazole,Triclabendazole,triclabendazole,DB12245,true,false,,false,accepted_exact_normalized_name
+DDInter1864,Triethylenetetramine,triethylenetetramine,Triethylenetetramine,triethylenetetramine,DB06824,true,false,,false,accepted_exact_normalized_name
+DDInter1866,Trifluoperazine,trifluoperazine,Trifluoperazine,trifluoperazine,DB00831,true,false,,false,accepted_exact_normalized_name
+DDInter1867,Triflupromazine,triflupromazine,Triflupromazine,triflupromazine,DB00508,true,false,,false,accepted_exact_normalized_name
+DDInter1868,Trifluridine,trifluridine,Trifluridine,trifluridine,DB00432,true,false,,false,accepted_exact_normalized_name
+DDInter1869,Triheptanoin,triheptanoin,Triheptanoin,triheptanoin,DB11677,true,false,,false,accepted_exact_normalized_name
+DDInter187,Benzphetamine,benzphetamine,Benzphetamine,benzphetamine,DB00865,true,false,,false,accepted_exact_normalized_name
+DDInter1870,Trihexyphenidyl,trihexyphenidyl,Trihexyphenidyl,trihexyphenidyl,DB00376,true,false,,false,accepted_exact_normalized_name
+DDInter1871,Trimethadione,trimethadione,Trimethadione,trimethadione,DB00347,true,false,,false,accepted_exact_normalized_name
+DDInter1872,Trimethaphan,trimethaphan,Trimethaphan,trimethaphan,DB01116,true,false,,false,accepted_exact_normalized_name
+DDInter1873,Trimethobenzamide,trimethobenzamide,Trimethobenzamide,trimethobenzamide,DB00662,true,false,,false,accepted_exact_normalized_name
+DDInter1874,Trimethoprim,trimethoprim,Trimethoprim,trimethoprim,DB00440,true,false,,false,accepted_exact_normalized_name
+DDInter1875,Trimetrexate,trimetrexate,Trimetrexate,trimetrexate,DB01157,true,false,,false,accepted_exact_normalized_name
+DDInter1876,Trimipramine,trimipramine,Trimipramine,trimipramine,DB00726,true,false,,false,accepted_exact_normalized_name
+DDInter1877,Trioxsalen,trioxsalen,Trioxsalen,trioxsalen,DB04571,true,false,,false,accepted_exact_normalized_name
+DDInter1878,Tripelennamine,tripelennamine,Tripelennamine,tripelennamine,DB00792,true,false,,false,accepted_exact_normalized_name
+DDInter1879,Triprolidine,triprolidine,Triprolidine,triprolidine,DB00427,true,false,,false,accepted_exact_normalized_name
+DDInter188,Benzthiazide,benzthiazide,Benzthiazide,benzthiazide,DB00562,true,false,,false,accepted_exact_normalized_name
+DDInter1880,Triptorelin,triptorelin,Triptorelin,triptorelin,DB06825,true,false,,false,accepted_exact_normalized_name
+DDInter1881,Troglitazone,troglitazone,Troglitazone,troglitazone,DB00197,true,false,,false,accepted_exact_normalized_name
+DDInter1882,Troleandomycin,troleandomycin,Troleandomycin,troleandomycin,DB13179,true,false,,false,accepted_exact_normalized_name
+DDInter1883,Tromethamine,tromethamine,Tromethamine,tromethamine,DB03754,true,false,,false,accepted_exact_normalized_name
+DDInter1884,Tropicamide,tropicamide,Tropicamide,tropicamide,DB00809,true,false,,false,accepted_exact_normalized_name
+DDInter1886,Trospium,trospium,Trospium,trospium,DB00209,true,false,,false,accepted_exact_normalized_name
+DDInter1887,Trovafloxacin,trovafloxacin,Trovafloxacin,trovafloxacin,DB00685,true,false,,false,accepted_exact_normalized_name
+DDInter1888,Tryptophan,tryptophan,Tryptophan,tryptophan,DB00150,true,false,,false,accepted_exact_normalized_name
+DDInter189,Benzylpenicillin,benzylpenicillin,Benzylpenicillin,benzylpenicillin,DB01053,true,false,,false,accepted_exact_normalized_name
+DDInter1890,Tubocurarine,tubocurarine,Tubocurarine,tubocurarine,DB01199,true,false,,false,accepted_exact_normalized_name
+DDInter1891,Tucatinib,tucatinib,Tucatinib,tucatinib,DB11652,true,false,,false,accepted_exact_normalized_name
+DDInter1896,Ubrogepant,ubrogepant,Ubrogepant,ubrogepant,DB15328,true,false,,false,accepted_exact_normalized_name
+DDInter1897,Ulipristal,ulipristal,Ulipristal,ulipristal,DB08867,true,false,,false,accepted_exact_normalized_name
+DDInter1899,Umeclidinium,umeclidinium,Umeclidinium,umeclidinium,DB09076,true,false,,false,accepted_exact_normalized_name
+DDInter19,Acetylcysteine,acetylcysteine,Acetylcysteine,acetylcysteine,DB06151,true,false,,false,accepted_exact_normalized_name
+DDInter1901,Upadacitinib,upadacitinib,Upadacitinib,upadacitinib,DB15091,true,false,,false,accepted_exact_normalized_name
+DDInter1902,Uracil mustard,uracil mustard,Uracil mustard,uracil mustard,DB00791,true,false,,false,accepted_exact_normalized_name
+DDInter1905,Urokinase,urokinase,Urokinase,urokinase,DB00013,true,false,,false,accepted_exact_normalized_name
+DDInter1906,Ursodeoxycholic acid,ursodeoxycholic acid,Ursodeoxycholic acid,ursodeoxycholic acid,DB01586,true,false,,false,accepted_exact_normalized_name
+DDInter1907,Ustekinumab,ustekinumab,Ustekinumab,ustekinumab,DB05679,true,false,,false,accepted_exact_normalized_name
+DDInter1908,Valaciclovir,valaciclovir,Valaciclovir,valaciclovir,DB00577,true,false,,false,accepted_exact_normalized_name
+DDInter1909,Valbenazine,valbenazine,Valbenazine,valbenazine,DB11915,true,false,,false,accepted_exact_normalized_name
+DDInter1910,Valdecoxib,valdecoxib,Valdecoxib,valdecoxib,DB00580,true,false,,false,accepted_exact_normalized_name
+DDInter1912,Valganciclovir,valganciclovir,Valganciclovir,valganciclovir,DB01610,true,false,,false,accepted_exact_normalized_name
+DDInter1913,Valproic acid,valproic acid,Valproic acid,valproic acid,DB00313,true,false,,false,accepted_exact_normalized_name
+DDInter1914,Valrubicin,valrubicin,Valrubicin,valrubicin,DB00385,true,false,,false,accepted_exact_normalized_name
+DDInter1915,Valsartan,valsartan,Valsartan,valsartan,DB00177,true,false,,false,accepted_exact_normalized_name
+DDInter1916,Vancomycin,vancomycin,Vancomycin,vancomycin,DB00512,true,false,,false,accepted_exact_normalized_name
+DDInter1917,Vandetanib,vandetanib,Vandetanib,vandetanib,DB05294,true,false,,false,accepted_exact_normalized_name
+DDInter1918,Vardenafil,vardenafil,Vardenafil,vardenafil,DB00862,true,false,,false,accepted_exact_normalized_name
+DDInter1919,Varenicline,varenicline,Varenicline,varenicline,DB01273,true,false,,false,accepted_exact_normalized_name
+DDInter192,Bepridil,bepridil,Bepridil,bepridil,DB01244,true,false,,false,accepted_exact_normalized_name
+DDInter1920,Varicella Zoster Vaccine (Recombinant),varicella zoster vaccine (recombinant),Varicella Zoster Vaccine (Recombinant),varicella zoster vaccine (recombinant),DB13924,true,true,parenthetical_or_comma_exact_match;qualifier_preserved_exactly:recombinant,false,accepted_exact_normalized_name
+DDInter1921,Vasopressin,vasopressin,Vasopressin,vasopressin,DB00067,true,false,,false,accepted_exact_normalized_name
+DDInter1922,Vecuronium,vecuronium,Vecuronium,vecuronium,DB01339,true,false,,false,accepted_exact_normalized_name
+DDInter1923,Vedolizumab,vedolizumab,Vedolizumab,vedolizumab,DB09033,true,false,,false,accepted_exact_normalized_name
+DDInter1924,Velpatasvir,velpatasvir,Velpatasvir,velpatasvir,DB11613,true,false,,false,accepted_exact_normalized_name
+DDInter1925,Vemurafenib,vemurafenib,Vemurafenib,vemurafenib,DB08881,true,false,,false,accepted_exact_normalized_name
+DDInter1926,Venetoclax,venetoclax,Venetoclax,venetoclax,DB11581,true,false,,false,accepted_exact_normalized_name
+DDInter1927,Venlafaxine,venlafaxine,Venlafaxine,venlafaxine,DB00285,true,false,,false,accepted_exact_normalized_name
+DDInter1928,Verapamil,verapamil,Verapamil,verapamil,DB00661,true,false,,false,accepted_exact_normalized_name
+DDInter1929,Verteporfin,verteporfin,Verteporfin,verteporfin,DB00460,true,false,,false,accepted_exact_normalized_name
+DDInter1930,Vibegron,vibegron,Vibegron,vibegron,DB14895,true,false,,false,accepted_exact_normalized_name
+DDInter1931,Vibrio cholerae CVD 103-HgR strain live antigen,vibrio cholerae cvd 103-hgr strain live antigen,Vibrio cholerae CVD 103-HgR strain live antigen,vibrio cholerae cvd 103-hgr strain live antigen,DB14443,true,false,,false,accepted_exact_normalized_name
+DDInter1933,Vigabatrin,vigabatrin,Vigabatrin,vigabatrin,DB01080,true,false,,false,accepted_exact_normalized_name
+DDInter1934,Vilanterol,vilanterol,Vilanterol,vilanterol,DB09082,true,false,,false,accepted_exact_normalized_name
+DDInter1935,Vilazodone,vilazodone,Vilazodone,vilazodone,DB06684,true,false,,false,accepted_exact_normalized_name
+DDInter1936,Vinblastine,vinblastine,Vinblastine,vinblastine,DB00570,true,false,,false,accepted_exact_normalized_name
+DDInter1937,Vincristine,vincristine,Vincristine,vincristine,DB00541,true,false,,false,accepted_exact_normalized_name
+DDInter1939,Vinorelbine,vinorelbine,Vinorelbine,vinorelbine,DB00361,true,false,,false,accepted_exact_normalized_name
+DDInter194,Beta carotene,beta carotene,Beta carotene,beta carotene,DB06755,true,false,,false,accepted_exact_normalized_name
+DDInter1940,Vismodegib,vismodegib,Vismodegib,vismodegib,DB08828,true,false,,false,accepted_exact_normalized_name
+DDInter1941,Vitamin A,vitamin a,Vitamin A,vitamin a,DB00162,true,false,,false,accepted_exact_normalized_name
+DDInter1942,Vitamin D,vitamin d,Vitamin D,vitamin d,DB11094,true,false,,false,accepted_exact_normalized_name
+DDInter1943,Vitamin E,vitamin e,Vitamin E,vitamin e,DB00163,true,false,,false,accepted_exact_normalized_name
+DDInter1944,Von Willebrand Factor Human,von willebrand factor human,Von Willebrand Factor Human,von willebrand factor human,DB13133,true,false,,false,accepted_exact_normalized_name
+DDInter1945,Vorapaxar,vorapaxar,Vorapaxar,vorapaxar,DB09030,true,false,,false,accepted_exact_normalized_name
+DDInter1946,Voriconazole,voriconazole,Voriconazole,voriconazole,DB00582,true,false,,false,accepted_exact_normalized_name
+DDInter1947,Vorinostat,vorinostat,Vorinostat,vorinostat,DB02546,true,false,,false,accepted_exact_normalized_name
+DDInter1948,Vortioxetine,vortioxetine,Vortioxetine,vortioxetine,DB09068,true,false,,false,accepted_exact_normalized_name
+DDInter1949,Voxelotor,voxelotor,Voxelotor,voxelotor,DB14975,true,false,,false,accepted_exact_normalized_name
+DDInter195,Betamethasone,betamethasone,Betamethasone,betamethasone,DB00443,true,false,,false,accepted_exact_normalized_name
+DDInter1950,Voxilaprevir,voxilaprevir,Voxilaprevir,voxilaprevir,DB12026,true,false,,false,accepted_exact_normalized_name
+DDInter1951,Warfarin,warfarin,Warfarin,warfarin,DB00682,true,false,,false,accepted_exact_normalized_name
+DDInter1953,Yellow Fever Vaccine,yellow fever vaccine,Yellow Fever Vaccine,yellow fever vaccine,DB10805,true,false,,false,accepted_exact_normalized_name
+DDInter1954,Yohimbine,yohimbine,Yohimbine,yohimbine,DB01392,true,false,,false,accepted_exact_normalized_name
+DDInter1955,Zafirlukast,zafirlukast,Zafirlukast,zafirlukast,DB00549,true,false,,false,accepted_exact_normalized_name
+DDInter1956,Zalcitabine,zalcitabine,Zalcitabine,zalcitabine,DB00943,true,false,,false,accepted_exact_normalized_name
+DDInter1957,Zaleplon,zaleplon,Zaleplon,zaleplon,DB00962,true,false,,false,accepted_exact_normalized_name
+DDInter1958,Zanamivir,zanamivir,Zanamivir,zanamivir,DB00558,true,false,,false,accepted_exact_normalized_name
+DDInter1959,Zanubrutinib,zanubrutinib,Zanubrutinib,zanubrutinib,DB15035,true,false,,false,accepted_exact_normalized_name
+DDInter1960,Ziconotide,ziconotide,Ziconotide,ziconotide,DB06283,true,false,,false,accepted_exact_normalized_name
+DDInter1961,Zidovudine,zidovudine,Zidovudine,zidovudine,DB00495,true,false,,false,accepted_exact_normalized_name
+DDInter1962,Zileuton,zileuton,Zileuton,zileuton,DB00744,true,false,,false,accepted_exact_normalized_name
+DDInter1963,Zinc acetate,zinc acetate,Zinc acetate,zinc acetate,DB14487,true,false,,false,accepted_exact_normalized_name
+DDInter1964,Zinc chloride,zinc chloride,Zinc chloride,zinc chloride,DB14533,true,false,,false,accepted_exact_normalized_name
+DDInter1965,Zinc gluconate,zinc gluconate,Zinc gluconate,zinc gluconate,DB11248,true,false,,false,accepted_exact_normalized_name
+DDInter1966,Zinc sulfate,zinc sulfate,Zinc sulfate,zinc sulfate,DB09322,true,false,,false,accepted_exact_normalized_name
+DDInter1967,Ziprasidone,ziprasidone,Ziprasidone,ziprasidone,DB00246,true,false,,false,accepted_exact_normalized_name
+DDInter1968,Zoledronic acid,zoledronic acid,Zoledronic acid,zoledronic acid,DB00399,true,false,,false,accepted_exact_normalized_name
+DDInter1969,Zolmitriptan,zolmitriptan,Zolmitriptan,zolmitriptan,DB00315,true,false,,false,accepted_exact_normalized_name
+DDInter197,Betaxolol,betaxolol,Betaxolol,betaxolol,DB00195,true,false,,false,accepted_exact_normalized_name
+DDInter1970,Zolpidem,zolpidem,Zolpidem,zolpidem,DB00425,true,false,,false,accepted_exact_normalized_name
+DDInter1971,Zonisamide,zonisamide,Zonisamide,zonisamide,DB00909,true,false,,false,accepted_exact_normalized_name
+DDInter1972,Zopiclone,zopiclone,Zopiclone,zopiclone,DB01198,true,false,,false,accepted_exact_normalized_name
+DDInter199,Bethanechol,bethanechol,Bethanechol,bethanechol,DB01019,true,false,,false,accepted_exact_normalized_name
+DDInter2,Abaloparatide,abaloparatide,Abaloparatide,abaloparatide,DB05084,true,false,,false,accepted_exact_normalized_name
+DDInter20,Acetylsalicylic acid,acetylsalicylic acid,Acetylsalicylic acid,acetylsalicylic acid,DB00945,true,false,,false,accepted_exact_normalized_name
+DDInter200,Betrixaban,betrixaban,Betrixaban,betrixaban,DB12364,true,false,,false,accepted_exact_normalized_name
+DDInter201,Bevacizumab,bevacizumab,Bevacizumab,bevacizumab,DB00112,true,false,,false,accepted_exact_normalized_name
+DDInter202,Bexarotene,bexarotene,Bexarotene,bexarotene,DB00307,true,false,,false,accepted_exact_normalized_name
+DDInter204,Bicalutamide,bicalutamide,Bicalutamide,bicalutamide,DB01128,true,false,,false,accepted_exact_normalized_name
+DDInter205,Bictegravir,bictegravir,Bictegravir,bictegravir,DB11799,true,false,,false,accepted_exact_normalized_name
+DDInter207,Bimatoprost,bimatoprost,Bimatoprost,bimatoprost,DB00905,true,false,,false,accepted_exact_normalized_name
+DDInter21,Acitretin,acitretin,Acitretin,acitretin,DB00459,true,false,,false,accepted_exact_normalized_name
+DDInter210,Binimetinib,binimetinib,Binimetinib,binimetinib,DB11967,true,false,,false,accepted_exact_normalized_name
+DDInter211,Biperiden,biperiden,Biperiden,biperiden,DB00810,true,false,,false,accepted_exact_normalized_name
+DDInter212,Bisacodyl,bisacodyl,Bisacodyl,bisacodyl,DB09020,true,false,,false,accepted_exact_normalized_name
+DDInter213,Bismuth subcitrate potassium,bismuth subcitrate potassium,Bismuth subcitrate potassium,bismuth subcitrate potassium,DB09275,true,false,,false,accepted_exact_normalized_name
+DDInter214,Bismuth subgallate,bismuth subgallate,Bismuth subgallate,bismuth subgallate,DB13909,true,false,,false,accepted_exact_normalized_name
+DDInter215,Bismuth subsalicylate,bismuth subsalicylate,Bismuth subsalicylate,bismuth subsalicylate,DB01294,true,false,,false,accepted_exact_normalized_name
+DDInter216,Bisoprolol,bisoprolol,Bisoprolol,bisoprolol,DB00612,true,false,,false,accepted_exact_normalized_name
+DDInter217,Bivalirudin,bivalirudin,Bivalirudin,bivalirudin,DB00006,true,false,,false,accepted_exact_normalized_name
+DDInter219,Bleomycin,bleomycin,Bleomycin,bleomycin,DB00290,true,false,,false,accepted_exact_normalized_name
+DDInter22,Aclidinium,aclidinium,Aclidinium,aclidinium,DB08897,true,false,,false,accepted_exact_normalized_name
+DDInter220,Blinatumomab,blinatumomab,Blinatumomab,blinatumomab,DB09052,true,false,,false,accepted_exact_normalized_name
+DDInter221,Boceprevir,boceprevir,Boceprevir,boceprevir,DB08873,true,false,,false,accepted_exact_normalized_name
+DDInter222,Bortezomib,bortezomib,Bortezomib,bortezomib,DB00188,true,false,,false,accepted_exact_normalized_name
+DDInter223,Bosentan,bosentan,Bosentan,bosentan,DB00559,true,false,,false,accepted_exact_normalized_name
+DDInter224,Bosutinib,bosutinib,Bosutinib,bosutinib,DB06616,true,false,,false,accepted_exact_normalized_name
+DDInter225,Botulinum toxin type A,botulinum toxin type a,Botulinum toxin type A,botulinum toxin type a,DB00083,true,false,,false,accepted_exact_normalized_name
+DDInter226,Botulinum Toxin Type B,botulinum toxin type b,Botulinum Toxin Type B,botulinum toxin type b,DB00042,true,false,,false,accepted_exact_normalized_name
+DDInter227,Bremelanotide,bremelanotide,Bremelanotide,bremelanotide,DB11653,true,false,,false,accepted_exact_normalized_name
+DDInter228,Brentuximab vedotin,brentuximab vedotin,Brentuximab vedotin,brentuximab vedotin,DB08870,true,false,,false,accepted_exact_normalized_name
+DDInter229,Bretylium,bretylium,Bretylium,bretylium,DB01158,true,false,,false,accepted_exact_normalized_name
+DDInter23,Acrivastine,acrivastine,Acrivastine,acrivastine,DB09488,true,false,,false,accepted_exact_normalized_name
+DDInter230,Brexanolone,brexanolone,Brexanolone,brexanolone,DB11859,true,false,,false,accepted_exact_normalized_name
+DDInter231,Brexpiprazole,brexpiprazole,Brexpiprazole,brexpiprazole,DB09128,true,false,,false,accepted_exact_normalized_name
+DDInter233,Brigatinib,brigatinib,Brigatinib,brigatinib,DB12267,true,false,,false,accepted_exact_normalized_name
+DDInter234,Brimonidine,brimonidine,Brimonidine,brimonidine,DB00484,true,false,,false,accepted_exact_normalized_name
+DDInter237,Brinzolamide,brinzolamide,Brinzolamide,brinzolamide,DB01194,true,false,,false,accepted_exact_normalized_name
+DDInter239,Brivaracetam,brivaracetam,Brivaracetam,brivaracetam,DB05541,true,false,,false,accepted_exact_normalized_name
+DDInter24,Activated charcoal,activated charcoal,Activated charcoal,activated charcoal,DB09278,true,false,,false,accepted_exact_normalized_name
+DDInter240,Brodalumab,brodalumab,Brodalumab,brodalumab,DB11776,true,false,,false,accepted_exact_normalized_name
+DDInter241,Bromfenac,bromfenac,Bromfenac,bromfenac,DB00963,true,false,,false,accepted_exact_normalized_name
+DDInter243,Bromocriptine,bromocriptine,Bromocriptine,bromocriptine,DB01200,true,false,,false,accepted_exact_normalized_name
+DDInter244,Bromotheophylline,bromotheophylline,Bromotheophylline,bromotheophylline,DB14018,true,false,,false,accepted_exact_normalized_name
+DDInter245,Brompheniramine,brompheniramine,Brompheniramine,brompheniramine,DB00835,true,false,,false,accepted_exact_normalized_name
+DDInter246,Budesonide,budesonide,Budesonide,budesonide,DB01222,true,false,,false,accepted_exact_normalized_name
+DDInter248,Bumetanide,bumetanide,Bumetanide,bumetanide,DB00887,true,false,,false,accepted_exact_normalized_name
+DDInter249,Bupivacaine,bupivacaine,Bupivacaine,bupivacaine,DB00297,true,false,,false,accepted_exact_normalized_name
+DDInter25,Acyclovir,acyclovir,Acyclovir,acyclovir,DB00787,true,false,,false,accepted_exact_normalized_name
+DDInter251,Buprenorphine,buprenorphine,Buprenorphine,buprenorphine,DB00921,true,false,,false,accepted_exact_normalized_name
+DDInter252,Bupropion,bupropion,Bupropion,bupropion,DB01156,true,false,,false,accepted_exact_normalized_name
+DDInter253,Burosumab,burosumab,Burosumab,burosumab,DB14012,true,false,,false,accepted_exact_normalized_name
+DDInter254,Buspirone,buspirone,Buspirone,buspirone,DB00490,true,false,,false,accepted_exact_normalized_name
+DDInter255,Busulfan,busulfan,Busulfan,busulfan,DB01008,true,false,,false,accepted_exact_normalized_name
+DDInter256,Butabarbital,butabarbital,Butabarbital,butabarbital,DB00237,true,false,,false,accepted_exact_normalized_name
+DDInter257,Butalbital,butalbital,Butalbital,butalbital,DB00241,true,false,,false,accepted_exact_normalized_name
+DDInter258,Butorphanol,butorphanol,Butorphanol,butorphanol,DB00611,true,false,,false,accepted_exact_normalized_name
+DDInter259,Cabazitaxel,cabazitaxel,Cabazitaxel,cabazitaxel,DB06772,true,false,,false,accepted_exact_normalized_name
+DDInter260,Cabergoline,cabergoline,Cabergoline,cabergoline,DB00248,true,false,,false,accepted_exact_normalized_name
+DDInter261,Cabotegravir,cabotegravir,Cabotegravir,cabotegravir,DB11751,true,false,,false,accepted_exact_normalized_name
+DDInter262,Cabozantinib,cabozantinib,Cabozantinib,cabozantinib,DB08875,true,false,,false,accepted_exact_normalized_name
+DDInter263,Caffeine,caffeine,Caffeine,caffeine,DB00201,true,false,,false,accepted_exact_normalized_name
+DDInter264,Calaspargase pegol,calaspargase pegol,Calaspargase pegol,calaspargase pegol,DB14730,true,false,,false,accepted_exact_normalized_name
+DDInter265,Calcifediol,calcifediol,Calcifediol,calcifediol,DB00146,true,false,,false,accepted_exact_normalized_name
+DDInter266,Calcipotriol,calcipotriol,Calcipotriol,calcipotriol,DB02300,true,false,,false,accepted_exact_normalized_name
+DDInter268,Calcitriol,calcitriol,Calcitriol,calcitriol,DB00136,true,false,,false,accepted_exact_normalized_name
+DDInter27,Adalimumab,adalimumab,Adalimumab,adalimumab,DB00051,true,false,,false,accepted_exact_normalized_name
+DDInter270,Calcium acetate,calcium acetate,Calcium acetate,calcium acetate,DB00258,true,false,,false,accepted_exact_normalized_name
+DDInter271,Calcium carbonate,calcium carbonate,Calcium carbonate,calcium carbonate,DB06724,true,false,,false,accepted_exact_normalized_name
+DDInter272,Calcium chloride,calcium chloride,Calcium chloride,calcium chloride,DB01164,true,false,,false,accepted_exact_normalized_name
+DDInter273,Calcium citrate,calcium citrate,Calcium citrate,calcium citrate,DB11093,true,false,,false,accepted_exact_normalized_name
+DDInter274,Calcium glubionate anhydrous,calcium glubionate anhydrous,Calcium glubionate anhydrous,calcium glubionate anhydrous,DB13142,true,false,,false,accepted_exact_normalized_name
+DDInter275,Calcium glucoheptonate,calcium glucoheptonate,Calcium glucoheptonate,calcium glucoheptonate,DB00326,true,false,,false,accepted_exact_normalized_name
+DDInter276,Calcium gluconate,calcium gluconate,Calcium gluconate,calcium gluconate,DB11126,true,false,,false,accepted_exact_normalized_name
+DDInter278,Calcium lactate,calcium lactate,Calcium lactate,calcium lactate,DB13231,true,false,,false,accepted_exact_normalized_name
+DDInter279,Calcium Phosphate,calcium phosphate,Calcium Phosphate,calcium phosphate,DB11348,true,false,,false,accepted_exact_normalized_name
+DDInter28,Adapalene,adapalene,Adapalene,adapalene,DB00210,true,false,,false,accepted_exact_normalized_name
+DDInter280,Canagliflozin,canagliflozin,Canagliflozin,canagliflozin,DB08907,true,false,,false,accepted_exact_normalized_name
+DDInter281,Canakinumab,canakinumab,Canakinumab,canakinumab,DB06168,true,false,,false,accepted_exact_normalized_name
+DDInter283,Cangrelor,cangrelor,Cangrelor,cangrelor,DB06441,true,false,,false,accepted_exact_normalized_name
+DDInter284,Cannabidiol,cannabidiol,Cannabidiol,cannabidiol,DB09061,true,false,,false,accepted_exact_normalized_name
+DDInter285,Capecitabine,capecitabine,Capecitabine,capecitabine,DB01101,true,false,,false,accepted_exact_normalized_name
+DDInter286,Caplacizumab,caplacizumab,Caplacizumab,caplacizumab,DB06081,true,false,,false,accepted_exact_normalized_name
+DDInter287,Capmatinib,capmatinib,Capmatinib,capmatinib,DB11791,true,false,,false,accepted_exact_normalized_name
+DDInter288,Capreomycin,capreomycin,Capreomycin,capreomycin,DB00314,true,false,,false,accepted_exact_normalized_name
+DDInter289,Capromab pendetide,capromab pendetide,Capromab pendetide,capromab pendetide,DB00089,true,false,,false,accepted_exact_normalized_name
+DDInter292,Captopril,captopril,Captopril,captopril,DB01197,true,false,,false,accepted_exact_normalized_name
+DDInter293,Carbamazepine,carbamazepine,Carbamazepine,carbamazepine,DB00564,true,false,,false,accepted_exact_normalized_name
+DDInter295,Carbenicillin,carbenicillin,Carbenicillin,carbenicillin,DB00578,true,false,,false,accepted_exact_normalized_name
+DDInter297,Carbinoxamine,carbinoxamine,Carbinoxamine,carbinoxamine,DB00748,true,false,,false,accepted_exact_normalized_name
+DDInter298,Carboplatin,carboplatin,Carboplatin,carboplatin,DB00958,true,false,,false,accepted_exact_normalized_name
+DDInter299,Carfilzomib,carfilzomib,Carfilzomib,carfilzomib,DB08889,true,false,,false,accepted_exact_normalized_name
+DDInter30,Adefovir dipivoxil,adefovir dipivoxil,Adefovir dipivoxil,adefovir dipivoxil,DB00718,true,false,,false,accepted_exact_normalized_name
+DDInter300,Cariprazine,cariprazine,Cariprazine,cariprazine,DB06016,true,false,,false,accepted_exact_normalized_name
+DDInter301,Carisoprodol,carisoprodol,Carisoprodol,carisoprodol,DB00395,true,false,,false,accepted_exact_normalized_name
+DDInter302,Carmustine,carmustine,Carmustine,carmustine,DB00262,true,false,,false,accepted_exact_normalized_name
+DDInter303,Carteolol,carteolol,Carteolol,carteolol,DB00521,true,false,,false,accepted_exact_normalized_name
+DDInter305,Carvedilol,carvedilol,Carvedilol,carvedilol,DB01136,true,false,,false,accepted_exact_normalized_name
+DDInter306,Caspofungin,caspofungin,Caspofungin,caspofungin,DB00520,true,false,,false,accepted_exact_normalized_name
+DDInter307,Castor oil,castor oil,Castor oil,castor oil,DB11113,true,false,,false,accepted_exact_normalized_name
+DDInter309,Cefaclor,cefaclor,Cefaclor,cefaclor,DB00833,true,false,,false,accepted_exact_normalized_name
+DDInter31,Adenosine,adenosine,Adenosine,adenosine,DB00640,true,false,,false,accepted_exact_normalized_name
+DDInter310,Cefadroxil,cefadroxil,Cefadroxil,cefadroxil,DB01140,true,false,,false,accepted_exact_normalized_name
+DDInter311,Cefalotin,cefalotin,Cefalotin,cefalotin,DB00456,true,false,,false,accepted_exact_normalized_name
+DDInter312,Cefamandole,cefamandole,Cefamandole,cefamandole,DB01326,true,false,,false,accepted_exact_normalized_name
+DDInter313,Cefapirin,cefapirin,Cefapirin,cefapirin,DB01139,true,false,,false,accepted_exact_normalized_name
+DDInter314,Cefazolin,cefazolin,Cefazolin,cefazolin,DB01327,true,false,,false,accepted_exact_normalized_name
+DDInter315,Cefdinir,cefdinir,Cefdinir,cefdinir,DB00535,true,false,,false,accepted_exact_normalized_name
+DDInter316,Cefditoren,cefditoren,Cefditoren,cefditoren,DB01066,true,false,,false,accepted_exact_normalized_name
+DDInter317,Cefepime,cefepime,Cefepime,cefepime,DB01413,true,false,,false,accepted_exact_normalized_name
+DDInter319,Cefixime,cefixime,Cefixime,cefixime,DB00671,true,false,,false,accepted_exact_normalized_name
+DDInter32,Afatinib,afatinib,Afatinib,afatinib,DB08916,true,false,,false,accepted_exact_normalized_name
+DDInter320,Cefmetazole,cefmetazole,Cefmetazole,cefmetazole,DB00274,true,false,,false,accepted_exact_normalized_name
+DDInter321,Cefonicid,cefonicid,Cefonicid,cefonicid,DB01328,true,false,,false,accepted_exact_normalized_name
+DDInter322,Cefoperazone,cefoperazone,Cefoperazone,cefoperazone,DB01329,true,false,,false,accepted_exact_normalized_name
+DDInter323,Cefotaxime,cefotaxime,Cefotaxime,cefotaxime,DB00493,true,false,,false,accepted_exact_normalized_name
+DDInter324,Cefotetan,cefotetan,Cefotetan,cefotetan,DB01330,true,false,,false,accepted_exact_normalized_name
+DDInter325,Cefoxitin,cefoxitin,Cefoxitin,cefoxitin,DB01331,true,false,,false,accepted_exact_normalized_name
+DDInter326,Cefpodoxime,cefpodoxime,Cefpodoxime,cefpodoxime,DB01416,true,false,,false,accepted_exact_normalized_name
+DDInter327,Cefprozil,cefprozil,Cefprozil,cefprozil,DB01150,true,false,,false,accepted_exact_normalized_name
+DDInter328,Cefradine,cefradine,Cefradine,cefradine,DB01333,true,false,,false,accepted_exact_normalized_name
+DDInter329,Ceftaroline fosamil,ceftaroline fosamil,Ceftaroline fosamil,ceftaroline fosamil,DB06590,true,false,,false,accepted_exact_normalized_name
+DDInter330,Ceftazidime,ceftazidime,Ceftazidime,ceftazidime,DB00438,true,false,,false,accepted_exact_normalized_name
+DDInter331,Ceftibuten,ceftibuten,Ceftibuten,ceftibuten,DB01415,true,false,,false,accepted_exact_normalized_name
+DDInter332,Ceftizoxime,ceftizoxime,Ceftizoxime,ceftizoxime,DB01332,true,false,,false,accepted_exact_normalized_name
+DDInter333,Ceftolozane,ceftolozane,Ceftolozane,ceftolozane,DB09050,true,false,,false,accepted_exact_normalized_name
+DDInter334,Ceftriaxone,ceftriaxone,Ceftriaxone,ceftriaxone,DB01212,true,false,,false,accepted_exact_normalized_name
+DDInter335,Cefuroxime,cefuroxime,Cefuroxime,cefuroxime,DB01112,true,false,,false,accepted_exact_normalized_name
+DDInter336,Celecoxib,celecoxib,Celecoxib,celecoxib,DB00482,true,false,,false,accepted_exact_normalized_name
+DDInter337,Cemiplimab,cemiplimab,Cemiplimab,cemiplimab,DB14707,true,false,,false,accepted_exact_normalized_name
+DDInter338,Cenobamate,cenobamate,Cenobamate,cenobamate,DB06119,true,false,,false,accepted_exact_normalized_name
+DDInter339,Cephalexin,cephalexin,Cephalexin,cephalexin,DB00567,true,false,,false,accepted_exact_normalized_name
+DDInter34,Agalsidase beta,agalsidase beta,Agalsidase beta,agalsidase beta,DB00103,true,false,,false,accepted_exact_normalized_name
+DDInter340,Ceritinib,ceritinib,Ceritinib,ceritinib,DB09063,true,false,,false,accepted_exact_normalized_name
+DDInter341,Cerivastatin,cerivastatin,Cerivastatin,cerivastatin,DB00439,true,false,,false,accepted_exact_normalized_name
+DDInter342,Certolizumab pegol,certolizumab pegol,Certolizumab pegol,certolizumab pegol,DB08904,true,false,,false,accepted_exact_normalized_name
+DDInter343,Cetirizine,cetirizine,Cetirizine,cetirizine,DB00341,true,false,,false,accepted_exact_normalized_name
+DDInter344,Cetuximab,cetuximab,Cetuximab,cetuximab,DB00002,true,false,,false,accepted_exact_normalized_name
+DDInter346,Cevimeline,cevimeline,Cevimeline,cevimeline,DB00185,true,false,,false,accepted_exact_normalized_name
+DDInter348,Chenodeoxycholic acid,chenodeoxycholic acid,Chenodeoxycholic acid,chenodeoxycholic acid,DB06777,true,false,,false,accepted_exact_normalized_name
+DDInter349,Chloral hydrate,chloral hydrate,Chloral hydrate,chloral hydrate,DB01563,true,false,,false,accepted_exact_normalized_name
+DDInter35,Albendazole,albendazole,Albendazole,albendazole,DB00518,true,false,,false,accepted_exact_normalized_name
+DDInter350,Chlorambucil,chlorambucil,Chlorambucil,chlorambucil,DB00291,true,false,,false,accepted_exact_normalized_name
+DDInter351,Chloramphenicol,chloramphenicol,Chloramphenicol,chloramphenicol,DB00446,true,false,,false,accepted_exact_normalized_name
+DDInter354,Chlorcyclizine,chlorcyclizine,Chlorcyclizine,chlorcyclizine,DB08936,true,false,,false,accepted_exact_normalized_name
+DDInter355,Chlordiazepoxide,chlordiazepoxide,Chlordiazepoxide,chlordiazepoxide,DB00475,true,false,,false,accepted_exact_normalized_name
+DDInter357,Chlormezanone,chlormezanone,Chlormezanone,chlormezanone,DB01178,true,false,,false,accepted_exact_normalized_name
+DDInter358,Chloroprocaine,chloroprocaine,Chloroprocaine,chloroprocaine,DB01161,true,false,,false,accepted_exact_normalized_name
+DDInter359,Chloroquine,chloroquine,Chloroquine,chloroquine,DB00608,true,false,,false,accepted_exact_normalized_name
+DDInter36,Albiglutide,albiglutide,Albiglutide,albiglutide,DB09043,true,false,,false,accepted_exact_normalized_name
+DDInter360,Chlorothiazide,chlorothiazide,Chlorothiazide,chlorothiazide,DB00880,true,false,,false,accepted_exact_normalized_name
+DDInter361,Chlorphenesin,chlorphenesin,Chlorphenesin,chlorphenesin,DB00856,true,false,,false,accepted_exact_normalized_name
+DDInter362,Chlorpheniramine,chlorpheniramine,Chlorpheniramine,chlorpheniramine,DB01114,true,false,,false,accepted_exact_normalized_name
+DDInter363,Chlorpromazine,chlorpromazine,Chlorpromazine,chlorpromazine,DB00477,true,false,,false,accepted_exact_normalized_name
+DDInter364,Chlorpropamide,chlorpropamide,Chlorpropamide,chlorpropamide,DB00672,true,false,,false,accepted_exact_normalized_name
+DDInter365,Chlorthalidone,chlorthalidone,Chlorthalidone,chlorthalidone,DB00310,true,false,,false,accepted_exact_normalized_name
+DDInter366,Chlorzoxazone,chlorzoxazone,Chlorzoxazone,chlorzoxazone,DB00356,true,false,,false,accepted_exact_normalized_name
+DDInter367,Cholecalciferol,cholecalciferol,Cholecalciferol,cholecalciferol,DB00169,true,false,,false,accepted_exact_normalized_name
+DDInter368,Cholestyramine,cholestyramine,Cholestyramine,cholestyramine,DB01432,true,false,,false,accepted_exact_normalized_name
+DDInter369,Cholic Acid,cholic acid,Cholic Acid,cholic acid,DB02659,true,false,,false,accepted_exact_normalized_name
+DDInter370,Choline salicylate,choline salicylate,Choline salicylate,choline salicylate,DB14006,true,false,,false,accepted_exact_normalized_name
+DDInter371,Chondroitin sulfate,chondroitin sulfate,Chondroitin sulfate,chondroitin sulfate,DB09301,true,false,,false,accepted_exact_normalized_name
+DDInter373,Chromic chloride,chromic chloride,Chromic chloride,chromic chloride,DB09129,true,false,,false,accepted_exact_normalized_name
+DDInter375,Ciclesonide,ciclesonide,Ciclesonide,ciclesonide,DB01410,true,false,,false,accepted_exact_normalized_name
+DDInter378,Cidofovir,cidofovir,Cidofovir,cidofovir,DB00369,true,false,,false,accepted_exact_normalized_name
+DDInter379,Cilostazol,cilostazol,Cilostazol,cilostazol,DB01166,true,false,,false,accepted_exact_normalized_name
+DDInter38,Aldesleukin,aldesleukin,Aldesleukin,aldesleukin,DB00041,true,false,,false,accepted_exact_normalized_name
+DDInter380,Cimetidine,cimetidine,Cimetidine,cimetidine,DB00501,true,false,,false,accepted_exact_normalized_name
+DDInter381,Cinacalcet,cinacalcet,Cinacalcet,cinacalcet,DB01012,true,false,,false,accepted_exact_normalized_name
+DDInter383,Cinoxacin,cinoxacin,Cinoxacin,cinoxacin,DB00827,true,false,,false,accepted_exact_normalized_name
+DDInter384,Ciprofloxacin,ciprofloxacin,Ciprofloxacin,ciprofloxacin,DB00537,true,false,,false,accepted_exact_normalized_name
+DDInter385,Cisapride,cisapride,Cisapride,cisapride,DB00604,true,false,,false,accepted_exact_normalized_name
+DDInter386,Cisatracurium,cisatracurium,Cisatracurium,cisatracurium,DB00565,true,false,,false,accepted_exact_normalized_name
+DDInter387,Cisplatin,cisplatin,Cisplatin,cisplatin,DB00515,true,false,,false,accepted_exact_normalized_name
+DDInter388,Citalopram,citalopram,Citalopram,citalopram,DB00215,true,false,,false,accepted_exact_normalized_name
+DDInter39,Alectinib,alectinib,Alectinib,alectinib,DB11363,true,false,,false,accepted_exact_normalized_name
+DDInter390,Citric acid,citric acid,Citric acid,citric acid,DB04272,true,false,,false,accepted_exact_normalized_name
+DDInter392,Cladribine,cladribine,Cladribine,cladribine,DB00242,true,false,,false,accepted_exact_normalized_name
+DDInter393,Clarithromycin,clarithromycin,Clarithromycin,clarithromycin,DB01211,true,false,,false,accepted_exact_normalized_name
+DDInter394,Clavulanic acid,clavulanic acid,Clavulanic acid,clavulanic acid,DB00766,true,false,,false,accepted_exact_normalized_name
+DDInter395,Clemastine,clemastine,Clemastine,clemastine,DB00283,true,false,,false,accepted_exact_normalized_name
+DDInter396,Clevidipine,clevidipine,Clevidipine,clevidipine,DB04920,true,false,,false,accepted_exact_normalized_name
+DDInter397,Clidinium,clidinium,Clidinium,clidinium,DB00771,true,false,,false,accepted_exact_normalized_name
+DDInter398,Clindamycin,clindamycin,Clindamycin,clindamycin,DB01190,true,false,,false,accepted_exact_normalized_name
+DDInter40,Alefacept,alefacept,Alefacept,alefacept,DB00092,true,false,,false,accepted_exact_normalized_name
+DDInter401,Clobazam,clobazam,Clobazam,clobazam,DB00349,true,false,,false,accepted_exact_normalized_name
+DDInter402,Clobetasol,clobetasol,Clobetasol,clobetasol,DB11750,true,false,,false,accepted_exact_normalized_name
+DDInter405,Clofarabine,clofarabine,Clofarabine,clofarabine,DB00631,true,false,,false,accepted_exact_normalized_name
+DDInter406,Clofazimine,clofazimine,Clofazimine,clofazimine,DB00845,true,false,,false,accepted_exact_normalized_name
+DDInter407,Clofedanol,clofedanol,Clofedanol,clofedanol,DB04837,true,false,,false,accepted_exact_normalized_name
+DDInter408,Clofibrate,clofibrate,Clofibrate,clofibrate,DB00636,true,false,,false,accepted_exact_normalized_name
+DDInter409,Clomifene,clomifene,Clomifene,clomifene,DB00882,true,false,,false,accepted_exact_normalized_name
+DDInter41,Alemtuzumab,alemtuzumab,Alemtuzumab,alemtuzumab,DB00087,true,false,,false,accepted_exact_normalized_name
+DDInter410,Clomipramine,clomipramine,Clomipramine,clomipramine,DB01242,true,false,,false,accepted_exact_normalized_name
+DDInter411,Clonazepam,clonazepam,Clonazepam,clonazepam,DB01068,true,false,,false,accepted_exact_normalized_name
+DDInter412,Clonidine,clonidine,Clonidine,clonidine,DB00575,true,false,,false,accepted_exact_normalized_name
+DDInter413,Clopidogrel,clopidogrel,Clopidogrel,clopidogrel,DB00758,true,false,,false,accepted_exact_normalized_name
+DDInter414,Clorazepic acid,clorazepic acid,Clorazepic acid,clorazepic acid,DB00628,true,false,,false,accepted_exact_normalized_name
+DDInter415,Clostridium tetani toxoid antigen (formaldehyde inactivated),clostridium tetani toxoid antigen (formaldehyde inactivated),Clostridium tetani toxoid antigen (formaldehyde inactivated),clostridium tetani toxoid antigen (formaldehyde inactivated),DB10583,true,true,parenthetical_or_comma_exact_match;qualifier_preserved_exactly:formaldehyde inactivated,false,accepted_exact_normalized_name
+DDInter416,Clotrimazole,clotrimazole,Clotrimazole,clotrimazole,DB00257,true,false,,false,accepted_exact_normalized_name
+DDInter418,Cloxacillin,cloxacillin,Cloxacillin,cloxacillin,DB01147,true,false,,false,accepted_exact_normalized_name
+DDInter419,Clozapine,clozapine,Clozapine,clozapine,DB00363,true,false,,false,accepted_exact_normalized_name
+DDInter42,Alendronic acid,alendronic acid,Alendronic acid,alendronic acid,DB00630,true,false,,false,accepted_exact_normalized_name
+DDInter420,Coagulation Factor IX Human,coagulation factor ix human,Coagulation Factor IX Human,coagulation factor ix human,DB13152,true,false,,false,accepted_exact_normalized_name
+DDInter421,Coagulation factor VIIa Recombinant Human,coagulation factor viia recombinant human,Coagulation factor VIIa Recombinant Human,coagulation factor viia recombinant human,DB00036,true,true,qualifier_preserved_exactly:recombinant,false,accepted_exact_normalized_name
+DDInter422,Coagulation factor X human,coagulation factor x human,Coagulation factor X human,coagulation factor x human,DB13148,true,false,,false,accepted_exact_normalized_name
+DDInter424,Cobicistat,cobicistat,Cobicistat,cobicistat,DB09065,true,false,,false,accepted_exact_normalized_name
+DDInter425,Cobimetinib,cobimetinib,Cobimetinib,cobimetinib,DB05239,true,false,,false,accepted_exact_normalized_name
+DDInter429,Codeine,codeine,Codeine,codeine,DB00318,true,false,,false,accepted_exact_normalized_name
+DDInter43,Alfentanil,alfentanil,Alfentanil,alfentanil,DB00802,true,false,,false,accepted_exact_normalized_name
+DDInter431,Colchicine,colchicine,Colchicine,colchicine,DB01394,true,false,,false,accepted_exact_normalized_name
+DDInter432,Colesevelam,colesevelam,Colesevelam,colesevelam,DB00930,true,false,,false,accepted_exact_normalized_name
+DDInter433,Colestipol,colestipol,Colestipol,colestipol,DB00375,true,false,,false,accepted_exact_normalized_name
+DDInter434,Colistimethate,colistimethate,Colistimethate,colistimethate,DB01111,true,false,,false,accepted_exact_normalized_name
+DDInter435,Collagenase clostridium histolyticum,collagenase clostridium histolyticum,Collagenase clostridium histolyticum,collagenase clostridium histolyticum,DB00048,true,false,,false,accepted_exact_normalized_name
+DDInter437,Conestat alfa,conestat alfa,Conestat alfa,conestat alfa,DB09228,true,false,,false,accepted_exact_normalized_name
+DDInter438,Conivaptan,conivaptan,Conivaptan,conivaptan,DB00872,true,false,,false,accepted_exact_normalized_name
+DDInter439,Conjugated estrogens,conjugated estrogens,Conjugated estrogens,conjugated estrogens,DB00286,true,false,,false,accepted_exact_normalized_name
+DDInter44,Alfuzosin,alfuzosin,Alfuzosin,alfuzosin,DB00346,true,false,,false,accepted_exact_normalized_name
+DDInter441,Copanlisib,copanlisib,Copanlisib,copanlisib,DB12483,true,false,,false,accepted_exact_normalized_name
+DDInter445,Corticotropin,corticotropin,Corticotropin,corticotropin,DB01285,true,false,,false,accepted_exact_normalized_name
+DDInter448,Crizotinib,crizotinib,Crizotinib,crizotinib,DB08865,true,false,,false,accepted_exact_normalized_name
+DDInter45,Alimemazine,alimemazine,Alimemazine,alimemazine,DB01246,true,false,,false,accepted_exact_normalized_name
+DDInter451,Cyanocobalamin,cyanocobalamin,Cyanocobalamin,cyanocobalamin,DB00115,true,false,,false,accepted_exact_normalized_name
+DDInter452,Cyclandelate,cyclandelate,Cyclandelate,cyclandelate,DB04838,true,false,,false,accepted_exact_normalized_name
+DDInter453,Cyclizine,cyclizine,Cyclizine,cyclizine,DB01176,true,false,,false,accepted_exact_normalized_name
+DDInter454,Cyclobenzaprine,cyclobenzaprine,Cyclobenzaprine,cyclobenzaprine,DB00924,true,false,,false,accepted_exact_normalized_name
+DDInter456,Cyclophosphamide,cyclophosphamide,Cyclophosphamide,cyclophosphamide,DB00531,true,false,,false,accepted_exact_normalized_name
+DDInter457,Cycloserine,cycloserine,Cycloserine,cycloserine,DB00260,true,false,,false,accepted_exact_normalized_name
+DDInter458,Cyclosporine,cyclosporine,Cyclosporine,cyclosporine,DB00091,true,false,,false,accepted_exact_normalized_name
+DDInter459,Cyproheptadine,cyproheptadine,Cyproheptadine,cyproheptadine,DB00434,true,false,,false,accepted_exact_normalized_name
+DDInter46,Aliskiren,aliskiren,Aliskiren,aliskiren,DB09026,true,false,,false,accepted_exact_normalized_name
+DDInter460,Cytarabine,cytarabine,Cytarabine,cytarabine,DB00987,true,false,,false,accepted_exact_normalized_name
+DDInter462,Dabrafenib,dabrafenib,Dabrafenib,dabrafenib,DB08912,true,false,,false,accepted_exact_normalized_name
+DDInter463,Dacarbazine,dacarbazine,Dacarbazine,dacarbazine,DB00851,true,false,,false,accepted_exact_normalized_name
+DDInter464,Daclatasvir,daclatasvir,Daclatasvir,daclatasvir,DB09102,true,false,,false,accepted_exact_normalized_name
+DDInter465,Dacomitinib,dacomitinib,Dacomitinib,dacomitinib,DB11963,true,false,,false,accepted_exact_normalized_name
+DDInter466,Dactinomycin,dactinomycin,Dactinomycin,dactinomycin,DB00970,true,false,,false,accepted_exact_normalized_name
+DDInter467,Dalbavancin,dalbavancin,Dalbavancin,dalbavancin,DB06219,true,false,,false,accepted_exact_normalized_name
+DDInter468,Dalfampridine,dalfampridine,Dalfampridine,dalfampridine,DB06637,true,false,,false,accepted_exact_normalized_name
+DDInter469,Dalfopristin,dalfopristin,Dalfopristin,dalfopristin,DB01764,true,false,,false,accepted_exact_normalized_name
+DDInter470,Dalteparin,dalteparin,Dalteparin,dalteparin,DB06779,true,false,,false,accepted_exact_normalized_name
+DDInter471,Danaparoid,danaparoid,Danaparoid,danaparoid,DB06754,true,false,,false,accepted_exact_normalized_name
+DDInter472,Danazol,danazol,Danazol,danazol,DB01406,true,false,,false,accepted_exact_normalized_name
+DDInter473,Dantrolene,dantrolene,Dantrolene,dantrolene,DB01219,true,false,,false,accepted_exact_normalized_name
+DDInter474,Dapagliflozin,dapagliflozin,Dapagliflozin,dapagliflozin,DB06292,true,false,,false,accepted_exact_normalized_name
+DDInter475,Dapsone,dapsone,Dapsone,dapsone,DB00250,true,false,,false,accepted_exact_normalized_name
+DDInter477,Daptomycin,daptomycin,Daptomycin,daptomycin,DB00080,true,false,,false,accepted_exact_normalized_name
+DDInter478,Daratumumab,daratumumab,Daratumumab,daratumumab,DB09331,true,false,,false,accepted_exact_normalized_name
+DDInter479,Darbepoetin alfa,darbepoetin alfa,Darbepoetin alfa,darbepoetin alfa,DB00012,true,false,,false,accepted_exact_normalized_name
+DDInter48,Allopurinol,allopurinol,Allopurinol,allopurinol,DB00437,true,false,,false,accepted_exact_normalized_name
+DDInter480,Darifenacin,darifenacin,Darifenacin,darifenacin,DB00496,true,false,,false,accepted_exact_normalized_name
+DDInter481,Darolutamide,darolutamide,Darolutamide,darolutamide,DB12941,true,false,,false,accepted_exact_normalized_name
+DDInter482,Darunavir,darunavir,Darunavir,darunavir,DB01264,true,false,,false,accepted_exact_normalized_name
+DDInter483,Dasabuvir,dasabuvir,Dasabuvir,dasabuvir,DB09183,true,false,,false,accepted_exact_normalized_name
+DDInter484,Dasatinib,dasatinib,Dasatinib,dasatinib,DB01254,true,false,,false,accepted_exact_normalized_name
+DDInter485,Daunorubicin,daunorubicin,Daunorubicin,daunorubicin,DB00694,true,false,,false,accepted_exact_normalized_name
+DDInter487,Decitabine,decitabine,Decitabine,decitabine,DB01262,true,false,,false,accepted_exact_normalized_name
+DDInter488,Deferasirox,deferasirox,Deferasirox,deferasirox,DB01609,true,false,,false,accepted_exact_normalized_name
+DDInter489,Deferiprone,deferiprone,Deferiprone,deferiprone,DB08826,true,false,,false,accepted_exact_normalized_name
+DDInter49,Almotriptan,almotriptan,Almotriptan,almotriptan,DB00918,true,false,,false,accepted_exact_normalized_name
+DDInter490,Deferoxamine,deferoxamine,Deferoxamine,deferoxamine,DB00746,true,false,,false,accepted_exact_normalized_name
+DDInter491,Defibrotide,defibrotide,Defibrotide,defibrotide,DB04932,true,false,,false,accepted_exact_normalized_name
+DDInter492,Deflazacort,deflazacort,Deflazacort,deflazacort,DB11921,true,false,,false,accepted_exact_normalized_name
+DDInter493,Degarelix,degarelix,Degarelix,degarelix,DB06699,true,false,,false,accepted_exact_normalized_name
+DDInter494,Dehydrocholic acid,dehydrocholic acid,Dehydrocholic acid,dehydrocholic acid,DB11622,true,false,,false,accepted_exact_normalized_name
+DDInter495,Delafloxacin,delafloxacin,Delafloxacin,delafloxacin,DB11943,true,false,,false,accepted_exact_normalized_name
+DDInter496,Delavirdine,delavirdine,Delavirdine,delavirdine,DB00705,true,false,,false,accepted_exact_normalized_name
+DDInter498,Demeclocycline,demeclocycline,Demeclocycline,demeclocycline,DB00618,true,false,,false,accepted_exact_normalized_name
+DDInter499,Denileukin diftitox,denileukin diftitox,Denileukin diftitox,denileukin diftitox,DB00004,true,false,,false,accepted_exact_normalized_name
+DDInter5,Abatacept,abatacept,Abatacept,abatacept,DB01281,true,false,,false,accepted_exact_normalized_name
+DDInter500,Denosumab,denosumab,Denosumab,denosumab,DB06643,true,false,,false,accepted_exact_normalized_name
+DDInter501,Deoxycholic acid,deoxycholic acid,Deoxycholic acid,deoxycholic acid,DB03619,true,false,,false,accepted_exact_normalized_name
+DDInter502,Deserpidine,deserpidine,Deserpidine,deserpidine,DB01089,true,false,,false,accepted_exact_normalized_name
+DDInter503,Desflurane,desflurane,Desflurane,desflurane,DB01189,true,false,,false,accepted_exact_normalized_name
+DDInter504,Desipramine,desipramine,Desipramine,desipramine,DB01151,true,false,,false,accepted_exact_normalized_name
+DDInter505,Desirudin,desirudin,Desirudin,desirudin,DB11095,true,false,,false,accepted_exact_normalized_name
+DDInter506,Desloratadine,desloratadine,Desloratadine,desloratadine,DB00967,true,false,,false,accepted_exact_normalized_name
+DDInter507,Desmopressin,desmopressin,Desmopressin,desmopressin,DB00035,true,false,,false,accepted_exact_normalized_name
+DDInter508,Desogestrel,desogestrel,Desogestrel,desogestrel,DB00304,true,false,,false,accepted_exact_normalized_name
+DDInter51,Alogliptin,alogliptin,Alogliptin,alogliptin,DB06203,true,false,,false,accepted_exact_normalized_name
+DDInter511,Desvenlafaxine,desvenlafaxine,Desvenlafaxine,desvenlafaxine,DB06700,true,false,,false,accepted_exact_normalized_name
+DDInter512,Deutetrabenazine,deutetrabenazine,Deutetrabenazine,deutetrabenazine,DB12161,true,false,,false,accepted_exact_normalized_name
+DDInter513,Dexamethasone,dexamethasone,Dexamethasone,dexamethasone,DB01234,true,false,,false,accepted_exact_normalized_name
+DDInter517,Dexbrompheniramine,dexbrompheniramine,Dexbrompheniramine,dexbrompheniramine,DB00405,true,false,,false,accepted_exact_normalized_name
+DDInter518,Dexfenfluramine,dexfenfluramine,Dexfenfluramine,dexfenfluramine,DB01191,true,false,,false,accepted_exact_normalized_name
+DDInter519,Dexlansoprazole,dexlansoprazole,Dexlansoprazole,dexlansoprazole,DB05351,true,false,,false,accepted_exact_normalized_name
+DDInter52,Alosetron,alosetron,Alosetron,alosetron,DB00969,true,false,,false,accepted_exact_normalized_name
+DDInter520,Dexmedetomidine,dexmedetomidine,Dexmedetomidine,dexmedetomidine,DB00633,true,false,,false,accepted_exact_normalized_name
+DDInter521,Dexmethylphenidate,dexmethylphenidate,Dexmethylphenidate,dexmethylphenidate,DB06701,true,false,,false,accepted_exact_normalized_name
+DDInter522,Dexrazoxane,dexrazoxane,Dexrazoxane,dexrazoxane,DB00380,true,false,,false,accepted_exact_normalized_name
+DDInter526,Dextroamphetamine,dextroamphetamine,Dextroamphetamine,dextroamphetamine,DB01576,true,false,,false,accepted_exact_normalized_name
+DDInter527,Dextromethorphan,dextromethorphan,Dextromethorphan,dextromethorphan,DB00514,true,false,,false,accepted_exact_normalized_name
+DDInter528,Dextropropoxyphene,dextropropoxyphene,Dextropropoxyphene,dextropropoxyphene,DB00647,true,false,,false,accepted_exact_normalized_name
+DDInter529,"Dextrose, unspecified form","dextrose, unspecified form","Dextrose, unspecified form","dextrose, unspecified form",DB09341,true,true,parenthetical_or_comma_exact_match;qualifier_preserved_exactly:unspecified form,false,accepted_exact_normalized_name
+DDInter53,Alpelisib,alpelisib,Alpelisib,alpelisib,DB12015,true,false,,false,accepted_exact_normalized_name
+DDInter531,Dezocine,dezocine,Dezocine,dezocine,DB01209,true,false,,false,accepted_exact_normalized_name
+DDInter532,Diamorphine,diamorphine,Diamorphine,diamorphine,DB01452,true,false,,false,accepted_exact_normalized_name
+DDInter533,Diatrizoate,diatrizoate,Diatrizoate,diatrizoate,DB00271,true,false,,false,accepted_exact_normalized_name
+DDInter534,Diazepam,diazepam,Diazepam,diazepam,DB00829,true,false,,false,accepted_exact_normalized_name
+DDInter535,Diazoxide,diazoxide,Diazoxide,diazoxide,DB01119,true,false,,false,accepted_exact_normalized_name
+DDInter536,Dichloralphenazone,dichloralphenazone,Dichloralphenazone,dichloralphenazone,DB01495,true,false,,false,accepted_exact_normalized_name
+DDInter537,Diclofenac,diclofenac,Diclofenac,diclofenac,DB00586,true,false,,false,accepted_exact_normalized_name
+DDInter54,Alprazolam,alprazolam,Alprazolam,alprazolam,DB00404,true,false,,false,accepted_exact_normalized_name
+DDInter540,Diclofenamide,diclofenamide,Diclofenamide,diclofenamide,DB01144,true,false,,false,accepted_exact_normalized_name
+DDInter541,Dicloxacillin,dicloxacillin,Dicloxacillin,dicloxacillin,DB00485,true,false,,false,accepted_exact_normalized_name
+DDInter542,Dicoumarol,dicoumarol,Dicoumarol,dicoumarol,DB00266,true,false,,false,accepted_exact_normalized_name
+DDInter543,Dicyclomine,dicyclomine,Dicyclomine,dicyclomine,DB00804,true,false,,false,accepted_exact_normalized_name
+DDInter544,Didanosine,didanosine,Didanosine,didanosine,DB00900,true,false,,false,accepted_exact_normalized_name
+DDInter546,Dienogest,dienogest,Dienogest,dienogest,DB09123,true,false,,false,accepted_exact_normalized_name
+DDInter547,Diethylpropion,diethylpropion,Diethylpropion,diethylpropion,DB00937,true,false,,false,accepted_exact_normalized_name
+DDInter548,Diethylstilbestrol,diethylstilbestrol,Diethylstilbestrol,diethylstilbestrol,DB00255,true,false,,false,accepted_exact_normalized_name
+DDInter549,Difenoxin,difenoxin,Difenoxin,difenoxin,DB01501,true,false,,false,accepted_exact_normalized_name
+DDInter55,Alprostadil,alprostadil,Alprostadil,alprostadil,DB00770,true,false,,false,accepted_exact_normalized_name
+DDInter551,Diflunisal,diflunisal,Diflunisal,diflunisal,DB00861,true,false,,false,accepted_exact_normalized_name
+DDInter553,Digitoxin,digitoxin,Digitoxin,digitoxin,DB01396,true,false,,false,accepted_exact_normalized_name
+DDInter554,Digoxin,digoxin,Digoxin,digoxin,DB00390,true,false,,false,accepted_exact_normalized_name
+DDInter555,Digoxin Immune Fab (Ovine),digoxin immune fab (ovine),Digoxin Immune Fab (Ovine),digoxin immune fab (ovine),DB00076,true,false,parenthetical_or_comma_exact_match,false,accepted_exact_normalized_name
+DDInter556,Dihydrocodeine,dihydrocodeine,Dihydrocodeine,dihydrocodeine,DB01551,true,false,,false,accepted_exact_normalized_name
+DDInter557,Dihydroergotamine,dihydroergotamine,Dihydroergotamine,dihydroergotamine,DB00320,true,false,,false,accepted_exact_normalized_name
+DDInter558,Dihydrotachysterol,dihydrotachysterol,Dihydrotachysterol,dihydrotachysterol,DB01070,true,false,,false,accepted_exact_normalized_name
+DDInter56,Alteplase,alteplase,Alteplase,alteplase,DB00009,true,false,,false,accepted_exact_normalized_name
+DDInter561,Diltiazem,diltiazem,Diltiazem,diltiazem,DB00343,true,false,,false,accepted_exact_normalized_name
+DDInter562,Dimenhydrinate,dimenhydrinate,Dimenhydrinate,dimenhydrinate,DB00985,true,false,,false,accepted_exact_normalized_name
+DDInter563,Dimercaprol,dimercaprol,Dimercaprol,dimercaprol,DB06782,true,false,,false,accepted_exact_normalized_name
+DDInter564,Dimethyl fumarate,dimethyl fumarate,Dimethyl fumarate,dimethyl fumarate,DB08908,true,false,,false,accepted_exact_normalized_name
+DDInter568,Dinutuximab,dinutuximab,Dinutuximab,dinutuximab,DB09077,true,false,,false,accepted_exact_normalized_name
+DDInter569,Diphenhydramine,diphenhydramine,Diphenhydramine,diphenhydramine,DB01075,true,false,,false,accepted_exact_normalized_name
+DDInter57,Altretamine,altretamine,Altretamine,altretamine,DB00488,true,false,,false,accepted_exact_normalized_name
+DDInter571,Diphenoxylate,diphenoxylate,Diphenoxylate,diphenoxylate,DB01081,true,false,,false,accepted_exact_normalized_name
+DDInter573,Dipyridamole,dipyridamole,Dipyridamole,dipyridamole,DB00975,true,false,,false,accepted_exact_normalized_name
+DDInter574,Diroximel fumarate,diroximel fumarate,Diroximel fumarate,diroximel fumarate,DB14783,true,false,,false,accepted_exact_normalized_name
+DDInter575,Disopyramide,disopyramide,Disopyramide,disopyramide,DB00280,true,false,,false,accepted_exact_normalized_name
+DDInter576,Disulfiram,disulfiram,Disulfiram,disulfiram,DB00822,true,false,,false,accepted_exact_normalized_name
+DDInter577,Dobutamine,dobutamine,Dobutamine,dobutamine,DB00841,true,false,,false,accepted_exact_normalized_name
+DDInter578,Docetaxel,docetaxel,Docetaxel,docetaxel,DB01248,true,false,,false,accepted_exact_normalized_name
+DDInter579,Docusate,docusate,Docusate,docusate,DB11089,true,false,,false,accepted_exact_normalized_name
+DDInter58,Aluminum hydroxide,aluminum hydroxide,Aluminum hydroxide,aluminum hydroxide,DB06723,true,false,,false,accepted_exact_normalized_name
+DDInter580,Dofetilide,dofetilide,Dofetilide,dofetilide,DB00204,true,false,,false,accepted_exact_normalized_name
+DDInter581,Dolasetron,dolasetron,Dolasetron,dolasetron,DB00757,true,false,,false,accepted_exact_normalized_name
+DDInter582,Dolutegravir,dolutegravir,Dolutegravir,dolutegravir,DB08930,true,false,,false,accepted_exact_normalized_name
+DDInter583,Donepezil,donepezil,Donepezil,donepezil,DB00843,true,false,,false,accepted_exact_normalized_name
+DDInter584,Dopamine,dopamine,Dopamine,dopamine,DB00988,true,false,,false,accepted_exact_normalized_name
+DDInter585,Doravirine,doravirine,Doravirine,doravirine,DB12301,true,false,,false,accepted_exact_normalized_name
+DDInter586,Doripenem,doripenem,Doripenem,doripenem,DB06211,true,false,,false,accepted_exact_normalized_name
+DDInter59,Alvimopan,alvimopan,Alvimopan,alvimopan,DB06274,true,false,,false,accepted_exact_normalized_name
+DDInter590,Doxacurium,doxacurium,Doxacurium,doxacurium,DB01135,true,false,,false,accepted_exact_normalized_name
+DDInter591,Doxapram,doxapram,Doxapram,doxapram,DB00561,true,false,,false,accepted_exact_normalized_name
+DDInter592,Doxazosin,doxazosin,Doxazosin,doxazosin,DB00590,true,false,,false,accepted_exact_normalized_name
+DDInter593,Doxepin,doxepin,Doxepin,doxepin,DB01142,true,false,,false,accepted_exact_normalized_name
+DDInter595,Doxercalciferol,doxercalciferol,Doxercalciferol,doxercalciferol,DB06410,true,false,,false,accepted_exact_normalized_name
+DDInter596,Doxorubicin,doxorubicin,Doxorubicin,doxorubicin,DB00997,true,false,,false,accepted_exact_normalized_name
+DDInter598,Doxycycline,doxycycline,Doxycycline,doxycycline,DB00254,true,false,,false,accepted_exact_normalized_name
+DDInter6,Abciximab,abciximab,Abciximab,abciximab,DB00054,true,false,,false,accepted_exact_normalized_name
+DDInter60,Amantadine,amantadine,Amantadine,amantadine,DB00915,true,false,,false,accepted_exact_normalized_name
+DDInter600,Doxylamine,doxylamine,Doxylamine,doxylamine,DB00366,true,false,,false,accepted_exact_normalized_name
+DDInter601,Dronabinol,dronabinol,Dronabinol,dronabinol,DB00470,true,false,,false,accepted_exact_normalized_name
+DDInter602,Dronedarone,dronedarone,Dronedarone,dronedarone,DB04855,true,false,,false,accepted_exact_normalized_name
+DDInter603,Droperidol,droperidol,Droperidol,droperidol,DB00450,true,false,,false,accepted_exact_normalized_name
+DDInter604,Drospirenone,drospirenone,Drospirenone,drospirenone,DB01395,true,false,,false,accepted_exact_normalized_name
+DDInter605,Drotrecogin alfa,drotrecogin alfa,Drotrecogin alfa,drotrecogin alfa,DB00055,true,false,,false,accepted_exact_normalized_name
+DDInter606,Droxidopa,droxidopa,Droxidopa,droxidopa,DB06262,true,false,,false,accepted_exact_normalized_name
+DDInter607,Dulaglutide,dulaglutide,Dulaglutide,dulaglutide,DB09045,true,false,,false,accepted_exact_normalized_name
+DDInter608,Duloxetine,duloxetine,Duloxetine,duloxetine,DB00476,true,false,,false,accepted_exact_normalized_name
+DDInter609,Dupilumab,dupilumab,Dupilumab,dupilumab,DB12159,true,false,,false,accepted_exact_normalized_name
+DDInter61,Ambenonium,ambenonium,Ambenonium,ambenonium,DB01122,true,false,,false,accepted_exact_normalized_name
+DDInter610,Durvalumab,durvalumab,Durvalumab,durvalumab,DB11714,true,false,,false,accepted_exact_normalized_name
+DDInter611,Dutasteride,dutasteride,Dutasteride,dutasteride,DB01126,true,false,,false,accepted_exact_normalized_name
+DDInter612,Duvelisib,duvelisib,Duvelisib,duvelisib,DB11952,true,false,,false,accepted_exact_normalized_name
+DDInter613,Dyphylline,dyphylline,Dyphylline,dyphylline,DB00651,true,false,,false,accepted_exact_normalized_name
+DDInter614,Echinacea,echinacea,Echinacea,echinacea,DB14240,true,false,,false,accepted_exact_normalized_name
+DDInter616,Econazole,econazole,Econazole,econazole,DB01127,true,false,,false,accepted_exact_normalized_name
+DDInter618,Eculizumab,eculizumab,Eculizumab,eculizumab,DB01257,true,false,,false,accepted_exact_normalized_name
+DDInter619,Edetate calcium disodium anhydrous,edetate calcium disodium anhydrous,Edetate calcium disodium anhydrous,edetate calcium disodium anhydrous,DB14598,true,false,,false,accepted_exact_normalized_name
+DDInter62,Ambrisentan,ambrisentan,Ambrisentan,ambrisentan,DB06403,true,false,,false,accepted_exact_normalized_name
+DDInter620,Edetate disodium anhydrous,edetate disodium anhydrous,Edetate disodium anhydrous,edetate disodium anhydrous,DB14600,true,false,,false,accepted_exact_normalized_name
+DDInter621,Edoxaban,edoxaban,Edoxaban,edoxaban,DB09075,true,false,,false,accepted_exact_normalized_name
+DDInter622,Edrophonium,edrophonium,Edrophonium,edrophonium,DB01010,true,false,,false,accepted_exact_normalized_name
+DDInter623,Efalizumab,efalizumab,Efalizumab,efalizumab,DB00095,true,false,,false,accepted_exact_normalized_name
+DDInter624,Efavirenz,efavirenz,Efavirenz,efavirenz,DB00625,true,false,,false,accepted_exact_normalized_name
+DDInter625,Elagolix,elagolix,Elagolix,elagolix,DB11979,true,false,,false,accepted_exact_normalized_name
+DDInter626,Elbasvir,elbasvir,Elbasvir,elbasvir,DB11574,true,false,,false,accepted_exact_normalized_name
+DDInter627,Eletriptan,eletriptan,Eletriptan,eletriptan,DB00216,true,false,,false,accepted_exact_normalized_name
+DDInter628,Elexacaftor,elexacaftor,Elexacaftor,elexacaftor,DB15444,true,false,,false,accepted_exact_normalized_name
+DDInter629,Eliglustat,eliglustat,Eliglustat,eliglustat,DB09039,true,false,,false,accepted_exact_normalized_name
+DDInter63,Amcinonide,amcinonide,Amcinonide,amcinonide,DB00288,true,false,,false,accepted_exact_normalized_name
+DDInter630,Elotuzumab,elotuzumab,Elotuzumab,elotuzumab,DB06317,true,false,,false,accepted_exact_normalized_name
+DDInter631,Eltrombopag,eltrombopag,Eltrombopag,eltrombopag,DB06210,true,false,,false,accepted_exact_normalized_name
+DDInter632,Eluxadoline,eluxadoline,Eluxadoline,eluxadoline,DB09272,true,false,,false,accepted_exact_normalized_name
+DDInter633,Elvitegravir,elvitegravir,Elvitegravir,elvitegravir,DB09101,true,false,,false,accepted_exact_normalized_name
+DDInter634,Emapalumab,emapalumab,Emapalumab,emapalumab,DB14724,true,false,,false,accepted_exact_normalized_name
+DDInter635,Emicizumab,emicizumab,Emicizumab,emicizumab,DB13923,true,false,,false,accepted_exact_normalized_name
+DDInter636,Empagliflozin,empagliflozin,Empagliflozin,empagliflozin,DB09038,true,false,,false,accepted_exact_normalized_name
+DDInter637,Emtricitabine,emtricitabine,Emtricitabine,emtricitabine,DB00879,true,false,,false,accepted_exact_normalized_name
+DDInter638,Enalapril,enalapril,Enalapril,enalapril,DB00584,true,false,,false,accepted_exact_normalized_name
+DDInter639,Enasidenib,enasidenib,Enasidenib,enasidenib,DB13874,true,false,,false,accepted_exact_normalized_name
+DDInter64,Amifampridine,amifampridine,Amifampridine,amifampridine,DB11640,true,false,,false,accepted_exact_normalized_name
+DDInter640,Encorafenib,encorafenib,Encorafenib,encorafenib,DB11718,true,false,,false,accepted_exact_normalized_name
+DDInter641,Enflurane,enflurane,Enflurane,enflurane,DB00228,true,false,,false,accepted_exact_normalized_name
+DDInter642,Enfortumab vedotin,enfortumab vedotin,Enfortumab vedotin,enfortumab vedotin,DB13007,true,false,,false,accepted_exact_normalized_name
+DDInter643,Enfuvirtide,enfuvirtide,Enfuvirtide,enfuvirtide,DB00109,true,false,,false,accepted_exact_normalized_name
+DDInter644,Enoxacin,enoxacin,Enoxacin,enoxacin,DB00467,true,false,,false,accepted_exact_normalized_name
+DDInter645,Enoxaparin,enoxaparin,Enoxaparin,enoxaparin,DB01225,true,false,,false,accepted_exact_normalized_name
+DDInter646,Entacapone,entacapone,Entacapone,entacapone,DB00494,true,false,,false,accepted_exact_normalized_name
+DDInter647,Entecavir,entecavir,Entecavir,entecavir,DB00442,true,false,,false,accepted_exact_normalized_name
+DDInter648,Entrectinib,entrectinib,Entrectinib,entrectinib,DB11986,true,false,,false,accepted_exact_normalized_name
+DDInter649,Enzalutamide,enzalutamide,Enzalutamide,enzalutamide,DB08899,true,false,,false,accepted_exact_normalized_name
+DDInter65,Amifostine,amifostine,Amifostine,amifostine,DB01143,true,false,,false,accepted_exact_normalized_name
+DDInter650,Ephedrine,ephedrine,Ephedrine,ephedrine,DB01364,true,false,,false,accepted_exact_normalized_name
+DDInter652,Epinephrine,epinephrine,Epinephrine,epinephrine,DB00668,true,false,,false,accepted_exact_normalized_name
+DDInter655,Epirubicin,epirubicin,Epirubicin,epirubicin,DB00445,true,false,,false,accepted_exact_normalized_name
+DDInter656,Eplerenone,eplerenone,Eplerenone,eplerenone,DB00700,true,false,,false,accepted_exact_normalized_name
+DDInter657,Epoprostenol,epoprostenol,Epoprostenol,epoprostenol,DB01240,true,false,,false,accepted_exact_normalized_name
+DDInter658,Eprosartan,eprosartan,Eprosartan,eprosartan,DB00876,true,false,,false,accepted_exact_normalized_name
+DDInter659,Eptifibatide,eptifibatide,Eptifibatide,eptifibatide,DB00063,true,false,,false,accepted_exact_normalized_name
+DDInter66,Amikacin,amikacin,Amikacin,amikacin,DB00479,true,false,,false,accepted_exact_normalized_name
+DDInter660,Eravacycline,eravacycline,Eravacycline,eravacycline,DB12329,true,false,,false,accepted_exact_normalized_name
+DDInter661,Erdafitinib,erdafitinib,Erdafitinib,erdafitinib,DB12147,true,false,,false,accepted_exact_normalized_name
+DDInter662,Ergocalciferol,ergocalciferol,Ergocalciferol,ergocalciferol,DB00153,true,false,,false,accepted_exact_normalized_name
+DDInter663,Ergoloid mesylate,ergoloid mesylate,Ergoloid mesylate,ergoloid mesylate,DB01049,true,false,,false,accepted_exact_normalized_name
+DDInter664,Ergometrine,ergometrine,Ergometrine,ergometrine,DB01253,true,false,,false,accepted_exact_normalized_name
+DDInter665,Ergotamine,ergotamine,Ergotamine,ergotamine,DB00696,true,false,,false,accepted_exact_normalized_name
+DDInter666,Eribulin,eribulin,Eribulin,eribulin,DB08871,true,false,,false,accepted_exact_normalized_name
+DDInter667,Erlotinib,erlotinib,Erlotinib,erlotinib,DB00530,true,false,,false,accepted_exact_normalized_name
+DDInter668,Ertapenem,ertapenem,Ertapenem,ertapenem,DB00303,true,false,,false,accepted_exact_normalized_name
+DDInter669,Ertugliflozin,ertugliflozin,Ertugliflozin,ertugliflozin,DB11827,true,false,,false,accepted_exact_normalized_name
+DDInter670,Erythromycin,erythromycin,Erythromycin,erythromycin,DB00199,true,false,,false,accepted_exact_normalized_name
+DDInter671,Erythropoietin,erythropoietin,Erythropoietin,erythropoietin,DB00016,true,false,,false,accepted_exact_normalized_name
+DDInter672,Escitalopram,escitalopram,Escitalopram,escitalopram,DB01175,true,false,,false,accepted_exact_normalized_name
+DDInter673,Esketamine,esketamine,Esketamine,esketamine,DB11823,true,false,,false,accepted_exact_normalized_name
+DDInter674,Eslicarbazepine,eslicarbazepine,Eslicarbazepine,eslicarbazepine,DB14575,true,false,,false,accepted_exact_normalized_name
+DDInter675,Esmolol,esmolol,Esmolol,esmolol,DB00187,true,false,,false,accepted_exact_normalized_name
+DDInter676,Esomeprazole,esomeprazole,Esomeprazole,esomeprazole,DB00736,true,false,,false,accepted_exact_normalized_name
+DDInter677,Estazolam,estazolam,Estazolam,estazolam,DB01215,true,false,,false,accepted_exact_normalized_name
+DDInter678,Esterified estrogens,esterified estrogens,Esterified estrogens,esterified estrogens,DB09381,true,false,,false,accepted_exact_normalized_name
+DDInter679,Estradiol,estradiol,Estradiol,estradiol,DB00783,true,false,,false,accepted_exact_normalized_name
+DDInter68,Amiloride,amiloride,Amiloride,amiloride,DB00594,true,false,,false,accepted_exact_normalized_name
+DDInter681,Estramustine,estramustine,Estramustine,estramustine,DB01196,true,false,,false,accepted_exact_normalized_name
+DDInter682,Estrone,estrone,Estrone,estrone,DB00655,true,false,,false,accepted_exact_normalized_name
+DDInter683,Estrone sulfate,estrone sulfate,Estrone sulfate,estrone sulfate,DB04574,true,false,,false,accepted_exact_normalized_name
+DDInter685,Eszopiclone,eszopiclone,Eszopiclone,eszopiclone,DB00402,true,false,,false,accepted_exact_normalized_name
+DDInter686,Etacrynic acid,etacrynic acid,Etacrynic acid,etacrynic acid,DB00903,true,false,,false,accepted_exact_normalized_name
+DDInter687,Etanercept,etanercept,Etanercept,etanercept,DB00005,true,false,,false,accepted_exact_normalized_name
+DDInter689,Ethambutol,ethambutol,Ethambutol,ethambutol,DB00330,true,false,,false,accepted_exact_normalized_name
+DDInter690,Ethanol,ethanol,Ethanol,ethanol,DB00898,true,false,,false,accepted_exact_normalized_name
+DDInter691,Ethchlorvynol,ethchlorvynol,Ethchlorvynol,ethchlorvynol,DB00189,true,false,,false,accepted_exact_normalized_name
+DDInter692,Ethinylestradiol,ethinylestradiol,Ethinylestradiol,ethinylestradiol,DB00977,true,false,,false,accepted_exact_normalized_name
+DDInter693,Ethiodized oil,ethiodized oil,Ethiodized oil,ethiodized oil,DB00965,true,false,,false,accepted_exact_normalized_name
+DDInter694,Ethionamide,ethionamide,Ethionamide,ethionamide,DB00609,true,false,,false,accepted_exact_normalized_name
+DDInter695,Ethosuximide,ethosuximide,Ethosuximide,ethosuximide,DB00593,true,false,,false,accepted_exact_normalized_name
+DDInter696,Ethotoin,ethotoin,Ethotoin,ethotoin,DB00754,true,false,,false,accepted_exact_normalized_name
+DDInter697,Etidocaine,etidocaine,Etidocaine,etidocaine,DB08987,true,false,,false,accepted_exact_normalized_name
+DDInter698,Etidronic acid,etidronic acid,Etidronic acid,etidronic acid,DB01077,true,false,,false,accepted_exact_normalized_name
+DDInter699,Etodolac,etodolac,Etodolac,etodolac,DB00749,true,false,,false,accepted_exact_normalized_name
+DDInter7,Abemaciclib,abemaciclib,Abemaciclib,abemaciclib,DB12001,true,false,,false,accepted_exact_normalized_name
+DDInter70,Aminocaproic acid,aminocaproic acid,Aminocaproic acid,aminocaproic acid,DB00513,true,false,,false,accepted_exact_normalized_name
+DDInter700,Etomidate,etomidate,Etomidate,etomidate,DB00292,true,false,,false,accepted_exact_normalized_name
+DDInter701,Etonogestrel,etonogestrel,Etonogestrel,etonogestrel,DB00294,true,false,,false,accepted_exact_normalized_name
+DDInter702,Etoposide,etoposide,Etoposide,etoposide,DB00773,true,false,,false,accepted_exact_normalized_name
+DDInter703,Etravirine,etravirine,Etravirine,etravirine,DB06414,true,false,,false,accepted_exact_normalized_name
+DDInter704,Everolimus,everolimus,Everolimus,everolimus,DB01590,true,false,,false,accepted_exact_normalized_name
+DDInter705,Exemestane,exemestane,Exemestane,exemestane,DB00990,true,false,,false,accepted_exact_normalized_name
+DDInter706,Exenatide,exenatide,Exenatide,exenatide,DB01276,true,false,,false,accepted_exact_normalized_name
+DDInter707,Ezetimibe,ezetimibe,Ezetimibe,ezetimibe,DB00973,true,false,,false,accepted_exact_normalized_name
+DDInter708,Ezogabine,ezogabine,Ezogabine,ezogabine,DB04953,true,false,,false,accepted_exact_normalized_name
+DDInter709,Factor IX Complex (Human),factor ix complex (human),Factor IX Complex (Human),factor ix complex (human),DB11330,true,false,parenthetical_or_comma_exact_match,false,accepted_exact_normalized_name
+DDInter71,Aminoglutethimide,aminoglutethimide,Aminoglutethimide,aminoglutethimide,DB00357,true,false,,false,accepted_exact_normalized_name
+DDInter710,Factor XIII (human),factor xiii (human),Factor XIII (human),factor xiii (human),DB12909,true,false,parenthetical_or_comma_exact_match,false,accepted_exact_normalized_name
+DDInter711,Famciclovir,famciclovir,Famciclovir,famciclovir,DB00426,true,false,,false,accepted_exact_normalized_name
+DDInter712,Famotidine,famotidine,Famotidine,famotidine,DB00927,true,false,,false,accepted_exact_normalized_name
+DDInter713,Febuxostat,febuxostat,Febuxostat,febuxostat,DB04854,true,false,,false,accepted_exact_normalized_name
+DDInter714,Fedratinib,fedratinib,Fedratinib,fedratinib,DB12500,true,false,,false,accepted_exact_normalized_name
+DDInter715,Felbamate,felbamate,Felbamate,felbamate,DB00949,true,false,,false,accepted_exact_normalized_name
+DDInter716,Felodipine,felodipine,Felodipine,felodipine,DB01023,true,false,,false,accepted_exact_normalized_name
+DDInter717,Fenfluramine,fenfluramine,Fenfluramine,fenfluramine,DB00574,true,false,,false,accepted_exact_normalized_name
+DDInter718,Fenofibrate,fenofibrate,Fenofibrate,fenofibrate,DB01039,true,false,,false,accepted_exact_normalized_name
+DDInter719,Fenofibric acid,fenofibric acid,Fenofibric acid,fenofibric acid,DB13873,true,false,,false,accepted_exact_normalized_name
+DDInter72,Aminolevulinic acid,aminolevulinic acid,Aminolevulinic acid,aminolevulinic acid,DB00855,true,false,,false,accepted_exact_normalized_name
+DDInter720,Fenoldopam,fenoldopam,Fenoldopam,fenoldopam,DB00800,true,false,,false,accepted_exact_normalized_name
+DDInter721,Fenoprofen,fenoprofen,Fenoprofen,fenoprofen,DB00573,true,false,,false,accepted_exact_normalized_name
+DDInter722,Fentanyl,fentanyl,Fentanyl,fentanyl,DB00813,true,false,,false,accepted_exact_normalized_name
+DDInter723,Ferric carboxymaltose,ferric carboxymaltose,Ferric carboxymaltose,ferric carboxymaltose,DB08917,true,false,,false,accepted_exact_normalized_name
+DDInter724,Ferric derisomaltose,ferric derisomaltose,Ferric derisomaltose,ferric derisomaltose,DB15617,true,false,,false,accepted_exact_normalized_name
+DDInter725,Ferrous fumarate,ferrous fumarate,Ferrous fumarate,ferrous fumarate,DB14491,true,false,,false,accepted_exact_normalized_name
+DDInter726,Ferrous gluconate,ferrous gluconate,Ferrous gluconate,ferrous gluconate,DB14488,true,false,,false,accepted_exact_normalized_name
+DDInter727,Ferrous sulfate anhydrous,ferrous sulfate anhydrous,Ferrous sulfate anhydrous,ferrous sulfate anhydrous,DB13257,true,false,,false,accepted_exact_normalized_name
+DDInter728,Ferumoxides,ferumoxides,Ferumoxides,ferumoxides,DB09508,true,false,,false,accepted_exact_normalized_name
+DDInter729,Ferumoxsil,ferumoxsil,Ferumoxsil,ferumoxsil,DB09507,true,false,,false,accepted_exact_normalized_name
+DDInter730,Ferumoxytol,ferumoxytol,Ferumoxytol,ferumoxytol,DB06215,true,false,,false,accepted_exact_normalized_name
+DDInter731,Fesoterodine,fesoterodine,Fesoterodine,fesoterodine,DB06702,true,false,,false,accepted_exact_normalized_name
+DDInter732,Fexofenadine,fexofenadine,Fexofenadine,fexofenadine,DB00950,true,false,,false,accepted_exact_normalized_name
+DDInter733,Fibrinogen human,fibrinogen human,Fibrinogen human,fibrinogen human,DB09222,true,false,,false,accepted_exact_normalized_name
+DDInter734,Fidaxomicin,fidaxomicin,Fidaxomicin,fidaxomicin,DB08874,true,false,,false,accepted_exact_normalized_name
+DDInter735,Filgrastim,filgrastim,Filgrastim,filgrastim,DB00099,true,false,,false,accepted_exact_normalized_name
+DDInter736,Finasteride,finasteride,Finasteride,finasteride,DB01216,true,false,,false,accepted_exact_normalized_name
+DDInter737,Fingolimod,fingolimod,Fingolimod,fingolimod,DB08868,true,false,,false,accepted_exact_normalized_name
+DDInter738,Flavoxate,flavoxate,Flavoxate,flavoxate,DB01148,true,false,,false,accepted_exact_normalized_name
+DDInter74,Aminophylline,aminophylline,Aminophylline,aminophylline,DB01223,true,false,,false,accepted_exact_normalized_name
+DDInter740,Flecainide,flecainide,Flecainide,flecainide,DB01195,true,false,,false,accepted_exact_normalized_name
+DDInter741,Flibanserin,flibanserin,Flibanserin,flibanserin,DB04908,true,false,,false,accepted_exact_normalized_name
+DDInter742,Floxuridine,floxuridine,Floxuridine,floxuridine,DB00322,true,false,,false,accepted_exact_normalized_name
+DDInter743,Fluconazole,fluconazole,Fluconazole,fluconazole,DB00196,true,false,,false,accepted_exact_normalized_name
+DDInter744,Flucytosine,flucytosine,Flucytosine,flucytosine,DB01099,true,false,,false,accepted_exact_normalized_name
+DDInter745,Fludarabine,fludarabine,Fludarabine,fludarabine,DB01073,true,false,,false,accepted_exact_normalized_name
+DDInter746,Fludeoxyglucose (18F),fludeoxyglucose (18f),Fludeoxyglucose (18F),fludeoxyglucose (18f),DB09502,true,false,parenthetical_or_comma_exact_match,false,accepted_exact_normalized_name
+DDInter747,Fludrocortisone,fludrocortisone,Fludrocortisone,fludrocortisone,DB00687,true,false,,false,accepted_exact_normalized_name
+DDInter748,Flumazenil,flumazenil,Flumazenil,flumazenil,DB01205,true,false,,false,accepted_exact_normalized_name
+DDInter749,Flunisolide,flunisolide,Flunisolide,flunisolide,DB00180,true,false,,false,accepted_exact_normalized_name
+DDInter75,Aminosalicylic acid,aminosalicylic acid,Aminosalicylic acid,aminosalicylic acid,DB00233,true,false,,false,accepted_exact_normalized_name
+DDInter751,Fluocinolone acetonide,fluocinolone acetonide,Fluocinolone acetonide,fluocinolone acetonide,DB00591,true,false,,false,accepted_exact_normalized_name
+DDInter752,Fluocinonide,fluocinonide,Fluocinonide,fluocinonide,DB01047,true,false,,false,accepted_exact_normalized_name
+DDInter755,Fluorometholone,fluorometholone,Fluorometholone,fluorometholone,DB00324,true,false,,false,accepted_exact_normalized_name
+DDInter757,Fluorouracil,fluorouracil,Fluorouracil,fluorouracil,DB00544,true,false,,false,accepted_exact_normalized_name
+DDInter758,Fluoxetine,fluoxetine,Fluoxetine,fluoxetine,DB00472,true,false,,false,accepted_exact_normalized_name
+DDInter759,Fluoxymesterone,fluoxymesterone,Fluoxymesterone,fluoxymesterone,DB01185,true,false,,false,accepted_exact_normalized_name
+DDInter76,Amiodarone,amiodarone,Amiodarone,amiodarone,DB01118,true,false,,false,accepted_exact_normalized_name
+DDInter760,Fluphenazine,fluphenazine,Fluphenazine,fluphenazine,DB00623,true,false,,false,accepted_exact_normalized_name
+DDInter762,Flurazepam,flurazepam,Flurazepam,flurazepam,DB00690,true,false,,false,accepted_exact_normalized_name
+DDInter763,Flurbiprofen,flurbiprofen,Flurbiprofen,flurbiprofen,DB00712,true,false,,false,accepted_exact_normalized_name
+DDInter765,Flutamide,flutamide,Flutamide,flutamide,DB00499,true,false,,false,accepted_exact_normalized_name
+DDInter766,Fluticasone,fluticasone,Fluticasone,fluticasone,DB13867,true,false,,false,accepted_exact_normalized_name
+DDInter769,Fluvastatin,fluvastatin,Fluvastatin,fluvastatin,DB01095,true,false,,false,accepted_exact_normalized_name
+DDInter77,Amisulpride,amisulpride,Amisulpride,amisulpride,DB06288,true,false,,false,accepted_exact_normalized_name
+DDInter770,Fluvoxamine,fluvoxamine,Fluvoxamine,fluvoxamine,DB00176,true,false,,false,accepted_exact_normalized_name
+DDInter771,Folic acid,folic acid,Folic acid,folic acid,DB00158,true,false,,false,accepted_exact_normalized_name
+DDInter772,Follitropin,follitropin,Follitropin,follitropin,DB00066,true,false,,false,accepted_exact_normalized_name
+DDInter773,Fomepizole,fomepizole,Fomepizole,fomepizole,DB01213,true,false,,false,accepted_exact_normalized_name
+DDInter775,Fondaparinux,fondaparinux,Fondaparinux,fondaparinux,DB00569,true,false,,false,accepted_exact_normalized_name
+DDInter776,Formoterol,formoterol,Formoterol,formoterol,DB00983,true,false,,false,accepted_exact_normalized_name
+DDInter777,Fosamprenavir,fosamprenavir,Fosamprenavir,fosamprenavir,DB01319,true,false,,false,accepted_exact_normalized_name
+DDInter778,Fosaprepitant,fosaprepitant,Fosaprepitant,fosaprepitant,DB06717,true,false,,false,accepted_exact_normalized_name
+DDInter779,Foscarnet,foscarnet,Foscarnet,foscarnet,DB00529,true,false,,false,accepted_exact_normalized_name
+DDInter78,Amitriptyline,amitriptyline,Amitriptyline,amitriptyline,DB00321,true,false,,false,accepted_exact_normalized_name
+DDInter780,Fosfomycin,fosfomycin,Fosfomycin,fosfomycin,DB00828,true,false,,false,accepted_exact_normalized_name
+DDInter781,Fosinopril,fosinopril,Fosinopril,fosinopril,DB00492,true,false,,false,accepted_exact_normalized_name
+DDInter782,Fosnetupitant,fosnetupitant,Fosnetupitant,fosnetupitant,DB14019,true,false,,false,accepted_exact_normalized_name
+DDInter783,Fosphenytoin,fosphenytoin,Fosphenytoin,fosphenytoin,DB01320,true,false,,false,accepted_exact_normalized_name
+DDInter784,Fospropofol,fospropofol,Fospropofol,fospropofol,DB06716,true,false,,false,accepted_exact_normalized_name
+DDInter785,Fostamatinib,fostamatinib,Fostamatinib,fostamatinib,DB12010,true,false,,false,accepted_exact_normalized_name
+DDInter786,Fostemsavir,fostemsavir,Fostemsavir,fostemsavir,DB11796,true,false,,false,accepted_exact_normalized_name
+DDInter787,Frangula purshiana bark,frangula purshiana bark,Frangula purshiana bark,frangula purshiana bark,DB15478,true,false,,false,accepted_exact_normalized_name
+DDInter788,Frovatriptan,frovatriptan,Frovatriptan,frovatriptan,DB00998,true,false,,false,accepted_exact_normalized_name
+DDInter789,Fulvestrant,fulvestrant,Fulvestrant,fulvestrant,DB00947,true,false,,false,accepted_exact_normalized_name
+DDInter79,Amlodipine,amlodipine,Amlodipine,amlodipine,DB00381,true,false,,false,accepted_exact_normalized_name
+DDInter790,Furosemide,furosemide,Furosemide,furosemide,DB00695,true,false,,false,accepted_exact_normalized_name
+DDInter791,Gabapentin,gabapentin,Gabapentin,gabapentin,DB00996,true,false,,false,accepted_exact_normalized_name
+DDInter792,Gadobenic acid,gadobenic acid,Gadobenic acid,gadobenic acid,DB00743,true,false,,false,accepted_exact_normalized_name
+DDInter794,Gadodiamide,gadodiamide,Gadodiamide,gadodiamide,DB00225,true,false,,false,accepted_exact_normalized_name
+DDInter795,Gadofosveset trisodium,gadofosveset trisodium,Gadofosveset trisodium,gadofosveset trisodium,DB06705,true,false,,false,accepted_exact_normalized_name
+DDInter796,Gadopentetic acid,gadopentetic acid,Gadopentetic acid,gadopentetic acid,DB00789,true,false,,false,accepted_exact_normalized_name
+DDInter797,Gadoteric acid,gadoteric acid,Gadoteric acid,gadoteric acid,DB09132,true,false,,false,accepted_exact_normalized_name
+DDInter798,Gadoteridol,gadoteridol,Gadoteridol,gadoteridol,DB00597,true,false,,false,accepted_exact_normalized_name
+DDInter8,Abiraterone,abiraterone,Abiraterone,abiraterone,DB05812,true,false,,false,accepted_exact_normalized_name
+DDInter80,Ammonium chloride,ammonium chloride,Ammonium chloride,ammonium chloride,DB06767,true,false,,false,accepted_exact_normalized_name
+DDInter800,Gadoxetic acid,gadoxetic acid,Gadoxetic acid,gadoxetic acid,DB08884,true,false,,false,accepted_exact_normalized_name
+DDInter802,Galantamine,galantamine,Galantamine,galantamine,DB00674,true,false,,false,accepted_exact_normalized_name
+DDInter804,Gallium nitrate,gallium nitrate,Gallium nitrate,gallium nitrate,DB05260,true,false,,false,accepted_exact_normalized_name
+DDInter806,Ganciclovir,ganciclovir,Ganciclovir,ganciclovir,DB01004,true,false,,false,accepted_exact_normalized_name
+DDInter808,Garlic,garlic,Garlic,garlic,DB10532,true,false,,false,accepted_exact_normalized_name
+DDInter809,Gatifloxacin,gatifloxacin,Gatifloxacin,gatifloxacin,DB01044,true,false,,false,accepted_exact_normalized_name
+DDInter81,Amobarbital,amobarbital,Amobarbital,amobarbital,DB01351,true,false,,false,accepted_exact_normalized_name
+DDInter810,Gefitinib,gefitinib,Gefitinib,gefitinib,DB00317,true,false,,false,accepted_exact_normalized_name
+DDInter811,Gemcitabine,gemcitabine,Gemcitabine,gemcitabine,DB00441,true,false,,false,accepted_exact_normalized_name
+DDInter812,Gemfibrozil,gemfibrozil,Gemfibrozil,gemfibrozil,DB01241,true,false,,false,accepted_exact_normalized_name
+DDInter813,Gemifloxacin,gemifloxacin,Gemifloxacin,gemifloxacin,DB01155,true,false,,false,accepted_exact_normalized_name
+DDInter814,Gemtuzumab ozogamicin,gemtuzumab ozogamicin,Gemtuzumab ozogamicin,gemtuzumab ozogamicin,DB00056,true,false,,false,accepted_exact_normalized_name
+DDInter815,Gentamicin,gentamicin,Gentamicin,gentamicin,DB00798,true,false,,false,accepted_exact_normalized_name
+DDInter817,Gilteritinib,gilteritinib,Gilteritinib,gilteritinib,DB12141,true,false,,false,accepted_exact_normalized_name
+DDInter819,Ginkgo biloba,ginkgo biloba,Ginkgo biloba,ginkgo biloba,DB01381,true,false,,false,accepted_exact_normalized_name
+DDInter82,Amoxapine,amoxapine,Amoxapine,amoxapine,DB00543,true,false,,false,accepted_exact_normalized_name
+DDInter820,Ginseng,ginseng,Ginseng,ginseng,DB01404,true,false,,false,accepted_exact_normalized_name
+DDInter821,Givosiran,givosiran,Givosiran,givosiran,DB15066,true,false,,false,accepted_exact_normalized_name
+DDInter822,Glasdegib,glasdegib,Glasdegib,glasdegib,DB11978,true,false,,false,accepted_exact_normalized_name
+DDInter823,Glatiramer,glatiramer,Glatiramer,glatiramer,DB05259,true,false,,false,accepted_exact_normalized_name
+DDInter824,Glecaprevir,glecaprevir,Glecaprevir,glecaprevir,DB13879,true,false,,false,accepted_exact_normalized_name
+DDInter825,Glimepiride,glimepiride,Glimepiride,glimepiride,DB00222,true,false,,false,accepted_exact_normalized_name
+DDInter826,Glipizide,glipizide,Glipizide,glipizide,DB01067,true,false,,false,accepted_exact_normalized_name
+DDInter827,Glucagon,glucagon,Glucagon,glucagon,DB00040,true,false,,false,accepted_exact_normalized_name
+DDInter828,Glucarpidase,glucarpidase,Glucarpidase,glucarpidase,DB08898,true,false,,false,accepted_exact_normalized_name
+DDInter829,Glucosamine,glucosamine,Glucosamine,glucosamine,DB01296,true,false,,false,accepted_exact_normalized_name
+DDInter83,Amoxicillin,amoxicillin,Amoxicillin,amoxicillin,DB01060,true,false,,false,accepted_exact_normalized_name
+DDInter830,Glutamic acid,glutamic acid,Glutamic acid,glutamic acid,DB00142,true,false,,false,accepted_exact_normalized_name
+DDInter831,Glyburide,glyburide,Glyburide,glyburide,DB01016,true,false,,false,accepted_exact_normalized_name
+DDInter832,Glycerin,glycerin,Glycerin,glycerin,DB09462,true,false,,false,accepted_exact_normalized_name
+DDInter833,Glycerol phenylbutyrate,glycerol phenylbutyrate,Glycerol phenylbutyrate,glycerol phenylbutyrate,DB08909,true,false,,false,accepted_exact_normalized_name
+DDInter834,Glycopyrronium,glycopyrronium,Glycopyrronium,glycopyrronium,DB00986,true,false,,false,accepted_exact_normalized_name
+DDInter837,Golimumab,golimumab,Golimumab,golimumab,DB06674,true,false,,false,accepted_exact_normalized_name
+DDInter838,Gonadorelin,gonadorelin,Gonadorelin,gonadorelin,DB00644,true,false,,false,accepted_exact_normalized_name
+DDInter839,Goserelin,goserelin,Goserelin,goserelin,DB00014,true,false,,false,accepted_exact_normalized_name
+DDInter84,Amphetamine,amphetamine,Amphetamine,amphetamine,DB00182,true,false,,false,accepted_exact_normalized_name
+DDInter840,Granisetron,granisetron,Granisetron,granisetron,DB00889,true,false,,false,accepted_exact_normalized_name
+DDInter841,Grazoprevir,grazoprevir,Grazoprevir,grazoprevir,DB11575,true,false,,false,accepted_exact_normalized_name
+DDInter842,Grepafloxacin,grepafloxacin,Grepafloxacin,grepafloxacin,DB00365,true,false,,false,accepted_exact_normalized_name
+DDInter843,Griseofulvin,griseofulvin,Griseofulvin,griseofulvin,DB00400,true,false,,false,accepted_exact_normalized_name
+DDInter844,Guanabenz,guanabenz,Guanabenz,guanabenz,DB00629,true,false,,false,accepted_exact_normalized_name
+DDInter845,Guanadrel,guanadrel,Guanadrel,guanadrel,DB00226,true,false,,false,accepted_exact_normalized_name
+DDInter846,Guanethidine,guanethidine,Guanethidine,guanethidine,DB01170,true,false,,false,accepted_exact_normalized_name
+DDInter847,Guanfacine,guanfacine,Guanfacine,guanfacine,DB01018,true,false,,false,accepted_exact_normalized_name
+DDInter848,Guanidine,guanidine,Guanidine,guanidine,DB00536,true,false,,false,accepted_exact_normalized_name
+DDInter849,Guselkumab,guselkumab,Guselkumab,guselkumab,DB11834,true,false,,false,accepted_exact_normalized_name
+DDInter85,Amphotericin B,amphotericin b,Amphotericin B,amphotericin b,DB00681,true,false,,false,accepted_exact_normalized_name
+DDInter850,Halazepam,halazepam,Halazepam,halazepam,DB00801,true,false,,false,accepted_exact_normalized_name
+DDInter852,Halofantrine,halofantrine,Halofantrine,halofantrine,DB01218,true,false,,false,accepted_exact_normalized_name
+DDInter853,Haloperidol,haloperidol,Haloperidol,haloperidol,DB00502,true,false,,false,accepted_exact_normalized_name
+DDInter854,Halothane,halothane,Halothane,halothane,DB01159,true,false,,false,accepted_exact_normalized_name
+DDInter855,Hemin,hemin,Hemin,hemin,DB03404,true,false,,false,accepted_exact_normalized_name
+DDInter856,Heparin,heparin,Heparin,heparin,DB01109,true,false,,false,accepted_exact_normalized_name
+DDInter858,Hepatitis A Vaccine,hepatitis a vaccine,Hepatitis A Vaccine,hepatitis a vaccine,DB10989,true,false,,false,accepted_exact_normalized_name
+DDInter860,Hepatitis B Vaccine (Recombinant),hepatitis b vaccine (recombinant),Hepatitis B Vaccine (Recombinant),hepatitis b vaccine (recombinant),DB11627,true,true,parenthetical_or_comma_exact_match;qualifier_preserved_exactly:recombinant,false,accepted_exact_normalized_name
+DDInter862,Hexaminolevulinate,hexaminolevulinate,Hexaminolevulinate,hexaminolevulinate,DB06261,true,false,,false,accepted_exact_normalized_name
+DDInter863,Histamine,histamine,Histamine,histamine,DB05381,true,false,,false,accepted_exact_normalized_name
+DDInter864,Histrelin,histrelin,Histrelin,histrelin,DB06788,true,false,,false,accepted_exact_normalized_name
+DDInter865,Homatropine,homatropine,Homatropine,homatropine,DB11181,true,false,,false,accepted_exact_normalized_name
+DDInter867,Human adenovirus e serotype 4 strain cl-68578 antigen,human adenovirus e serotype 4 strain cl-68578 antigen,Human adenovirus e serotype 4 strain cl-68578 antigen,human adenovirus e serotype 4 strain cl-68578 antigen,DB14409,true,false,,false,accepted_exact_normalized_name
+DDInter869,Human C1-esterase inhibitor,human c1-esterase inhibitor,Human C1-esterase inhibitor,human c1-esterase inhibitor,DB06404,true,false,,false,accepted_exact_normalized_name
+DDInter870,Human cytomegalovirus immune globulin,human cytomegalovirus immune globulin,Human cytomegalovirus immune globulin,human cytomegalovirus immune globulin,DB13886,true,false,,false,accepted_exact_normalized_name
+DDInter881,Hyaluronidase,hyaluronidase,Hyaluronidase,hyaluronidase,DB14740,true,false,,false,accepted_exact_normalized_name
+DDInter882,Hydralazine,hydralazine,Hydralazine,hydralazine,DB01275,true,false,,false,accepted_exact_normalized_name
+DDInter883,Hydrochlorothiazide,hydrochlorothiazide,Hydrochlorothiazide,hydrochlorothiazide,DB00999,true,false,,false,accepted_exact_normalized_name
+DDInter884,Hydrocodone,hydrocodone,Hydrocodone,hydrocodone,DB00956,true,false,,false,accepted_exact_normalized_name
+DDInter885,Hydrocortisone,hydrocortisone,Hydrocortisone,hydrocortisone,DB00741,true,false,,false,accepted_exact_normalized_name
+DDInter888,Hydrocortisone butyrate,hydrocortisone butyrate,Hydrocortisone butyrate,hydrocortisone butyrate,DB14540,true,false,,false,accepted_exact_normalized_name
+DDInter889,Hydroflumethiazide,hydroflumethiazide,Hydroflumethiazide,hydroflumethiazide,DB00774,true,false,,false,accepted_exact_normalized_name
+DDInter89,Ampicillin,ampicillin,Ampicillin,ampicillin,DB00415,true,false,,false,accepted_exact_normalized_name
+DDInter890,Hydromorphone,hydromorphone,Hydromorphone,hydromorphone,DB00327,true,false,,false,accepted_exact_normalized_name
+DDInter891,Hydroxocobalamin,hydroxocobalamin,Hydroxocobalamin,hydroxocobalamin,DB00200,true,false,,false,accepted_exact_normalized_name
+DDInter893,Hydroxychloroquine,hydroxychloroquine,Hydroxychloroquine,hydroxychloroquine,DB01611,true,false,,false,accepted_exact_normalized_name
+DDInter894,Hydroxyurea,hydroxyurea,Hydroxyurea,hydroxyurea,DB01005,true,false,,false,accepted_exact_normalized_name
+DDInter895,Hydroxyzine,hydroxyzine,Hydroxyzine,hydroxyzine,DB00557,true,false,,false,accepted_exact_normalized_name
+DDInter896,Hyoscyamine,hyoscyamine,Hyoscyamine,hyoscyamine,DB00424,true,false,,false,accepted_exact_normalized_name
+DDInter897,Ibandronate,ibandronate,Ibandronate,ibandronate,DB00710,true,false,,false,accepted_exact_normalized_name
+DDInter898,Ibritumomab tiuxetan,ibritumomab tiuxetan,Ibritumomab tiuxetan,ibritumomab tiuxetan,DB00078,true,false,,false,accepted_exact_normalized_name
+DDInter899,Ibrutinib,ibrutinib,Ibrutinib,ibrutinib,DB09053,true,false,,false,accepted_exact_normalized_name
+DDInter9,Acalabrutinib,acalabrutinib,Acalabrutinib,acalabrutinib,DB11703,true,false,,false,accepted_exact_normalized_name
+DDInter90,Amprenavir,amprenavir,Amprenavir,amprenavir,DB00701,true,false,,false,accepted_exact_normalized_name
+DDInter900,Ibuprofen,ibuprofen,Ibuprofen,ibuprofen,DB01050,true,false,,false,accepted_exact_normalized_name
+DDInter901,Ibutilide,ibutilide,Ibutilide,ibutilide,DB00308,true,false,,false,accepted_exact_normalized_name
+DDInter902,Icatibant,icatibant,Icatibant,icatibant,DB06196,true,false,,false,accepted_exact_normalized_name
+DDInter903,Icosapent,icosapent,Icosapent,icosapent,DB00159,true,false,,false,accepted_exact_normalized_name
+DDInter904,Idarubicin,idarubicin,Idarubicin,idarubicin,DB01177,true,false,,false,accepted_exact_normalized_name
+DDInter905,Idelalisib,idelalisib,Idelalisib,idelalisib,DB09054,true,false,,false,accepted_exact_normalized_name
+DDInter906,Ifosfamide,ifosfamide,Ifosfamide,ifosfamide,DB01181,true,false,,false,accepted_exact_normalized_name
+DDInter907,Iloperidone,iloperidone,Iloperidone,iloperidone,DB04946,true,false,,false,accepted_exact_normalized_name
+DDInter908,Iloprost,iloprost,Iloprost,iloprost,DB01088,true,false,,false,accepted_exact_normalized_name
+DDInter909,Imatinib,imatinib,Imatinib,imatinib,DB00619,true,false,,false,accepted_exact_normalized_name
+DDInter91,Amrinone,amrinone,Amrinone,amrinone,DB01427,true,false,,false,accepted_exact_normalized_name
+DDInter911,Imipenem,imipenem,Imipenem,imipenem,DB01598,true,false,,false,accepted_exact_normalized_name
+DDInter912,Imipramine,imipramine,Imipramine,imipramine,DB00458,true,false,,false,accepted_exact_normalized_name
+DDInter913,Imiquimod,imiquimod,Imiquimod,imiquimod,DB00724,true,false,,false,accepted_exact_normalized_name
+DDInter915,Indacaterol,indacaterol,Indacaterol,indacaterol,DB05039,true,false,,false,accepted_exact_normalized_name
+DDInter916,Indapamide,indapamide,Indapamide,indapamide,DB00808,true,false,,false,accepted_exact_normalized_name
+DDInter917,Indinavir,indinavir,Indinavir,indinavir,DB00224,true,false,,false,accepted_exact_normalized_name
+DDInter92,Amyl Nitrite,amyl nitrite,Amyl Nitrite,amyl nitrite,DB01612,true,false,,false,accepted_exact_normalized_name
+DDInter921,Indomethacin,indomethacin,Indomethacin,indomethacin,DB00328,true,false,,false,accepted_exact_normalized_name
+DDInter922,Inebilizumab,inebilizumab,Inebilizumab,inebilizumab,DB12530,true,false,,false,accepted_exact_normalized_name
+DDInter923,Infliximab,infliximab,Infliximab,infliximab,DB00065,true,false,,false,accepted_exact_normalized_name
+DDInter926,Inotersen,inotersen,Inotersen,inotersen,DB14713,true,false,,false,accepted_exact_normalized_name
+DDInter927,Inotuzumab ozogamicin,inotuzumab ozogamicin,Inotuzumab ozogamicin,inotuzumab ozogamicin,DB05889,true,false,,false,accepted_exact_normalized_name
+DDInter93,Anagrelide,anagrelide,Anagrelide,anagrelide,DB00261,true,false,,false,accepted_exact_normalized_name
+DDInter930,Insulin degludec,insulin degludec,Insulin degludec,insulin degludec,DB09564,true,false,,false,accepted_exact_normalized_name
+DDInter931,Insulin detemir,insulin detemir,Insulin detemir,insulin detemir,DB01307,true,false,,false,accepted_exact_normalized_name
+DDInter932,Insulin glargine,insulin glargine,Insulin glargine,insulin glargine,DB00047,true,false,,false,accepted_exact_normalized_name
+DDInter933,Insulin glulisine,insulin glulisine,Insulin glulisine,insulin glulisine,DB01309,true,false,,false,accepted_exact_normalized_name
+DDInter934,Insulin human,insulin human,Insulin human,insulin human,DB00030,true,false,,false,accepted_exact_normalized_name
+DDInter94,Anakinra,anakinra,Anakinra,anakinra,DB00026,true,false,,false,accepted_exact_normalized_name
+DDInter940,Insulin lispro,insulin lispro,Insulin lispro,insulin lispro,DB00046,true,false,,false,accepted_exact_normalized_name
+DDInter942,"Interferon alfa-2a, Recombinant","interferon alfa-2a, recombinant","Interferon alfa-2a, Recombinant","interferon alfa-2a, recombinant",DB00034,true,true,parenthetical_or_comma_exact_match;qualifier_preserved_exactly:recombinant,false,accepted_exact_normalized_name
+DDInter943,Interferon alfa-2b,interferon alfa-2b,Interferon alfa-2b,interferon alfa-2b,DB00105,true,false,,false,accepted_exact_normalized_name
+DDInter944,Interferon alfa-n1,interferon alfa-n1,Interferon alfa-n1,interferon alfa-n1,DB00011,true,false,,false,accepted_exact_normalized_name
+DDInter945,Interferon alfa-n3,interferon alfa-n3,Interferon alfa-n3,interferon alfa-n3,DB00018,true,false,,false,accepted_exact_normalized_name
+DDInter946,Interferon alfacon-1,interferon alfacon-1,Interferon alfacon-1,interferon alfacon-1,DB00069,true,false,,false,accepted_exact_normalized_name
+DDInter947,Interferon beta-1a,interferon beta-1a,Interferon beta-1a,interferon beta-1a,DB00060,true,false,,false,accepted_exact_normalized_name
+DDInter948,Interferon beta-1b,interferon beta-1b,Interferon beta-1b,interferon beta-1b,DB00068,true,false,,false,accepted_exact_normalized_name
+DDInter949,Interferon gamma-1b,interferon gamma-1b,Interferon gamma-1b,interferon gamma-1b,DB00033,true,false,,false,accepted_exact_normalized_name
+DDInter95,Anastrozole,anastrozole,Anastrozole,anastrozole,DB01217,true,false,,false,accepted_exact_normalized_name
+DDInter954,Iodide I-131,iodide i-131,Iodide I-131,iodide i-131,DB09293,true,false,,false,accepted_exact_normalized_name
+DDInter957,Iodipamide,iodipamide,Iodipamide,iodipamide,DB04711,true,false,,false,accepted_exact_normalized_name
+DDInter958,Iodixanol,iodixanol,Iodixanol,iodixanol,DB01249,true,false,,false,accepted_exact_normalized_name
+DDInter959,Ioflupane I-123,ioflupane i-123,Ioflupane I-123,ioflupane i-123,DB08824,true,false,,false,accepted_exact_normalized_name
+DDInter960,Iohexol,iohexol,Iohexol,iohexol,DB01362,true,false,,false,accepted_exact_normalized_name
+DDInter961,Iopamidol,iopamidol,Iopamidol,iopamidol,DB08947,true,false,,false,accepted_exact_normalized_name
+DDInter964,Iopromide,iopromide,Iopromide,iopromide,DB09156,true,false,,false,accepted_exact_normalized_name
+DDInter965,Iothalamic acid,iothalamic acid,Iothalamic acid,iothalamic acid,DB09133,true,false,,false,accepted_exact_normalized_name
+DDInter966,Ioversol,ioversol,Ioversol,ioversol,DB09134,true,false,,false,accepted_exact_normalized_name
+DDInter967,Ioxilan,ioxilan,Ioxilan,ioxilan,DB09135,true,false,,false,accepted_exact_normalized_name
+DDInter968,Ipecac,ipecac,Ipecac,ipecac,DB13293,true,false,,false,accepted_exact_normalized_name
+DDInter969,Ipilimumab,ipilimumab,Ipilimumab,ipilimumab,DB06186,true,false,,false,accepted_exact_normalized_name
+DDInter97,Anidulafungin,anidulafungin,Anidulafungin,anidulafungin,DB00362,true,false,,false,accepted_exact_normalized_name
+DDInter970,Ipratropium,ipratropium,Ipratropium,ipratropium,DB00332,true,false,,false,accepted_exact_normalized_name
+DDInter972,Irbesartan,irbesartan,Irbesartan,irbesartan,DB01029,true,false,,false,accepted_exact_normalized_name
+DDInter973,Irinotecan,irinotecan,Irinotecan,irinotecan,DB00762,true,false,,false,accepted_exact_normalized_name
+DDInter975,Iron,iron,Iron,iron,DB01592,true,false,,false,accepted_exact_normalized_name
+DDInter976,Iron Dextran,iron dextran,Iron Dextran,iron dextran,DB00893,true,false,,false,accepted_exact_normalized_name
+DDInter978,Iron sucrose,iron sucrose,Iron sucrose,iron sucrose,DB09146,true,false,,false,accepted_exact_normalized_name
+DDInter979,Isatuximab,isatuximab,Isatuximab,isatuximab,DB14811,true,false,,false,accepted_exact_normalized_name
+DDInter980,Isavuconazonium,isavuconazonium,Isavuconazonium,isavuconazonium,DB06636,true,false,,false,accepted_exact_normalized_name
+DDInter981,Isocarboxazid,isocarboxazid,Isocarboxazid,isocarboxazid,DB01247,true,false,,false,accepted_exact_normalized_name
+DDInter982,Isoetharine,isoetharine,Isoetharine,isoetharine,DB00221,true,false,,false,accepted_exact_normalized_name
+DDInter983,Isoflurane,isoflurane,Isoflurane,isoflurane,DB00753,true,false,,false,accepted_exact_normalized_name
+DDInter985,Isometheptene,isometheptene,Isometheptene,isometheptene,DB06706,true,false,,false,accepted_exact_normalized_name
+DDInter986,Isoniazid,isoniazid,Isoniazid,isoniazid,DB00951,true,false,,false,accepted_exact_normalized_name
+DDInter987,Isoprenaline,isoprenaline,Isoprenaline,isoprenaline,DB01064,true,false,,false,accepted_exact_normalized_name
+DDInter988,Isosorbide,isosorbide,Isosorbide,isosorbide,DB09401,true,false,,false,accepted_exact_normalized_name
+DDInter989,Isosorbide dinitrate,isosorbide dinitrate,Isosorbide dinitrate,isosorbide dinitrate,DB00883,true,false,,false,accepted_exact_normalized_name
+DDInter99,Anistreplase,anistreplase,Anistreplase,anistreplase,DB00029,true,false,,false,accepted_exact_normalized_name
+DDInter990,Isosorbide mononitrate,isosorbide mononitrate,Isosorbide mononitrate,isosorbide mononitrate,DB01020,true,false,,false,accepted_exact_normalized_name
+DDInter991,Isotretinoin,isotretinoin,Isotretinoin,isotretinoin,DB00982,true,false,,false,accepted_exact_normalized_name
+DDInter992,Isoxsuprine,isoxsuprine,Isoxsuprine,isoxsuprine,DB08941,true,false,,false,accepted_exact_normalized_name
+DDInter993,Isradipine,isradipine,Isradipine,isradipine,DB00270,true,false,,false,accepted_exact_normalized_name
+DDInter994,Istradefylline,istradefylline,Istradefylline,istradefylline,DB11757,true,false,,false,accepted_exact_normalized_name
+DDInter995,Itraconazole,itraconazole,Itraconazole,itraconazole,DB01167,true,false,,false,accepted_exact_normalized_name
+DDInter996,Ivabradine,ivabradine,Ivabradine,ivabradine,DB09083,true,false,,false,accepted_exact_normalized_name
+DDInter997,Ivacaftor,ivacaftor,Ivacaftor,ivacaftor,DB08820,true,false,,false,accepted_exact_normalized_name
+DDInter998,Ivermectin,ivermectin,Ivermectin,ivermectin,DB00602,true,false,,false,accepted_exact_normalized_name

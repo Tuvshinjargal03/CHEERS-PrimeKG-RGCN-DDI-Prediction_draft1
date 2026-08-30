@@ -6,9 +6,10 @@ How does the trained G3 model behave on drug-drug interaction pairs from other
 datasets that are absent from the PrimeKG snapshot used for training and internal
 evaluation?
 
-This package consolidates two approved exploratory G3 seed-44 ranking pilots. It
-preserves the original preparation and per-query outputs byte-for-byte and adds a
-shared comparison summary and figure. It does not contain a new training run.
+This package consolidates two approved exploratory G3 seed-44 ranking pilots. Frozen
+cohorts and scientific result artifacts remain byte-preserved. Evaluator scripts and
+documentation may evolve for portability and reproducibility, with original and current
+hashes recorded in `COPY_PROVENANCE.json`. It does not contain a new training run.
 
 ## Compact Git package and full local archive
 
@@ -87,9 +88,31 @@ hash-recorded for detailed mapping audits, but it is no longer an evaluator inpu
 The saved per-query CSVs are local archival outputs and are not required to rerun either
 experiment.
 
-The Kaggle evaluator rebuilds its cohort from the external authoritative
-`db_drug_interactions.csv` path documented in the script. Its local-only per-query CSV is
-not an evaluator input. The tracked Kaggle cohort records the exact evaluated targets.
+The Kaggle evaluator accepts the hash-pinned source CSV used for the pilot through
+`--kaggle-source`; the source is not described as authoritative. It verifies that source
+reconstruction yields the tracked 38,510-pair cohort before any scoring. Its local-only
+per-query CSV is not an evaluator input. Both evaluators default fresh output to ignored
+`reproduction_run/` directories, refuse overwrite, and provide no-write verification.
+
+A GitHub checkout contains the evaluator code, exact frozen target cohorts, DDInter
+filtering universe, aggregate results, and integrity records. An exact rerun additionally
+requires the hash-pinned external source download(s), documented lightweight G3 runtime,
+and G3 seed-44 checkpoint. Those large source/runtime artifacts are not embedded here.
+
+## External source provenance and mapping review
+
+`SOURCE_PROVENANCE.json` records the DDInter download page, all eight raw partition
+filenames and hashes, and the Kaggle dataset page/local CSV hash. Exact download dates
+and source versions were not recorded and are explicitly `not recorded`; filesystem
+timestamps are not treated as retrieval evidence. DDInter partitions overlap and are
+deduplicated as symmetric pairs.
+
+`ddinter/preparation/ddinter_exact_name_mapping_review.csv` is a row-level lexical review
+of all 1,614 retained exact-name mappings. Every mapped DDInter and PrimeKG name is equal
+after normalization; 14 parenthetical/comma names received focused lexical attention,
+seven form/origin qualifiers were detected and preserved identically on both sides, and
+no obvious suspicious lexical case or qualifier collapse was found. This is not
+authoritative pharmacological identity validation.
 
 ## Results
 
@@ -104,6 +127,12 @@ cohort. Kaggle has somewhat higher MRR and Hits@K than DDInter, while DDInter ha
 slightly better mean and median rank. Both pilots show a large transfer gap relative
 to the internal benchmark. This pattern is consistent with substantial dataset and
 distribution shift, but it does not establish a causal explanation.
+
+As descriptive context, uniform-random ranking over each query's already-recorded
+filtered candidate count gives expected MRR 0.002695 and Hits@10 0.003121 for DDInter,
+and expected MRR 0.002693 and Hits@10 0.003118 for Kaggle. The observed values are
+higher, but remain weak relative to the internal benchmark. These baselines do not
+create a statistical-significance claim.
 
 The machine-readable source of this table is
 `comparison/external_evaluation_summary.csv` and its JSON equivalent. The SVG figure
@@ -135,10 +164,10 @@ analysis/external_ddi_evaluation/
 ├── EXTERNAL_EVALUATION_SHA256SUMS.sha256
 ├── LOCAL_ARCHIVE_INVENTORY.json
 ├── ddinter/
-│   ├── preparation/   # byte-preserved preparation outputs
-│   └── pilot/         # byte-preserved DDInter pilot outputs
+│   ├── preparation/   # frozen outputs plus evolved reproducibility tooling
+│   └── pilot/         # frozen DDInter results plus evolved evaluator
 ├── kaggle/
-│   └── pilot/         # byte-preserved Kaggle pilot outputs
+│   └── pilot/         # frozen Kaggle results plus evolved evaluator
 └── comparison/
     ├── external_evaluation_summary.csv
     ├── external_evaluation_summary.json
@@ -146,11 +175,11 @@ analysis/external_ddi_evaluation/
     └── external_evaluation_comparison.svg
 ```
 
-`COPY_PROVENANCE.json` maps every preserved package copy to its original local
-analysis path and records its SHA256. `EXTERNAL_EVALUATION_SHA256SUMS.sha256` covers
-every package file except itself. The superseded top-level analysis directories were
-removed only after all 25 package copies were verified byte-identical and their original
-paths, sizes, and hashes were recorded here.
+`COPY_PROVENANCE.json` maps every consolidated file to its original local analysis path.
+Immutable raw/result artifacts retain byte-identical status. Intentionally evolved
+evaluator/documentation files retain original hashes and separately record current
+hashes plus the reason for change. `EXTERNAL_EVALUATION_SHA256SUMS.sha256` covers every
+package file except itself, including hash-recorded local archives when present.
 
 `ddinter/preparation/DDINTER_MAPPED_POSITIVE_FILTER_PROVENANCE.json` documents the
 derivation and exact set equivalence of the compact tracked filter file against the

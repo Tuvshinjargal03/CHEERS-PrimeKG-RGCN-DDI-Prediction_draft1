@@ -8,6 +8,7 @@ package. Pilot metric values are never recomputed or changed.
 
 from __future__ import annotations
 
+import argparse
 import csv
 import hashlib
 import json
@@ -67,53 +68,83 @@ def sha256(path: Path) -> str:
 
 
 def verify_preserved_copies() -> list[dict[str, object]]:
-    provenance_path = PACKAGE / "COPY_PROVENANCE.json"
-    if not all(source_dir.exists() for source_dir in ORIGINALS):
-        if not provenance_path.exists():
-            raise FileNotFoundError(
-                "Original analysis directories and recorded copy provenance are both missing"
-            )
-        recorded = json.loads(provenance_path.read_text(encoding="utf-8"))
-        entries = recorded["files"]
-        archive_paths = {
-            str(entry["original_relative_path"])
-            for entry in json.loads(ARCHIVE_INVENTORY.read_text(encoding="utf-8"))["files"]
-        }
-        for entry in entries:
-            copied = PROJECT / str(entry["package_path"])
-            if not copied.is_file():
-                relative = copied.relative_to(PACKAGE).as_posix()
-                if relative in archive_paths:
-                    continue
-                raise FileNotFoundError(f"Required tracked package file is missing: {copied}")
-            if copied.stat().st_size != int(entry["size_bytes"]):
-                raise ValueError(f"Recorded package-copy size changed: {copied}")
-            if sha256(copied) != str(entry["sha256"]):
-                raise ValueError(f"Recorded package-copy hash changed: {copied}")
-        return entries
+    """Verify immutable copies against original hashes and evolved files against current hashes."""
 
-    entries: list[dict[str, object]] = []
-    for source_dir, copy_dir in ORIGINALS.items():
-        source_files = sorted(path for path in source_dir.iterdir() if path.is_file())
-        copy_files = sorted(path for path in copy_dir.iterdir() if path.is_file())
-        if [path.name for path in source_files] != [path.name for path in copy_files]:
-            raise ValueError(f"Copied file inventory differs for {source_dir}")
-        for source in source_files:
-            copied = copy_dir / source.name
-            source_hash = sha256(source)
-            copy_hash = sha256(copied)
-            if source_hash != copy_hash or source.stat().st_size != copied.stat().st_size:
-                raise ValueError(f"Copy is not byte-identical: {copied}")
-            entries.append(
-                {
-                    "original_path": source.relative_to(PROJECT).as_posix(),
-                    "package_path": copied.relative_to(PROJECT).as_posix(),
-                    "size_bytes": copied.stat().st_size,
-                    "sha256": copy_hash,
-                    "byte_identical": True,
-                }
-            )
+    provenance_path = PACKAGE / "COPY_PROVENANCE.json"
+    recorded = json.loads(provenance_path.read_text(encoding="utf-8"))
+    entries = recorded["files"]
+    archive_paths = {
+        str(entry["original_relative_path"])
+        for entry in json.loads(ARCHIVE_INVENTORY.read_text(encoding="utf-8"))["files"]
+    }
+    for entry in entries:
+        copied = PROJECT / str(entry["package_path"])
+        if not copied.is_file():
+            relative = copied.relative_to(PACKAGE).as_posix()
+            if relative in archive_paths:
+                continue
+            raise FileNotFoundError(f"Required package file is missing: {copied}")
+        immutable = bool(entry["byte_identical"])
+        size_key = "size_bytes" if immutable else "current_size_bytes"
+        hash_key = "sha256" if immutable else "current_sha256"
+        if copied.stat().st_size != int(entry[size_key]) or sha256(copied) != str(entry[hash_key]):
+            kind = "immutable preserved artifact" if immutable else "intentionally evolved file"
+            raise ValueError(f"Recorded {kind} hash/size changed: {copied}")
+        if not immutable and not entry.get("evolution_note"):
+            raise ValueError(f"Evolved file lacks an evolution note: {copied}")
     return entries
+
+
+def verify_sha256_manifest(
+    path: Path, root: Path, *, allowed_missing: set[str] | None = None
+) -> int:
+    allowed_missing = allowed_missing or set()
+    entries = []
+    for line in path.read_text(encoding="ascii").splitlines():
+        if not line.strip():
+            continue
+        expected, relative = line.split("  ", 1)
+        target = root / relative
+        if not target.is_file() and relative in allowed_missing:
+            entries.append(relative)
+            continue
+        if not target.is_file() or sha256(target) != expected:
+            raise ValueError(f"SHA256 manifest verification failed: {target}")
+        entries.append(relative)
+    return len(entries)
+
+
+def verify_all_manifests() -> dict[str, int]:
+    inventory = json.loads(ARCHIVE_INVENTORY.read_text(encoding="utf-8"))
+    archive_paths = {
+        str(entry["original_relative_path"]) for entry in inventory["files"]
+    }
+    nested = {
+        "ddinter_preparation": PACKAGE / "ddinter/preparation/SHA256SUMS.sha256",
+        "ddinter_pilot": PACKAGE / "ddinter/pilot/SHA256SUMS.sha256",
+        "kaggle_pilot": PACKAGE / "kaggle/pilot/SHA256SUMS.sha256",
+    }
+    counts = {
+        name: verify_sha256_manifest(path, path.parent) for name, path in nested.items()
+    }
+    counts["top_level"] = verify_sha256_manifest(
+        PACKAGE / "EXTERNAL_EVALUATION_SHA256SUMS.sha256",
+        PACKAGE,
+        allowed_missing=archive_paths,
+    )
+    verified_archives = 0
+    missing_archives = 0
+    for entry in inventory["files"]:
+        target = PACKAGE / str(entry["original_relative_path"])
+        if not target.is_file():
+            missing_archives += 1
+            continue
+        if target.stat().st_size != int(entry["size_bytes"]) or sha256(target) != entry["sha256"]:
+            raise ValueError(f"Local archive inventory verification failed: {target}")
+        verified_archives += 1
+    counts["local_archive_verified"] = verified_archives
+    counts["local_archive_missing_optional"] = missing_archives
+    return counts
 
 
 def load_pilot_metrics() -> tuple[dict[str, object], dict[str, object]]:
@@ -236,9 +267,9 @@ def write_summary(rows: list[dict[str, object]]) -> None:
         writer.writerows(rank_rows)
 
 
-def render_svg(rows: list[dict[str, object]]) -> None:
+def render_svg(rows: list[dict[str, object]], *, overwrite: bool = False) -> None:
     svg_path = COMPARISON / "external_evaluation_comparison.svg"
-    if svg_path.exists():
+    if svg_path.exists() and not overwrite:
         return
 
     metrics = ("MRR", "Hits@1", "Hits@5", "Hits@10")
@@ -267,7 +298,8 @@ def render_svg(rows: list[dict[str, object]]) -> None:
         for tick in ticks:
             ty = y + h - (tick / maximum) * h
             parts.append(f'<line x1="{x}" y1="{ty:.2f}" x2="{x+w}" y2="{ty:.2f}" stroke="#D7DDE3" stroke-width="1"/>')
-            parts.append(f'<text x="{x-12}" y="{ty+5:.2f}" text-anchor="end" class="axis">{tick:.2f}</text>')
+            tick_text = f"{tick:.3f}" if maximum <= 0.03 else f"{tick:.2f}"
+            parts.append(f'<text x="{x-12}" y="{ty+5:.2f}" text-anchor="end" class="axis">{tick_text}</text>')
 
     panel_axes(main, main["max"], [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6], "A. Full comparison")
     group_w = main["w"] / len(metrics)
@@ -347,18 +379,41 @@ def write_package_manifest() -> None:
     )
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--verify-only",
+        action="store_true",
+        help="Verify provenance, frozen metrics, nested manifests, and local archive hashes without writing.",
+    )
+    return parser.parse_args()
+
+
 def main() -> None:
-    COMPARISON.mkdir(parents=True, exist_ok=True)
+    args = parse_args()
     provenance = verify_preserved_copies()
     ddinter, kaggle = load_pilot_metrics()
     rows = summary_rows(ddinter, kaggle)
+    if args.verify_only:
+        manifests = verify_all_manifests()
+        print(json.dumps({
+            "provenance_files": len(provenance),
+            "immutable_files": sum(bool(entry["byte_identical"]) for entry in provenance),
+            "evolved_files": sum(not bool(entry["byte_identical"]) for entry in provenance),
+            "manifests": manifests,
+            "frozen_metrics_verified": True,
+        }, indent=2))
+        return
+    COMPARISON.mkdir(parents=True, exist_ok=True)
     write_summary(rows)
     render_svg(rows)
     (PACKAGE / "COPY_PROVENANCE.json").write_text(
         json.dumps(
             {
                 "verified_utc": datetime.now(timezone.utc).isoformat(),
-                "all_copies_byte_identical": True,
+                "all_copies_byte_identical": all(
+                    bool(entry["byte_identical"]) for entry in provenance
+                ),
                 "file_count": len(provenance),
                 "files": provenance,
             },

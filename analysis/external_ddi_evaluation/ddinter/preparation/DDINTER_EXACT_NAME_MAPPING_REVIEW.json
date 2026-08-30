@@ -1,0 +1,13 @@
+{
+  "review_scope": "Deterministic lexical review of the 1,614 existing exact normalized-name mappings; no remapping and no fuzzy matching.",
+  "review_artifact": "ddinter_exact_name_mapping_review.csv",
+  "mapped_rows_reviewed": 1614,
+  "normalization": "Unicode NFKC, trim, collapse whitespace, casefold",
+  "equal_after_normalization": 1614,
+  "route_or_formulation_qualifier_detected_and_preserved": 7,
+  "parenthetical_or_comma_exact_matches_reviewed": 14,
+  "obvious_suspicious_lexical_cases": 0,
+  "requires_follow_up": 0,
+  "result": "Seven exact matches contain explicit form/origin qualifiers such as recombinant, unspecified form, or formaldehyde inactivated; each qualifier is present identically on both sides. No obvious lexical mismatch or route/formulation collapse was found. This is a conservative lexical audit, not an authoritative pharmacological identity validation.",
+  "frozen_cohort_policy": "The frozen cohort was not changed. If a future authoritative crosswalk changes a mapping, the cohort construction and evaluation would require an evaluation-only rerun; model retraining would not be required."
+}

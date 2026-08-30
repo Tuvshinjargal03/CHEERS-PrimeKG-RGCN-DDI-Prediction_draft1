@@ -1,36 +1,43 @@
-# Proposed DDInter external-evaluation protocol
+# DDInter external-evaluation protocol: proposal and executed pilot
 
-This directory contains preparation outputs only. No model was run for external scoring.
+This document preserves the original study design while distinguishing it from the
+pilot that has now been executed and frozen. Preparation and evaluation perform no
+training or retraining.
 
-## Primary cohort
+## Originally proposed protocol
 
-Use only rows in `ddinter_primekg_novel_pairs.csv`. Here, **novel** means absent from
-the complete known-positive DDI set in this PrimeKG snapshot. It does not mean newly
-discovered or clinically novel. The crosswalk uses no fuzzy matching. Exact normalized-
-name matches are fallback mappings and should be reviewed before final freezing.
+The proposal was to retain DDInter pairs absent from the complete known-positive DDI
+set in the project PrimeKG snapshot, evaluate both directions against the same 4,278
+candidate drugs, and report MRR and Hits@1/5/10. For each query, the planned filtered
+ranking removed self, complete PrimeKG-known partners, and other mapped DDInter-positive
+partners, then restored the current target. Severity was planned as descriptive
+stratification only.
 
-## Ranking queries
+The broader proposal also contemplated matched multi-seed G0-G3 evaluation after
+additional checkpoints and split artifacts became available. Those broader comparisons
+were not executed and are not claimed.
 
-For each retained positive pair, evaluate both A-to-B and B-to-A. Rank against the same
-4,278 candidate drugs used by the main experiment. For each query, filter all complete
-PrimeKG-known positive partners, every other mapped DDInter-positive partner, and the
-self candidate, then restore the target candidate before ranking.
+## Actual executed and frozen pilot
 
-Report MRR and Hits@1, Hits@5, and Hits@10 overall and separately for Major, Moderate,
-Minor, and Unknown severity. Add a sensitivity analysis excluding Unknown. DDInter
-severity is descriptive stratification only and must not be treated as a positive or
-negative class.
+- Model/runtime: G3 seed 44, best epoch 499, verified NumPy export of the trained model.
+- Frozen target cohort: 49,105 unique symmetric DDInter pairs and 98,210 directional
+  queries.
+- Mapping: conservative exact normalized-name fallback; no fuzzy matching and no
+  collapsing of salts, formulations, combinations, or route-specific entities.
+- Filtering: self, all complete PrimeKG-known positive partners, and every other mapped
+  DDInter-positive partner; current target restored.
+- Ranking: optimistic strict rank, `1 + count(available score > target score)`.
+- Results: overall MRR/Hits@K/rank summaries, severity summaries, Unknown-excluded
+  sensitivity analysis, and tie diagnostics in `../pilot/`.
 
-## Fair comparison
+Here, **PrimeKG-absent** is snapshot-relative. It does not mean newly discovered,
+clinically novel, safe, unsafe, or a confirmed non-interaction. Raw scores are ranking
+scores, not probabilities.
 
-Use the same frozen external pair list and filtering universe for every graph and seed.
-Compute per-seed metrics, graph-level mean and sample standard deviation, and paired
-per-seed graph differences. Do not claim statistical significance from five seeds alone.
+## Remaining limitations, not execution blockers
 
-## Remaining gates
-
-1. Review or replace exact-name fallback mappings with an authoritative DDInter-to-
-   DrugBank crosswalk where available.
-2. Restore `ddi_val.pt` and `ddi_test.pt` to report split-specific overlap.
-3. Restore the missing G0-G3 seed checkpoints for the intended comparison.
-4. Re-hash and freeze the final reviewed crosswalk and pair cohort before evaluation.
+The completed pilot is scientifically usable as a descriptive single-seed robustness
+analysis. It does not provide external G0/G1/G2 comparisons, multi-seed uncertainty, or
+an authoritative identifier crosswalk. The 1,614 exact-name mappings have a tracked
+lexical review record, but future authoritative mapping corrections would require an
+evaluation-only rerun of affected cohorts; model retraining would not be required.

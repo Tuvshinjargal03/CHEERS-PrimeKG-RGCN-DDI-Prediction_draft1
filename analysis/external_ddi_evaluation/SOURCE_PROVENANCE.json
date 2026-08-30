@@ -1,0 +1,33 @@
+{
+  "scope": "Raw external source files used to reconstruct the frozen G3 seed-44 pilots; source versions and retrieval dates are not inferred from filesystem timestamps.",
+  "kaggle": {
+    "dataset_name": "Drug-Drug Interactions",
+    "source_url": "https://www.kaggle.com/datasets/mghobashy/drug-drug-interactions",
+    "source_url_basis": "The public dataset page matches the local filename and Drug 1, Drug 2, Interaction Description schema; the download URL was not separately recorded at retrieval time.",
+    "local_filename": "db_drug_interactions.csv",
+    "size_bytes": 22081193,
+    "sha256": "95d8399aa9c7479001f90400fbd91c6260cbfe517b22d5153a2b031f39b11328",
+    "retrieval_date": "not recorded",
+    "version": "not recorded",
+    "relationship_to_drugbank": "The Kaggle publisher describes the source as DrugBank-derived; this project therefore treats it as a source-consistency control, not independent external validation.",
+    "relationship_to_tdc": "No TDC download or TDC dataset identity is established by the local provenance record. TDC was not used by the evaluator."
+  },
+  "ddinter": {
+    "database_name": "DDInter",
+    "source_url": "https://ddinter.scbdd.com/",
+    "download_url": "https://ddinter.scbdd.com/download/",
+    "retrieval_date": "not recorded",
+    "version": "not recorded",
+    "partition_note": "The eight ATC-organized source partitions overlap; the preparation step canonicalizes symmetric pairs and records duplicate physical rows across partitions.",
+    "files": [
+      {"filename": "ddinter_downloads_code_A.csv", "size_bytes": 3343434, "sha256": "a22ca451d2b755ca2331886f7e00540c86f555f9f55704a59a19c691251f52e0"},
+      {"filename": "ddinter_downloads_code_B.csv", "size_bytes": 867726, "sha256": "76de5115a55587f0e822e1096b684fd3ddde058fbefcbb19896df58820ace130"},
+      {"filename": "ddinter_downloads_code_D.csv", "size_bytes": 1520704, "sha256": "c0627ec39965dbe27829e4934cd20d71eb079f4e373287678737bba9423a306a"},
+      {"filename": "ddinter_downloads_code_H.csv", "size_bytes": 705088, "sha256": "f0f925f0ba1ee68c4668d3e7a6732719b34623b22a0f5d017f9090e59f63c88e"},
+      {"filename": "ddinter_downloads_code_L.csv", "size_bytes": 3885702, "sha256": "f54f4486cc00344f8c86508c31c2ca3fad6d1d37ec3af5bcf609b4bbda5507ef"},
+      {"filename": "ddinter_downloads_code_P.csv", "size_bytes": 317460, "sha256": "83f8c0edb20d09ef29b8500b48f9623e208379525688ade9e70a7df2d8749d55"},
+      {"filename": "ddinter_downloads_code_R.csv", "size_bytes": 1793766, "sha256": "1c39c3d4a6e41659b7a988538d7f363867592abc6f41a815de8746f6e2150574"},
+      {"filename": "ddinter_downloads_code_V.csv", "size_bytes": 700777, "sha256": "353973fb300453946aea95733e8fb52338e4b59426d2ce6ca318363d4f84f10a"}
+    ]
+  }
+}
