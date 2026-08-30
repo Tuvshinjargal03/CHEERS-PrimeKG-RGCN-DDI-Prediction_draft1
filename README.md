@@ -27,6 +27,7 @@
 - [Multi-seed results](#multi-seed-results)
 - [Complementary five-seed classification](#complementary-five-seed-classification)
 - [Relation-level ablation study](#relation-level-ablation-study)
+- [DDI-edge cold-start evaluation](#ddi-edge-cold-start-evaluation)
 - [Interpretation of graph composition](#interpretation-of-graph-composition)
 - [Final model verification](#final-model-verification)
 - [Lightweight NumPy runtime](#lightweight-numpy-runtime)
@@ -461,6 +462,71 @@ Per-seed JSON metrics for all A1-A7 experiments are available under:
 `results/relation_ablation/`
 
 Large generated artifacts such as trained model checkpoints, graph tensors, and raw PrimeKG data are intentionally excluded from the repository.
+
+## DDI-edge cold-start evaluation
+
+After the transductive G0–G3 comparison and relation-level ablation study, we evaluated whether auxiliary biomedical context remains useful when selected drugs receive no DDI supervision during training. This experiment is described as **DDI-edge cold-start**, not fully inductive unseen-node prediction, because the current R-GCN still uses learned node-ID embeddings.
+
+### Cold-drug cohort and protocol
+
+The cold cohort was constructed deterministically with split seed **42**. A drug was eligible when it satisfied all three conditions:
+
+- total known DDI degree across the fixed split >= 20;
+- G3 biomedical graph degree >= 5;
+- existing test DDI degree >= 10.
+
+This produced **1,969 eligible drugs**. A stratified 10% sample across total-DDI-degree quartiles selected **196 cold drugs** (49 per quartile). The protocol therefore evaluates **context-available DDI cold-start**, rather than arbitrary unseen drugs with no biomedical context.
+
+For every selected cold drug, all of its training DDI edges were removed from DDI supervision and message passing. Cold drugs also received no sampled-negative DDI supervision. Removed known-positive DDIs remained in the full known-positive mask so that true known interactions could not accidentally be sampled as negatives. G3 retained the selected drugs' non-DDI biomedical relations. Early stopping used only the warm validation subset.
+
+| Quantity | Value |
+|---|---:|
+| Cold drugs | 196 |
+| Original training DDI pairs | 1,069,080 |
+| Warm-only training DDI pairs | 927,782 |
+| Removed training pairs touching cold drugs | 141,298 |
+| Primary cold→warm test pairs | 17,176 |
+| Secondary cold↔cold test pairs | 651 |
+
+### Primary evaluation: cold → warm
+
+The primary evaluation uses test pairs with exactly one cold endpoint. Each pair is oriented as a cold-drug query against a warm target. Ranking uses the same 4,278 candidate drugs and the same full filtered-ranking rule as the main experiment. Results are means ± sample standard deviations across model seeds **42, 43, and 44**.
+
+| Graph | MRR | Hits@1 | Hits@5 | Hits@10 | Mean rank | Median rank |
+|---|---:|---:|---:|---:|---:|---:|
+| **G0** | **0.140603 ± 0.058159** | **0.135130 ± 0.055543** | **0.142932 ± 0.060426** | **0.146483 ± 0.063192** | **1145.03 ± 140.89** | **792.33 ± 168.63** |
+| G3 | 0.062437 ± 0.033823 | 0.059211 ± 0.033184 | 0.063985 ± 0.034233 | 0.065634 ± 0.034774 | 1916.65 ± 131.69 | 2129.00 ± 60.22 |
+
+The paired G3−G0 MRR difference was **−0.078166 ± 0.024531**, and G3 had lower MRR than G0 in all three seeds. Under this specific one-sided context-available DDI-edge cold-start protocol, adding the complete G3 biomedical graph did not improve ranking performance. This result does not establish that biomedical knowledge generally harms cold-start prediction; it shows that the current R-GCN architecture and training objective did not automatically convert the retained auxiliary context into better cold→warm rankings.
+
+![Three-seed primary DDI-edge cold-start MRR](figures/cold_start/cold_start_mrr_3seed.png)
+
+### Secondary evaluation: cold ↔ cold
+
+A separate secondary analysis evaluates the **651** held-out test pairs where both endpoints are cold. Both directions were ranked, producing **1,302 ranking queries**. No retraining or new negative sampling was performed; the same six best checkpoints from the primary experiment were reused.
+
+| Graph | MRR | Hits@1 | Hits@5 | Hits@10 | Mean rank | Median rank |
+|---|---:|---:|---:|---:|---:|---:|
+| G0 | 0.000990 ± 0.000177 | 0.000000 ± 0.000000 | 0.000000 ± 0.000000 | 0.000000 ± 0.000000 | 1132.28 ± 149.86 | 1164.67 ± 138.75 |
+| **G3** | **0.012618 ± 0.007886** | **0.006144 ± 0.002769** | **0.014081 ± 0.010762** | **0.019457 ± 0.016568** | **822.54 ± 158.58** | **838.33 ± 197.70** |
+
+The paired G3−G0 MRR difference was **+0.011628 ± 0.007991**, with G3 achieving higher MRR in all three seeds. Because G0 MRR is near zero, a relative percentage improvement would be misleading; the absolute paired difference and rank statistics are more informative.
+
+Together, the two cold-start analyses show that the value of biomedical context depends on the evaluation setting. G3 was worse for the one-sided cold→warm task but better for the two-sided cold↔cold task. A restrained interpretation is that auxiliary biomedical relations can provide structural signal when both endpoints lack DDI supervision, but the current R-GCN does not exploit that information reliably across all cold-start scenarios. No statistical significance is claimed from three seeds.
+
+![Three-seed secondary cold-to-cold MRR](figures/cold_start/cold_cold_mrr_3seed.png)
+
+### Reproducibility
+
+Cold-start notebook:
+
+[`notebooks/10_cold_start_evaluation.ipynb`](notebooks/10_cold_start_evaluation.ipynb)
+
+Frozen aggregate results:
+
+`results/cold_start/split_seed_42/final/`
+
+This directory contains per-seed results, three-seed summaries, paired G3-versus-G0 deltas, and thesis-ready exports for the primary evaluation, together with the corresponding secondary cold↔cold result files. Large generated graph tensors and training checkpoints are intentionally excluded from the normal Git repository.
 
 ## Interpretation of graph composition
 
@@ -918,7 +984,7 @@ This tree reflects the actual portable folder after repository documentation was
 ├── api/                         # FastAPI application
 ├── checkpoints/                 # selected archival G3 checkpoint
 ├── data/processed/              # selected mappings/tensors for archival inspection
-├── figures/                     # relation-ablation figure exports
+├── figures/                     # relation-ablation and cold-start figure exports
 ├── final_release/
 │   ├── g3_context_runtime/      # portable G3 support-context export
 │   ├── lightweight_runtime/     # verified NumPy scoring export
@@ -931,11 +997,12 @@ This tree reflects the actual portable folder after repository documentation was
 │       ├── components/
 │       ├── lib/
 │       └── pages/
-├── notebooks/                   # included A1–A7 relation follow-up notebooks
+├── notebooks/                   # relation-ablation and cold-start evaluation notebooks
 ├── results/
 │   ├── classification_metrics_5seed/
 │   ├── live_5seed/
 │   ├── relation_ablation/
+│   ├── cold_start/
 │   └── rgcn_multiseed/          # historical three-seed snapshot
 ├── scripts/                     # evaluation utilities
 ├── src/                         # inference, context, evidence, and R-GCN modules
@@ -1044,6 +1111,7 @@ Those materials were retained in the university experiment workspace. The includ
 | `results/live_5seed/final_experiment_summary.json` | current five-seed graph-composition results used by the application |
 | `results/classification_metrics_5seed/` | frozen five-seed classification metrics, per-seed counts, and SHA256 manifest |
 | `results/relation_ablation/final/` | frozen three-seed single-relation summary and paired deltas versus G0 |
+| `results/cold_start/split_seed_42/final/` | frozen three-seed DDI-edge cold-start summaries, per-seed metrics, and paired G3-versus-G0 deltas |
 | `THIRD_PARTY_NOTICES.md` | PrimeKG software and published-dataset license metadata |
 
 The G3 context manifest currently matches its files.
@@ -1083,6 +1151,7 @@ It must not be presented as a current integrity manifest and is retained only as
 - all three independent verification scripts;
 - five-seed experiment/classification results, relation-ablation results, and verification summaries;
 - the two relation-ablation notebooks and their exported figures;
+- the cold-start evaluation notebook, aggregate result tables, and exported cold-start figures;
 - current requirements;
 - valid manifests and any clearly labeled historical manifests.
 
@@ -1124,7 +1193,9 @@ Release decisions and verified third-party status:
 - One principal GNN architecture was evaluated.
 - Robustness evaluation used five seeds.
 - Statistical significance is not claimed.
-- Evaluation is transductive; held-out entities remain known.
+- The principal G0–G3 evaluation is transductive; held-out entities remain known.
+- The added cold-start experiment is DDI-edge cold-start, not fully inductive unseen-node prediction, because the model still uses learned node-ID embeddings.
+- The cold-start cohort is context-available by design and the reported cold-start comparisons use three model seeds.
 - Sampled unobserved negatives are not confirmed non-interactions.
 - The single-relation follow-up used only three seeds and does not establish statistical significance.
 - Knowledge-graph incompleteness and source bias can affect training and evaluation.
@@ -1140,7 +1211,7 @@ Release decisions and verified third-party status:
 - extend the single-relation follow-up to five or more seeds;
 - bootstrap uncertainty estimates and protocol-defined significance testing;
 - stronger GNN and knowledge-graph baselines;
-- inductive and cold-start evaluation;
+- fully inductive unseen-drug evaluation using transferable molecular, textual, or neighborhood-derived features;
 - external DDI validation;
 - calibrated classification where scientifically appropriate;
 - additional biomedical data sources;
