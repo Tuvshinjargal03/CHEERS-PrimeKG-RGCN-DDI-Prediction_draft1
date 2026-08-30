@@ -64,6 +64,14 @@ export default function RelationAnalysis() {
         ),
     [data],
   )
+  const highestHits1 = useMemo(
+    () =>
+      (data?.results || []).reduce(
+        (best, row) => (!best || row.hits1_mean > best.hits1_mean ? row : best),
+        null,
+      ),
+    [data],
+  )
   const mostConsistentHasFewestEdges = useMemo(() => {
     if (!mostConsistent || !data?.results?.length) return false
     return data.results.every(
@@ -141,10 +149,10 @@ export default function RelationAnalysis() {
 
             <article className="interpretation-card">
               <span className="eyebrow">Scientific interpretation</span>
-              <h2>Contribution depends on relation semantics</h2>
+              <h2>Observed ranking contribution varies by relation semantics</h2>
               <ul>
-                <li><strong>Indication</strong> has the largest mean gain, but improves only two of three seeds.</li>
-                {mostConsistent && <li><strong>{mostConsistent.relation}</strong> is nearly tied and positive in every matched seed{mostConsistentHasFewestEdges ? ' despite having the fewest biomedical edges.' : '.'}</li>}
+                <li><strong>Indication</strong> has the highest mean MRR, Hits@5, and Hits@10, but improves in MRR over G0 in only two of three seeds.</li>
+                {mostConsistent && <li><strong>{mostConsistent.relation}</strong> is nearly tied in mean MRR and positive in every matched seed{mostConsistentHasFewestEdges ? ' despite having the fewest biomedical edges.' : '.'}{highestHits1?.graph === mostConsistent.graph ? ' It also has the highest mean Hits@1.' : ''}</li>}
                 <li><strong>Transporter</strong> also improves all three matched seeds with a smaller mean gain.</li>
                 <li><strong>Off-label use</strong> is unstable; one poor seed drives its negative mean.</li>
               </ul>
@@ -158,7 +166,7 @@ export default function RelationAnalysis() {
             </div>
             <div className="results-table-wrap">
               <table className="results-table relation-table">
-                <thead><tr><th>Rank</th><th>Relation</th><th>Family</th><th>Mean MRR</th><th>Mean ΔMRR</th><th>Wins vs G0</th><th>Edges</th></tr></thead>
+                <thead><tr><th>Rank</th><th>Relation</th><th>Family</th><th>MRR mean ± SD</th><th>Hits@1 mean ± SD</th><th>Hits@5 mean ± SD</th><th>Hits@10 mean ± SD</th><th>Mean ΔMRR ± SD</th><th>Wins vs G0</th><th>Edges</th></tr></thead>
                 <tbody>
                   {data.results.map((row) => (
                     <tr key={row.graph}>
@@ -166,6 +174,9 @@ export default function RelationAnalysis() {
                       <td>{row.relation}</td>
                       <td><span className={`family-pill ${row.family === 'Drug-Disease' ? 'disease' : ''}`}>{row.family}</span></td>
                       <td>{row.mrr_mean.toFixed(6)} ± {row.mrr_std.toFixed(6)}</td>
+                      <td>{row.hits1_mean.toFixed(6)} ± {row.hits1_std.toFixed(6)}</td>
+                      <td>{row.hits5_mean.toFixed(6)} ± {row.hits5_std.toFixed(6)}</td>
+                      <td>{row.hits10_mean.toFixed(6)} ± {row.hits10_std.toFixed(6)}</td>
                       <td className={row.delta_mrr_mean >= 0 ? 'positive-value' : 'negative-value'}>{signed(row.delta_mrr_mean)} ± {row.delta_mrr_std.toFixed(6)}</td>
                       <td><span className="wins-cell"><CheckCircle2 size={15} />{row.wins_vs_g0}/3</span></td>
                       <td>{row.biomedical_edges.toLocaleString()}</td>

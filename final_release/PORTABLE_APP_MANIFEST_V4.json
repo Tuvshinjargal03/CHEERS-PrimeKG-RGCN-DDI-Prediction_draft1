@@ -40,8 +40,8 @@
                   },
                   {
                       "path":  "README.md",
-                      "size_bytes":  52734,
-                      "sha256":  "cb4b4447ddf3c35f17f8d6dbf1e98f3625cdd33808af450734d8e75827ce2b66",
+                      "size_bytes":  53545,
+                      "sha256":  "2bb1f9b479e7a39d93defa1bdf5519a990941181746888e72df5189d3e0515f9",
                       "category":  "documentation",
                       "required_for_level_1":  false
                   },
@@ -61,8 +61,8 @@
                   },
                   {
                       "path":  "api/main.py",
-                      "size_bytes":  22280,
-                      "sha256":  "ecab53734d3961d231e6a001915a323a4e2e42df81150d5e392d5dfc44f7e338",
+                      "size_bytes":  22590,
+                      "sha256":  "1ff1cdd26ff37593682f751e63a07e9c77cd544f93380d18b28d231c50c19176",
                       "category":  "application_code",
                       "required_for_level_1":  true
                   },
@@ -341,8 +341,8 @@
                   },
                   {
                       "path":  "frontend/src/pages/RelationAnalysis.jsx",
-                      "size_bytes":  7576,
-                      "sha256":  "197fce7ed7b5467dd0a904d38cb96e81eac02cd4b7831b1656be3d198c4b2d29",
+                      "size_bytes":  8293,
+                      "sha256":  "d00b1aa703a5479b3cfc06f18bb1643ecd71d2884d2b560b21b7f7b675d47404",
                       "category":  "application_code",
                       "required_for_level_1":  true
                   },
