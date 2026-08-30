@@ -1,0 +1,7 @@
+# Large local-only artifacts retained on disk and recorded in
+# LOCAL_ARCHIVE_INVENTORY.json. The frozen target cohorts remain tracked.
+/ddinter/preparation/ddinter_mapped_pair_review.csv
+/ddinter/preparation/ddinter_deduplicated_pairs.csv
+/ddinter/pilot/ddinter_g3_seed44_per_query.csv
+/ddinter/pilot/reproduction_run/
+/kaggle/pilot/kaggle_g3_seed44_per_query.csv

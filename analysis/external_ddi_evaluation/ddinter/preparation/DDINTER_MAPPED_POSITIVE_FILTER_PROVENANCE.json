@@ -1,0 +1,32 @@
+{
+  "artifact": "ddinter_mapped_positive_filter_pairs.csv",
+  "purpose": "Compact tracked universe of mapped DDInter-positive node pairs used for filtered ranking.",
+  "derivation": {
+    "source_local_archive": "ddinter_mapped_pair_review.csv",
+    "source_sha256": "73cd0cb913801956480d4b28569dcfc8dbdc50652e40375170ac3ca220c506b6",
+    "selection": "Rows where mapping_status is both mapped.",
+    "projection": [
+      "PrimeKG_node_A",
+      "PrimeKG_node_B"
+    ],
+    "canonicalization": "Each pair is stored as min(node_A, node_B), max(node_A, node_B), then sorted numerically.",
+    "scientific_values_recomputed": false
+  },
+  "compact_artifact": {
+    "size_bytes": 1385091,
+    "sha256": "1af413b3c23ac08d8966252c86069dc7ab01cf75f578ce6b4f8536bede46b64a",
+    "row_count": 138358,
+    "unique_symmetric_pair_count": 138358,
+    "self_pair_count": 0,
+    "duplicate_symmetric_pair_count": 0,
+    "candidate_vocabulary_size": 4278,
+    "pairs_with_endpoint_outside_candidate_vocabulary": 0
+  },
+  "set_equivalence_to_source": {
+    "original_mapped_positive_pair_count": 138358,
+    "compact_pair_count": 138358,
+    "missing_pairs": 0,
+    "extra_pairs": 0,
+    "symmetric_equivalence": true
+  }
+}

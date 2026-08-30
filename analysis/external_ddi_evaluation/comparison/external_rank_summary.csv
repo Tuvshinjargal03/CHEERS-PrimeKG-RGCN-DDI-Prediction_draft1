@@ -1,0 +1,3 @@
+cohort,pairs,directional_queries,MeanRank,MedianRank
+Kaggle source-consistency,38510,77020,1142.5726564528693,792
+DDInter external robustness,49105,98210,1113.2549740352306,776

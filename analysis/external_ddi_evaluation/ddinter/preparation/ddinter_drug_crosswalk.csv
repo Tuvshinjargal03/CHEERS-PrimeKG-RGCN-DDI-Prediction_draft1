@@ -1,0 +1,1940 @@
+DDInter_ID,DDInter_name,DrugBank_ID,PrimeKG_name,PrimeKG_node,mapping_method,mapping_confidence_category
+DDInter1,Abacavir,DB01048,Abacavir,4636,exact normalized-name fallback,exact-name match
+DDInter10,Acamprosate,,,,none,unmapped
+DDInter100,Anthrax vaccine,DB11003,Anthrax vaccine,9673,exact normalized-name fallback,exact-name match
+DDInter1000,Ivosidenib,DB14568,Ivosidenib,4522,exact normalized-name fallback,exact-name match
+DDInter1001,Ixabepilone,DB04845,Ixabepilone,4322,exact normalized-name fallback,exact-name match
+DDInter1002,Ixazomib,DB09570,Ixazomib,4023,exact normalized-name fallback,exact-name match
+DDInter1003,Ixekizumab,DB11569,Ixekizumab,8944,exact normalized-name fallback,exact-name match
+DDInter1004,Kanamycin,DB01172,Kanamycin,9190,exact normalized-name fallback,exact-name match
+DDInter1005,Kaolin,DB01575,Kaolin,9747,exact normalized-name fallback,exact-name match
+DDInter1006,Kava,,,,none,unmapped
+DDInter1007,Ketamine,DB01221,Ketamine,3393,exact normalized-name fallback,exact-name match
+DDInter1008,Ketoconazole,DB01026,Ketoconazole,3064,exact normalized-name fallback,exact-name match
+DDInter1009,Ketoprofen,DB01009,Ketoprofen,3061,exact normalized-name fallback,exact-name match
+DDInter101,Anti-inhibitor coagulant complex,DB13151,Anti-inhibitor coagulant complex,3376,exact normalized-name fallback,exact-name match
+DDInter1010,Ketorolac,DB00465,Ketorolac,4557,exact normalized-name fallback,exact-name match
+DDInter1011,Ketorolac (ophthalmic),,,,none,unmapped
+DDInter1012,Ketotifen,DB00920,Ketotifen,6019,exact normalized-name fallback,exact-name match
+DDInter1013,Labetalol,DB00598,Labetalol,2985,exact normalized-name fallback,exact-name match
+DDInter1014,Lacosamide,DB06218,Lacosamide,4342,exact normalized-name fallback,exact-name match
+DDInter1015,Lactic acid,,,,none,unmapped
+DDInter1016,Lactitol,DB12942,Lactitol,9406,exact normalized-name fallback,exact-name match
+DDInter1017,Lactobacillus acidophilus,,,,none,unmapped
+DDInter1018,Lactulose,DB00581,Lactulose,9255,exact normalized-name fallback,exact-name match
+DDInter1019,Lamivudine,DB00709,Lamivudine,3001,exact normalized-name fallback,exact-name match
+DDInter102,"Antihemophilic factor, human recombinant",DB00025,"Antihemophilic factor, human recombinant",3402,exact normalized-name fallback,exact-name match
+DDInter1020,Lamotrigine,DB00555,Lamotrigine,2975,exact normalized-name fallback,exact-name match
+DDInter1021,Lanreotide,DB06791,Lanreotide,4367,exact normalized-name fallback,exact-name match
+DDInter1022,Lansoprazole,DB00448,Lansoprazole,3569,exact normalized-name fallback,exact-name match
+DDInter1023,Lanthanum carbonate,DB06792,Lanthanum carbonate,9295,exact normalized-name fallback,exact-name match
+DDInter1024,Lapatinib,DB01259,Lapatinib,3783,exact normalized-name fallback,exact-name match
+DDInter1025,Laronidase,,,,none,unmapped
+DDInter1026,Larotrectinib,DB14723,Larotrectinib,4528,exact normalized-name fallback,exact-name match
+DDInter1027,Lasmiditan,DB11732,Lasmiditan,4027,exact normalized-name fallback,exact-name match
+DDInter1028,Latanoprost,DB00654,Latanoprost,6218,exact normalized-name fallback,exact-name match
+DDInter103,Antilymphocyte immunoglobulin (horse),DB09312,Antilymphocyte immunoglobulin (horse),9654,exact normalized-name fallback,exact-name match
+DDInter1031,Ledipasvir,DB09027,Ledipasvir,9036,exact normalized-name fallback,exact-name match
+DDInter1032,Lefamulin,DB12825,Lefamulin,4480,exact normalized-name fallback,exact-name match
+DDInter1033,Leflunomide,DB01097,Leflunomide,4107,exact normalized-name fallback,exact-name match
+DDInter1034,Lemborexant,DB11951,Lemborexant,3835,exact normalized-name fallback,exact-name match
+DDInter1035,Lenalidomide,DB00480,Lenalidomide,5536,exact normalized-name fallback,exact-name match
+DDInter1036,Lenvatinib,DB09078,Lenvatinib,4013,exact normalized-name fallback,exact-name match
+DDInter1037,Lepirudin,DB00001,Lepirudin,4869,exact normalized-name fallback,exact-name match
+DDInter1038,Lesinurad,DB11560,Lesinurad,4436,exact normalized-name fallback,exact-name match
+DDInter1039,Letermovir,DB12070,Letermovir,3836,exact normalized-name fallback,exact-name match
+DDInter104,Antithrombin Alfa,DB11166,Antithrombin Alfa,4964,exact normalized-name fallback,exact-name match
+DDInter1040,Letrozole,DB01006,Letrozole,3060,exact normalized-name fallback,exact-name match
+DDInter1041,Leucovorin,DB00650,Leucovorin,9057,exact normalized-name fallback,exact-name match
+DDInter1042,Leuprolide,DB00007,Leuprolide,5355,exact normalized-name fallback,exact-name match
+DDInter1043,Levacetylmethadol,DB01227,Levacetylmethadol,4280,exact normalized-name fallback,exact-name match
+DDInter1044,Levamisole,DB00848,Levamisole,6811,exact normalized-name fallback,exact-name match
+DDInter1045,Levamlodipine,DB09237,Levamlodipine,3206,exact normalized-name fallback,exact-name match
+DDInter1046,Levetiracetam,DB01202,Levetiracetam,7060,exact normalized-name fallback,exact-name match
+DDInter1047,Levmetamfetamine (nasal),,,,none,unmapped
+DDInter1048,Levobetaxolol (ophthalmic),,,,none,unmapped
+DDInter1049,Levobunolol,DB01210,Levobunolol,3938,exact normalized-name fallback,exact-name match
+DDInter105,Antithrombin III human,DB11598,Antithrombin III human,5614,exact normalized-name fallback,exact-name match
+DDInter1050,Levobunolol (ophthalmic),,,,none,unmapped
+DDInter1051,Levobupivacaine,DB01002,Levobupivacaine,4104,exact normalized-name fallback,exact-name match
+DDInter1052,Levocarnitine,DB00583,Levocarnitine,5105,exact normalized-name fallback,exact-name match
+DDInter1053,Levocetirizine,DB06282,Levocetirizine,3164,exact normalized-name fallback,exact-name match
+DDInter1054,Levodopa,DB01235,Levodopa,3104,exact normalized-name fallback,exact-name match
+DDInter1055,Levofloxacin,DB01137,Levofloxacin,3092,exact normalized-name fallback,exact-name match
+DDInter1056,Levoleucovorin,DB11596,Levoleucovorin,10264,exact normalized-name fallback,exact-name match
+DDInter1057,Levomefolic acid,DB11256,Levomefolic acid,3516,exact normalized-name fallback,exact-name match
+DDInter1058,Levomefolic acid (calcium),,,,none,unmapped
+DDInter1059,Levomilnacipran,DB08918,Levomilnacipran,4005,exact normalized-name fallback,exact-name match
+DDInter106,Antithymocyte immunoglobulin (rabbit),DB00098,Antithymocyte immunoglobulin (rabbit),6143,exact normalized-name fallback,exact-name match
+DDInter1060,Levonordefrin,DB06707,Levonordefrin,8932,exact normalized-name fallback,exact-name match
+DDInter1061,Levonorgestrel,DB00367,Levonorgestrel,3726,exact normalized-name fallback,exact-name match
+DDInter1062,Levorphanol,DB00854,Levorphanol,5934,exact normalized-name fallback,exact-name match
+DDInter1063,Levosalbutamol,DB13139,Levosalbutamol,4037,exact normalized-name fallback,exact-name match
+DDInter1064,Levothyroxine,DB00451,Levothyroxine,2843,exact normalized-name fallback,exact-name match
+DDInter1065,Licorice,,,,none,unmapped
+DDInter1066,Lidocaine,DB00281,Lidocaine,3723,exact normalized-name fallback,exact-name match
+DDInter1067,Lidocaine (ophthalmic),,,,none,unmapped
+DDInter1068,Lidocaine (topical),,,,none,unmapped
+DDInter1069,Linaclotide,DB08890,Linaclotide,8433,exact normalized-name fallback,exact-name match
+DDInter107,Apalutamide,DB11901,Apalutamide,4451,exact normalized-name fallback,exact-name match
+DDInter1070,Linagliptin,DB08882,Linagliptin,4381,exact normalized-name fallback,exact-name match
+DDInter1071,Lincomycin,DB01627,Lincomycin,9130,exact normalized-name fallback,exact-name match
+DDInter1072,Lindane,DB00431,Lindane,4976,exact normalized-name fallback,exact-name match
+DDInter1073,Linezolid,DB00601,Linezolid,3665,exact normalized-name fallback,exact-name match
+DDInter1074,Liothyronine,DB00279,Liothyronine,2842,exact normalized-name fallback,exact-name match
+DDInter1075,Liotrix,DB01583,Liotrix,2847,exact normalized-name fallback,exact-name match
+DDInter1076,Lipoic acid,DB00166,Lipoic acid,4053,exact normalized-name fallback,exact-name match
+DDInter1077,Liraglutide,DB06655,Liraglutide,3168,exact normalized-name fallback,exact-name match
+DDInter1078,Lisdexamfetamine,DB01255,Lisdexamfetamine,3942,exact normalized-name fallback,exact-name match
+DDInter1079,Lisinopril,DB00722,Lisinopril,5473,exact normalized-name fallback,exact-name match
+DDInter108,Apixaban,DB06605,Apixaban,3802,exact normalized-name fallback,exact-name match
+DDInter1080,Lisocabtagene maraleucel,,,,none,unmapped
+DDInter1081,Lithium carbonate,DB14509,Lithium carbonate,6614,exact normalized-name fallback,exact-name match
+DDInter1082,Lixisenatide,DB09265,Lixisenatide,6734,exact normalized-name fallback,exact-name match
+DDInter1083,Lofexidine,DB04948,Lofexidine,3975,exact normalized-name fallback,exact-name match
+DDInter1084,Lomefloxacin,DB00978,Lomefloxacin,4101,exact normalized-name fallback,exact-name match
+DDInter1085,Lomitapide,DB08827,Lomitapide,4374,exact normalized-name fallback,exact-name match
+DDInter1086,Lomustine,DB01206,Lomustine,3937,exact normalized-name fallback,exact-name match
+DDInter1087,Lonafarnib,DB06448,Lonafarnib,3800,exact normalized-name fallback,exact-name match
+DDInter1088,Loperamide,DB00836,Loperamide,3908,exact normalized-name fallback,exact-name match
+DDInter1089,Lopinavir,DB01601,Lopinavir,3129,exact normalized-name fallback,exact-name match
+DDInter109,Apomorphine,DB00714,Apomorphine,3003,exact normalized-name fallback,exact-name match
+DDInter1090,Loracarbef,DB00447,Loracarbef,9031,exact normalized-name fallback,exact-name match
+DDInter1091,Loratadine,DB00455,Loratadine,3733,exact normalized-name fallback,exact-name match
+DDInter1092,Lorazepam,DB00186,Lorazepam,4199,exact normalized-name fallback,exact-name match
+DDInter1093,Lorcaserin,DB04871,Lorcaserin,3971,exact normalized-name fallback,exact-name match
+DDInter1094,Lorlatinib,DB12130,Lorlatinib,3837,exact normalized-name fallback,exact-name match
+DDInter1095,Losartan,DB00678,Losartan,2998,exact normalized-name fallback,exact-name match
+DDInter1096,Loteprednol (ophthalmic),,,,none,unmapped
+DDInter1097,Loteprednol etabonate,,,,none,unmapped
+DDInter1098,Lovastatin,DB00227,Lovastatin,2918,exact normalized-name fallback,exact-name match
+DDInter1099,Loxapine,DB00408,Loxapine,4794,exact normalized-name fallback,exact-name match
+DDInter11,Acarbose,DB00284,Acarbose,6615,exact normalized-name fallback,exact-name match
+DDInter110,Apraclonidine,DB00964,Apraclonidine,5630,exact normalized-name fallback,exact-name match
+DDInter1100,Lubiprostone,DB01046,Lubiprostone,4596,exact normalized-name fallback,exact-name match
+DDInter1101,Lumacaftor,DB09280,Lumacaftor,3210,exact normalized-name fallback,exact-name match
+DDInter1102,Lumateperone,DB06077,Lumateperone,3416,exact normalized-name fallback,exact-name match
+DDInter1103,Lumefantrine,DB06708,Lumefantrine,3996,exact normalized-name fallback,exact-name match
+DDInter1104,Lurasidone,DB08815,Lurasidone,4373,exact normalized-name fallback,exact-name match
+DDInter1105,Lurbinectedin,DB12674,Lurbinectedin,3251,exact normalized-name fallback,exact-name match
+DDInter1106,Lusutrombopag,DB13125,Lusutrombopag,3482,exact normalized-name fallback,exact-name match
+DDInter1107,Lutein,,,,none,unmapped
+DDInter1108,Lutetium Lu 177 dotatate,DB13985,Lutetium Lu 177 dotatate,6065,exact normalized-name fallback,exact-name match
+DDInter1109,Lyme disease vaccine (recombinant OspA),,,,none,unmapped
+DDInter111,Apremilast,DB05676,Apremilast,4132,exact normalized-name fallback,exact-name match
+DDInter1110,Macimorelin,DB13074,Macimorelin,4485,exact normalized-name fallback,exact-name match
+DDInter1111,Macitentan,DB08932,Macitentan,3193,exact normalized-name fallback,exact-name match
+DDInter1112,Magaldrate,DB08938,Magaldrate,9580,exact normalized-name fallback,exact-name match
+DDInter1113,Magnesium carbonate,DB09481,Magnesium carbonate,8929,exact normalized-name fallback,exact-name match
+DDInter1114,Magnesium chloride,DB09407,Magnesium chloride,9182,exact normalized-name fallback,exact-name match
+DDInter1115,Magnesium citrate,DB11110,Magnesium citrate,9200,exact normalized-name fallback,exact-name match
+DDInter1116,Magnesium gluconate,DB13749,Magnesium gluconate,3375,exact normalized-name fallback,exact-name match
+DDInter1117,Magnesium glycinate,DB11189,Magnesium glycinate,9775,exact normalized-name fallback,exact-name match
+DDInter1118,Magnesium hydroxide,DB09104,Magnesium hydroxide,9159,exact normalized-name fallback,exact-name match
+DDInter1119,Magnesium oxide,DB01377,Magnesium oxide,9145,exact normalized-name fallback,exact-name match
+DDInter112,Aprepitant,DB00673,Aprepitant,4238,exact normalized-name fallback,exact-name match
+DDInter1120,Magnesium sulfate,DB00653,Magnesium sulfate,8952,exact normalized-name fallback,exact-name match
+DDInter1121,Manganese (chloride),,,,none,unmapped
+DDInter1122,Manganese (sulfate),,,,none,unmapped
+DDInter1123,Mannitol,DB00742,Mannitol,9122,exact normalized-name fallback,exact-name match
+DDInter1124,Maprotiline,DB00934,Maprotiline,3325,exact normalized-name fallback,exact-name match
+DDInter1125,Maraviroc,DB04835,Maraviroc,4319,exact normalized-name fallback,exact-name match
+DDInter1126,Mazindol,DB00579,Mazindol,5136,exact normalized-name fallback,exact-name match
+DDInter1127,Measles virus vaccine live attenuated,,,,none,unmapped
+DDInter1128,Mebendazole,DB00643,Mebendazole,4650,exact normalized-name fallback,exact-name match
+DDInter1129,Mebrofenin,,,,none,unmapped
+DDInter113,Aprotinin,DB06692,Aprotinin,3654,exact normalized-name fallback,exact-name match
+DDInter1130,Mecamylamine,DB00657,Mecamylamine,6430,exact normalized-name fallback,exact-name match
+DDInter1131,Mecasermin,DB01277,Mecasermin,3337,exact normalized-name fallback,exact-name match
+DDInter1132,Mecasermin rinfabate,,,,none,unmapped
+DDInter1133,Mechlorethamine,DB00888,Mechlorethamine,3632,exact normalized-name fallback,exact-name match
+DDInter1134,Meclizine,DB00737,Meclizine,3007,exact normalized-name fallback,exact-name match
+DDInter1135,Meclofenamic acid,DB00939,Meclofenamic acid,3292,exact normalized-name fallback,exact-name match
+DDInter1136,Mecobalamin,,,,none,unmapped
+DDInter1137,Medroxyprogesterone acetate,DB00603,Medroxyprogesterone acetate,2986,exact normalized-name fallback,exact-name match
+DDInter1138,Medrysone (ophthalmic),,,,none,unmapped
+DDInter1139,Mefenamic acid,DB00784,Mefenamic acid,3019,exact normalized-name fallback,exact-name match
+DDInter114,Arbutamine,DB01102,Arbutamine,5313,exact normalized-name fallback,exact-name match
+DDInter1140,Mefloquine,DB00358,Mefloquine,3484,exact normalized-name fallback,exact-name match
+DDInter1141,Megestrol acetate,DB00351,Megestrol acetate,4218,exact normalized-name fallback,exact-name match
+DDInter1142,Melatonin,DB01065,Melatonin,3509,exact normalized-name fallback,exact-name match
+DDInter1143,Meloxicam,DB00814,Meloxicam,3025,exact normalized-name fallback,exact-name match
+DDInter1144,Melphalan,DB01042,Melphalan,8995,exact normalized-name fallback,exact-name match
+DDInter1145,Melphalan flufenamide,,,,none,unmapped
+DDInter1146,Memantine,DB01043,Memantine,4601,exact normalized-name fallback,exact-name match
+DDInter1147,Meningococcal polysaccharide vaccine group C,,,,none,unmapped
+DDInter1148,Menotropins,,,,none,unmapped
+DDInter1149,Mepenzolate,DB04843,Mepenzolate,4857,exact normalized-name fallback,exact-name match
+DDInter115,Ardeparin,DB00407,Ardeparin,5608,exact normalized-name fallback,exact-name match
+DDInter1150,Meperidine,DB00454,Meperidine,2954,exact normalized-name fallback,exact-name match
+DDInter1151,Mephentermine,DB01365,Mephentermine,8934,exact normalized-name fallback,exact-name match
+DDInter1152,Mephenytoin,DB00532,Mephenytoin,3288,exact normalized-name fallback,exact-name match
+DDInter1153,Mepivacaine,DB00961,Mepivacaine,5329,exact normalized-name fallback,exact-name match
+DDInter1154,Meprobamate,DB00371,Meprobamate,5847,exact normalized-name fallback,exact-name match
+DDInter1155,Mepyramine,DB06691,Mepyramine,3993,exact normalized-name fallback,exact-name match
+DDInter1156,Mercaptopurine,DB01033,Mercaptopurine,3547,exact normalized-name fallback,exact-name match
+DDInter1157,Meropenem,DB00760,Meropenem,9134,exact normalized-name fallback,exact-name match
+DDInter1158,Mesalazine,DB00244,Mesalazine,4659,exact normalized-name fallback,exact-name match
+DDInter1159,Mesoridazine,DB00933,Mesoridazine,3914,exact normalized-name fallback,exact-name match
+DDInter116,Arformoterol,DB01274,Arformoterol,3943,exact normalized-name fallback,exact-name match
+DDInter1160,Mestranol,DB01357,Mestranol,4290,exact normalized-name fallback,exact-name match
+DDInter1161,Metamfetamine,DB01577,Metamfetamine,3957,exact normalized-name fallback,exact-name match
+DDInter1162,Metaraminol,DB00610,Metaraminol,6121,exact normalized-name fallback,exact-name match
+DDInter1163,Metaxalone,DB00660,Metaxalone,9128,exact normalized-name fallback,exact-name match
+DDInter1164,Metformin,DB00331,Metformin,5371,exact normalized-name fallback,exact-name match
+DDInter1165,Methacholine,DB06709,Methacholine,4859,exact normalized-name fallback,exact-name match
+DDInter1166,Methadone,DB00333,Methadone,2943,exact normalized-name fallback,exact-name match
+DDInter1167,Methazolamide,DB00703,Methazolamide,5575,exact normalized-name fallback,exact-name match
+DDInter1168,Methdilazine,DB00902,Methdilazine,6018,exact normalized-name fallback,exact-name match
+DDInter1169,Methenamine,DB06799,Methenamine,9111,exact normalized-name fallback,exact-name match
+DDInter117,Argatroban,DB00278,Argatroban,2929,exact normalized-name fallback,exact-name match
+DDInter1170,Methimazole,DB00763,Methimazole,3904,exact normalized-name fallback,exact-name match
+DDInter1171,Methionine,DB00134,Methionine,3428,exact normalized-name fallback,exact-name match
+DDInter1172,Methocarbamol,DB00423,Methocarbamol,5573,exact normalized-name fallback,exact-name match
+DDInter1173,Methohexital,DB00474,Methohexital,4616,exact normalized-name fallback,exact-name match
+DDInter1174,Methotrexate,DB00563,Methotrexate,2977,exact normalized-name fallback,exact-name match
+DDInter1175,Methotrimeprazine,DB01403,Methotrimeprazine,3948,exact normalized-name fallback,exact-name match
+DDInter1176,Methoxamine,DB00723,Methoxamine,6122,exact normalized-name fallback,exact-name match
+DDInter1177,Methoxsalen,DB00553,Methoxsalen,4086,exact normalized-name fallback,exact-name match
+DDInter1178,Methoxsalen (topical),,,,none,unmapped
+DDInter1179,Methoxyflurane,DB01028,Methoxyflurane,3919,exact normalized-name fallback,exact-name match
+DDInter118,Aripiprazole,DB01238,Aripiprazole,3106,exact normalized-name fallback,exact-name match
+DDInter1180,Methscopolamine,DB11315,Methscopolamine,9104,exact normalized-name fallback,exact-name match
+DDInter1181,Methsuximide,DB05246,Methsuximide,4620,exact normalized-name fallback,exact-name match
+DDInter1182,Methyl aminolevulinate (topical),,,,none,unmapped
+DDInter1183,Methyl salicylate (topical),,,,none,unmapped
+DDInter1184,Methylcellulose,DB11228,Methylcellulose,9776,exact normalized-name fallback,exact-name match
+DDInter1185,Methyldopa,DB00968,Methyldopa,3592,exact normalized-name fallback,exact-name match
+DDInter1186,Methylene blue,DB09241,Methylene blue,3207,exact normalized-name fallback,exact-name match
+DDInter1187,Methylergometrine,DB00353,Methylergometrine,4219,exact normalized-name fallback,exact-name match
+DDInter1188,Methylnaltrexone,DB06800,Methylnaltrexone,6291,exact normalized-name fallback,exact-name match
+DDInter1189,Methylphenidate,DB00422,Methylphenidate,5638,exact normalized-name fallback,exact-name match
+DDInter119,Armodafinil,DB06413,Armodafinil,3798,exact normalized-name fallback,exact-name match
+DDInter1190,Methylphenobarbital,DB00849,Methylphenobarbital,4618,exact normalized-name fallback,exact-name match
+DDInter1191,Methylprednisolone,DB00959,Methylprednisolone,3052,exact normalized-name fallback,exact-name match
+DDInter1192,Methylprednisolone (topical),,,,none,unmapped
+DDInter1193,Methyltestosterone,DB06710,Methyltestosterone,3170,exact normalized-name fallback,exact-name match
+DDInter1194,Methysergide,DB00247,Methysergide,4206,exact normalized-name fallback,exact-name match
+DDInter1195,Meticillin,DB01603,Meticillin,9189,exact normalized-name fallback,exact-name match
+DDInter1196,Metipranolol (ophthalmic),,,,none,unmapped
+DDInter1197,Metoclopramide,DB01233,Metoclopramide,3329,exact normalized-name fallback,exact-name match
+DDInter1198,Metocurine,DB01336,Metocurine,6179,exact normalized-name fallback,exact-name match
+DDInter1199,Metolazone,DB00524,Metolazone,5931,exact normalized-name fallback,exact-name match
+DDInter12,Acebutolol,DB01193,Acebutolol,3936,exact normalized-name fallback,exact-name match
+DDInter120,Arsenic trioxide,DB01169,Arsenic trioxide,3096,exact normalized-name fallback,exact-name match
+DDInter1200,Metoprolol,DB00264,Metoprolol,2925,exact normalized-name fallback,exact-name match
+DDInter1201,Metreleptin,DB09046,Metreleptin,8287,exact normalized-name fallback,exact-name match
+DDInter1202,Metronidazole,DB00916,Metronidazole,3763,exact normalized-name fallback,exact-name match
+DDInter1203,Metronidazole (topical),,,,none,unmapped
+DDInter1204,Metyrapone,DB01011,Metyrapone,3513,exact normalized-name fallback,exact-name match
+DDInter1205,Metyrosine,DB00765,Metyrosine,6220,exact normalized-name fallback,exact-name match
+DDInter1206,Mexiletine,DB00379,Mexiletine,3880,exact normalized-name fallback,exact-name match
+DDInter1207,Mezlocillin,DB00948,Mezlocillin,9193,exact normalized-name fallback,exact-name match
+DDInter1208,Micafungin,DB01141,Micafungin,3593,exact normalized-name fallback,exact-name match
+DDInter1209,Miconazole,DB01110,Miconazole,3083,exact normalized-name fallback,exact-name match
+DDInter121,Artemether,DB06697,Artemether,3805,exact normalized-name fallback,exact-name match
+DDInter1210,Miconazole (topical),,,,none,unmapped
+DDInter1211,Microcrystalline cellulose,,,,none,unmapped
+DDInter1212,Midazolam,DB00683,Midazolam,3746,exact normalized-name fallback,exact-name match
+DDInter1213,Midodrine,DB00211,Midodrine,3864,exact normalized-name fallback,exact-name match
+DDInter1214,Midostaurin,DB06595,Midostaurin,3801,exact normalized-name fallback,exact-name match
+DDInter1215,Mifepristone,DB00834,Mifepristone,3756,exact normalized-name fallback,exact-name match
+DDInter1216,Migalastat,DB05018,Migalastat,4641,exact normalized-name fallback,exact-name match
+DDInter1217,Miglitol,DB00491,Miglitol,4536,exact normalized-name fallback,exact-name match
+DDInter1218,Miglustat,,,,none,unmapped
+DDInter1219,Milk thistle,,,,none,unmapped
+DDInter122,Artesunate,DB09274,Artesunate,3209,exact normalized-name fallback,exact-name match
+DDInter1220,Milnacipran,DB04896,Milnacipran,4325,exact normalized-name fallback,exact-name match
+DDInter1221,Milrinone,DB00235,Milrinone,6003,exact normalized-name fallback,exact-name match
+DDInter1222,Miltefosine,DB09031,Miltefosine,3659,exact normalized-name fallback,exact-name match
+DDInter1223,Mineral oil,DB11057,Mineral oil,9773,exact normalized-name fallback,exact-name match
+DDInter1224,Minocycline,DB01017,Minocycline,4697,exact normalized-name fallback,exact-name match
+DDInter1225,Minocycline (topical),,,,none,unmapped
+DDInter1226,Minoxidil,DB00350,Minoxidil,4638,exact normalized-name fallback,exact-name match
+DDInter1227,Minoxidil (topical),,,,none,unmapped
+DDInter1228,Mipomersen,DB05528,Mipomersen,10217,exact normalized-name fallback,exact-name match
+DDInter1229,Mirabegron,DB08893,Mirabegron,3189,exact normalized-name fallback,exact-name match
+DDInter123,Articaine,DB09009,Articaine,9098,exact normalized-name fallback,exact-name match
+DDInter1230,Mirtazapine,DB00370,Mirtazapine,3877,exact normalized-name fallback,exact-name match
+DDInter1231,Misoprostol,DB00929,Misoprostol,5004,exact normalized-name fallback,exact-name match
+DDInter1232,Mitomycin,DB00305,Mitomycin,4054,exact normalized-name fallback,exact-name match
+DDInter1233,Mitotane,DB00648,Mitotane,2808,exact normalized-name fallback,exact-name match
+DDInter1234,Mitoxantrone,DB01204,Mitoxantrone,3574,exact normalized-name fallback,exact-name match
+DDInter1235,Mivacurium,DB01226,Mivacurium,4852,exact normalized-name fallback,exact-name match
+DDInter1236,Modafinil,DB00745,Modafinil,3751,exact normalized-name fallback,exact-name match
+DDInter1237,Moexipril,DB00691,Moexipril,5472,exact normalized-name fallback,exact-name match
+DDInter1238,Mogamulizumab,DB12498,Mogamulizumab,8977,exact normalized-name fallback,exact-name match
+DDInter1239,Molindone,DB01618,Molindone,5100,exact normalized-name fallback,exact-name match
+DDInter124,Ascorbic acid,DB00126,Ascorbic acid,2911,exact normalized-name fallback,exact-name match
+DDInter1240,Monomethyl fumarate,DB14219,Monomethyl fumarate,9725,exact normalized-name fallback,exact-name match
+DDInter1241,Monopotassium phosphate,DB09413,Monopotassium phosphate,9120,exact normalized-name fallback,exact-name match
+DDInter1242,Montelukast,DB00471,Montelukast,3382,exact normalized-name fallback,exact-name match
+DDInter1243,Moricizine,DB00680,Moricizine,5352,exact normalized-name fallback,exact-name match
+DDInter1244,Morphine,DB00295,Morphine,2933,exact normalized-name fallback,exact-name match
+DDInter1245,Morphine (liposomal),,,,none,unmapped
+DDInter1246,Moxetumomab Pasudotox,DB12688,Moxetumomab Pasudotox,5342,exact normalized-name fallback,exact-name match
+DDInter1247,Moxifloxacin,DB00218,Moxifloxacin,4072,exact normalized-name fallback,exact-name match
+DDInter1248,Mumps virus strain B level jeryl lynn live antigen,,,,none,unmapped
+DDInter1249,Mupirocin,DB00410,Mupirocin,9237,exact normalized-name fallback,exact-name match
+DDInter125,Asenapine,DB06216,Asenapine,3163,exact normalized-name fallback,exact-name match
+DDInter1250,Muromonab,DB00075,Muromonab,5606,exact normalized-name fallback,exact-name match
+DDInter1251,Mycophenolate mofetil,DB00688,Mycophenolate mofetil,3747,exact normalized-name fallback,exact-name match
+DDInter1252,Mycophenolic acid,DB01024,Mycophenolic acid,4625,exact normalized-name fallback,exact-name match
+DDInter1253,Nabilone,DB00486,Nabilone,4559,exact normalized-name fallback,exact-name match
+DDInter1254,Nabumetone,DB00461,Nabumetone,2958,exact normalized-name fallback,exact-name match
+DDInter1255,Nadolol,DB01203,Nadolol,3365,exact normalized-name fallback,exact-name match
+DDInter1256,Nafcillin,DB00607,Nafcillin,2988,exact normalized-name fallback,exact-name match
+DDInter1257,Nalbuphine,DB00844,Nalbuphine,5933,exact normalized-name fallback,exact-name match
+DDInter1258,Naldemedine,DB11691,Naldemedine,4663,exact normalized-name fallback,exact-name match
+DDInter1259,Nalidixic acid,DB00779,Nalidixic acid,4093,exact normalized-name fallback,exact-name match
+DDInter126,Asparaginase Erwinia chrysanthemi,DB08886,Asparaginase Erwinia chrysanthemi,3297,exact normalized-name fallback,exact-name match
+DDInter1260,Nalmefene,DB06230,Nalmefene,4662,exact normalized-name fallback,exact-name match
+DDInter1261,Naloxegol,DB09049,Naloxegol,4011,exact normalized-name fallback,exact-name match
+DDInter1262,Naloxone,DB01183,Naloxone,3097,exact normalized-name fallback,exact-name match
+DDInter1263,Naltrexone,DB00704,Naltrexone,4639,exact normalized-name fallback,exact-name match
+DDInter1264,Naphazoline (nasal),,,,none,unmapped
+DDInter1265,Naphazoline (ophthalmic),,,,none,unmapped
+DDInter1266,Naproxen,DB00788,Naproxen,3021,exact normalized-name fallback,exact-name match
+DDInter1267,Naratriptan,DB00952,Naratriptan,3684,exact normalized-name fallback,exact-name match
+DDInter1268,Natalizumab,DB00108,Natalizumab,6200,exact normalized-name fallback,exact-name match
+DDInter1269,Nateglinide,DB00731,Nateglinide,3005,exact normalized-name fallback,exact-name match
+DDInter127,Asparaginase Escherichia coli,DB00023,Asparaginase Escherichia coli,3285,exact normalized-name fallback,exact-name match
+DDInter1270,Naxitamab,,,,none,unmapped
+DDInter1271,Nebivolol,DB04861,Nebivolol,3152,exact normalized-name fallback,exact-name match
+DDInter1272,Necitumumab,DB09559,Necitumumab,6501,exact normalized-name fallback,exact-name match
+DDInter1273,Nedocromil,DB00716,Nedocromil,5106,exact normalized-name fallback,exact-name match
+DDInter1274,Nefazodone,DB01149,Nefazodone,3929,exact normalized-name fallback,exact-name match
+DDInter1275,Nelarabine,DB01280,Nelarabine,3702,exact normalized-name fallback,exact-name match
+DDInter1276,Nelfinavir,DB00220,Nelfinavir,2917,exact normalized-name fallback,exact-name match
+DDInter1277,Neomycin,DB00994,Neomycin,6130,exact normalized-name fallback,exact-name match
+DDInter1278,Neomycin (topical),,,,none,unmapped
+DDInter1279,Neostigmine,DB01400,Neostigmine,3644,exact normalized-name fallback,exact-name match
+DDInter128,Astemizole,DB00637,Astemizole,3743,exact normalized-name fallback,exact-name match
+DDInter1280,Nepafenac (ophthalmic),,,,none,unmapped
+DDInter1281,Neratinib,DB11828,Neratinib,3239,exact normalized-name fallback,exact-name match
+DDInter1282,Nesiritide,DB04899,Nesiritide,6173,exact normalized-name fallback,exact-name match
+DDInter1283,Netilmicin,DB00955,Netilmicin,9191,exact normalized-name fallback,exact-name match
+DDInter1284,Netupitant,DB09048,Netupitant,4010,exact normalized-name fallback,exact-name match
+DDInter1285,Nevirapine,DB00238,Nevirapine,2921,exact normalized-name fallback,exact-name match
+DDInter1286,Niacin,DB00627,Niacin,3289,exact normalized-name fallback,exact-name match
+DDInter1287,Nicardipine,DB00622,Nicardipine,3742,exact normalized-name fallback,exact-name match
+DDInter1288,Niclosamide,DB06803,Niclosamide,4148,exact normalized-name fallback,exact-name match
+DDInter1289,Nicotinamide,DB02701,Nicotinamide,3962,exact normalized-name fallback,exact-name match
+DDInter129,Atazanavir,DB01072,Atazanavir,3079,exact normalized-name fallback,exact-name match
+DDInter1290,Nicotine,DB00184,Nicotine,3663,exact normalized-name fallback,exact-name match
+DDInter1291,Nifedipine,DB01115,Nifedipine,3084,exact normalized-name fallback,exact-name match
+DDInter1292,Nifurtimox,,,,none,unmapped
+DDInter1293,Nilotinib,DB04868,Nilotinib,3970,exact normalized-name fallback,exact-name match
+DDInter1294,Nilutamide,DB00665,Nilutamide,4055,exact normalized-name fallback,exact-name match
+DDInter1295,Nimodipine,DB00393,Nimodipine,4223,exact normalized-name fallback,exact-name match
+DDInter1296,Nintedanib,DB09079,Nintedanib,3196,exact normalized-name fallback,exact-name match
+DDInter1297,Niraparib,DB11793,Niraparib,3544,exact normalized-name fallback,exact-name match
+DDInter1298,Nisoldipine,DB00401,Nisoldipine,3729,exact normalized-name fallback,exact-name match
+DDInter1299,Nitazoxanide,,,,none,unmapped
+DDInter13,Acenocoumarol,DB01418,Acenocoumarol,3124,exact normalized-name fallback,exact-name match
+DDInter130,Atenolol,DB00335,Atenolol,2945,exact normalized-name fallback,exact-name match
+DDInter1300,Nitisinone,,,,none,unmapped
+DDInter1301,Nitrazepam,DB01595,Nitrazepam,4302,exact normalized-name fallback,exact-name match
+DDInter1302,Nitric Oxide,DB00435,Nitric Oxide,3417,exact normalized-name fallback,exact-name match
+DDInter1303,Nitrofurantoin,DB00698,Nitrofurantoin,4056,exact normalized-name fallback,exact-name match
+DDInter1304,Nitroglycerin,DB00727,Nitroglycerin,3418,exact normalized-name fallback,exact-name match
+DDInter1305,Nitroprusside,DB00325,Nitroprusside,4649,exact normalized-name fallback,exact-name match
+DDInter1306,Nitrous acid,DB09112,Nitrous acid,5213,exact normalized-name fallback,exact-name match
+DDInter1307,Nitrous oxide,DB06690,Nitrous oxide,10014,exact normalized-name fallback,exact-name match
+DDInter1308,Nivolumab,DB09035,Nivolumab,8386,exact normalized-name fallback,exact-name match
+DDInter1309,Nizatidine,DB00585,Nizatidine,3626,exact normalized-name fallback,exact-name match
+DDInter131,Atezolizumab,DB11595,Atezolizumab,8397,exact normalized-name fallback,exact-name match
+DDInter1310,Norelgestromin,DB06713,Norelgestromin,3583,exact normalized-name fallback,exact-name match
+DDInter1311,Norepinephrine,DB00368,Norepinephrine,5135,exact normalized-name fallback,exact-name match
+DDInter1312,Norethisterone,DB00717,Norethisterone,3004,exact normalized-name fallback,exact-name match
+DDInter1313,Norfloxacin,DB01059,Norfloxacin,4105,exact normalized-name fallback,exact-name match
+DDInter1314,Norgestimate,DB00957,Norgestimate,3051,exact normalized-name fallback,exact-name match
+DDInter1315,Norgestrel,DB09389,Norgestrel,3609,exact normalized-name fallback,exact-name match
+DDInter1316,Nortriptyline,DB00540,Nortriptyline,2972,exact normalized-name fallback,exact-name match
+DDInter1317,Novobiocin,DB01051,Novobiocin,9017,exact normalized-name fallback,exact-name match
+DDInter1318,Nystatin,DB00646,Nystatin,9021,exact normalized-name fallback,exact-name match
+DDInter1319,Obeticholic acid,DB05990,Obeticholic acid,4135,exact normalized-name fallback,exact-name match
+DDInter132,Atomoxetine,DB00289,Atomoxetine,2931,exact normalized-name fallback,exact-name match
+DDInter1320,Obinutuzumab,DB08935,Obinutuzumab,5013,exact normalized-name fallback,exact-name match
+DDInter1321,Ocrelizumab,DB11988,Ocrelizumab,5015,exact normalized-name fallback,exact-name match
+DDInter1322,Octasulfur (topical),,,,none,unmapped
+DDInter1323,Octreotide,DB00104,Octreotide,2910,exact normalized-name fallback,exact-name match
+DDInter1324,Ofatumumab,DB06650,Ofatumumab,5012,exact normalized-name fallback,exact-name match
+DDInter1325,Ofloxacin,DB01165,Ofloxacin,4109,exact normalized-name fallback,exact-name match
+DDInter1326,Olanzapine,DB00334,Olanzapine,2944,exact normalized-name fallback,exact-name match
+DDInter1327,Olaparib,DB09074,Olaparib,3819,exact normalized-name fallback,exact-name match
+DDInter1328,Olaratumab,DB06043,Olaratumab,6676,exact normalized-name fallback,exact-name match
+DDInter1329,Oliceridine,DB14881,Oliceridine,4051,exact normalized-name fallback,exact-name match
+DDInter133,Atorvastatin,DB01076,Atorvastatin,3080,exact normalized-name fallback,exact-name match
+DDInter1330,Olmesartan,DB00275,Olmesartan,4992,exact normalized-name fallback,exact-name match
+DDInter1331,Olodaterol,DB09080,Olodaterol,4580,exact normalized-name fallback,exact-name match
+DDInter1332,Olopatadine,,,,none,unmapped
+DDInter1333,Olopatadine (nasal),,,,none,unmapped
+DDInter1334,Olsalazine,DB01250,Olsalazine,6940,exact normalized-name fallback,exact-name match
+DDInter1335,Omacetaxine mepesuccinate,DB04865,Omacetaxine mepesuccinate,8669,exact normalized-name fallback,exact-name match
+DDInter1336,Omadacycline,DB12455,Omadacycline,3248,exact normalized-name fallback,exact-name match
+DDInter1337,Omalizumab,DB00043,Omalizumab,4754,exact normalized-name fallback,exact-name match
+DDInter1339,Omega-3 fatty acids,DB11133,Omega-3 fatty acids,3441,exact normalized-name fallback,exact-name match
+DDInter134,Atovaquone,DB01117,Atovaquone,4268,exact normalized-name fallback,exact-name match
+DDInter1340,Omeprazole,DB00338,Omeprazole,3568,exact normalized-name fallback,exact-name match
+DDInter1341,Onasemnogene abeparvovec,DB15528,Onasemnogene abeparvovec,10596,exact normalized-name fallback,exact-name match
+DDInter1342,Ondansetron,DB00904,Ondansetron,3760,exact normalized-name fallback,exact-name match
+DDInter1343,Opicapone,DB11632,Opicapone,4595,exact normalized-name fallback,exact-name match
+DDInter1344,Opium,DB11130,Opium,3220,exact normalized-name fallback,exact-name match
+DDInter1345,Oprelvekin,,,,none,unmapped
+DDInter1346,Orciprenaline,DB00816,Orciprenaline,6343,exact normalized-name fallback,exact-name match
+DDInter1347,Oritavancin,DB04911,Oritavancin,3153,exact normalized-name fallback,exact-name match
+DDInter1348,Orlistat,DB01083,Orlistat,3504,exact normalized-name fallback,exact-name match
+DDInter1349,Orphenadrine,DB01173,Orphenadrine,3930,exact normalized-name fallback,exact-name match
+DDInter135,Atracurium,DB13295,Atracurium,9243,exact normalized-name fallback,exact-name match
+DDInter1350,Oseltamivir,DB00198,Oseltamivir,4544,exact normalized-name fallback,exact-name match
+DDInter1351,Osilodrostat,DB11837,Osilodrostat,3832,exact normalized-name fallback,exact-name match
+DDInter1352,Osimertinib,DB09330,Osimertinib,4160,exact normalized-name fallback,exact-name match
+DDInter1353,Ospemifene,DB04938,Ospemifene,3974,exact normalized-name fallback,exact-name match
+DDInter1354,Oxacillin,DB00713,Oxacillin,7096,exact normalized-name fallback,exact-name match
+DDInter1355,Oxaliplatin,DB00526,Oxaliplatin,3519,exact normalized-name fallback,exact-name match
+DDInter1356,Oxamniquine,DB01096,Oxamniquine,3925,exact normalized-name fallback,exact-name match
+DDInter1357,Oxandrolone,DB00621,Oxandrolone,4560,exact normalized-name fallback,exact-name match
+DDInter1358,Oxaprozin,DB00991,Oxaprozin,4767,exact normalized-name fallback,exact-name match
+DDInter1359,Oxazepam,DB00842,Oxazepam,3029,exact normalized-name fallback,exact-name match
+DDInter136,Atropine,DB00572,Atropine,4844,exact normalized-name fallback,exact-name match
+DDInter1360,Oxcarbazepine,DB00776,Oxcarbazepine,3017,exact normalized-name fallback,exact-name match
+DDInter1362,Oxitriptan,DB02959,Oxitriptan,10035,exact normalized-name fallback,exact-name match
+DDInter1363,Oxtriphylline,DB01303,Oxtriphylline,4113,exact normalized-name fallback,exact-name match
+DDInter1364,Oxybuprocaine (ophthalmic),,,,none,unmapped
+DDInter1365,Oxybutynin,DB01062,Oxybutynin,3075,exact normalized-name fallback,exact-name match
+DDInter1366,Oxycodone,DB00497,Oxycodone,2965,exact normalized-name fallback,exact-name match
+DDInter1367,Oxygen,,,,none,unmapped
+DDInter1368,Oxymetazoline (nasal),,,,none,unmapped
+DDInter1369,Oxymetazoline (ophthalmic),,,,none,unmapped
+DDInter137,Atropine (ophthalmic),,,,none,unmapped
+DDInter1370,Oxymetazoline (topical),,,,none,unmapped
+DDInter1371,Oxymetholone,DB06412,Oxymetholone,3166,exact normalized-name fallback,exact-name match
+DDInter1372,Oxymorphone,DB01192,Oxymorphone,3935,exact normalized-name fallback,exact-name match
+DDInter1373,Oxyquinoline (topical),,,,none,unmapped
+DDInter1374,Oxytetracycline,DB00595,Oxytetracycline,2984,exact normalized-name fallback,exact-name match
+DDInter1375,Oxytocin,DB00107,Oxytocin,3610,exact normalized-name fallback,exact-name match
+DDInter1376,Ozanimod,DB12612,Ozanimod,3373,exact normalized-name fallback,exact-name match
+DDInter1377,Paclitaxel,DB01229,Paclitaxel,3575,exact normalized-name fallback,exact-name match
+DDInter1378,Paclitaxel (protein-bound),,,,none,unmapped
+DDInter1379,Palbociclib,DB09073,Palbociclib,3195,exact normalized-name fallback,exact-name match
+DDInter138,Attapulgite,,,,none,unmapped
+DDInter1380,Palifermin,DB00039,Palifermin,6476,exact normalized-name fallback,exact-name match
+DDInter1381,Paliperidone,DB01267,Paliperidone,3784,exact normalized-name fallback,exact-name match
+DDInter1382,Palonosetron,DB00377,Palonosetron,3879,exact normalized-name fallback,exact-name match
+DDInter1383,Pamidronic acid,DB00282,Pamidronic acid,6510,exact normalized-name fallback,exact-name match
+DDInter1384,Pancrelipase,DB00085,Pancrelipase,9411,exact normalized-name fallback,exact-name match
+DDInter1385,Pancuronium,DB01337,Pancuronium,3642,exact normalized-name fallback,exact-name match
+DDInter1386,Panitumumab,DB01269,Panitumumab,6494,exact normalized-name fallback,exact-name match
+DDInter1387,Panobinostat,DB06603,Panobinostat,3989,exact normalized-name fallback,exact-name match
+DDInter1388,Pantoprazole,DB00213,Pantoprazole,4203,exact normalized-name fallback,exact-name match
+DDInter1389,Papaverine,DB01113,Papaverine,6102,exact normalized-name fallback,exact-name match
+DDInter139,Auranofin,DB00995,Auranofin,3057,exact normalized-name fallback,exact-name match
+DDInter1390,Papaya,,,,none,unmapped
+DDInter1391,Paraldehyde,DB09117,Paraldehyde,3422,exact normalized-name fallback,exact-name match
+DDInter1392,Paramethadione,DB00617,Paramethadione,4236,exact normalized-name fallback,exact-name match
+DDInter1393,Parathyroid hormone,DB05829,Parathyroid hormone,8445,exact normalized-name fallback,exact-name match
+DDInter1394,Paricalcitol,DB00910,Paricalcitol,3709,exact normalized-name fallback,exact-name match
+DDInter1395,Paritaprevir,DB09297,Paritaprevir,3823,exact normalized-name fallback,exact-name match
+DDInter1396,Paromomycin,DB01421,Paromomycin,9184,exact normalized-name fallback,exact-name match
+DDInter1397,Paroxetine,DB00715,Paroxetine,3899,exact normalized-name fallback,exact-name match
+DDInter1398,Pasireotide,DB06663,Pasireotide,4357,exact normalized-name fallback,exact-name match
+DDInter1399,Patiromer,DB09263,Patiromer,10696,exact normalized-name fallback,exact-name match
+DDInter14,Acetaminophen,DB00316,Acetaminophen,2937,exact normalized-name fallback,exact-name match
+DDInter140,Aurothioglucose,DB09121,Aurothioglucose,5585,exact normalized-name fallback,exact-name match
+DDInter1400,Pazopanib,DB06589,Pazopanib,3988,exact normalized-name fallback,exact-name match
+DDInter1401,Pectin,,,,none,unmapped
+DDInter1402,Pegademase,DB00061,Pegademase,6881,exact normalized-name fallback,exact-name match
+DDInter1403,Pegaptanib (ophthalmic),,,,none,unmapped
+DDInter1404,Pegaspargase,DB00059,Pegaspargase,3286,exact normalized-name fallback,exact-name match
+DDInter1405,Pegfilgrastim,DB00019,Pegfilgrastim,3477,exact normalized-name fallback,exact-name match
+DDInter1406,Peginesatide,DB08894,Peginesatide,6322,exact normalized-name fallback,exact-name match
+DDInter1407,Peginterferon alfa-2a,DB00008,Peginterferon alfa-2a,4060,exact normalized-name fallback,exact-name match
+DDInter1408,Peginterferon alfa-2b,DB00022,Peginterferon alfa-2b,3855,exact normalized-name fallback,exact-name match
+DDInter1409,Peginterferon beta-1a,DB09122,Peginterferon beta-1a,4154,exact normalized-name fallback,exact-name match
+DDInter141,Avanafil,DB06237,Avanafil,4344,exact normalized-name fallback,exact-name match
+DDInter1410,Pegloticase,DB09208,Pegloticase,9271,exact normalized-name fallback,exact-name match
+DDInter1411,Pegvaliase,DB12839,Pegvaliase,10320,exact normalized-name fallback,exact-name match
+DDInter1412,Pegvisomant,DB00082,Pegvisomant,3478,exact normalized-name fallback,exact-name match
+DDInter1413,Pembrolizumab,DB09037,Pembrolizumab,8387,exact normalized-name fallback,exact-name match
+DDInter1414,Pemetrexed,DB00642,Pemetrexed,3585,exact normalized-name fallback,exact-name match
+DDInter1415,Pemigatinib,DB15102,Pemigatinib,4532,exact normalized-name fallback,exact-name match
+DDInter1416,Pemoline,,,,none,unmapped
+DDInter1417,Penbutolol,DB01359,Penbutolol,3330,exact normalized-name fallback,exact-name match
+DDInter1418,Penciclovir (topical),,,,none,unmapped
+DDInter1419,Penicillamine,DB00859,Penicillamine,9022,exact normalized-name fallback,exact-name match
+DDInter142,Avapritinib,DB15233,Avapritinib,4533,exact normalized-name fallback,exact-name match
+DDInter1420,Pentamidine,DB00738,Pentamidine,3479,exact normalized-name fallback,exact-name match
+DDInter1421,Pentazocine,DB00652,Pentazocine,5289,exact normalized-name fallback,exact-name match
+DDInter1423,Pentobarbital,DB00312,Pentobarbital,4213,exact normalized-name fallback,exact-name match
+DDInter1424,Pentosan polysulfate,DB00686,Pentosan polysulfate,5758,exact normalized-name fallback,exact-name match
+DDInter1425,Pentostatin,DB00552,Pentostatin,8033,exact normalized-name fallback,exact-name match
+DDInter1426,Pentoxifylline,DB00806,Pentoxifylline,4095,exact normalized-name fallback,exact-name match
+DDInter1427,Pentoxyverine,,,,none,unmapped
+DDInter1428,Perampanel,DB08883,Perampanel,3812,exact normalized-name fallback,exact-name match
+DDInter1429,Perflutren,DB00556,Perflutren,9639,exact normalized-name fallback,exact-name match
+DDInter143,Avatrombopag,DB11995,Avatrombopag,4582,exact normalized-name fallback,exact-name match
+DDInter1430,Pergolide,DB01186,Pergolide,4273,exact normalized-name fallback,exact-name match
+DDInter1431,Perindopril,DB00790,Perindopril,3629,exact normalized-name fallback,exact-name match
+DDInter1432,Perphenazine,DB00850,Perphenazine,3910,exact normalized-name fallback,exact-name match
+DDInter1434,Pertuzumab,DB06366,Pertuzumab,6138,exact normalized-name fallback,exact-name match
+DDInter1435,Pexidartinib,DB12978,Pexidartinib,3254,exact normalized-name fallback,exact-name match
+DDInter1436,Pfizer-BioNTech Covid-19 Vaccine,,,,none,unmapped
+DDInter1437,Phenacemide,DB01121,Phenacemide,5258,exact normalized-name fallback,exact-name match
+DDInter1438,Phenazopyridine,DB01438,Phenazopyridine,5259,exact normalized-name fallback,exact-name match
+DDInter1439,Phendimetrazine,DB01579,Phendimetrazine,6092,exact normalized-name fallback,exact-name match
+DDInter144,Avelumab,DB11945,Avelumab,8399,exact normalized-name fallback,exact-name match
+DDInter1440,Phenelzine,DB00780,Phenelzine,3667,exact normalized-name fallback,exact-name match
+DDInter1441,Phenindamine,DB01619,Phenindamine,6028,exact normalized-name fallback,exact-name match
+DDInter1442,Phenobarbital,DB01174,Phenobarbital,3776,exact normalized-name fallback,exact-name match
+DDInter1443,Phenolphthalein,DB04824,Phenolphthalein,5160,exact normalized-name fallback,exact-name match
+DDInter1444,Phenoxybenzamine,DB00925,Phenoxybenzamine,5628,exact normalized-name fallback,exact-name match
+DDInter1445,Phenoxymethylpenicillin,DB00417,Phenoxymethylpenicillin,7095,exact normalized-name fallback,exact-name match
+DDInter1446,Phensuximide,DB00832,Phensuximide,9137,exact normalized-name fallback,exact-name match
+DDInter1447,Phentermine,DB00191,Phentermine,4200,exact normalized-name fallback,exact-name match
+DDInter1448,Phentolamine,DB00692,Phentolamine,5627,exact normalized-name fallback,exact-name match
+DDInter1449,Phenyl salicylate,,,,none,unmapped
+DDInter1451,Phenylbutazone,DB00812,Phenylbutazone,4248,exact normalized-name fallback,exact-name match
+DDInter1452,Phenylbutyric acid,DB06819,Phenylbutyric acid,4001,exact normalized-name fallback,exact-name match
+DDInter1453,Phenylephrine,DB00388,Phenylephrine,3664,exact normalized-name fallback,exact-name match
+DDInter1454,Phenylephrine (nasal),,,,none,unmapped
+DDInter1455,Phenylephrine (ophthalmic),,,,none,unmapped
+DDInter1456,Phenylephrine (otic),,,,none,unmapped
+DDInter1457,Phenylephrine (topical),,,,none,unmapped
+DDInter1458,Phenylpropanolamine,DB00397,Phenylpropanolamine,3681,exact normalized-name fallback,exact-name match
+DDInter1459,Phenyltoloxamine,,,,none,unmapped
+DDInter146,Axicabtagene ciloleucel,,,,none,unmapped
+DDInter1460,Phenytoin,DB00252,Phenytoin,2924,exact normalized-name fallback,exact-name match
+DDInter1461,Phylloquinone,DB01022,Phylloquinone,5907,exact normalized-name fallback,exact-name match
+DDInter1462,Physostigmine,DB00981,Physostigmine,5956,exact normalized-name fallback,exact-name match
+DDInter1463,Physostigmine (ophthalmic),,,,none,unmapped
+DDInter1464,Picosulfuric acid,DB09268,Picosulfuric acid,9595,exact normalized-name fallback,exact-name match
+DDInter1465,Pilocarpine,DB01085,Pilocarpine,4266,exact normalized-name fallback,exact-name match
+DDInter1466,Pilocarpine (ophthalmic),,,,none,unmapped
+DDInter1467,Pimavanserin,DB05316,Pimavanserin,6053,exact normalized-name fallback,exact-name match
+DDInter1468,Pimecrolimus,DB00337,Pimecrolimus,4215,exact normalized-name fallback,exact-name match
+DDInter1469,Pimecrolimus (topical),,,,none,unmapped
+DDInter147,Axitinib,DB06626,Axitinib,3803,exact normalized-name fallback,exact-name match
+DDInter1470,Pimozide,DB01100,Pimozide,3771,exact normalized-name fallback,exact-name match
+DDInter1471,Pindolol,DB00960,Pindolol,3916,exact normalized-name fallback,exact-name match
+DDInter1472,Pioglitazone,DB01132,Pioglitazone,3089,exact normalized-name fallback,exact-name match
+DDInter1473,Pipecuronium,DB01338,Pipecuronium,3643,exact normalized-name fallback,exact-name match
+DDInter1474,Piperacillin,DB00319,Piperacillin,9045,exact normalized-name fallback,exact-name match
+DDInter1475,Piperazine,DB00592,Piperazine,3892,exact normalized-name fallback,exact-name match
+DDInter1476,Pirbuterol,DB01291,Pirbuterol,5315,exact normalized-name fallback,exact-name match
+DDInter1477,Pirfenidone,DB04951,Pirfenidone,3154,exact normalized-name fallback,exact-name match
+DDInter1478,Piroxicam,DB00554,Piroxicam,2974,exact normalized-name fallback,exact-name match
+DDInter1479,Pitavastatin,DB08860,Pitavastatin,3185,exact normalized-name fallback,exact-name match
+DDInter148,Azacitidine,DB00928,Azacitidine,4197,exact normalized-name fallback,exact-name match
+DDInter1480,Pitolisant,DB11642,Pitolisant,3230,exact normalized-name fallback,exact-name match
+DDInter1481,Plantago seed,DB11097,Plantago seed,9774,exact normalized-name fallback,exact-name match
+DDInter1482,Plazomicin,DB12615,Plazomicin,9067,exact normalized-name fallback,exact-name match
+DDInter1483,Plecanatide,DB13170,Plecanatide,8494,exact normalized-name fallback,exact-name match
+DDInter1484,Plicamycin,DB06810,Plicamycin,9324,exact normalized-name fallback,exact-name match
+DDInter1485,Polatuzumab vedotin,DB12240,Polatuzumab vedotin,4464,exact normalized-name fallback,exact-name match
+DDInter1486,Poliovirus type 1 antigen (formaldehyde inactivated),,,,none,unmapped
+DDInter1487,Polyethylene glycol (3350 with electrolytes),,,,none,unmapped
+DDInter1488,Polyethylene glycol (3350),,,,none,unmapped
+DDInter1489,Polymyxin B,DB00781,Polymyxin B,9056,exact normalized-name fallback,exact-name match
+DDInter149,Azatadine,DB00719,Azatadine,4243,exact normalized-name fallback,exact-name match
+DDInter1490,Polythiazide,DB01324,Polythiazide,3114,exact normalized-name fallback,exact-name match
+DDInter1491,Pomalidomide,DB08910,Pomalidomide,4150,exact normalized-name fallback,exact-name match
+DDInter1492,Ponatinib,DB08901,Ponatinib,3813,exact normalized-name fallback,exact-name match
+DDInter1493,Porfimer sodium,DB00707,Porfimer sodium,6118,exact normalized-name fallback,exact-name match
+DDInter1494,Posaconazole,DB01263,Posaconazole,4285,exact normalized-name fallback,exact-name match
+DDInter1495,Potassium acetate,DB14498,Potassium acetate,6417,exact normalized-name fallback,exact-name match
+DDInter1496,Potassium bicarbonate,DB11098,Potassium bicarbonate,8997,exact normalized-name fallback,exact-name match
+DDInter1497,Potassium chloride,DB00761,Potassium chloride,4868,exact normalized-name fallback,exact-name match
+DDInter1498,Potassium citrate,DB09125,Potassium citrate,9081,exact normalized-name fallback,exact-name match
+DDInter1499,Potassium gluconate,DB13620,Potassium gluconate,3435,exact normalized-name fallback,exact-name match
+DDInter15,Acetazolamide,DB00819,Acetazolamide,4249,exact normalized-name fallback,exact-name match
+DDInter150,Azathioprine,DB00993,Azathioprine,3056,exact normalized-name fallback,exact-name match
+DDInter1500,Potassium Iodide,DB06715,Potassium Iodide,9085,exact normalized-name fallback,exact-name match
+DDInter1501,Potassium perchlorate,DB09418,Potassium perchlorate,3216,exact normalized-name fallback,exact-name match
+DDInter1502,Pralatrexate,DB06813,Pralatrexate,3510,exact normalized-name fallback,exact-name match
+DDInter1503,Pralidoxime,DB00733,Pralidoxime,5954,exact normalized-name fallback,exact-name match
+DDInter1504,Pralsetinib,,,,none,unmapped
+DDInter1505,Pramipexole,DB00413,Pramipexole,5625,exact normalized-name fallback,exact-name match
+DDInter1506,Pramlintide,DB01278,Pramlintide,5999,exact normalized-name fallback,exact-name match
+DDInter1507,Prasterone enantate,,,,none,unmapped
+DDInter1508,Prasugrel,DB06209,Prasugrel,3162,exact normalized-name fallback,exact-name match
+DDInter1509,Pravastatin,DB00175,Pravastatin,6190,exact normalized-name fallback,exact-name match
+DDInter151,Azelaic acid,DB00548,Azelaic acid,5524,exact normalized-name fallback,exact-name match
+DDInter1510,Praziquantel,DB01058,Praziquantel,3769,exact normalized-name fallback,exact-name match
+DDInter1511,Prazosin,DB00457,Prazosin,3322,exact normalized-name fallback,exact-name match
+DDInter1512,Prednicarbate (topical),,,,none,unmapped
+DDInter1513,Prednisolone,DB00860,Prednisolone,2813,exact normalized-name fallback,exact-name match
+DDInter1514,Prednisolone (ophthalmic),,,,none,unmapped
+DDInter1515,Prednisone,DB00635,Prednisone,2807,exact normalized-name fallback,exact-name match
+DDInter1516,Pregabalin,DB00230,Pregabalin,6341,exact normalized-name fallback,exact-name match
+DDInter1517,Pretomanid,DB05154,Pretomanid,4330,exact normalized-name fallback,exact-name match
+DDInter1518,Prilocaine,DB00750,Prilocaine,5353,exact normalized-name fallback,exact-name match
+DDInter1519,Prilocaine (topiclal),,,,none,unmapped
+DDInter152,Azelaic acid (topical),,,,none,unmapped
+DDInter1520,Primaquine,DB01087,Primaquine,3573,exact normalized-name fallback,exact-name match
+DDInter1521,Primidone,DB00794,Primidone,4094,exact normalized-name fallback,exact-name match
+DDInter1522,Probenecid,DB01032,Probenecid,3066,exact normalized-name fallback,exact-name match
+DDInter1523,Probucol,DB01599,Probucol,5143,exact normalized-name fallback,exact-name match
+DDInter1524,Procainamide,DB01035,Procainamide,3635,exact normalized-name fallback,exact-name match
+DDInter1525,Procaine,DB00721,Procaine,3628,exact normalized-name fallback,exact-name match
+DDInter1526,Procarbazine,DB01168,Procarbazine,3697,exact normalized-name fallback,exact-name match
+DDInter1527,Prochlorperazine,DB00433,Prochlorperazine,3883,exact normalized-name fallback,exact-name match
+DDInter1528,Procyclidine,DB00387,Procyclidine,4839,exact normalized-name fallback,exact-name match
+DDInter1529,Progesterone,DB00396,Progesterone,3468,exact normalized-name fallback,exact-name match
+DDInter153,Azelastine,DB00972,Azelastine,3766,exact normalized-name fallback,exact-name match
+DDInter1530,Progesterone (topical),,,,none,unmapped
+DDInter1531,Proguanil,DB01131,Proguanil,3928,exact normalized-name fallback,exact-name match
+DDInter1532,Promazine,DB00420,Promazine,3881,exact normalized-name fallback,exact-name match
+DDInter1533,Promethazine,DB01069,Promethazine,3078,exact normalized-name fallback,exact-name match
+DDInter1534,Propafenone,DB01182,Propafenone,3933,exact normalized-name fallback,exact-name match
+DDInter1535,Propantheline,DB00782,Propantheline,5096,exact normalized-name fallback,exact-name match
+DDInter1536,Proparacaine (ophthalmic),,,,none,unmapped
+DDInter1537,Propiomazine,DB00777,Propiomazine,6017,exact normalized-name fallback,exact-name match
+DDInter1538,Propofol,DB00818,Propofol,3027,exact normalized-name fallback,exact-name match
+DDInter1539,Propranolol,DB00571,Propranolol,2979,exact normalized-name fallback,exact-name match
+DDInter154,Azelastine (nasal),,,,none,unmapped
+DDInter1540,Propylhexedrine (nasal),,,,none,unmapped
+DDInter1541,Propylthiouracil,DB00550,Propylthiouracil,3423,exact normalized-name fallback,exact-name match
+DDInter1542,Protein C,DB11312,Protein C,4760,exact normalized-name fallback,exact-name match
+DDInter1543,Protriptyline,DB00344,Protriptyline,6088,exact normalized-name fallback,exact-name match
+DDInter1544,Prucalopride,DB06480,Prucalopride,3167,exact normalized-name fallback,exact-name match
+DDInter1545,Pseudoephedrine,DB00852,Pseudoephedrine,3032,exact normalized-name fallback,exact-name match
+DDInter1546,Pyrantel,DB11156,Pyrantel,3481,exact normalized-name fallback,exact-name match
+DDInter1547,Pyrazinamide,DB00339,Pyrazinamide,3693,exact normalized-name fallback,exact-name match
+DDInter1548,Pyridostigmine,DB00545,Pyridostigmine,5953,exact normalized-name fallback,exact-name match
+DDInter1549,Pyridoxine,DB00165,Pyridoxine,2915,exact normalized-name fallback,exact-name match
+DDInter155,Azelastine (ophthalmic),,,,none,unmapped
+DDInter1550,Pyrimethamine,DB00205,Pyrimethamine,4591,exact normalized-name fallback,exact-name match
+DDInter1551,Pyrophosphoric acid,DB04160,Pyrophosphoric acid,10268,exact normalized-name fallback,exact-name match
+DDInter1552,Quazepam,DB01589,Quazepam,4301,exact normalized-name fallback,exact-name match
+DDInter1553,Quetiapine,DB01224,Quetiapine,3782,exact normalized-name fallback,exact-name match
+DDInter1554,Quinapril,DB00881,Quinapril,3038,exact normalized-name fallback,exact-name match
+DDInter1555,Quinestrol,DB04575,Quinestrol,5159,exact normalized-name fallback,exact-name match
+DDInter1556,Quinidine,DB00908,Quinidine,3041,exact normalized-name fallback,exact-name match
+DDInter1557,Quinine,DB00468,Quinine,3734,exact normalized-name fallback,exact-name match
+DDInter1558,Quinupristin,DB01369,Quinupristin,4291,exact normalized-name fallback,exact-name match
+DDInter1559,Rabeprazole,DB01129,Rabeprazole,3927,exact normalized-name fallback,exact-name match
+DDInter156,Azilsartan medoxomil,DB08822,Azilsartan medoxomil,4997,exact normalized-name fallback,exact-name match
+DDInter1560,Racepinephrine,DB11124,Racepinephrine,5319,exact normalized-name fallback,exact-name match
+DDInter1561,Radium Ra 223 dichloride,DB08913,Radium Ra 223 dichloride,9321,exact normalized-name fallback,exact-name match
+DDInter1562,Raloxifene,DB00481,Raloxifene,2962,exact normalized-name fallback,exact-name match
+DDInter1563,Raltegravir,DB06817,Raltegravir,4642,exact normalized-name fallback,exact-name match
+DDInter1564,Ramelteon,DB00980,Ramelteon,4102,exact normalized-name fallback,exact-name match
+DDInter1565,Ramipril,DB00178,Ramipril,3619,exact normalized-name fallback,exact-name match
+DDInter1566,Ramucirumab,DB05578,Ramucirumab,5825,exact normalized-name fallback,exact-name match
+DDInter1568,Ranitidine,DB00863,Ranitidine,3485,exact normalized-name fallback,exact-name match
+DDInter1569,Ranitidine (bismuth citrate),,,,none,unmapped
+DDInter157,Azithromycin,DB00207,Azithromycin,4202,exact normalized-name fallback,exact-name match
+DDInter1570,Ranolazine,DB00243,Ranolazine,3320,exact normalized-name fallback,exact-name match
+DDInter1571,Rapacuronium,DB04834,Rapacuronium,6180,exact normalized-name fallback,exact-name match
+DDInter1572,Rasagiline,DB01367,Rasagiline,4116,exact normalized-name fallback,exact-name match
+DDInter1573,Rasburicase,DB00049,Rasburicase,9269,exact normalized-name fallback,exact-name match
+DDInter1574,Ravulizumab,DB11580,Ravulizumab,6729,exact normalized-name fallback,exact-name match
+DDInter1575,Regadenoson,DB06213,Regadenoson,6906,exact normalized-name fallback,exact-name match
+DDInter1576,Regorafenib,DB08896,Regorafenib,4382,exact normalized-name fallback,exact-name match
+DDInter1577,Relugolix,DB11853,Relugolix,3240,exact normalized-name fallback,exact-name match
+DDInter1578,Remdesivir,DB14761,Remdesivir,4050,exact normalized-name fallback,exact-name match
+DDInter1579,Remifentanil,DB00899,Remifentanil,5935,exact normalized-name fallback,exact-name match
+DDInter158,Aztreonam,DB00355,Aztreonam,9181,exact normalized-name fallback,exact-name match
+DDInter1580,Remimazolam,DB12404,Remimazolam,3247,exact normalized-name fallback,exact-name match
+DDInter1581,Repaglinide,DB00912,Repaglinide,3042,exact normalized-name fallback,exact-name match
+DDInter1582,Reserpine,DB00206,Reserpine,3721,exact normalized-name fallback,exact-name match
+DDInter1583,Resorcinol (topical),,,,none,unmapped
+DDInter1584,Retapamulin (topical),,,,none,unmapped
+DDInter1585,Reteplase,DB00015,Reteplase,5373,exact normalized-name fallback,exact-name match
+DDInter1586,Revefenacin,DB11855,Revefenacin,3241,exact normalized-name fallback,exact-name match
+DDInter1587,Ribavirin,DB00811,Ribavirin,3445,exact normalized-name fallback,exact-name match
+DDInter1588,Ribociclib,DB11730,Ribociclib,4442,exact normalized-name fallback,exact-name match
+DDInter1589,Rifabutin,DB00615,Rifabutin,4235,exact normalized-name fallback,exact-name match
+DDInter159,Bacampicillin,DB01602,Bacampicillin,9194,exact normalized-name fallback,exact-name match
+DDInter1590,Rifampicin,DB01045,Rifampicin,3069,exact normalized-name fallback,exact-name match
+DDInter1591,Rifamycin,DB11753,Rifamycin,3234,exact normalized-name fallback,exact-name match
+DDInter1592,Rifapentine,DB01201,Rifapentine,4277,exact normalized-name fallback,exact-name match
+DDInter1593,Rifaximin,DB01220,Rifaximin,4279,exact normalized-name fallback,exact-name match
+DDInter1594,Rilonacept,DB06372,Rilonacept,7200,exact normalized-name fallback,exact-name match
+DDInter1595,Rilpivirine,DB08864,Rilpivirine,3186,exact normalized-name fallback,exact-name match
+DDInter1596,Riluzole,DB00740,Riluzole,4091,exact normalized-name fallback,exact-name match
+DDInter1597,Rimantadine,DB00478,Rimantadine,9144,exact normalized-name fallback,exact-name match
+DDInter1598,Rimegepant,DB12457,Rimegepant,4470,exact normalized-name fallback,exact-name match
+DDInter1599,Rimexolone (ophthalmic),,,,none,unmapped
+DDInter16,Acetohexamide,DB00414,Acetohexamide,2949,exact normalized-name fallback,exact-name match
+DDInter160,Bacillus calmette-guerin substrain tice live antigen,DB10343,Bacillus calmette-guerin substrain tice live antigen,9662,exact normalized-name fallback,exact-name match
+DDInter1600,Riociguat,DB08931,Riociguat,3192,exact normalized-name fallback,exact-name match
+DDInter1601,Ripretinib,DB14840,Ripretinib,3277,exact normalized-name fallback,exact-name match
+DDInter1602,Risankizumab,DB14762,Risankizumab,8949,exact normalized-name fallback,exact-name match
+DDInter1603,Risdiplam,DB15305,Risdiplam,3281,exact normalized-name fallback,exact-name match
+DDInter1604,Risedronic acid,DB00884,Risedronic acid,3450,exact normalized-name fallback,exact-name match
+DDInter1605,Risperidone,DB00734,Risperidone,3006,exact normalized-name fallback,exact-name match
+DDInter1606,Ritodrine,DB00867,Ritodrine,4657,exact normalized-name fallback,exact-name match
+DDInter1607,Ritonavir,DB00503,Ritonavir,2967,exact normalized-name fallback,exact-name match
+DDInter1608,Rituximab,DB00073,Rituximab,5009,exact normalized-name fallback,exact-name match
+DDInter1609,Rivaroxaban,DB06228,Rivaroxaban,3793,exact normalized-name fallback,exact-name match
+DDInter161,Bacitracin,DB00626,Bacitracin,6819,exact normalized-name fallback,exact-name match
+DDInter1610,Rivastigmine,DB00989,Rivastigmine,5957,exact normalized-name fallback,exact-name match
+DDInter1611,Rizatriptan,DB00953,Rizatriptan,3685,exact normalized-name fallback,exact-name match
+DDInter1612,Rocuronium,DB00728,Rocuronium,5657,exact normalized-name fallback,exact-name match
+DDInter1613,Rofecoxib,DB00533,Rofecoxib,3383,exact normalized-name fallback,exact-name match
+DDInter1614,Roflumilast,DB01656,Roflumilast,4303,exact normalized-name fallback,exact-name match
+DDInter1615,Rolapitant,DB09291,Rolapitant,4021,exact normalized-name fallback,exact-name match
+DDInter1616,Romidepsin,DB06176,Romidepsin,3792,exact normalized-name fallback,exact-name match
+DDInter1617,Romiplostim,DB05332,Romiplostim,8394,exact normalized-name fallback,exact-name match
+DDInter1618,Romosozumab,DB11866,Romosozumab,8972,exact normalized-name fallback,exact-name match
+DDInter1619,Ropinirole,DB00268,Ropinirole,4074,exact normalized-name fallback,exact-name match
+DDInter162,Baclofen,DB00181,Baclofen,5455,exact normalized-name fallback,exact-name match
+DDInter1620,Ropivacaine,DB00296,Ropivacaine,4075,exact normalized-name fallback,exact-name match
+DDInter1621,Rosiglitazone,DB00412,Rosiglitazone,2948,exact normalized-name fallback,exact-name match
+DDInter1622,Rosuvastatin,DB01098,Rosuvastatin,3081,exact normalized-name fallback,exact-name match
+DDInter1623,Rotavirus vaccine,DB10276,Rotavirus vaccine,9657,exact normalized-name fallback,exact-name match
+DDInter1624,Rotigotine,DB05271,Rotigotine,3976,exact normalized-name fallback,exact-name match
+DDInter1625,Rubella virus vaccine,DB10317,Rubella virus vaccine,9659,exact normalized-name fallback,exact-name match
+DDInter1626,Rucaparib,DB12332,Rucaparib,3840,exact normalized-name fallback,exact-name match
+DDInter1627,Rufinamide,DB06201,Rufinamide,3161,exact normalized-name fallback,exact-name match
+DDInter1628,Ruxolitinib,DB08877,Ruxolitinib,4380,exact normalized-name fallback,exact-name match
+DDInter1629,Sacituzumab govitecan,DB12893,Sacituzumab govitecan,4646,exact normalized-name fallback,exact-name match
+DDInter163,Baloxavir marboxil,DB13997,Baloxavir marboxil,4513,exact normalized-name fallback,exact-name match
+DDInter1630,Sacubitril,DB09292,Sacubitril,5569,exact normalized-name fallback,exact-name match
+DDInter1631,Safinamide,DB06654,Safinamide,3687,exact normalized-name fallback,exact-name match
+DDInter1632,Salbutamol,DB01001,Salbutamol,4262,exact normalized-name fallback,exact-name match
+DDInter1633,Salicylic acid (sodium),,,,none,unmapped
+DDInter1634,Salicylic acid (topical),,,,none,unmapped
+DDInter1635,Salmeterol,DB00938,Salmeterol,3046,exact normalized-name fallback,exact-name match
+DDInter1636,Salmon calcitonin,DB00017,Salmon calcitonin,5998,exact normalized-name fallback,exact-name match
+DDInter1637,Salsalate,DB01399,Salsalate,4769,exact normalized-name fallback,exact-name match
+DDInter1638,Samarium (153Sm) lexidronam,,,,none,unmapped
+DDInter1639,Sapropterin,DB00360,Sapropterin,3447,exact normalized-name fallback,exact-name match
+DDInter164,Balsalazide,DB01014,Balsalazide,4768,exact normalized-name fallback,exact-name match
+DDInter1640,Saquinavir,DB01232,Saquinavir,3102,exact normalized-name fallback,exact-name match
+DDInter1641,Sarecycline,DB12035,Sarecycline,9040,exact normalized-name fallback,exact-name match
+DDInter1642,Sargramostim,DB00020,Sargramostim,6278,exact normalized-name fallback,exact-name match
+DDInter1643,Sarilumab,DB11767,Sarilumab,4445,exact normalized-name fallback,exact-name match
+DDInter1644,Satralizumab,,,,none,unmapped
+DDInter1645,Saw palmetto,,,,none,unmapped
+DDInter1646,Saxagliptin,DB06335,Saxagliptin,3796,exact normalized-name fallback,exact-name match
+DDInter1647,Scopolamine,DB00747,Scopolamine,4846,exact normalized-name fallback,exact-name match
+DDInter1648,Scopolamine (ophthalmic),,,,none,unmapped
+DDInter1649,Secnidazole,,,,none,unmapped
+DDInter165,Baricitinib,DB11817,Baricitinib,4449,exact normalized-name fallback,exact-name match
+DDInter1650,Secobarbital,DB00418,Secobarbital,4080,exact normalized-name fallback,exact-name match
+DDInter1651,Secretin human,DB09532,Secretin human,5675,exact normalized-name fallback,exact-name match
+DDInter1652,Secukinumab,DB09029,Secukinumab,8943,exact normalized-name fallback,exact-name match
+DDInter1653,Selegiline,DB01037,Selegiline,3921,exact normalized-name fallback,exact-name match
+DDInter1654,Selenium,DB11135,Selenium,3499,exact normalized-name fallback,exact-name match
+DDInter1655,Selenium Sulfide,,,,none,unmapped
+DDInter1656,Selexipag,DB11362,Selexipag,4425,exact normalized-name fallback,exact-name match
+DDInter1657,Selinexor,DB11942,Selinexor,4453,exact normalized-name fallback,exact-name match
+DDInter1658,Selpercatinib,DB15685,Selpercatinib,4535,exact normalized-name fallback,exact-name match
+DDInter1659,Selumetinib,DB11689,Selumetinib,3232,exact normalized-name fallback,exact-name match
+DDInter166,Basiliximab,DB00074,Basiliximab,6317,exact normalized-name fallback,exact-name match
+DDInter1660,Semaglutide,DB13928,Semaglutide,3258,exact normalized-name fallback,exact-name match
+DDInter1661,Sermorelin,,,,none,unmapped
+DDInter1662,Sertraline,DB01104,Sertraline,3082,exact normalized-name fallback,exact-name match
+DDInter1663,Sevelamer,DB00658,Sevelamer,9353,exact normalized-name fallback,exact-name match
+DDInter1664,Sevoflurane,DB01236,Sevoflurane,3105,exact normalized-name fallback,exact-name match
+DDInter1665,Sibutramine,DB01105,Sibutramine,4267,exact normalized-name fallback,exact-name match
+DDInter1666,Sildenafil,DB00203,Sildenafil,3720,exact normalized-name fallback,exact-name match
+DDInter1667,Silodosin,DB06207,Silodosin,4340,exact normalized-name fallback,exact-name match
+DDInter1668,Siltuximab,DB09036,Siltuximab,4395,exact normalized-name fallback,exact-name match
+DDInter1669,Silver (topical),,,,none,unmapped
+DDInter167,Bazedoxifene,DB06401,Bazedoxifene,4664,exact normalized-name fallback,exact-name match
+DDInter1670,Silver nitrate (ophthalmic),,,,none,unmapped
+DDInter1671,Silver nitrate (topical),,,,none,unmapped
+DDInter1672,Silver sulfadiazine (topical),,,,none,unmapped
+DDInter1673,Simeprevir,DB06290,Simeprevir,3165,exact normalized-name fallback,exact-name match
+DDInter1674,Simethicone,,,,none,unmapped
+DDInter1675,Simvastatin,DB00641,Simvastatin,3744,exact normalized-name fallback,exact-name match
+DDInter1676,Siponimod,DB12371,Siponimod,4468,exact normalized-name fallback,exact-name match
+DDInter1677,Sipuleucel-T,DB06688,Sipuleucel-T,7393,exact normalized-name fallback,exact-name match
+DDInter1678,Sirolimus,DB00877,Sirolimus,3758,exact normalized-name fallback,exact-name match
+DDInter1679,Sitagliptin,DB01261,Sitagliptin,4284,exact normalized-name fallback,exact-name match
+DDInter168,Beclomethasone dipropionate,DB00394,Beclomethasone dipropionate,2801,exact normalized-name fallback,exact-name match
+DDInter1680,"Smallpox (Vaccinia) Vaccine, Live",,,,none,unmapped
+DDInter1681,Sodium acetate,DB09395,Sodium acetate,3472,exact normalized-name fallback,exact-name match
+DDInter1682,Sodium aurothiomalate,DB09276,Sodium aurothiomalate,4643,exact normalized-name fallback,exact-name match
+DDInter1683,Sodium bicarbonate,DB01390,Sodium bicarbonate,9071,exact normalized-name fallback,exact-name match
+DDInter1684,Sodium cellulose phosphate,,,,none,unmapped
+DDInter1685,Sodium chloride,DB09153,Sodium chloride,10685,exact normalized-name fallback,exact-name match
+DDInter1686,Sodium citrate,DB09154,Sodium citrate,9001,exact normalized-name fallback,exact-name match
+DDInter1687,Sodium ferric gluconate complex,DB09517,Sodium ferric gluconate complex,5078,exact normalized-name fallback,exact-name match
+DDInter1688,Sodium glycerophosphate,,,,none,unmapped
+DDInter1689,Sodium iodide,,,,none,unmapped
+DDInter169,Beclomethasone dipropionate (nasal),,,,none,unmapped
+DDInter1690,Sodium oxybate,DB09072,Sodium oxybate,3427,exact normalized-name fallback,exact-name match
+DDInter1691,"Sodium phosphate, monobasic",DB09449,"Sodium phosphate, monobasic",9073,exact normalized-name fallback,exact-name match
+DDInter1692,"Sodium phosphate, monobasic (p32)",,,,none,unmapped
+DDInter1693,Sodium sulfate,DB09472,Sodium sulfate,5584,exact normalized-name fallback,exact-name match
+DDInter1694,Sodium zirconium cyclosilicate,DB14048,Sodium zirconium cyclosilicate,9636,exact normalized-name fallback,exact-name match
+DDInter1695,Sofosbuvir,DB08934,Sofosbuvir,3497,exact normalized-name fallback,exact-name match
+DDInter1696,Solifenacin,DB01591,Solifenacin,3366,exact normalized-name fallback,exact-name match
+DDInter1697,Solriamfetol,DB14754,Solriamfetol,6101,exact normalized-name fallback,exact-name match
+DDInter1698,Somapacitan,DB15093,Somapacitan,3280,exact normalized-name fallback,exact-name match
+DDInter1699,Somatotropin,DB00052,Somatotropin,5054,exact normalized-name fallback,exact-name match
+DDInter17,Acetohydroxamic acid,DB00551,Acetohydroxamic acid,7556,exact normalized-name fallback,exact-name match
+DDInter170,Bedaquiline,DB08903,Bedaquiline,4383,exact normalized-name fallback,exact-name match
+DDInter1700,Somatrem,DB09098,Somatrem,5055,exact normalized-name fallback,exact-name match
+DDInter1701,Sonidegib,DB09143,Sonidegib,4405,exact normalized-name fallback,exact-name match
+DDInter1702,Sorafenib,DB00398,Sorafenib,3728,exact normalized-name fallback,exact-name match
+DDInter1703,Sorbitol,DB01638,Sorbitol,9328,exact normalized-name fallback,exact-name match
+DDInter1704,Sotalol,DB00489,Sotalol,3885,exact normalized-name fallback,exact-name match
+DDInter1705,Sparfloxacin,DB01208,Sparfloxacin,4110,exact normalized-name fallback,exact-name match
+DDInter1706,Spectinomycin,DB00919,Spectinomycin,9364,exact normalized-name fallback,exact-name match
+DDInter1707,Spironolactone,DB00421,Spironolactone,2951,exact normalized-name fallback,exact-name match
+DDInter1708,St. John's Wort,DB01323,St. John's Wort,3946,exact normalized-name fallback,exact-name match
+DDInter1709,Stanozolol,DB06718,Stanozolol,5226,exact normalized-name fallback,exact-name match
+DDInter171,Belantamab mafodotin,,,,none,unmapped
+DDInter1710,Stavudine,DB00649,Stavudine,2993,exact normalized-name fallback,exact-name match
+DDInter1711,Stiripentol,DB09118,Stiripentol,4014,exact normalized-name fallback,exact-name match
+DDInter1712,Streptokinase,DB00086,Streptokinase,3500,exact normalized-name fallback,exact-name match
+DDInter1713,Streptomycin,DB01082,Streptomycin,7373,exact normalized-name fallback,exact-name match
+DDInter1714,Streptozocin,DB00428,Streptozocin,4081,exact normalized-name fallback,exact-name match
+DDInter1715,Strontium chloride Sr-89,,,,none,unmapped
+DDInter1716,Succinylcholine,DB00202,Succinylcholine,3621,exact normalized-name fallback,exact-name match
+DDInter1717,Sucralfate,DB00364,Sucralfate,6962,exact normalized-name fallback,exact-name match
+DDInter1718,Sufentanil,DB00708,Sufentanil,4242,exact normalized-name fallback,exact-name match
+DDInter1719,Sugammadex,DB06206,Sugammadex,9450,exact normalized-name fallback,exact-name match
+DDInter172,Belatacept,DB06681,Belatacept,6667,exact normalized-name fallback,exact-name match
+DDInter1720,Sulfacetamide (ophthalmic),,,,none,unmapped
+DDInter1721,Sulfadiazine,DB00359,Sulfadiazine,4221,exact normalized-name fallback,exact-name match
+DDInter1722,Sulfadoxine,DB01299,Sulfadoxine,9142,exact normalized-name fallback,exact-name match
+DDInter1723,Sulfamethizole,DB00576,Sulfamethizole,2982,exact normalized-name fallback,exact-name match
+DDInter1724,Sulfamethoxazole,DB01015,Sulfamethoxazole,3062,exact normalized-name fallback,exact-name match
+DDInter1725,Sulfasalazine,DB00795,Sulfasalazine,4765,exact normalized-name fallback,exact-name match
+DDInter1726,Sulfinpyrazone,DB01138,Sulfinpyrazone,3357,exact normalized-name fallback,exact-name match
+DDInter1727,Sulfisoxazole,DB00263,Sulfisoxazole,4554,exact normalized-name fallback,exact-name match
+DDInter1729,Sulindac,DB00605,Sulindac,2987,exact normalized-name fallback,exact-name match
+DDInter173,Belimumab,DB08879,Belimumab,7066,exact normalized-name fallback,exact-name match
+DDInter1730,Sumatriptan,DB00669,Sumatriptan,3682,exact normalized-name fallback,exact-name match
+DDInter1731,Sunitinib,DB01268,Sunitinib,3785,exact normalized-name fallback,exact-name match
+DDInter1732,Suprofen (ophthalmic),,,,none,unmapped
+DDInter1733,Suvorexant,DB09034,Suvorexant,4394,exact normalized-name fallback,exact-name match
+DDInter1734,Tacrine,DB00382,Tacrine,4077,exact normalized-name fallback,exact-name match
+DDInter1735,Tacrolimus,DB00864,Tacrolimus,3034,exact normalized-name fallback,exact-name match
+DDInter1736,Tadalafil,DB00820,Tadalafil,3754,exact normalized-name fallback,exact-name match
+DDInter1737,Tafamidis,DB11644,Tafamidis,5806,exact normalized-name fallback,exact-name match
+DDInter1738,Tafasitamab,DB15044,Tafasitamab,8431,exact normalized-name fallback,exact-name match
+DDInter1739,Tafenoquine,DB06608,Tafenoquine,3990,exact normalized-name fallback,exact-name match
+DDInter174,Belinostat,DB05015,Belinostat,4127,exact normalized-name fallback,exact-name match
+DDInter1741,Tagraxofusp,DB14731,Tagraxofusp,7189,exact normalized-name fallback,exact-name match
+DDInter1742,Talazoparib,DB11760,Talazoparib,7813,exact normalized-name fallback,exact-name match
+DDInter1743,Talimogene laherparepvec,DB13896,Talimogene laherparepvec,9257,exact normalized-name fallback,exact-name match
+DDInter1744,Tamoxifen,DB00675,Tamoxifen,2996,exact normalized-name fallback,exact-name match
+DDInter1745,Tamsulosin,DB00706,Tamsulosin,3324,exact normalized-name fallback,exact-name match
+DDInter1746,Tapentadol,DB06204,Tapentadol,3982,exact normalized-name fallback,exact-name match
+DDInter1747,Tasimelteon,DB09071,Tasimelteon,4152,exact normalized-name fallback,exact-name match
+DDInter1748,Tazarotene,DB00799,Tazarotene,4592,exact normalized-name fallback,exact-name match
+DDInter1749,Tazarotene (topical),,,,none,unmapped
+DDInter175,Belladonna,,,,none,unmapped
+DDInter1750,Tazemetostat,DB12887,Tazemetostat,4481,exact normalized-name fallback,exact-name match
+DDInter1752,Tedizolid,DB14569,Tedizolid,3679,exact normalized-name fallback,exact-name match
+DDInter1753,Teduglutide,DB08900,Teduglutide,7980,exact normalized-name fallback,exact-name match
+DDInter1754,Tegaserod,DB01079,Tegaserod,3924,exact normalized-name fallback,exact-name match
+DDInter1755,Telaprevir,DB05521,Telaprevir,3158,exact normalized-name fallback,exact-name match
+DDInter1756,Telavancin,DB06402,Telavancin,9091,exact normalized-name fallback,exact-name match
+DDInter1757,Telbivudine,DB01265,Telbivudine,9199,exact normalized-name fallback,exact-name match
+DDInter1758,Telithromycin,DB00976,Telithromycin,4261,exact normalized-name fallback,exact-name match
+DDInter1759,Telmisartan,DB00966,Telmisartan,4619,exact normalized-name fallback,exact-name match
+DDInter176,Bempedoic acid,DB11936,Bempedoic acid,3473,exact normalized-name fallback,exact-name match
+DDInter1760,Telotristat ethyl,,,,none,unmapped
+DDInter1761,Temazepam,DB00231,Temazepam,4204,exact normalized-name fallback,exact-name match
+DDInter1762,Temozolomide,DB00853,Temozolomide,9119,exact normalized-name fallback,exact-name match
+DDInter1763,Temsirolimus,DB06287,Temsirolimus,3795,exact normalized-name fallback,exact-name match
+DDInter1764,Tenecteplase,DB00031,Tenecteplase,5375,exact normalized-name fallback,exact-name match
+DDInter1765,Teniposide,DB00444,Teniposide,3731,exact normalized-name fallback,exact-name match
+DDInter1766,Teprotumumab,DB06343,Teprotumumab,6738,exact normalized-name fallback,exact-name match
+DDInter1767,Terazosin,DB01162,Terazosin,5086,exact normalized-name fallback,exact-name match
+DDInter1768,Terbinafine,DB00857,Terbinafine,3033,exact normalized-name fallback,exact-name match
+DDInter1769,Terbutaline,DB00871,Terbutaline,3631,exact normalized-name fallback,exact-name match
+DDInter177,Benazepril,DB00542,Benazepril,3618,exact normalized-name fallback,exact-name match
+DDInter1770,Terfenadine,DB00342,Terfenadine,3725,exact normalized-name fallback,exact-name match
+DDInter1771,Teriflunomide,DB08880,Teriflunomide,4149,exact normalized-name fallback,exact-name match
+DDInter1772,Teriparatide,DB06285,Teriparatide,8446,exact normalized-name fallback,exact-name match
+DDInter1773,Tesamorelin,DB08869,Tesamorelin,6277,exact normalized-name fallback,exact-name match
+DDInter1774,Testolactone,DB00894,Testolactone,7958,exact normalized-name fallback,exact-name match
+DDInter1775,Testosterone,DB00624,Testosterone,2991,exact normalized-name fallback,exact-name match
+DDInter1776,Testosterone (topical),,,,none,unmapped
+DDInter1778,Tetrabenazine,DB04844,Tetrabenazine,3968,exact normalized-name fallback,exact-name match
+DDInter1779,Tetracaine,DB09085,Tetracaine,6435,exact normalized-name fallback,exact-name match
+DDInter178,Bendamustine,DB06769,Bendamustine,4146,exact normalized-name fallback,exact-name match
+DDInter1780,Tetracaine (ophthalmic),,,,none,unmapped
+DDInter1781,Tetracaine (topical),,,,none,unmapped
+DDInter1782,Tetracosactide,DB01284,Tetracosactide,6669,exact normalized-name fallback,exact-name match
+DDInter1783,Tetracycline,DB00759,Tetracycline,3013,exact normalized-name fallback,exact-name match
+DDInter1784,Tetracycline (topical),,,,none,unmapped
+DDInter1785,Tetraferric tricitrate decahydrate,DB14520,Tetraferric tricitrate decahydrate,2903,exact normalized-name fallback,exact-name match
+DDInter1786,Tetrofosmin,,,,none,unmapped
+DDInter1787,Tetryzoline (nasal),,,,none,unmapped
+DDInter1788,Tetryzoline (ophthalmic),,,,none,unmapped
+DDInter1789,Thalidomide,DB01041,Thalidomide,3389,exact normalized-name fallback,exact-name match
+DDInter179,Bendroflumethiazide,DB00436,Bendroflumethiazide,3545,exact normalized-name fallback,exact-name match
+DDInter1790,Thallous Chloride,,,,none,unmapped
+DDInter1791,Theophylline,DB00277,Theophylline,3567,exact normalized-name fallback,exact-name match
+DDInter1792,Thiabendazole,DB00730,Thiabendazole,4090,exact normalized-name fallback,exact-name match
+DDInter1793,Thiethylperazine,DB00372,Thiethylperazine,6485,exact normalized-name fallback,exact-name match
+DDInter1794,Thimerosal (topical),,,,none,unmapped
+DDInter1795,Thiopental,DB00599,Thiopental,4617,exact normalized-name fallback,exact-name match
+DDInter1796,Thioridazine,DB00679,Thioridazine,3897,exact normalized-name fallback,exact-name match
+DDInter1797,Thiotepa,DB04572,Thiotepa,3651,exact normalized-name fallback,exact-name match
+DDInter1798,Thiothixene,DB01623,Thiothixene,3134,exact normalized-name fallback,exact-name match
+DDInter1799,"Thyroid, porcine",DB09100,"Thyroid, porcine",2888,exact normalized-name fallback,exact-name match
+DDInter18,Acetylcholine,DB03128,Acetylcholine,4855,exact normalized-name fallback,exact-name match
+DDInter180,Benzalkonium (topical),,,,none,unmapped
+DDInter1800,Thyrotropin alfa,DB00024,Thyrotropin alfa,6115,exact normalized-name fallback,exact-name match
+DDInter1801,Tiagabine,DB00906,Tiagabine,4255,exact normalized-name fallback,exact-name match
+DDInter1802,Ticagrelor,DB08816,Ticagrelor,3182,exact normalized-name fallback,exact-name match
+DDInter1803,Ticarcillin,DB01607,Ticarcillin,9198,exact normalized-name fallback,exact-name match
+DDInter1804,Ticlopidine,DB00208,Ticlopidine,3554,exact normalized-name fallback,exact-name match
+DDInter1805,Tigecycline,DB00560,Tigecycline,9127,exact normalized-name fallback,exact-name match
+DDInter1806,Tildrakizumab,DB14004,Tildrakizumab,3483,exact normalized-name fallback,exact-name match
+DDInter1807,Tilmanocept,,,,none,unmapped
+DDInter1808,Tiludronic acid,DB01133,Tiludronic acid,3090,exact normalized-name fallback,exact-name match
+DDInter1809,Timolol,DB00373,Timolol,3878,exact normalized-name fallback,exact-name match
+DDInter181,Benzatropine,DB00245,Benzatropine,2922,exact normalized-name fallback,exact-name match
+DDInter1810,Timolol (ophthalmic),,,,none,unmapped
+DDInter1811,Tinidazole,DB00911,Tinidazole,4256,exact normalized-name fallback,exact-name match
+DDInter1812,Tinzaparin,DB06822,Tinzaparin,4673,exact normalized-name fallback,exact-name match
+DDInter1813,Tioconazole,DB01007,Tioconazole,3601,exact normalized-name fallback,exact-name match
+DDInter1814,Tioguanine,DB00352,Tioguanine,3411,exact normalized-name fallback,exact-name match
+DDInter1815,Tiotropium,DB01409,Tiotropium,3949,exact normalized-name fallback,exact-name match
+DDInter1816,Tipiracil,DB09343,Tipiracil,8000,exact normalized-name fallback,exact-name match
+DDInter1817,Tipranavir,DB00932,Tipranavir,3913,exact normalized-name fallback,exact-name match
+DDInter1818,Tirofiban,DB00775,Tirofiban,6009,exact normalized-name fallback,exact-name match
+DDInter1819,Tisagenlecleucel,,,,none,unmapped
+DDInter182,Benzhydrocodone,DB15465,Benzhydrocodone,9816,exact normalized-name fallback,exact-name match
+DDInter1820,Tivozanib,DB11800,Tivozanib,9380,exact normalized-name fallback,exact-name match
+DDInter1821,Tizanidine,DB00697,Tizanidine,4089,exact normalized-name fallback,exact-name match
+DDInter1822,Tobramycin,DB00684,Tobramycin,9201,exact normalized-name fallback,exact-name match
+DDInter1823,Tocainide,DB01056,Tocainide,3072,exact normalized-name fallback,exact-name match
+DDInter1824,Tocilizumab,DB06273,Tocilizumab,4346,exact normalized-name fallback,exact-name match
+DDInter1825,Tofacitinib,DB08895,Tofacitinib,3190,exact normalized-name fallback,exact-name match
+DDInter1826,Tolazamide,DB00839,Tolazamide,4561,exact normalized-name fallback,exact-name match
+DDInter1827,Tolazoline,DB00797,Tolazoline,5120,exact normalized-name fallback,exact-name match
+DDInter1828,Tolbutamide,DB01124,Tolbutamide,3087,exact normalized-name fallback,exact-name match
+DDInter1829,Tolcapone,DB00323,Tolcapone,4555,exact normalized-name fallback,exact-name match
+DDInter183,Benznidazole,DB11989,Benznidazole,9428,exact normalized-name fallback,exact-name match
+DDInter1830,Tolevamer,DB01344,Tolevamer,10265,exact normalized-name fallback,exact-name match
+DDInter1831,Tolmetin,DB00500,Tolmetin,2966,exact normalized-name fallback,exact-name match
+DDInter1832,Tolterodine,DB01036,Tolterodine,3920,exact normalized-name fallback,exact-name match
+DDInter1833,Tolvaptan,DB06212,Tolvaptan,4341,exact normalized-name fallback,exact-name match
+DDInter1834,Topiramate,DB00273,Topiramate,2927,exact normalized-name fallback,exact-name match
+DDInter1835,Topotecan,DB01030,Topotecan,4264,exact normalized-name fallback,exact-name match
+DDInter1836,Torasemide,DB00214,Torasemide,2916,exact normalized-name fallback,exact-name match
+DDInter1837,Toremifene,DB00539,Toremifene,4227,exact normalized-name fallback,exact-name match
+DDInter1838,Tositumomab,DB00081,Tositumomab,5011,exact normalized-name fallback,exact-name match
+DDInter1839,Tositumomab (I-131),,,,none,unmapped
+DDInter184,Benzocaine (topical),,,,none,unmapped
+DDInter1840,Trabectedin,DB05109,Trabectedin,3395,exact normalized-name fallback,exact-name match
+DDInter1841,Tramadol,DB00193,Tramadol,3861,exact normalized-name fallback,exact-name match
+DDInter1842,Trametinib,DB08911,Trametinib,4385,exact normalized-name fallback,exact-name match
+DDInter1843,Trandolapril,DB00519,Trandolapril,4545,exact normalized-name fallback,exact-name match
+DDInter1844,Tranexamic acid,DB00302,Tranexamic acid,5376,exact normalized-name fallback,exact-name match
+DDInter1845,Tranylcypromine,DB00752,Tranylcypromine,3902,exact normalized-name fallback,exact-name match
+DDInter1846,Trastuzumab,DB00072,Trastuzumab,6134,exact normalized-name fallback,exact-name match
+DDInter1847,Trastuzumab deruxtecan,DB14962,Trastuzumab deruxtecan,3529,exact normalized-name fallback,exact-name match
+DDInter1848,Trastuzumab emtansine,DB05773,Trastuzumab emtansine,3791,exact normalized-name fallback,exact-name match
+DDInter1849,Travoprost,DB00287,Travoprost,6217,exact normalized-name fallback,exact-name match
+DDInter185,Benzonatate,,,,none,unmapped
+DDInter1851,Trazodone,DB00656,Trazodone,3745,exact normalized-name fallback,exact-name match
+DDInter1852,Treprostinil,DB00374,Treprostinil,4556,exact normalized-name fallback,exact-name match
+DDInter1853,Tretinoin,DB00755,Tretinoin,3012,exact normalized-name fallback,exact-name match
+DDInter1854,Tretinoin (topical),,,,none,unmapped
+DDInter1855,Triamcinolone,DB00620,Triamcinolone,2806,exact normalized-name fallback,exact-name match
+DDInter1856,Triamcinolone (nasal),,,,none,unmapped
+DDInter1857,Triamcinolone (ophthalmic),,,,none,unmapped
+DDInter1858,Triamcinolone (topical),,,,none,unmapped
+DDInter1859,Triamterene,DB00384,Triamterene,4078,exact normalized-name fallback,exact-name match
+DDInter186,Benzoyl peroxide (topical),,,,none,unmapped
+DDInter1860,Triazolam,DB00897,Triazolam,3759,exact normalized-name fallback,exact-name match
+DDInter1861,Trichlormethiazide,DB01021,Trichlormethiazide,3546,exact normalized-name fallback,exact-name match
+DDInter1862,Trichophyton mentagrophytes,,,,none,unmapped
+DDInter1863,Triclabendazole,DB12245,Triclabendazole,3579,exact normalized-name fallback,exact-name match
+DDInter1864,Triethylenetetramine,DB06824,Triethylenetetramine,9107,exact normalized-name fallback,exact-name match
+DDInter1865,Trifarotene (topical),,,,none,unmapped
+DDInter1866,Trifluoperazine,DB00831,Trifluoperazine,3696,exact normalized-name fallback,exact-name match
+DDInter1867,Triflupromazine,DB00508,Triflupromazine,3624,exact normalized-name fallback,exact-name match
+DDInter1868,Trifluridine,DB00432,Trifluridine,2953,exact normalized-name fallback,exact-name match
+DDInter1869,Triheptanoin,DB11677,Triheptanoin,3231,exact normalized-name fallback,exact-name match
+DDInter187,Benzphetamine,DB00865,Benzphetamine,4057,exact normalized-name fallback,exact-name match
+DDInter1870,Trihexyphenidyl,DB00376,Trihexyphenidyl,4837,exact normalized-name fallback,exact-name match
+DDInter1871,Trimethadione,DB00347,Trimethadione,4217,exact normalized-name fallback,exact-name match
+DDInter1872,Trimethaphan,DB01116,Trimethaphan,3636,exact normalized-name fallback,exact-name match
+DDInter1873,Trimethobenzamide,DB00662,Trimethobenzamide,9209,exact normalized-name fallback,exact-name match
+DDInter1874,Trimethoprim,DB00440,Trimethoprim,4082,exact normalized-name fallback,exact-name match
+DDInter1875,Trimetrexate,DB01157,Trimetrexate,3465,exact normalized-name fallback,exact-name match
+DDInter1876,Trimipramine,DB00726,Trimipramine,3900,exact normalized-name fallback,exact-name match
+DDInter1877,Trioxsalen,DB04571,Trioxsalen,9161,exact normalized-name fallback,exact-name match
+DDInter1878,Tripelennamine,DB00792,Tripelennamine,3905,exact normalized-name fallback,exact-name match
+DDInter1879,Triprolidine,DB00427,Triprolidine,6015,exact normalized-name fallback,exact-name match
+DDInter188,Benzthiazide,DB00562,Benzthiazide,5574,exact normalized-name fallback,exact-name match
+DDInter1880,Triptorelin,DB06825,Triptorelin,5364,exact normalized-name fallback,exact-name match
+DDInter1881,Troglitazone,DB00197,Troglitazone,3596,exact normalized-name fallback,exact-name match
+DDInter1882,Troleandomycin,DB13179,Troleandomycin,3842,exact normalized-name fallback,exact-name match
+DDInter1883,Tromethamine,DB03754,Tromethamine,8334,exact normalized-name fallback,exact-name match
+DDInter1884,Tropicamide,DB00809,Tropicamide,4848,exact normalized-name fallback,exact-name match
+DDInter1885,Tropicamide (ophthalmic),,,,none,unmapped
+DDInter1886,Trospium,DB00209,Trospium,3863,exact normalized-name fallback,exact-name match
+DDInter1887,Trovafloxacin,DB00685,Trovafloxacin,4088,exact normalized-name fallback,exact-name match
+DDInter1888,Tryptophan,DB00150,Tryptophan,3412,exact normalized-name fallback,exact-name match
+DDInter1889,Tuberculin purified protein derivative,,,,none,unmapped
+DDInter189,Benzylpenicillin,DB01053,Benzylpenicillin,3071,exact normalized-name fallback,exact-name match
+DDInter1890,Tubocurarine,DB01199,Tubocurarine,3640,exact normalized-name fallback,exact-name match
+DDInter1891,Tucatinib,DB11652,Tucatinib,3491,exact normalized-name fallback,exact-name match
+DDInter1892,Turmeric,,,,none,unmapped
+DDInter1893,Typhoid vaccine (inactivated),,,,none,unmapped
+DDInter1894,Typhoid vaccine (live),,,,none,unmapped
+DDInter1895,Tyropanoic acid,,,,none,unmapped
+DDInter1896,Ubrogepant,DB15328,Ubrogepant,3691,exact normalized-name fallback,exact-name match
+DDInter1897,Ulipristal,DB08867,Ulipristal,3187,exact normalized-name fallback,exact-name match
+DDInter1898,Ulobetasol (topical),,,,none,unmapped
+DDInter1899,Umeclidinium,DB09076,Umeclidinium,4012,exact normalized-name fallback,exact-name match
+DDInter19,Acetylcysteine,DB06151,Acetylcysteine,4819,exact normalized-name fallback,exact-name match
+DDInter190,Benzylpenicillin (potassium),,,,none,unmapped
+DDInter1901,Upadacitinib,DB15091,Upadacitinib,4052,exact normalized-name fallback,exact-name match
+DDInter1902,Uracil mustard,DB00791,Uracil mustard,9256,exact normalized-name fallback,exact-name match
+DDInter1903,Urea,,,,none,unmapped
+DDInter1904,Urofollitropin,,,,none,unmapped
+DDInter1905,Urokinase,DB00013,Urokinase,3584,exact normalized-name fallback,exact-name match
+DDInter1906,Ursodeoxycholic acid,DB01586,Ursodeoxycholic acid,4605,exact normalized-name fallback,exact-name match
+DDInter1907,Ustekinumab,DB05679,Ustekinumab,7013,exact normalized-name fallback,exact-name match
+DDInter1908,Valaciclovir,DB00577,Valaciclovir,3716,exact normalized-name fallback,exact-name match
+DDInter1909,Valbenazine,DB11915,Valbenazine,3833,exact normalized-name fallback,exact-name match
+DDInter191,Benzylpenicillin (sodium),,,,none,unmapped
+DDInter1910,Valdecoxib,DB00580,Valdecoxib,4230,exact normalized-name fallback,exact-name match
+DDInter1911,Valerian,,,,none,unmapped
+DDInter1912,Valganciclovir,DB01610,Valganciclovir,8998,exact normalized-name fallback,exact-name match
+DDInter1913,Valproic acid,DB00313,Valproic acid,2936,exact normalized-name fallback,exact-name match
+DDInter1914,Valrubicin,DB00385,Valrubicin,6437,exact normalized-name fallback,exact-name match
+DDInter1915,Valsartan,DB00177,Valsartan,4552,exact normalized-name fallback,exact-name match
+DDInter1916,Vancomycin,DB00512,Vancomycin,2968,exact normalized-name fallback,exact-name match
+DDInter1917,Vandetanib,DB05294,Vandetanib,3156,exact normalized-name fallback,exact-name match
+DDInter1918,Vardenafil,DB00862,Vardenafil,3757,exact normalized-name fallback,exact-name match
+DDInter1919,Varenicline,DB01273,Varenicline,6672,exact normalized-name fallback,exact-name match
+DDInter192,Bepridil,DB01244,Bepridil,3941,exact normalized-name fallback,exact-name match
+DDInter1920,Varicella Zoster Vaccine (Recombinant),DB13924,Varicella Zoster Vaccine (Recombinant),9723,exact normalized-name fallback,exact-name match
+DDInter1921,Vasopressin,DB00067,Vasopressin,5304,exact normalized-name fallback,exact-name match
+DDInter1922,Vecuronium,DB01339,Vecuronium,6432,exact normalized-name fallback,exact-name match
+DDInter1923,Vedolizumab,DB09033,Vedolizumab,6205,exact normalized-name fallback,exact-name match
+DDInter1924,Velpatasvir,DB11613,Velpatasvir,4438,exact normalized-name fallback,exact-name match
+DDInter1925,Vemurafenib,DB08881,Vemurafenib,3188,exact normalized-name fallback,exact-name match
+DDInter1926,Venetoclax,DB11581,Venetoclax,4437,exact normalized-name fallback,exact-name match
+DDInter1927,Venlafaxine,DB00285,Venlafaxine,3870,exact normalized-name fallback,exact-name match
+DDInter1928,Verapamil,DB00661,Verapamil,2995,exact normalized-name fallback,exact-name match
+DDInter1929,Verteporfin,DB00460,Verteporfin,9176,exact normalized-name fallback,exact-name match
+DDInter193,Berotralstat,,,,none,unmapped
+DDInter1930,Vibegron,DB14895,Vibegron,4529,exact normalized-name fallback,exact-name match
+DDInter1931,Vibrio cholerae CVD 103-HgR strain live antigen,DB14443,Vibrio cholerae CVD 103-HgR strain live antigen,9730,exact normalized-name fallback,exact-name match
+DDInter1932,Vibrio cholerae CVD 103-HgR strain live antigen (live),,,,none,unmapped
+DDInter1933,Vigabatrin,DB01080,Vigabatrin,4565,exact normalized-name fallback,exact-name match
+DDInter1934,Vilanterol,DB09082,Vilanterol,4397,exact normalized-name fallback,exact-name match
+DDInter1935,Vilazodone,DB06684,Vilazodone,3992,exact normalized-name fallback,exact-name match
+DDInter1936,Vinblastine,DB00570,Vinblastine,3890,exact normalized-name fallback,exact-name match
+DDInter1937,Vincristine,DB00541,Vincristine,3738,exact normalized-name fallback,exact-name match
+DDInter1938,Vincristine (liposome),,,,none,unmapped
+DDInter1939,Vinorelbine,DB00361,Vinorelbine,3875,exact normalized-name fallback,exact-name match
+DDInter194,Beta carotene,DB06755,Beta carotene,2836,exact normalized-name fallback,exact-name match
+DDInter1940,Vismodegib,DB08828,Vismodegib,3184,exact normalized-name fallback,exact-name match
+DDInter1941,Vitamin A,DB00162,Vitamin A,2835,exact normalized-name fallback,exact-name match
+DDInter1942,Vitamin D,DB11094,Vitamin D,3488,exact normalized-name fallback,exact-name match
+DDInter1943,Vitamin E,DB00163,Vitamin E,2837,exact normalized-name fallback,exact-name match
+DDInter1944,Von Willebrand Factor Human,DB13133,Von Willebrand Factor Human,4686,exact normalized-name fallback,exact-name match
+DDInter1945,Vorapaxar,DB09030,Vorapaxar,4393,exact normalized-name fallback,exact-name match
+DDInter1946,Voriconazole,DB00582,Voriconazole,3385,exact normalized-name fallback,exact-name match
+DDInter1947,Vorinostat,DB02546,Vorinostat,7742,exact normalized-name fallback,exact-name match
+DDInter1948,Vortioxetine,DB09068,Vortioxetine,3818,exact normalized-name fallback,exact-name match
+DDInter1949,Voxelotor,DB14975,Voxelotor,4530,exact normalized-name fallback,exact-name match
+DDInter195,Betamethasone,DB00443,Betamethasone,2802,exact normalized-name fallback,exact-name match
+DDInter1950,Voxilaprevir,DB12026,Voxilaprevir,4175,exact normalized-name fallback,exact-name match
+DDInter1951,Warfarin,DB00682,Warfarin,2999,exact normalized-name fallback,exact-name match
+DDInter1952,Xylometazoline (nasal),,,,none,unmapped
+DDInter1953,Yellow Fever Vaccine,DB10805,Yellow Fever Vaccine,9670,exact normalized-name fallback,exact-name match
+DDInter1954,Yohimbine,DB01392,Yohimbine,3947,exact normalized-name fallback,exact-name match
+DDInter1955,Zafirlukast,DB00549,Zafirlukast,3384,exact normalized-name fallback,exact-name match
+DDInter1956,Zalcitabine,DB00943,Zalcitabine,3047,exact normalized-name fallback,exact-name match
+DDInter1957,Zaleplon,DB00962,Zaleplon,3765,exact normalized-name fallback,exact-name match
+DDInter1958,Zanamivir,DB00558,Zanamivir,8230,exact normalized-name fallback,exact-name match
+DDInter1959,Zanubrutinib,DB15035,Zanubrutinib,4531,exact normalized-name fallback,exact-name match
+DDInter196,Betamethasone (topical),,,,none,unmapped
+DDInter1960,Ziconotide,DB06283,Ziconotide,5811,exact normalized-name fallback,exact-name match
+DDInter1961,Zidovudine,DB00495,Zidovudine,2964,exact normalized-name fallback,exact-name match
+DDInter1962,Zileuton,DB00744,Zileuton,3009,exact normalized-name fallback,exact-name match
+DDInter1963,Zinc acetate,DB14487,Zinc acetate,3463,exact normalized-name fallback,exact-name match
+DDInter1964,Zinc chloride,DB14533,Zinc chloride,3273,exact normalized-name fallback,exact-name match
+DDInter1965,Zinc gluconate,DB11248,Zinc gluconate,9089,exact normalized-name fallback,exact-name match
+DDInter1966,Zinc sulfate,DB09322,Zinc sulfate,3534,exact normalized-name fallback,exact-name match
+DDInter1967,Ziprasidone,DB00246,Ziprasidone,2923,exact normalized-name fallback,exact-name match
+DDInter1968,Zoledronic acid,DB00399,Zoledronic acid,6511,exact normalized-name fallback,exact-name match
+DDInter1969,Zolmitriptan,DB00315,Zolmitriptan,3680,exact normalized-name fallback,exact-name match
+DDInter197,Betaxolol,DB00195,Betaxolol,3862,exact normalized-name fallback,exact-name match
+DDInter1970,Zolpidem,DB00425,Zolpidem,3882,exact normalized-name fallback,exact-name match
+DDInter1971,Zonisamide,DB00909,Zonisamide,3762,exact normalized-name fallback,exact-name match
+DDInter1972,Zopiclone,DB01198,Zopiclone,3392,exact normalized-name fallback,exact-name match
+DDInter198,Betaxolol (ophthalmic),,,,none,unmapped
+DDInter199,Bethanechol,DB01019,Bethanechol,4851,exact normalized-name fallback,exact-name match
+DDInter2,Abaloparatide,DB05084,Abaloparatide,8444,exact normalized-name fallback,exact-name match
+DDInter20,Acetylsalicylic acid,DB00945,Acetylsalicylic acid,4564,exact normalized-name fallback,exact-name match
+DDInter200,Betrixaban,DB12364,Betrixaban,3403,exact normalized-name fallback,exact-name match
+DDInter201,Bevacizumab,DB00112,Bevacizumab,5293,exact normalized-name fallback,exact-name match
+DDInter202,Bexarotene,DB00307,Bexarotene,4211,exact normalized-name fallback,exact-name match
+DDInter203,Bexarotene (topical),,,,none,unmapped
+DDInter204,Bicalutamide,DB01128,Bicalutamide,3926,exact normalized-name fallback,exact-name match
+DDInter205,Bictegravir,DB11799,Bictegravir,4447,exact normalized-name fallback,exact-name match
+DDInter206,Bifidobacterium longum infantis,,,,none,unmapped
+DDInter207,Bimatoprost,DB00905,Bimatoprost,3761,exact normalized-name fallback,exact-name match
+DDInter21,Acitretin,DB00459,Acitretin,2957,exact normalized-name fallback,exact-name match
+DDInter210,Binimetinib,DB11967,Binimetinib,4174,exact normalized-name fallback,exact-name match
+DDInter211,Biperiden,DB00810,Biperiden,3907,exact normalized-name fallback,exact-name match
+DDInter212,Bisacodyl,DB09020,Bisacodyl,9140,exact normalized-name fallback,exact-name match
+DDInter213,Bismuth subcitrate potassium,DB09275,Bismuth subcitrate potassium,10289,exact normalized-name fallback,exact-name match
+DDInter214,Bismuth subgallate,DB13909,Bismuth subgallate,3257,exact normalized-name fallback,exact-name match
+DDInter215,Bismuth subsalicylate,DB01294,Bismuth subsalicylate,2898,exact normalized-name fallback,exact-name match
+DDInter216,Bisoprolol,DB00612,Bisoprolol,4234,exact normalized-name fallback,exact-name match
+DDInter217,Bivalirudin,DB00006,Bivalirudin,3553,exact normalized-name fallback,exact-name match
+DDInter219,Bleomycin,DB00290,Bleomycin,4676,exact normalized-name fallback,exact-name match
+DDInter22,Aclidinium,DB08897,Aclidinium,3656,exact normalized-name fallback,exact-name match
+DDInter220,Blinatumomab,DB09052,Blinatumomab,8403,exact normalized-name fallback,exact-name match
+DDInter221,Boceprevir,DB08873,Boceprevir,3811,exact normalized-name fallback,exact-name match
+DDInter222,Bortezomib,DB00188,Bortezomib,3860,exact normalized-name fallback,exact-name match
+DDInter223,Bosentan,DB00559,Bosentan,4229,exact normalized-name fallback,exact-name match
+DDInter224,Bosutinib,DB06616,Bosutinib,4355,exact normalized-name fallback,exact-name match
+DDInter225,Botulinum toxin type A,DB00083,Botulinum toxin type A,5891,exact normalized-name fallback,exact-name match
+DDInter226,Botulinum Toxin Type B,DB00042,Botulinum Toxin Type B,7982,exact normalized-name fallback,exact-name match
+DDInter227,Bremelanotide,DB11653,Bremelanotide,6671,exact normalized-name fallback,exact-name match
+DDInter228,Brentuximab vedotin,DB08870,Brentuximab vedotin,4377,exact normalized-name fallback,exact-name match
+DDInter229,Bretylium,DB01158,Bretylium,6410,exact normalized-name fallback,exact-name match
+DDInter23,Acrivastine,DB09488,Acrivastine,6041,exact normalized-name fallback,exact-name match
+DDInter230,Brexanolone,DB11859,Brexanolone,3518,exact normalized-name fallback,exact-name match
+DDInter231,Brexpiprazole,DB09128,Brexpiprazole,4015,exact normalized-name fallback,exact-name match
+DDInter232,Brexucabtagene autoleucel,,,,none,unmapped
+DDInter233,Brigatinib,DB12267,Brigatinib,4466,exact normalized-name fallback,exact-name match
+DDInter234,Brimonidine,DB00484,Brimonidine,4632,exact normalized-name fallback,exact-name match
+DDInter235,Brimonidine (ophthalmic),,,,none,unmapped
+DDInter236,Brimonidine (topical),,,,none,unmapped
+DDInter237,Brinzolamide,DB01194,Brinzolamide,4274,exact normalized-name fallback,exact-name match
+DDInter238,Brinzolamide (ophthalmic),,,,none,unmapped
+DDInter239,Brivaracetam,DB05541,Brivaracetam,4334,exact normalized-name fallback,exact-name match
+DDInter24,Activated charcoal,DB09278,Activated charcoal,10562,exact normalized-name fallback,exact-name match
+DDInter240,Brodalumab,DB11776,Brodalumab,9224,exact normalized-name fallback,exact-name match
+DDInter241,Bromfenac,DB00963,Bromfenac,3452,exact normalized-name fallback,exact-name match
+DDInter242,Bromfenac (ophthalmic),,,,none,unmapped
+DDInter243,Bromocriptine,DB01200,Bromocriptine,4276,exact normalized-name fallback,exact-name match
+DDInter244,Bromotheophylline,DB14018,Bromotheophylline,4189,exact normalized-name fallback,exact-name match
+DDInter245,Brompheniramine,DB00835,Brompheniramine,4849,exact normalized-name fallback,exact-name match
+DDInter246,Budesonide,DB01222,Budesonide,2817,exact normalized-name fallback,exact-name match
+DDInter247,Budesonide (nasal),,,,none,unmapped
+DDInter248,Bumetanide,DB00887,Bumetanide,3451,exact normalized-name fallback,exact-name match
+DDInter249,Bupivacaine,DB00297,Bupivacaine,3871,exact normalized-name fallback,exact-name match
+DDInter25,Acyclovir,DB00787,Acyclovir,3020,exact normalized-name fallback,exact-name match
+DDInter250,Bupivacaine (liposome),,,,none,unmapped
+DDInter251,Buprenorphine,DB00921,Buprenorphine,3764,exact normalized-name fallback,exact-name match
+DDInter252,Bupropion,DB01156,Bupropion,3327,exact normalized-name fallback,exact-name match
+DDInter253,Burosumab,DB14012,Burosumab,9414,exact normalized-name fallback,exact-name match
+DDInter254,Buspirone,DB00490,Buspirone,2963,exact normalized-name fallback,exact-name match
+DDInter255,Busulfan,DB01008,Busulfan,3521,exact normalized-name fallback,exact-name match
+DDInter256,Butabarbital,DB00237,Butabarbital,2920,exact normalized-name fallback,exact-name match
+DDInter257,Butalbital,DB00241,Butalbital,5845,exact normalized-name fallback,exact-name match
+DDInter258,Butorphanol,DB00611,Butorphanol,5932,exact normalized-name fallback,exact-name match
+DDInter259,Cabazitaxel,DB06772,Cabazitaxel,3808,exact normalized-name fallback,exact-name match
+DDInter26,Acyclovir (topical),,,,none,unmapped
+DDInter260,Cabergoline,DB00248,Cabergoline,4207,exact normalized-name fallback,exact-name match
+DDInter261,Cabotegravir,DB11751,Cabotegravir,9052,exact normalized-name fallback,exact-name match
+DDInter262,Cabozantinib,DB08875,Cabozantinib,4379,exact normalized-name fallback,exact-name match
+DDInter263,Caffeine,DB00201,Caffeine,3566,exact normalized-name fallback,exact-name match
+DDInter264,Calaspargase pegol,DB14730,Calaspargase pegol,10243,exact normalized-name fallback,exact-name match
+DDInter265,Calcifediol,DB00146,Calcifediol,3487,exact normalized-name fallback,exact-name match
+DDInter266,Calcipotriol,DB02300,Calcipotriol,3558,exact normalized-name fallback,exact-name match
+DDInter267,Calcipotriol (topical),,,,none,unmapped
+DDInter268,Calcitriol,DB00136,Calcitriol,3342,exact normalized-name fallback,exact-name match
+DDInter269,Calcitriol (topical),,,,none,unmapped
+DDInter27,Adalimumab,DB00051,Adalimumab,6367,exact normalized-name fallback,exact-name match
+DDInter270,Calcium acetate,DB00258,Calcium acetate,9188,exact normalized-name fallback,exact-name match
+DDInter271,Calcium carbonate,DB06724,Calcium carbonate,9286,exact normalized-name fallback,exact-name match
+DDInter272,Calcium chloride,DB01164,Calcium chloride,6770,exact normalized-name fallback,exact-name match
+DDInter273,Calcium citrate,DB11093,Calcium citrate,3219,exact normalized-name fallback,exact-name match
+DDInter274,Calcium glubionate anhydrous,DB13142,Calcium glubionate anhydrous,10277,exact normalized-name fallback,exact-name match
+DDInter275,Calcium glucoheptonate,DB00326,Calcium glucoheptonate,9202,exact normalized-name fallback,exact-name match
+DDInter276,Calcium gluconate,DB11126,Calcium gluconate,9094,exact normalized-name fallback,exact-name match
+DDInter277,Calcium glycerophosphate,,,,none,unmapped
+DDInter278,Calcium lactate,DB13231,Calcium lactate,9179,exact normalized-name fallback,exact-name match
+DDInter279,Calcium Phosphate,DB11348,Calcium Phosphate,3224,exact normalized-name fallback,exact-name match
+DDInter28,Adapalene,DB00210,Adapalene,5059,exact normalized-name fallback,exact-name match
+DDInter280,Canagliflozin,DB08907,Canagliflozin,3334,exact normalized-name fallback,exact-name match
+DDInter281,Canakinumab,DB06168,Canakinumab,7199,exact normalized-name fallback,exact-name match
+DDInter282,Candida albicans,,,,none,unmapped
+DDInter283,Cangrelor,DB06441,Cangrelor,5117,exact normalized-name fallback,exact-name match
+DDInter284,Cannabidiol,DB09061,Cannabidiol,3439,exact normalized-name fallback,exact-name match
+DDInter285,Capecitabine,DB01101,Capecitabine,3541,exact normalized-name fallback,exact-name match
+DDInter286,Caplacizumab,DB06081,Caplacizumab,7193,exact normalized-name fallback,exact-name match
+DDInter287,Capmatinib,DB11791,Capmatinib,4171,exact normalized-name fallback,exact-name match
+DDInter288,Capreomycin,DB00314,Capreomycin,9211,exact normalized-name fallback,exact-name match
+DDInter289,Capromab pendetide,DB00089,Capromab pendetide,6186,exact normalized-name fallback,exact-name match
+DDInter29,Adapalene (topical),,,,none,unmapped
+DDInter291,Capsicum,,,,none,unmapped
+DDInter292,Captopril,DB01197,Captopril,3100,exact normalized-name fallback,exact-name match
+DDInter293,Carbamazepine,DB00564,Carbamazepine,3739,exact normalized-name fallback,exact-name match
+DDInter294,Carbamoylcholine (ophthalmic),,,,none,unmapped
+DDInter295,Carbenicillin,DB00578,Carbenicillin,3503,exact normalized-name fallback,exact-name match
+DDInter297,Carbinoxamine,DB00748,Carbinoxamine,6016,exact normalized-name fallback,exact-name match
+DDInter298,Carboplatin,DB00958,Carboplatin,3520,exact normalized-name fallback,exact-name match
+DDInter299,Carfilzomib,DB08889,Carfilzomib,8064,exact normalized-name fallback,exact-name match
+DDInter3,Abametapir (topical),,,,none,unmapped
+DDInter30,Adefovir dipivoxil,DB00718,Adefovir dipivoxil,4600,exact normalized-name fallback,exact-name match
+DDInter300,Cariprazine,DB06016,Cariprazine,3977,exact normalized-name fallback,exact-name match
+DDInter301,Carisoprodol,DB00395,Carisoprodol,4615,exact normalized-name fallback,exact-name match
+DDInter302,Carmustine,DB00262,Carmustine,6307,exact normalized-name fallback,exact-name match
+DDInter303,Carteolol,DB00521,Carteolol,3888,exact normalized-name fallback,exact-name match
+DDInter304,Carteolol (ophthalmic),,,,none,unmapped
+DDInter305,Carvedilol,DB01136,Carvedilol,3091,exact normalized-name fallback,exact-name match
+DDInter306,Caspofungin,DB00520,Caspofungin,4226,exact normalized-name fallback,exact-name match
+DDInter307,Castor oil,DB11113,Castor oil,8085,exact normalized-name fallback,exact-name match
+DDInter308,Cedazuridine,,,,none,unmapped
+DDInter309,Cefaclor,DB00833,Cefaclor,3556,exact normalized-name fallback,exact-name match
+DDInter31,Adenosine,DB00640,Adenosine,3701,exact normalized-name fallback,exact-name match
+DDInter310,Cefadroxil,DB01140,Cefadroxil,8990,exact normalized-name fallback,exact-name match
+DDInter311,Cefalotin,DB00456,Cefalotin,2955,exact normalized-name fallback,exact-name match
+DDInter312,Cefamandole,DB01326,Cefamandole,9018,exact normalized-name fallback,exact-name match
+DDInter313,Cefapirin,DB01139,Cefapirin,9264,exact normalized-name fallback,exact-name match
+DDInter314,Cefazolin,DB01327,Cefazolin,3115,exact normalized-name fallback,exact-name match
+DDInter315,Cefdinir,DB00535,Cefdinir,7357,exact normalized-name fallback,exact-name match
+DDInter316,Cefditoren,DB01066,Cefditoren,9439,exact normalized-name fallback,exact-name match
+DDInter317,Cefepime,DB01413,Cefepime,8991,exact normalized-name fallback,exact-name match
+DDInter318,Cefiderocol,,,,none,unmapped
+DDInter319,Cefixime,DB00671,Cefixime,8987,exact normalized-name fallback,exact-name match
+DDInter32,Afatinib,DB08916,Afatinib,6139,exact normalized-name fallback,exact-name match
+DDInter320,Cefmetazole,DB00274,Cefmetazole,2928,exact normalized-name fallback,exact-name match
+DDInter321,Cefonicid,DB01328,Cefonicid,3116,exact normalized-name fallback,exact-name match
+DDInter322,Cefoperazone,DB01329,Cefoperazone,3117,exact normalized-name fallback,exact-name match
+DDInter323,Cefotaxime,DB00493,Cefotaxime,6159,exact normalized-name fallback,exact-name match
+DDInter324,Cefotetan,DB01330,Cefotetan,3118,exact normalized-name fallback,exact-name match
+DDInter325,Cefoxitin,DB01331,Cefoxitin,9197,exact normalized-name fallback,exact-name match
+DDInter326,Cefpodoxime,DB01416,Cefpodoxime,9440,exact normalized-name fallback,exact-name match
+DDInter327,Cefprozil,DB01150,Cefprozil,9268,exact normalized-name fallback,exact-name match
+DDInter328,Cefradine,DB01333,Cefradine,4287,exact normalized-name fallback,exact-name match
+DDInter329,Ceftaroline fosamil,DB06590,Ceftaroline fosamil,9453,exact normalized-name fallback,exact-name match
+DDInter33,Aflibercept,,,,none,unmapped
+DDInter330,Ceftazidime,DB00438,Ceftazidime,8986,exact normalized-name fallback,exact-name match
+DDInter331,Ceftibuten,DB01415,Ceftibuten,9034,exact normalized-name fallback,exact-name match
+DDInter332,Ceftizoxime,DB01332,Ceftizoxime,9033,exact normalized-name fallback,exact-name match
+DDInter333,Ceftolozane,DB09050,Ceftolozane,9263,exact normalized-name fallback,exact-name match
+DDInter334,Ceftriaxone,DB01212,Ceftriaxone,3101,exact normalized-name fallback,exact-name match
+DDInter335,Cefuroxime,DB01112,Cefuroxime,9032,exact normalized-name fallback,exact-name match
+DDInter336,Celecoxib,DB00482,Celecoxib,3884,exact normalized-name fallback,exact-name match
+DDInter337,Cemiplimab,DB14707,Cemiplimab,8388,exact normalized-name fallback,exact-name match
+DDInter338,Cenobamate,DB06119,Cenobamate,3160,exact normalized-name fallback,exact-name match
+DDInter339,Cephalexin,DB00567,Cephalexin,2978,exact normalized-name fallback,exact-name match
+DDInter34,Agalsidase beta,DB00103,Agalsidase beta,9070,exact normalized-name fallback,exact-name match
+DDInter340,Ceritinib,DB09063,Ceritinib,4396,exact normalized-name fallback,exact-name match
+DDInter341,Cerivastatin,DB00439,Cerivastatin,3730,exact normalized-name fallback,exact-name match
+DDInter342,Certolizumab pegol,DB08904,Certolizumab pegol,4670,exact normalized-name fallback,exact-name match
+DDInter343,Cetirizine,DB00341,Cetirizine,6012,exact normalized-name fallback,exact-name match
+DDInter344,Cetuximab,DB00002,Cetuximab,6388,exact normalized-name fallback,exact-name match
+DDInter345,Cetylpyridinium (topical),,,,none,unmapped
+DDInter346,Cevimeline,DB00185,Cevimeline,3858,exact normalized-name fallback,exact-name match
+DDInter347,Chamomile,,,,none,unmapped
+DDInter348,Chenodeoxycholic acid,DB06777,Chenodeoxycholic acid,3494,exact normalized-name fallback,exact-name match
+DDInter349,Chloral hydrate,DB01563,Chloral hydrate,9126,exact normalized-name fallback,exact-name match
+DDInter35,Albendazole,DB00518,Albendazole,4085,exact normalized-name fallback,exact-name match
+DDInter350,Chlorambucil,DB00291,Chlorambucil,3523,exact normalized-name fallback,exact-name match
+DDInter351,Chloramphenicol,DB00446,Chloramphenicol,3732,exact normalized-name fallback,exact-name match
+DDInter352,Chloramphenicol (ophthalmic),,,,none,unmapped
+DDInter353,Chloramphenicol (otic),,,,none,unmapped
+DDInter354,Chlorcyclizine,DB08936,Chlorcyclizine,6039,exact normalized-name fallback,exact-name match
+DDInter355,Chlordiazepoxide,DB00475,Chlordiazepoxide,8912,exact normalized-name fallback,exact-name match
+DDInter356,Chlorhexidine,,,,none,unmapped
+DDInter357,Chlormezanone,DB01178,Chlormezanone,9382,exact normalized-name fallback,exact-name match
+DDInter358,Chloroprocaine,DB01161,Chloroprocaine,3639,exact normalized-name fallback,exact-name match
+DDInter359,Chloroquine,DB00608,Chloroquine,2989,exact normalized-name fallback,exact-name match
+DDInter36,Albiglutide,DB09043,Albiglutide,6732,exact normalized-name fallback,exact-name match
+DDInter360,Chlorothiazide,DB00880,Chlorothiazide,5576,exact normalized-name fallback,exact-name match
+DDInter361,Chlorphenesin,DB00856,Chlorphenesin,3449,exact normalized-name fallback,exact-name match
+DDInter362,Chlorpheniramine,DB01114,Chlorpheniramine,3773,exact normalized-name fallback,exact-name match
+DDInter363,Chlorpromazine,DB00477,Chlorpromazine,2961,exact normalized-name fallback,exact-name match
+DDInter364,Chlorpropamide,DB00672,Chlorpropamide,3386,exact normalized-name fallback,exact-name match
+DDInter365,Chlorthalidone,DB00310,Chlorthalidone,2935,exact normalized-name fallback,exact-name match
+DDInter366,Chlorzoxazone,DB00356,Chlorzoxazone,3874,exact normalized-name fallback,exact-name match
+DDInter367,Cholecalciferol,DB00169,Cholecalciferol,3344,exact normalized-name fallback,exact-name match
+DDInter368,Cholestyramine,DB01432,Cholestyramine,9210,exact normalized-name fallback,exact-name match
+DDInter369,Cholic Acid,DB02659,Cholic Acid,3361,exact normalized-name fallback,exact-name match
+DDInter37,Alclometasone (topical),,,,none,unmapped
+DDInter370,Choline salicylate,DB14006,Choline salicylate,3437,exact normalized-name fallback,exact-name match
+DDInter371,Chondroitin sulfate,DB09301,Chondroitin sulfate,3530,exact normalized-name fallback,exact-name match
+DDInter372,Chorionic Gonadotropin (Human),,,,none,unmapped
+DDInter373,Chromic chloride,DB09129,Chromic chloride,4823,exact normalized-name fallback,exact-name match
+DDInter374,Chromium picolinate,,,,none,unmapped
+DDInter375,Ciclesonide,DB01410,Ciclesonide,2819,exact normalized-name fallback,exact-name match
+DDInter376,Ciclesonide (nasal),,,,none,unmapped
+DDInter377,Ciclopirox,,,,none,unmapped
+DDInter378,Cidofovir,DB00369,Cidofovir,3661,exact normalized-name fallback,exact-name match
+DDInter379,Cilostazol,DB01166,Cilostazol,3774,exact normalized-name fallback,exact-name match
+DDInter38,Aldesleukin,DB00041,Aldesleukin,3446,exact normalized-name fallback,exact-name match
+DDInter380,Cimetidine,DB00501,Cimetidine,3512,exact normalized-name fallback,exact-name match
+DDInter381,Cinacalcet,DB01012,Cinacalcet,3918,exact normalized-name fallback,exact-name match
+DDInter382,Cinchocaine (topical),,,,none,unmapped
+DDInter383,Cinoxacin,DB00827,Cinoxacin,4097,exact normalized-name fallback,exact-name match
+DDInter384,Ciprofloxacin,DB00537,Ciprofloxacin,2971,exact normalized-name fallback,exact-name match
+DDInter385,Cisapride,DB00604,Cisapride,3741,exact normalized-name fallback,exact-name match
+DDInter386,Cisatracurium,DB00565,Cisatracurium,6429,exact normalized-name fallback,exact-name match
+DDInter387,Cisplatin,DB00515,Cisplatin,2969,exact normalized-name fallback,exact-name match
+DDInter388,Citalopram,DB00215,Citalopram,3865,exact normalized-name fallback,exact-name match
+DDInter39,Alectinib,DB11363,Alectinib,5813,exact normalized-name fallback,exact-name match
+DDInter390,Citric acid,DB04272,Citric acid,5133,exact normalized-name fallback,exact-name match
+DDInter391,Citrus bioflavonoids,,,,none,unmapped
+DDInter392,Cladribine,DB00242,Cladribine,4587,exact normalized-name fallback,exact-name match
+DDInter393,Clarithromycin,DB01211,Clarithromycin,3778,exact normalized-name fallback,exact-name match
+DDInter394,Clavulanic acid,DB00766,Clavulanic acid,9072,exact normalized-name fallback,exact-name match
+DDInter395,Clemastine,DB00283,Clemastine,3869,exact normalized-name fallback,exact-name match
+DDInter396,Clevidipine,DB04920,Clevidipine,3652,exact normalized-name fallback,exact-name match
+DDInter397,Clidinium,DB00771,Clidinium,5095,exact normalized-name fallback,exact-name match
+DDInter398,Clindamycin,DB01190,Clindamycin,3328,exact normalized-name fallback,exact-name match
+DDInter399,Clindamycin (topical),,,,none,unmapped
+DDInter4,Abarelix,,,,none,unmapped
+DDInter40,Alefacept,DB00092,Alefacept,6395,exact normalized-name fallback,exact-name match
+DDInter400,Clioquinol (topical),,,,none,unmapped
+DDInter401,Clobazam,DB00349,Clobazam,3873,exact normalized-name fallback,exact-name match
+DDInter402,Clobetasol,DB11750,Clobetasol,3830,exact normalized-name fallback,exact-name match
+DDInter403,Clobetasol (topical),,,,none,unmapped
+DDInter404,Clocortolone (topical),,,,none,unmapped
+DDInter405,Clofarabine,DB00631,Clofarabine,4588,exact normalized-name fallback,exact-name match
+DDInter406,Clofazimine,DB00845,Clofazimine,3030,exact normalized-name fallback,exact-name match
+DDInter407,Clofedanol,DB04837,Clofedanol,6029,exact normalized-name fallback,exact-name match
+DDInter408,Clofibrate,DB00636,Clofibrate,3290,exact normalized-name fallback,exact-name match
+DDInter409,Clomifene,DB00882,Clomifene,3469,exact normalized-name fallback,exact-name match
+DDInter41,Alemtuzumab,DB00087,Alemtuzumab,5068,exact normalized-name fallback,exact-name match
+DDInter410,Clomipramine,DB01242,Clomipramine,3108,exact normalized-name fallback,exact-name match
+DDInter411,Clonazepam,DB01068,Clonazepam,3077,exact normalized-name fallback,exact-name match
+DDInter412,Clonidine,DB00575,Clonidine,2981,exact normalized-name fallback,exact-name match
+DDInter413,Clopidogrel,DB00758,Clopidogrel,3752,exact normalized-name fallback,exact-name match
+DDInter414,Clorazepic acid,DB00628,Clorazepic acid,4237,exact normalized-name fallback,exact-name match
+DDInter415,Clostridium tetani toxoid antigen (formaldehyde inactivated),DB10583,Clostridium tetani toxoid antigen (formaldehyde inactivated),9663,exact normalized-name fallback,exact-name match
+DDInter416,Clotrimazole,DB00257,Clotrimazole,3867,exact normalized-name fallback,exact-name match
+DDInter417,Clove,,,,none,unmapped
+DDInter418,Cloxacillin,DB01147,Cloxacillin,3094,exact normalized-name fallback,exact-name match
+DDInter419,Clozapine,DB00363,Clozapine,3876,exact normalized-name fallback,exact-name match
+DDInter42,Alendronic acid,DB00630,Alendronic acid,6512,exact normalized-name fallback,exact-name match
+DDInter420,Coagulation Factor IX Human,DB13152,Coagulation Factor IX Human,4762,exact normalized-name fallback,exact-name match
+DDInter421,Coagulation factor VIIa Recombinant Human,DB00036,Coagulation factor VIIa Recombinant Human,5417,exact normalized-name fallback,exact-name match
+DDInter422,Coagulation factor X human,DB13148,Coagulation factor X human,9504,exact normalized-name fallback,exact-name match
+DDInter423,Coal tar (topical),,,,none,unmapped
+DDInter424,Cobicistat,DB09065,Cobicistat,3817,exact normalized-name fallback,exact-name match
+DDInter425,Cobimetinib,DB05239,Cobimetinib,3548,exact normalized-name fallback,exact-name match
+DDInter426,Cocaine (nasal),,,,none,unmapped
+DDInter427,Cocaine (topical),,,,none,unmapped
+DDInter428,Coccidioides immitis spherule,,,,none,unmapped
+DDInter429,Codeine,DB00318,Codeine,3872,exact normalized-name fallback,exact-name match
+DDInter43,Alfentanil,DB00802,Alfentanil,3022,exact normalized-name fallback,exact-name match
+DDInter430,Coenzyme M,,,,none,unmapped
+DDInter431,Colchicine,DB01394,Colchicine,3121,exact normalized-name fallback,exact-name match
+DDInter432,Colesevelam,DB00930,Colesevelam,9285,exact normalized-name fallback,exact-name match
+DDInter433,Colestipol,DB00375,Colestipol,9745,exact normalized-name fallback,exact-name match
+DDInter434,Colistimethate,DB01111,Colistimethate,9571,exact normalized-name fallback,exact-name match
+DDInter435,Collagenase clostridium histolyticum,DB00048,Collagenase clostridium histolyticum,4806,exact normalized-name fallback,exact-name match
+DDInter436,Collagenase clostridium histolyticum (topical),,,,none,unmapped
+DDInter437,Conestat alfa,DB09228,Conestat alfa,4963,exact normalized-name fallback,exact-name match
+DDInter438,Conivaptan,DB00872,Conivaptan,4253,exact normalized-name fallback,exact-name match
+DDInter439,Conjugated estrogens,DB00286,Conjugated estrogens,2930,exact normalized-name fallback,exact-name match
+DDInter44,Alfuzosin,DB00346,Alfuzosin,4216,exact normalized-name fallback,exact-name match
+DDInter440,Conjugated estrogens (topical),,,,none,unmapped
+DDInter441,Copanlisib,DB12483,Copanlisib,3250,exact normalized-name fallback,exact-name match
+DDInter442,Copper gluconate,,,,none,unmapped
+DDInter443,Copper oxodotreotide Cu-64,,,,none,unmapped
+DDInter445,Corticotropin,DB01285,Corticotropin,3408,exact normalized-name fallback,exact-name match
+DDInter446,Cranberry,,,,none,unmapped
+DDInter447,Creatine,,,,none,unmapped
+DDInter448,Crizotinib,DB08865,Crizotinib,3810,exact normalized-name fallback,exact-name match
+DDInter449,Cromoglicic acid,,,,none,unmapped
+DDInter45,Alimemazine,DB01246,Alimemazine,6026,exact normalized-name fallback,exact-name match
+DDInter451,Cyanocobalamin,DB00115,Cyanocobalamin,3489,exact normalized-name fallback,exact-name match
+DDInter452,Cyclandelate,DB04838,Cyclandelate,4320,exact normalized-name fallback,exact-name match
+DDInter453,Cyclizine,DB01176,Cyclizine,4566,exact normalized-name fallback,exact-name match
+DDInter454,Cyclobenzaprine,DB00924,Cyclobenzaprine,3043,exact normalized-name fallback,exact-name match
+DDInter455,Cyclopentolate (ophthalmic),,,,none,unmapped
+DDInter456,Cyclophosphamide,DB00531,Cyclophosphamide,3737,exact normalized-name fallback,exact-name match
+DDInter457,Cycloserine,DB00260,Cycloserine,3611,exact normalized-name fallback,exact-name match
+DDInter458,Cyclosporine,DB00091,Cyclosporine,3717,exact normalized-name fallback,exact-name match
+DDInter459,Cyproheptadine,DB00434,Cyproheptadine,4660,exact normalized-name fallback,exact-name match
+DDInter46,Aliskiren,DB09026,Aliskiren,4392,exact normalized-name fallback,exact-name match
+DDInter460,Cytarabine,DB00987,Cytarabine,3563,exact normalized-name fallback,exact-name match
+DDInter461,Cytarabine (liposomal),,,,none,unmapped
+DDInter462,Dabrafenib,DB08912,Dabrafenib,4386,exact normalized-name fallback,exact-name match
+DDInter463,Dacarbazine,DB00851,Dacarbazine,4098,exact normalized-name fallback,exact-name match
+DDInter464,Daclatasvir,DB09102,Daclatasvir,3821,exact normalized-name fallback,exact-name match
+DDInter465,Dacomitinib,DB11963,Dacomitinib,3243,exact normalized-name fallback,exact-name match
+DDInter466,Dactinomycin,DB00970,Dactinomycin,8939,exact normalized-name fallback,exact-name match
+DDInter467,Dalbavancin,DB06219,Dalbavancin,9376,exact normalized-name fallback,exact-name match
+DDInter468,Dalfampridine,DB06637,Dalfampridine,4609,exact normalized-name fallback,exact-name match
+DDInter469,Dalfopristin,DB01764,Dalfopristin,4305,exact normalized-name fallback,exact-name match
+DDInter47,Alitretinoin (topical),,,,none,unmapped
+DDInter470,Dalteparin,DB06779,Dalteparin,3551,exact normalized-name fallback,exact-name match
+DDInter471,Danaparoid,DB06754,Danaparoid,5612,exact normalized-name fallback,exact-name match
+DDInter472,Danazol,DB01406,Danazol,3311,exact normalized-name fallback,exact-name match
+DDInter473,Dantrolene,DB01219,Dantrolene,3294,exact normalized-name fallback,exact-name match
+DDInter474,Dapagliflozin,DB06292,Dapagliflozin,3984,exact normalized-name fallback,exact-name match
+DDInter475,Dapsone,DB00250,Dapsone,3380,exact normalized-name fallback,exact-name match
+DDInter476,Dapsone (topical),,,,none,unmapped
+DDInter477,Daptomycin,DB00080,Daptomycin,9239,exact normalized-name fallback,exact-name match
+DDInter478,Daratumumab,DB09331,Daratumumab,8941,exact normalized-name fallback,exact-name match
+DDInter479,Darbepoetin alfa,DB00012,Darbepoetin alfa,6319,exact normalized-name fallback,exact-name match
+DDInter48,Allopurinol,DB00437,Allopurinol,3694,exact normalized-name fallback,exact-name match
+DDInter480,Darifenacin,DB00496,Darifenacin,3886,exact normalized-name fallback,exact-name match
+DDInter481,Darolutamide,DB12941,Darolutamide,3253,exact normalized-name fallback,exact-name match
+DDInter482,Darunavir,DB01264,Darunavir,3109,exact normalized-name fallback,exact-name match
+DDInter483,Dasabuvir,DB09183,Dasabuvir,4018,exact normalized-name fallback,exact-name match
+DDInter484,Dasatinib,DB01254,Dasatinib,3577,exact normalized-name fallback,exact-name match
+DDInter485,Daunorubicin,DB00694,Daunorubicin,3572,exact normalized-name fallback,exact-name match
+DDInter486,Daunorubicin (liposomal),,,,none,unmapped
+DDInter487,Decitabine,DB01262,Decitabine,3496,exact normalized-name fallback,exact-name match
+DDInter488,Deferasirox,DB01609,Deferasirox,4121,exact normalized-name fallback,exact-name match
+DDInter489,Deferiprone,DB08826,Deferiprone,4674,exact normalized-name fallback,exact-name match
+DDInter49,Almotriptan,DB00918,Almotriptan,3683,exact normalized-name fallback,exact-name match
+DDInter490,Deferoxamine,DB00746,Deferoxamine,3695,exact normalized-name fallback,exact-name match
+DDInter491,Defibrotide,DB04932,Defibrotide,4741,exact normalized-name fallback,exact-name match
+DDInter492,Deflazacort,DB11921,Deflazacort,3834,exact normalized-name fallback,exact-name match
+DDInter493,Degarelix,DB06699,Degarelix,5361,exact normalized-name fallback,exact-name match
+DDInter494,Dehydrocholic acid,DB11622,Dehydrocholic acid,9327,exact normalized-name fallback,exact-name match
+DDInter495,Delafloxacin,DB11943,Delafloxacin,3242,exact normalized-name fallback,exact-name match
+DDInter496,Delavirdine,DB00705,Delavirdine,3750,exact normalized-name fallback,exact-name match
+DDInter497,Demecarium (ophthalmic),,,,none,unmapped
+DDInter498,Demeclocycline,DB00618,Demeclocycline,5650,exact normalized-name fallback,exact-name match
+DDInter499,Denileukin diftitox,DB00004,Denileukin diftitox,6316,exact normalized-name fallback,exact-name match
+DDInter5,Abatacept,DB01281,Abatacept,6666,exact normalized-name fallback,exact-name match
+DDInter50,Aloe Vera Leaf,,,,none,unmapped
+DDInter500,Denosumab,DB06643,Denosumab,8454,exact normalized-name fallback,exact-name match
+DDInter501,Deoxycholic acid,DB03619,Deoxycholic acid,6580,exact normalized-name fallback,exact-name match
+DDInter502,Deserpidine,DB01089,Deserpidine,5137,exact normalized-name fallback,exact-name match
+DDInter503,Desflurane,DB01189,Desflurane,3098,exact normalized-name fallback,exact-name match
+DDInter504,Desipramine,DB01151,Desipramine,3326,exact normalized-name fallback,exact-name match
+DDInter505,Desirudin,DB11095,Desirudin,4667,exact normalized-name fallback,exact-name match
+DDInter506,Desloratadine,DB00967,Desloratadine,6020,exact normalized-name fallback,exact-name match
+DDInter507,Desmopressin,DB00035,Desmopressin,3378,exact normalized-name fallback,exact-name match
+DDInter508,Desogestrel,DB00304,Desogestrel,2934,exact normalized-name fallback,exact-name match
+DDInter509,Desonide (topical),,,,none,unmapped
+DDInter51,Alogliptin,DB06203,Alogliptin,3981,exact normalized-name fallback,exact-name match
+DDInter510,Desoximetasone (topical),,,,none,unmapped
+DDInter511,Desvenlafaxine,DB06700,Desvenlafaxine,3994,exact normalized-name fallback,exact-name match
+DDInter512,Deutetrabenazine,DB12161,Deutetrabenazine,3838,exact normalized-name fallback,exact-name match
+DDInter513,Dexamethasone,DB01234,Dexamethasone,3103,exact normalized-name fallback,exact-name match
+DDInter514,Dexamethasone (nasal),,,,none,unmapped
+DDInter515,Dexamethasone (ophthalmic),,,,none,unmapped
+DDInter516,Dexamethasone (topical),,,,none,unmapped
+DDInter517,Dexbrompheniramine,DB00405,Dexbrompheniramine,6014,exact normalized-name fallback,exact-name match
+DDInter518,Dexfenfluramine,DB01191,Dexfenfluramine,3934,exact normalized-name fallback,exact-name match
+DDInter519,Dexlansoprazole,DB05351,Dexlansoprazole,4332,exact normalized-name fallback,exact-name match
+DDInter52,Alosetron,DB00969,Alosetron,4100,exact normalized-name fallback,exact-name match
+DDInter520,Dexmedetomidine,DB00633,Dexmedetomidine,3894,exact normalized-name fallback,exact-name match
+DDInter521,Dexmethylphenidate,DB06701,Dexmethylphenidate,6098,exact normalized-name fallback,exact-name match
+DDInter522,Dexrazoxane,DB00380,Dexrazoxane,6436,exact normalized-name fallback,exact-name match
+DDInter523,Dextran (-1),,,,none,unmapped
+DDInter524,Dextran (high molecular weight),,,,none,unmapped
+DDInter525,Dextran (low molecular weight),,,,none,unmapped
+DDInter526,Dextroamphetamine,DB01576,Dextroamphetamine,3956,exact normalized-name fallback,exact-name match
+DDInter527,Dextromethorphan,DB00514,Dextromethorphan,3887,exact normalized-name fallback,exact-name match
+DDInter528,Dextropropoxyphene,DB00647,Dextropropoxyphene,3895,exact normalized-name fallback,exact-name match
+DDInter529,"Dextrose, unspecified form",DB09341,"Dextrose, unspecified form",3549,exact normalized-name fallback,exact-name match
+DDInter53,Alpelisib,DB12015,Alpelisib,4458,exact normalized-name fallback,exact-name match
+DDInter530,Dextrothyroxine,,,,none,unmapped
+DDInter531,Dezocine,DB01209,Dezocine,6286,exact normalized-name fallback,exact-name match
+DDInter532,Diamorphine,DB01452,Diamorphine,3295,exact normalized-name fallback,exact-name match
+DDInter533,Diatrizoate,DB00271,Diatrizoate,9569,exact normalized-name fallback,exact-name match
+DDInter534,Diazepam,DB00829,Diazepam,3028,exact normalized-name fallback,exact-name match
+DDInter535,Diazoxide,DB01119,Diazoxide,3707,exact normalized-name fallback,exact-name match
+DDInter536,Dichloralphenazone,DB01495,Dichloralphenazone,10028,exact normalized-name fallback,exact-name match
+DDInter537,Diclofenac,DB00586,Diclofenac,2844,exact normalized-name fallback,exact-name match
+DDInter538,Diclofenac (ophthalmic),,,,none,unmapped
+DDInter539,Diclofenac (topical),,,,none,unmapped
+DDInter54,Alprazolam,DB00404,Alprazolam,2947,exact normalized-name fallback,exact-name match
+DDInter540,Diclofenamide,DB01144,Diclofenamide,5578,exact normalized-name fallback,exact-name match
+DDInter541,Dicloxacillin,DB00485,Dicloxacillin,4225,exact normalized-name fallback,exact-name match
+DDInter542,Dicoumarol,DB00266,Dicoumarol,2926,exact normalized-name fallback,exact-name match
+DDInter543,Dicyclomine,DB00804,Dicyclomine,5097,exact normalized-name fallback,exact-name match
+DDInter544,Didanosine,DB00900,Didanosine,3039,exact normalized-name fallback,exact-name match
+DDInter545,Dienestrol (topical),,,,none,unmapped
+DDInter546,Dienogest,DB09123,Dienogest,4404,exact normalized-name fallback,exact-name match
+DDInter547,Diethylpropion,DB00937,Diethylpropion,6090,exact normalized-name fallback,exact-name match
+DDInter548,Diethylstilbestrol,DB00255,Diethylstilbestrol,2841,exact normalized-name fallback,exact-name match
+DDInter549,Difenoxin,DB01501,Difenoxin,9095,exact normalized-name fallback,exact-name match
+DDInter55,Alprostadil,DB00770,Alprostadil,5002,exact normalized-name fallback,exact-name match
+DDInter550,Diflorasone (topical),,,,none,unmapped
+DDInter551,Diflunisal,DB00861,Diflunisal,2845,exact normalized-name fallback,exact-name match
+DDInter552,Difluprednate (ophthalmic),,,,none,unmapped
+DDInter553,Digitoxin,DB01396,Digitoxin,3122,exact normalized-name fallback,exact-name match
+DDInter554,Digoxin,DB00390,Digoxin,4623,exact normalized-name fallback,exact-name match
+DDInter555,Digoxin Immune Fab (Ovine),DB00076,Digoxin Immune Fab (Ovine),9821,exact normalized-name fallback,exact-name match
+DDInter556,Dihydrocodeine,DB01551,Dihydrocodeine,3954,exact normalized-name fallback,exact-name match
+DDInter557,Dihydroergotamine,DB00320,Dihydroergotamine,4214,exact normalized-name fallback,exact-name match
+DDInter558,Dihydrotachysterol,DB01070,Dihydrotachysterol,6522,exact normalized-name fallback,exact-name match
+DDInter559,Diiodohydroxyquinoline,,,,none,unmapped
+DDInter56,Alteplase,DB00009,Alteplase,5372,exact normalized-name fallback,exact-name match
+DDInter561,Diltiazem,DB00343,Diltiazem,2946,exact normalized-name fallback,exact-name match
+DDInter562,Dimenhydrinate,DB00985,Dimenhydrinate,6021,exact normalized-name fallback,exact-name match
+DDInter563,Dimercaprol,DB06782,Dimercaprol,8339,exact normalized-name fallback,exact-name match
+DDInter564,Dimethyl fumarate,DB08908,Dimethyl fumarate,8909,exact normalized-name fallback,exact-name match
+DDInter567,Dinoprostone (topical),,,,none,unmapped
+DDInter568,Dinutuximab,DB09077,Dinutuximab,9369,exact normalized-name fallback,exact-name match
+DDInter569,Diphenhydramine,DB01075,Diphenhydramine,3390,exact normalized-name fallback,exact-name match
+DDInter57,Altretamine,DB00488,Altretamine,9217,exact normalized-name fallback,exact-name match
+DDInter570,Diphenhydramine (topical),,,,none,unmapped
+DDInter571,Diphenoxylate,DB01081,Diphenoxylate,5936,exact normalized-name fallback,exact-name match
+DDInter572,Dipivefrin (ophthalmic),,,,none,unmapped
+DDInter573,Dipyridamole,DB00975,Dipyridamole,5333,exact normalized-name fallback,exact-name match
+DDInter574,Diroximel fumarate,DB14783,Diroximel fumarate,5919,exact normalized-name fallback,exact-name match
+DDInter575,Disopyramide,DB00280,Disopyramide,3321,exact normalized-name fallback,exact-name match
+DDInter576,Disulfiram,DB00822,Disulfiram,3755,exact normalized-name fallback,exact-name match
+DDInter577,Dobutamine,DB00841,Dobutamine,3591,exact normalized-name fallback,exact-name match
+DDInter578,Docetaxel,DB01248,Docetaxel,3576,exact normalized-name fallback,exact-name match
+DDInter579,Docusate,DB11089,Docusate,9230,exact normalized-name fallback,exact-name match
+DDInter58,Aluminum hydroxide,DB06723,Aluminum hydroxide,9158,exact normalized-name fallback,exact-name match
+DDInter580,Dofetilide,DB00204,Dofetilide,4201,exact normalized-name fallback,exact-name match
+DDInter581,Dolasetron,DB00757,Dolasetron,3903,exact normalized-name fallback,exact-name match
+DDInter582,Dolutegravir,DB08930,Dolutegravir,4629,exact normalized-name fallback,exact-name match
+DDInter583,Donepezil,DB00843,Donepezil,3909,exact normalized-name fallback,exact-name match
+DDInter584,Dopamine,DB00988,Dopamine,3424,exact normalized-name fallback,exact-name match
+DDInter585,Doravirine,DB12301,Doravirine,3839,exact normalized-name fallback,exact-name match
+DDInter586,Doripenem,DB06211,Doripenem,3581,exact normalized-name fallback,exact-name match
+DDInter587,Dornase alfa,,,,none,unmapped
+DDInter588,Dorzolamide (ophthalmic),,,,none,unmapped
+DDInter589,Dotatate,,,,none,unmapped
+DDInter59,Alvimopan,DB06274,Alvimopan,5945,exact normalized-name fallback,exact-name match
+DDInter590,Doxacurium,DB01135,Doxacurium,3638,exact normalized-name fallback,exact-name match
+DDInter591,Doxapram,DB00561,Doxapram,8495,exact normalized-name fallback,exact-name match
+DDInter592,Doxazosin,DB00590,Doxazosin,3891,exact normalized-name fallback,exact-name match
+DDInter593,Doxepin,DB01142,Doxepin,3093,exact normalized-name fallback,exact-name match
+DDInter594,Doxepin (topical),,,,none,unmapped
+DDInter595,Doxercalciferol,DB06410,Doxercalciferol,3493,exact normalized-name fallback,exact-name match
+DDInter596,Doxorubicin,DB00997,Doxorubicin,3058,exact normalized-name fallback,exact-name match
+DDInter597,Doxorubicin (liposomal),,,,none,unmapped
+DDInter598,Doxycycline,DB00254,Doxycycline,4208,exact normalized-name fallback,exact-name match
+DDInter599,Doxycycline (topical),,,,none,unmapped
+DDInter6,Abciximab,DB00054,Abciximab,6008,exact normalized-name fallback,exact-name match
+DDInter60,Amantadine,DB00915,Amantadine,3613,exact normalized-name fallback,exact-name match
+DDInter600,Doxylamine,DB00366,Doxylamine,6013,exact normalized-name fallback,exact-name match
+DDInter601,Dronabinol,DB00470,Dronabinol,3381,exact normalized-name fallback,exact-name match
+DDInter602,Dronedarone,DB04855,Dronedarone,3151,exact normalized-name fallback,exact-name match
+DDInter603,Droperidol,DB00450,Droperidol,6120,exact normalized-name fallback,exact-name match
+DDInter604,Drospirenone,DB01395,Drospirenone,3453,exact normalized-name fallback,exact-name match
+DDInter605,Drotrecogin alfa,DB00055,Drotrecogin alfa,4757,exact normalized-name fallback,exact-name match
+DDInter606,Droxidopa,DB06262,Droxidopa,3614,exact normalized-name fallback,exact-name match
+DDInter607,Dulaglutide,DB09045,Dulaglutide,6733,exact normalized-name fallback,exact-name match
+DDInter608,Duloxetine,DB00476,Duloxetine,2960,exact normalized-name fallback,exact-name match
+DDInter609,Dupilumab,DB12159,Dupilumab,8113,exact normalized-name fallback,exact-name match
+DDInter61,Ambenonium,DB01122,Ambenonium,3637,exact normalized-name fallback,exact-name match
+DDInter610,Durvalumab,DB11714,Durvalumab,8398,exact normalized-name fallback,exact-name match
+DDInter611,Dutasteride,DB01126,Dutasteride,3088,exact normalized-name fallback,exact-name match
+DDInter612,Duvelisib,DB11952,Duvelisib,4454,exact normalized-name fallback,exact-name match
+DDInter613,Dyphylline,DB00651,Dyphylline,4739,exact normalized-name fallback,exact-name match
+DDInter614,Echinacea,DB14240,Echinacea,4521,exact normalized-name fallback,exact-name match
+DDInter615,Echothiophate (ophthalmic),,,,none,unmapped
+DDInter616,Econazole,DB01127,Econazole,3602,exact normalized-name fallback,exact-name match
+DDInter617,Econazole (topical),,,,none,unmapped
+DDInter618,Eculizumab,DB01257,Eculizumab,6728,exact normalized-name fallback,exact-name match
+DDInter619,Edetate calcium disodium anhydrous,DB14598,Edetate calcium disodium anhydrous,3538,exact normalized-name fallback,exact-name match
+DDInter62,Ambrisentan,DB06403,Ambrisentan,3797,exact normalized-name fallback,exact-name match
+DDInter620,Edetate disodium anhydrous,DB14600,Edetate disodium anhydrous,3539,exact normalized-name fallback,exact-name match
+DDInter621,Edoxaban,DB09075,Edoxaban,5450,exact normalized-name fallback,exact-name match
+DDInter622,Edrophonium,DB01010,Edrophonium,5958,exact normalized-name fallback,exact-name match
+DDInter623,Efalizumab,DB00095,Efalizumab,6142,exact normalized-name fallback,exact-name match
+DDInter624,Efavirenz,DB00625,Efavirenz,2992,exact normalized-name fallback,exact-name match
+DDInter625,Elagolix,DB11979,Elagolix,4030,exact normalized-name fallback,exact-name match
+DDInter626,Elbasvir,DB11574,Elbasvir,3825,exact normalized-name fallback,exact-name match
+DDInter627,Eletriptan,DB00216,Eletriptan,3379,exact normalized-name fallback,exact-name match
+DDInter628,Elexacaftor,DB15444,Elexacaftor,3282,exact normalized-name fallback,exact-name match
+DDInter629,Eliglustat,DB09039,Eliglustat,4009,exact normalized-name fallback,exact-name match
+DDInter63,Amcinonide,DB00288,Amcinonide,3724,exact normalized-name fallback,exact-name match
+DDInter630,Elotuzumab,DB06317,Elotuzumab,8424,exact normalized-name fallback,exact-name match
+DDInter631,Eltrombopag,DB06210,Eltrombopag,4137,exact normalized-name fallback,exact-name match
+DDInter632,Eluxadoline,DB09272,Eluxadoline,5948,exact normalized-name fallback,exact-name match
+DDInter633,Elvitegravir,DB09101,Elvitegravir,4402,exact normalized-name fallback,exact-name match
+DDInter634,Emapalumab,DB14724,Emapalumab,6943,exact normalized-name fallback,exact-name match
+DDInter635,Emicizumab,DB13923,Emicizumab,5454,exact normalized-name fallback,exact-name match
+DDInter636,Empagliflozin,DB09038,Empagliflozin,4630,exact normalized-name fallback,exact-name match
+DDInter637,Emtricitabine,DB00879,Emtricitabine,3037,exact normalized-name fallback,exact-name match
+DDInter638,Enalapril,DB00584,Enalapril,2983,exact normalized-name fallback,exact-name match
+DDInter639,Enasidenib,DB13874,Enasidenib,4046,exact normalized-name fallback,exact-name match
+DDInter64,Amifampridine,DB11640,Amifampridine,4658,exact normalized-name fallback,exact-name match
+DDInter640,Encorafenib,DB11718,Encorafenib,4026,exact normalized-name fallback,exact-name match
+DDInter641,Enflurane,DB00228,Enflurane,2919,exact normalized-name fallback,exact-name match
+DDInter642,Enfortumab vedotin,DB13007,Enfortumab vedotin,4484,exact normalized-name fallback,exact-name match
+DDInter643,Enfuvirtide,DB00109,Enfuvirtide,4603,exact normalized-name fallback,exact-name match
+DDInter644,Enoxacin,DB00467,Enoxacin,4083,exact normalized-name fallback,exact-name match
+DDInter645,Enoxaparin,DB01225,Enoxaparin,3557,exact normalized-name fallback,exact-name match
+DDInter646,Entacapone,DB00494,Entacapone,3589,exact normalized-name fallback,exact-name match
+DDInter647,Entecavir,DB00442,Entecavir,9261,exact normalized-name fallback,exact-name match
+DDInter648,Entrectinib,DB11986,Entrectinib,4456,exact normalized-name fallback,exact-name match
+DDInter649,Enzalutamide,DB08899,Enzalutamide,3191,exact normalized-name fallback,exact-name match
+DDInter65,Amifostine,DB01143,Amifostine,4653,exact normalized-name fallback,exact-name match
+DDInter650,Ephedrine,DB01364,Ephedrine,3119,exact normalized-name fallback,exact-name match
+DDInter651,Ephedrine (nasal),,,,none,unmapped
+DDInter652,Epinephrine,DB00668,Epinephrine,3590,exact normalized-name fallback,exact-name match
+DDInter653,Epinephrine (ophthalmic),,,,none,unmapped
+DDInter654,Epinephrine (topical),,,,none,unmapped
+DDInter655,Epirubicin,DB00445,Epirubicin,3502,exact normalized-name fallback,exact-name match
+DDInter656,Eplerenone,DB00700,Eplerenone,3748,exact normalized-name fallback,exact-name match
+DDInter657,Epoprostenol,DB01240,Epoprostenol,5114,exact normalized-name fallback,exact-name match
+DDInter658,Eprosartan,DB00876,Eprosartan,4993,exact normalized-name fallback,exact-name match
+DDInter659,Eptifibatide,DB00063,Eptifibatide,7478,exact normalized-name fallback,exact-name match
+DDInter66,Amikacin,DB00479,Amikacin,9195,exact normalized-name fallback,exact-name match
+DDInter660,Eravacycline,DB12329,Eravacycline,3690,exact normalized-name fallback,exact-name match
+DDInter661,Erdafitinib,DB12147,Erdafitinib,4463,exact normalized-name fallback,exact-name match
+DDInter662,Ergocalciferol,DB00153,Ergocalciferol,3343,exact normalized-name fallback,exact-name match
+DDInter663,Ergoloid mesylate,DB01049,Ergoloid mesylate,4265,exact normalized-name fallback,exact-name match
+DDInter664,Ergometrine,DB01253,Ergometrine,4281,exact normalized-name fallback,exact-name match
+DDInter665,Ergotamine,DB00696,Ergotamine,4241,exact normalized-name fallback,exact-name match
+DDInter666,Eribulin,DB08871,Eribulin,4811,exact normalized-name fallback,exact-name match
+DDInter667,Erlotinib,DB00530,Erlotinib,2970,exact normalized-name fallback,exact-name match
+DDInter668,Ertapenem,DB00303,Ertapenem,9143,exact normalized-name fallback,exact-name match
+DDInter669,Ertugliflozin,DB11827,Ertugliflozin,3238,exact normalized-name fallback,exact-name match
+DDInter67,Amikacin (liposome),,,,none,unmapped
+DDInter670,Erythromycin,DB00199,Erythromycin,3719,exact normalized-name fallback,exact-name match
+DDInter671,Erythropoietin,DB00016,Erythropoietin,6320,exact normalized-name fallback,exact-name match
+DDInter672,Escitalopram,DB01175,Escitalopram,3931,exact normalized-name fallback,exact-name match
+DDInter673,Esketamine,DB11823,Esketamine,4450,exact normalized-name fallback,exact-name match
+DDInter674,Eslicarbazepine,DB14575,Eslicarbazepine,4524,exact normalized-name fallback,exact-name match
+DDInter675,Esmolol,DB00187,Esmolol,3859,exact normalized-name fallback,exact-name match
+DDInter676,Esomeprazole,DB00736,Esomeprazole,4245,exact normalized-name fallback,exact-name match
+DDInter677,Estazolam,DB01215,Estazolam,4278,exact normalized-name fallback,exact-name match
+DDInter678,Esterified estrogens,DB09381,Esterified estrogens,3302,exact normalized-name fallback,exact-name match
+DDInter679,Estradiol,DB00783,Estradiol,3018,exact normalized-name fallback,exact-name match
+DDInter68,Amiloride,DB00594,Amiloride,3474,exact normalized-name fallback,exact-name match
+DDInter680,Estradiol (topical),,,,none,unmapped
+DDInter681,Estramustine,DB01196,Estramustine,4275,exact normalized-name fallback,exact-name match
+DDInter682,Estrone,DB00655,Estrone,2994,exact normalized-name fallback,exact-name match
+DDInter683,Estrone sulfate,DB04574,Estrone sulfate,3146,exact normalized-name fallback,exact-name match
+DDInter684,Estrone sulfate (topical),,,,none,unmapped
+DDInter685,Eszopiclone,DB00402,Eszopiclone,4224,exact normalized-name fallback,exact-name match
+DDInter686,Etacrynic acid,DB00903,Etacrynic acid,3040,exact normalized-name fallback,exact-name match
+DDInter687,Etanercept,DB00005,Etanercept,6366,exact normalized-name fallback,exact-name match
+DDInter688,Etelcalcetide,,,,none,unmapped
+DDInter689,Ethambutol,DB00330,Ethambutol,9185,exact normalized-name fallback,exact-name match
+DDInter69,Aminobenzoic acid,,,,none,unmapped
+DDInter690,Ethanol,DB00898,Ethanol,3370,exact normalized-name fallback,exact-name match
+DDInter691,Ethchlorvynol,DB00189,Ethchlorvynol,8911,exact normalized-name fallback,exact-name match
+DDInter692,Ethinylestradiol,DB00977,Ethinylestradiol,3053,exact normalized-name fallback,exact-name match
+DDInter693,Ethiodized oil,DB00965,Ethiodized oil,10399,exact normalized-name fallback,exact-name match
+DDInter694,Ethionamide,DB00609,Ethionamide,9123,exact normalized-name fallback,exact-name match
+DDInter695,Ethosuximide,DB00593,Ethosuximide,4232,exact normalized-name fallback,exact-name match
+DDInter696,Ethotoin,DB00754,Ethotoin,3291,exact normalized-name fallback,exact-name match
+DDInter697,Etidocaine,DB08987,Etidocaine,9092,exact normalized-name fallback,exact-name match
+DDInter698,Etidronic acid,DB01077,Etidronic acid,6211,exact normalized-name fallback,exact-name match
+DDInter699,Etodolac,DB00749,Etodolac,3010,exact normalized-name fallback,exact-name match
+DDInter7,Abemaciclib,DB12001,Abemaciclib,3245,exact normalized-name fallback,exact-name match
+DDInter70,Aminocaproic acid,DB00513,Aminocaproic acid,4633,exact normalized-name fallback,exact-name match
+DDInter700,Etomidate,DB00292,Etomidate,3341,exact normalized-name fallback,exact-name match
+DDInter701,Etonogestrel,DB00294,Etonogestrel,2932,exact normalized-name fallback,exact-name match
+DDInter702,Etoposide,DB00773,Etoposide,3387,exact normalized-name fallback,exact-name match
+DDInter703,Etravirine,DB06414,Etravirine,4349,exact normalized-name fallback,exact-name match
+DDInter704,Everolimus,DB01590,Everolimus,3959,exact normalized-name fallback,exact-name match
+DDInter705,Exemestane,DB00990,Exemestane,3600,exact normalized-name fallback,exact-name match
+DDInter706,Exenatide,DB01276,Exenatide,3111,exact normalized-name fallback,exact-name match
+DDInter707,Ezetimibe,DB00973,Ezetimibe,4260,exact normalized-name fallback,exact-name match
+DDInter708,Ezogabine,DB04953,Ezogabine,4627,exact normalized-name fallback,exact-name match
+DDInter709,Factor IX Complex (Human),DB11330,Factor IX Complex (Human),9482,exact normalized-name fallback,exact-name match
+DDInter71,Aminoglutethimide,DB00357,Aminoglutethimide,4220,exact normalized-name fallback,exact-name match
+DDInter710,Factor XIII (human),DB12909,Factor XIII (human),9500,exact normalized-name fallback,exact-name match
+DDInter711,Famciclovir,DB00426,Famciclovir,4631,exact normalized-name fallback,exact-name match
+DDInter712,Famotidine,DB00927,Famotidine,4099,exact normalized-name fallback,exact-name match
+DDInter713,Febuxostat,DB04854,Febuxostat,8028,exact normalized-name fallback,exact-name match
+DDInter714,Fedratinib,DB12500,Fedratinib,4033,exact normalized-name fallback,exact-name match
+DDInter715,Felbamate,DB00949,Felbamate,4258,exact normalized-name fallback,exact-name match
+DDInter716,Felodipine,DB01023,Felodipine,3767,exact normalized-name fallback,exact-name match
+DDInter717,Fenfluramine,DB00574,Fenfluramine,3740,exact normalized-name fallback,exact-name match
+DDInter718,Fenofibrate,DB01039,Fenofibrate,3067,exact normalized-name fallback,exact-name match
+DDInter719,Fenofibric acid,DB13873,Fenofibric acid,5051,exact normalized-name fallback,exact-name match
+DDInter72,Aminolevulinic acid,DB00855,Aminolevulinic acid,4966,exact normalized-name fallback,exact-name match
+DDInter720,Fenoldopam,DB00800,Fenoldopam,4795,exact normalized-name fallback,exact-name match
+DDInter721,Fenoprofen,DB00573,Fenoprofen,2980,exact normalized-name fallback,exact-name match
+DDInter722,Fentanyl,DB00813,Fentanyl,3024,exact normalized-name fallback,exact-name match
+DDInter723,Ferric carboxymaltose,DB08917,Ferric carboxymaltose,10323,exact normalized-name fallback,exact-name match
+DDInter724,Ferric derisomaltose,DB15617,Ferric derisomaltose,5214,exact normalized-name fallback,exact-name match
+DDInter725,Ferrous fumarate,DB14491,Ferrous fumarate,5130,exact normalized-name fallback,exact-name match
+DDInter726,Ferrous gluconate,DB14488,Ferrous gluconate,5127,exact normalized-name fallback,exact-name match
+DDInter727,Ferrous sulfate anhydrous,DB13257,Ferrous sulfate anhydrous,3490,exact normalized-name fallback,exact-name match
+DDInter728,Ferumoxides,DB09508,Ferumoxides,10303,exact normalized-name fallback,exact-name match
+DDInter729,Ferumoxsil,DB09507,Ferumoxsil,10302,exact normalized-name fallback,exact-name match
+DDInter73,Aminolevulinic acid (topical),,,,none,unmapped
+DDInter730,Ferumoxytol,DB06215,Ferumoxytol,8983,exact normalized-name fallback,exact-name match
+DDInter731,Fesoterodine,DB06702,Fesoterodine,3995,exact normalized-name fallback,exact-name match
+DDInter732,Fexofenadine,DB00950,Fexofenadine,3049,exact normalized-name fallback,exact-name match
+DDInter733,Fibrinogen human,DB09222,Fibrinogen human,9469,exact normalized-name fallback,exact-name match
+DDInter734,Fidaxomicin,DB08874,Fidaxomicin,4378,exact normalized-name fallback,exact-name match
+DDInter735,Filgrastim,DB00099,Filgrastim,5895,exact normalized-name fallback,exact-name match
+DDInter736,Finasteride,DB01216,Finasteride,3779,exact normalized-name fallback,exact-name match
+DDInter737,Fingolimod,DB08868,Fingolimod,4612,exact normalized-name fallback,exact-name match
+DDInter738,Flavoxate,DB01148,Flavoxate,5099,exact normalized-name fallback,exact-name match
+DDInter739,Flax seed,,,,none,unmapped
+DDInter74,Aminophylline,DB01223,Aminophylline,4111,exact normalized-name fallback,exact-name match
+DDInter740,Flecainide,DB01195,Flecainide,3099,exact normalized-name fallback,exact-name match
+DDInter741,Flibanserin,DB04908,Flibanserin,4326,exact normalized-name fallback,exact-name match
+DDInter742,Floxuridine,DB00322,Floxuridine,3287,exact normalized-name fallback,exact-name match
+DDInter743,Fluconazole,DB00196,Fluconazole,3718,exact normalized-name fallback,exact-name match
+DDInter744,Flucytosine,DB01099,Flucytosine,6782,exact normalized-name fallback,exact-name match
+DDInter745,Fludarabine,DB01073,Fludarabine,5755,exact normalized-name fallback,exact-name match
+DDInter746,Fludeoxyglucose (18F),DB09502,Fludeoxyglucose (18F),3564,exact normalized-name fallback,exact-name match
+DDInter747,Fludrocortisone,DB00687,Fludrocortisone,2810,exact normalized-name fallback,exact-name match
+DDInter748,Flumazenil,DB01205,Flumazenil,6084,exact normalized-name fallback,exact-name match
+DDInter749,Flunisolide,DB00180,Flunisolide,2797,exact normalized-name fallback,exact-name match
+DDInter75,Aminosalicylic acid,DB00233,Aminosalicylic acid,3555,exact normalized-name fallback,exact-name match
+DDInter750,Flunisolide (nasal),,,,none,unmapped
+DDInter751,Fluocinolone acetonide,DB00591,Fluocinolone acetonide,2804,exact normalized-name fallback,exact-name match
+DDInter752,Fluocinonide,DB01047,Fluocinonide,2816,exact normalized-name fallback,exact-name match
+DDInter753,Fluocinonide (topical),,,,none,unmapped
+DDInter755,Fluorometholone,DB00324,Fluorometholone,2800,exact normalized-name fallback,exact-name match
+DDInter756,Fluorometholone (ophthalmic),,,,none,unmapped
+DDInter757,Fluorouracil,DB00544,Fluorouracil,2973,exact normalized-name fallback,exact-name match
+DDInter758,Fluoxetine,DB00472,Fluoxetine,2959,exact normalized-name fallback,exact-name match
+DDInter759,Fluoxymesterone,DB01185,Fluoxymesterone,3310,exact normalized-name fallback,exact-name match
+DDInter76,Amiodarone,DB01118,Amiodarone,3085,exact normalized-name fallback,exact-name match
+DDInter760,Fluphenazine,DB00623,Fluphenazine,3893,exact normalized-name fallback,exact-name match
+DDInter761,Flurandrenolide (topical),,,,none,unmapped
+DDInter762,Flurazepam,DB00690,Flurazepam,4240,exact normalized-name fallback,exact-name match
+DDInter763,Flurbiprofen,DB00712,Flurbiprofen,3002,exact normalized-name fallback,exact-name match
+DDInter764,Flurbiprofen (ophthalmic),,,,none,unmapped
+DDInter765,Flutamide,DB00499,Flutamide,3570,exact normalized-name fallback,exact-name match
+DDInter766,Fluticasone,DB13867,Fluticasone,2823,exact normalized-name fallback,exact-name match
+DDInter767,Fluticasone (nasal),,,,none,unmapped
+DDInter768,Fluticasone (topical),,,,none,unmapped
+DDInter769,Fluvastatin,DB01095,Fluvastatin,3770,exact normalized-name fallback,exact-name match
+DDInter77,Amisulpride,DB06288,Amisulpride,6056,exact normalized-name fallback,exact-name match
+DDInter770,Fluvoxamine,DB00176,Fluvoxamine,3856,exact normalized-name fallback,exact-name match
+DDInter771,Folic acid,DB00158,Folic acid,3461,exact normalized-name fallback,exact-name match
+DDInter772,Follitropin,DB00066,Follitropin,5887,exact normalized-name fallback,exact-name match
+DDInter773,Fomepizole,DB01213,Fomepizole,4602,exact normalized-name fallback,exact-name match
+DDInter775,Fondaparinux,DB00569,Fondaparinux,5418,exact normalized-name fallback,exact-name match
+DDInter776,Formoterol,DB00983,Formoterol,3055,exact normalized-name fallback,exact-name match
+DDInter777,Fosamprenavir,DB01319,Fosamprenavir,4286,exact normalized-name fallback,exact-name match
+DDInter778,Fosaprepitant,DB06717,Fosaprepitant,4361,exact normalized-name fallback,exact-name match
+DDInter779,Foscarnet,DB00529,Foscarnet,9010,exact normalized-name fallback,exact-name match
+DDInter78,Amitriptyline,DB00321,Amitriptyline,2939,exact normalized-name fallback,exact-name match
+DDInter780,Fosfomycin,DB00828,Fosfomycin,9204,exact normalized-name fallback,exact-name match
+DDInter781,Fosinopril,DB00492,Fosinopril,5470,exact normalized-name fallback,exact-name match
+DDInter782,Fosnetupitant,DB14019,Fosnetupitant,4514,exact normalized-name fallback,exact-name match
+DDInter783,Fosphenytoin,DB01320,Fosphenytoin,3113,exact normalized-name fallback,exact-name match
+DDInter784,Fospropofol,DB06716,Fospropofol,3171,exact normalized-name fallback,exact-name match
+DDInter785,Fostamatinib,DB12010,Fostamatinib,4457,exact normalized-name fallback,exact-name match
+DDInter786,Fostemsavir,DB11796,Fostemsavir,3236,exact normalized-name fallback,exact-name match
+DDInter787,Frangula purshiana bark,DB15478,Frangula purshiana bark,9818,exact normalized-name fallback,exact-name match
+DDInter788,Frovatriptan,DB00998,Frovatriptan,4103,exact normalized-name fallback,exact-name match
+DDInter789,Fulvestrant,DB00947,Fulvestrant,4257,exact normalized-name fallback,exact-name match
+DDInter79,Amlodipine,DB00381,Amlodipine,3727,exact normalized-name fallback,exact-name match
+DDInter790,Furosemide,DB00695,Furosemide,3000,exact normalized-name fallback,exact-name match
+DDInter791,Gabapentin,DB00996,Gabapentin,3492,exact normalized-name fallback,exact-name match
+DDInter792,Gadobenic acid,DB00743,Gadobenic acid,3008,exact normalized-name fallback,exact-name match
+DDInter793,Gadobutrol,,,,none,unmapped
+DDInter794,Gadodiamide,DB00225,Gadodiamide,9568,exact normalized-name fallback,exact-name match
+DDInter795,Gadofosveset trisodium,DB06705,Gadofosveset trisodium,3169,exact normalized-name fallback,exact-name match
+DDInter796,Gadopentetic acid,DB00789,Gadopentetic acid,8479,exact normalized-name fallback,exact-name match
+DDInter797,Gadoteric acid,DB09132,Gadoteric acid,9584,exact normalized-name fallback,exact-name match
+DDInter798,Gadoteridol,DB00597,Gadoteridol,9570,exact normalized-name fallback,exact-name match
+DDInter799,Gadoversetamide,,,,none,unmapped
+DDInter8,Abiraterone,DB05812,Abiraterone,3159,exact normalized-name fallback,exact-name match
+DDInter80,Ammonium chloride,DB06767,Ammonium chloride,9106,exact normalized-name fallback,exact-name match
+DDInter800,Gadoxetic acid,DB08884,Gadoxetic acid,9027,exact normalized-name fallback,exact-name match
+DDInter801,Galactose,,,,none,unmapped
+DDInter802,Galantamine,DB00674,Galantamine,3896,exact normalized-name fallback,exact-name match
+DDInter803,Gallium chloride Ga-67,,,,none,unmapped
+DDInter804,Gallium nitrate,DB05260,Gallium nitrate,2899,exact normalized-name fallback,exact-name match
+DDInter805,gamma-Aminobutyric acid,,,,none,unmapped
+DDInter806,Ganciclovir,DB01004,Ganciclovir,9046,exact normalized-name fallback,exact-name match
+DDInter807,Ganirelix,,,,none,unmapped
+DDInter808,Garlic,DB10532,Garlic,9998,exact normalized-name fallback,exact-name match
+DDInter809,Gatifloxacin,DB01044,Gatifloxacin,3068,exact normalized-name fallback,exact-name match
+DDInter81,Amobarbital,DB01351,Amobarbital,5849,exact normalized-name fallback,exact-name match
+DDInter810,Gefitinib,DB00317,Gefitinib,2938,exact normalized-name fallback,exact-name match
+DDInter811,Gemcitabine,DB00441,Gemcitabine,4196,exact normalized-name fallback,exact-name match
+DDInter812,Gemfibrozil,DB01241,Gemfibrozil,3107,exact normalized-name fallback,exact-name match
+DDInter813,Gemifloxacin,DB01155,Gemifloxacin,4108,exact normalized-name fallback,exact-name match
+DDInter814,Gemtuzumab ozogamicin,DB00056,Gemtuzumab ozogamicin,6328,exact normalized-name fallback,exact-name match
+DDInter815,Gentamicin,DB00798,Gentamicin,5774,exact normalized-name fallback,exact-name match
+DDInter816,Gentamicin (topical),,,,none,unmapped
+DDInter817,Gilteritinib,DB12141,Gilteritinib,3246,exact normalized-name fallback,exact-name match
+DDInter818,Ginger,,,,none,unmapped
+DDInter819,Ginkgo biloba,DB01381,Ginkgo biloba,4292,exact normalized-name fallback,exact-name match
+DDInter82,Amoxapine,DB00543,Amoxapine,3323,exact normalized-name fallback,exact-name match
+DDInter820,Ginseng,DB01404,Ginseng,5537,exact normalized-name fallback,exact-name match
+DDInter821,Givosiran,DB15066,Givosiran,9294,exact normalized-name fallback,exact-name match
+DDInter822,Glasdegib,DB11978,Glasdegib,3244,exact normalized-name fallback,exact-name match
+DDInter823,Glatiramer,DB05259,Glatiramer,8107,exact normalized-name fallback,exact-name match
+DDInter824,Glecaprevir,DB13879,Glecaprevir,4508,exact normalized-name fallback,exact-name match
+DDInter825,Glimepiride,DB00222,Glimepiride,4553,exact normalized-name fallback,exact-name match
+DDInter826,Glipizide,DB01067,Glipizide,3076,exact normalized-name fallback,exact-name match
+DDInter827,Glucagon,DB00040,Glucagon,6157,exact normalized-name fallback,exact-name match
+DDInter828,Glucarpidase,DB08898,Glucarpidase,10402,exact normalized-name fallback,exact-name match
+DDInter829,Glucosamine,DB01296,Glucosamine,4978,exact normalized-name fallback,exact-name match
+DDInter83,Amoxicillin,DB01060,Amoxicillin,3074,exact normalized-name fallback,exact-name match
+DDInter830,Glutamic acid,DB00142,Glutamic acid,4691,exact normalized-name fallback,exact-name match
+DDInter831,Glyburide,DB01016,Glyburide,3063,exact normalized-name fallback,exact-name match
+DDInter832,Glycerin,DB09462,Glycerin,3495,exact normalized-name fallback,exact-name match
+DDInter833,Glycerol phenylbutyrate,DB08909,Glycerol phenylbutyrate,3508,exact normalized-name fallback,exact-name match
+DDInter834,Glycopyrronium,DB00986,Glycopyrronium,4850,exact normalized-name fallback,exact-name match
+DDInter835,Glycopyrronium (topical),,,,none,unmapped
+DDInter836,Goldenseal,,,,none,unmapped
+DDInter837,Golimumab,DB06674,Golimumab,6384,exact normalized-name fallback,exact-name match
+DDInter838,Gonadorelin,DB00644,Gonadorelin,5357,exact normalized-name fallback,exact-name match
+DDInter839,Goserelin,DB00014,Goserelin,5251,exact normalized-name fallback,exact-name match
+DDInter84,Amphetamine,DB00182,Amphetamine,3857,exact normalized-name fallback,exact-name match
+DDInter840,Granisetron,DB00889,Granisetron,4254,exact normalized-name fallback,exact-name match
+DDInter841,Grazoprevir,DB11575,Grazoprevir,3226,exact normalized-name fallback,exact-name match
+DDInter842,Grepafloxacin,DB00365,Grepafloxacin,4076,exact normalized-name fallback,exact-name match
+DDInter843,Griseofulvin,DB00400,Griseofulvin,4079,exact normalized-name fallback,exact-name match
+DDInter844,Guanabenz,DB00629,Guanabenz,4087,exact normalized-name fallback,exact-name match
+DDInter845,Guanadrel,DB00226,Guanadrel,6087,exact normalized-name fallback,exact-name match
+DDInter846,Guanethidine,DB01170,Guanethidine,6091,exact normalized-name fallback,exact-name match
+DDInter847,Guanfacine,DB01018,Guanfacine,4263,exact normalized-name fallback,exact-name match
+DDInter848,Guanidine,DB00536,Guanidine,5248,exact normalized-name fallback,exact-name match
+DDInter849,Guselkumab,DB11834,Guselkumab,8354,exact normalized-name fallback,exact-name match
+DDInter85,Amphotericin B,DB00681,Amphotericin B,4239,exact normalized-name fallback,exact-name match
+DDInter850,Halazepam,DB00801,Halazepam,8913,exact normalized-name fallback,exact-name match
+DDInter851,Halcinonide (topical),,,,none,unmapped
+DDInter852,Halofantrine,DB01218,Halofantrine,3781,exact normalized-name fallback,exact-name match
+DDInter853,Haloperidol,DB00502,Haloperidol,3735,exact normalized-name fallback,exact-name match
+DDInter854,Halothane,DB01159,Halothane,3095,exact normalized-name fallback,exact-name match
+DDInter855,Hemin,DB03404,Hemin,9385,exact normalized-name fallback,exact-name match
+DDInter856,Heparin,DB01109,Heparin,3293,exact normalized-name fallback,exact-name match
+DDInter857,Heparin (flush),,,,none,unmapped
+DDInter858,Hepatitis A Vaccine,DB10989,Hepatitis A Vaccine,9671,exact normalized-name fallback,exact-name match
+DDInter86,Amphotericin B (cholesteryl sulfate),,,,none,unmapped
+DDInter860,Hepatitis B Vaccine (Recombinant),DB11627,Hepatitis B Vaccine (Recombinant),9685,exact normalized-name fallback,exact-name match
+DDInter861,Hexachlorophene (topical),,,,none,unmapped
+DDInter862,Hexaminolevulinate,DB06261,Hexaminolevulinate,10598,exact normalized-name fallback,exact-name match
+DDInter863,Histamine,DB05381,Histamine,4195,exact normalized-name fallback,exact-name match
+DDInter864,Histrelin,DB06788,Histrelin,5363,exact normalized-name fallback,exact-name match
+DDInter865,Homatropine,DB11181,Homatropine,4550,exact normalized-name fallback,exact-name match
+DDInter866,Homatropine (ophthalmic),,,,none,unmapped
+DDInter867,Human adenovirus e serotype 4 strain cl-68578 antigen,DB14409,Human adenovirus e serotype 4 strain cl-68578 antigen,9729,exact normalized-name fallback,exact-name match
+DDInter868,Human botulinum neurotoxin A/B immune globulin,,,,none,unmapped
+DDInter869,Human C1-esterase inhibitor,DB06404,Human C1-esterase inhibitor,4887,exact normalized-name fallback,exact-name match
+DDInter87,Amphotericin B (lipid complex),,,,none,unmapped
+DDInter870,Human cytomegalovirus immune globulin,DB13886,Human cytomegalovirus immune globulin,9929,exact normalized-name fallback,exact-name match
+DDInter871,Human immunoglobulin G (intramuscular),,,,none,unmapped
+DDInter872,Human immunoglobulin G (intravenous and subcutaneous),,,,none,unmapped
+DDInter873,Human immunoglobulin G (intravenous),,,,none,unmapped
+DDInter874,Human immunoglobulin G (subcutaneous),,,,none,unmapped
+DDInter875,Human papillomavirus type 11 L1 capsid protein antigen,,,,none,unmapped
+DDInter877,Human Rho(D) immune globulin,,,,none,unmapped
+DDInter88,Amphotericin B (liposomal),,,,none,unmapped
+DDInter880,Hyaluronic acid,,,,none,unmapped
+DDInter881,Hyaluronidase,DB14740,Hyaluronidase,7017,exact normalized-name fallback,exact-name match
+DDInter882,Hydralazine,DB01275,Hydralazine,3110,exact normalized-name fallback,exact-name match
+DDInter883,Hydrochlorothiazide,DB00999,Hydrochlorothiazide,3059,exact normalized-name fallback,exact-name match
+DDInter884,Hydrocodone,DB00956,Hydrocodone,3915,exact normalized-name fallback,exact-name match
+DDInter885,Hydrocortisone,DB00741,Hydrocortisone,2811,exact normalized-name fallback,exact-name match
+DDInter886,Hydrocortisone (ophthalmic),,,,none,unmapped
+DDInter887,Hydrocortisone (topical),,,,none,unmapped
+DDInter888,Hydrocortisone butyrate,DB14540,Hydrocortisone butyrate,2826,exact normalized-name fallback,exact-name match
+DDInter889,Hydroflumethiazide,DB00774,Hydroflumethiazide,3016,exact normalized-name fallback,exact-name match
+DDInter89,Ampicillin,DB00415,Ampicillin,2950,exact normalized-name fallback,exact-name match
+DDInter890,Hydromorphone,DB00327,Hydromorphone,2940,exact normalized-name fallback,exact-name match
+DDInter891,Hydroxocobalamin,DB00200,Hydroxocobalamin,2889,exact normalized-name fallback,exact-name match
+DDInter892,Hydroxyamphetamine (ophthalmic),,,,none,unmapped
+DDInter893,Hydroxychloroquine,DB01611,Hydroxychloroquine,3130,exact normalized-name fallback,exact-name match
+DDInter894,Hydroxyurea,DB01005,Hydroxyurea,3917,exact normalized-name fallback,exact-name match
+DDInter895,Hydroxyzine,DB00557,Hydroxyzine,2976,exact normalized-name fallback,exact-name match
+DDInter896,Hyoscyamine,DB00424,Hyoscyamine,4840,exact normalized-name fallback,exact-name match
+DDInter897,Ibandronate,DB00710,Ibandronate,6513,exact normalized-name fallback,exact-name match
+DDInter898,Ibritumomab tiuxetan,DB00078,Ibritumomab tiuxetan,5010,exact normalized-name fallback,exact-name match
+DDInter899,Ibrutinib,DB09053,Ibrutinib,3194,exact normalized-name fallback,exact-name match
+DDInter9,Acalabrutinib,DB11703,Acalabrutinib,3233,exact normalized-name fallback,exact-name match
+DDInter90,Amprenavir,DB00701,Amprenavir,3749,exact normalized-name fallback,exact-name match
+DDInter900,Ibuprofen,DB01050,Ibuprofen,3070,exact normalized-name fallback,exact-name match
+DDInter901,Ibutilide,DB00308,Ibutilide,5085,exact normalized-name fallback,exact-name match
+DDInter902,Icatibant,DB06196,Icatibant,7359,exact normalized-name fallback,exact-name match
+DDInter903,Icosapent,DB00159,Icosapent,2914,exact normalized-name fallback,exact-name match
+DDInter904,Idarubicin,DB01177,Idarubicin,3932,exact normalized-name fallback,exact-name match
+DDInter905,Idelalisib,DB09054,Idelalisib,3816,exact normalized-name fallback,exact-name match
+DDInter906,Ifosfamide,DB01181,Ifosfamide,3391,exact normalized-name fallback,exact-name match
+DDInter907,Iloperidone,DB04946,Iloperidone,3789,exact normalized-name fallback,exact-name match
+DDInter908,Iloprost,DB01088,Iloprost,5005,exact normalized-name fallback,exact-name match
+DDInter909,Imatinib,DB00619,Imatinib,2990,exact normalized-name fallback,exact-name match
+DDInter91,Amrinone,DB01427,Amrinone,6005,exact normalized-name fallback,exact-name match
+DDInter910,Imiglucerase,,,,none,unmapped
+DDInter911,Imipenem,DB01598,Imipenem,3580,exact normalized-name fallback,exact-name match
+DDInter912,Imipramine,DB00458,Imipramine,2956,exact normalized-name fallback,exact-name match
+DDInter913,Imiquimod,DB00724,Imiquimod,4244,exact normalized-name fallback,exact-name match
+DDInter914,Imiquimod (topical),,,,none,unmapped
+DDInter915,Indacaterol,DB05039,Indacaterol,4329,exact normalized-name fallback,exact-name match
+DDInter916,Indapamide,DB00808,Indapamide,3023,exact normalized-name fallback,exact-name match
+DDInter917,Indinavir,DB00224,Indinavir,3722,exact normalized-name fallback,exact-name match
+DDInter918,Indium In-111 oxyquinoline,,,,none,unmapped
+DDInter919,Indium In-111 pentetate,,,,none,unmapped
+DDInter92,Amyl Nitrite,DB01612,Amyl Nitrite,3419,exact normalized-name fallback,exact-name match
+DDInter920,Indium In-111 pentetreotide,,,,none,unmapped
+DDInter921,Indomethacin,DB00328,Indomethacin,2941,exact normalized-name fallback,exact-name match
+DDInter922,Inebilizumab,DB12530,Inebilizumab,8428,exact normalized-name fallback,exact-name match
+DDInter923,Infliximab,DB00065,Infliximab,6368,exact normalized-name fallback,exact-name match
+DDInter924,Influenza A virus A/California/7/2009 (H1N1)-like antigen (propiolactone inactivated),,,,none,unmapped
+DDInter925,Influenza A virus A/Vietnam/1194/2004 (H5N1) antigen (formaldehyde inactivated),,,,none,unmapped
+DDInter926,Inotersen,DB14713,Inotersen,9218,exact normalized-name fallback,exact-name match
+DDInter927,Inotuzumab ozogamicin,DB05889,Inotuzumab ozogamicin,5341,exact normalized-name fallback,exact-name match
+DDInter928,Insulin aspart (aspart protamine),,,,none,unmapped
+DDInter929,Insulin aspart (aspart),,,,none,unmapped
+DDInter93,Anagrelide,DB00261,Anagrelide,4073,exact normalized-name fallback,exact-name match
+DDInter930,Insulin degludec,DB09564,Insulin degludec,3218,exact normalized-name fallback,exact-name match
+DDInter931,Insulin detemir,DB01307,Insulin detemir,3112,exact normalized-name fallback,exact-name match
+DDInter932,Insulin glargine,DB00047,Insulin glargine,4066,exact normalized-name fallback,exact-name match
+DDInter933,Insulin glulisine,DB01309,Insulin glulisine,4115,exact normalized-name fallback,exact-name match
+DDInter934,Insulin human,DB00030,Insulin human,3582,exact normalized-name fallback,exact-name match
+DDInter935,"Insulin human (inhalation, rapid acting)",,,,none,unmapped
+DDInter936,Insulin human (isophane),,,,none,unmapped
+DDInter937,Insulin human (regular),,,,none,unmapped
+DDInter938,Insulin human (zinc extended),,,,none,unmapped
+DDInter939,Insulin human (zinc),,,,none,unmapped
+DDInter94,Anakinra,DB00026,Anakinra,6181,exact normalized-name fallback,exact-name match
+DDInter940,Insulin lispro,DB00046,Insulin lispro,4065,exact normalized-name fallback,exact-name match
+DDInter941,Insulin lispro (protamine),,,,none,unmapped
+DDInter942,"Interferon alfa-2a, Recombinant",DB00034,"Interferon alfa-2a, Recombinant",4064,exact normalized-name fallback,exact-name match
+DDInter943,Interferon alfa-2b,DB00105,Interferon alfa-2b,4071,exact normalized-name fallback,exact-name match
+DDInter944,Interferon alfa-n1,DB00011,Interferon alfa-n1,4061,exact normalized-name fallback,exact-name match
+DDInter945,Interferon alfa-n3,DB00018,Interferon alfa-n3,4062,exact normalized-name fallback,exact-name match
+DDInter946,Interferon alfacon-1,DB00069,Interferon alfacon-1,4069,exact normalized-name fallback,exact-name match
+DDInter947,Interferon beta-1a,DB00060,Interferon beta-1a,4067,exact normalized-name fallback,exact-name match
+DDInter948,Interferon beta-1b,DB00068,Interferon beta-1b,4068,exact normalized-name fallback,exact-name match
+DDInter949,Interferon gamma-1b,DB00033,Interferon gamma-1b,4063,exact normalized-name fallback,exact-name match
+DDInter95,Anastrozole,DB01217,Anastrozole,3780,exact normalized-name fallback,exact-name match
+DDInter950,Inulin,,,,none,unmapped
+DDInter951,Iobenguane (I-123),,,,none,unmapped
+DDInter952,Iobenguane (I-131),,,,none,unmapped
+DDInter953,Iodide I-123,,,,none,unmapped
+DDInter954,Iodide I-131,DB09293,Iodide I-131,10287,exact normalized-name fallback,exact-name match
+DDInter955,Iodine,,,,none,unmapped
+DDInter956,Iodine (topical),,,,none,unmapped
+DDInter957,Iodipamide,DB04711,Iodipamide,3148,exact normalized-name fallback,exact-name match
+DDInter958,Iodixanol,DB01249,Iodixanol,9572,exact normalized-name fallback,exact-name match
+DDInter959,Ioflupane I-123,DB08824,Ioflupane I-123,9009,exact normalized-name fallback,exact-name match
+DDInter960,Iohexol,DB01362,Iohexol,10400,exact normalized-name fallback,exact-name match
+DDInter961,Iopamidol,DB08947,Iopamidol,10401,exact normalized-name fallback,exact-name match
+DDInter962,Iopanoic acid,,,,none,unmapped
+DDInter963,Iopodic acid,,,,none,unmapped
+DDInter964,Iopromide,DB09156,Iopromide,9589,exact normalized-name fallback,exact-name match
+DDInter965,Iothalamic acid,DB09133,Iothalamic acid,9585,exact normalized-name fallback,exact-name match
+DDInter966,Ioversol,DB09134,Ioversol,9586,exact normalized-name fallback,exact-name match
+DDInter967,Ioxilan,DB09135,Ioxilan,9587,exact normalized-name fallback,exact-name match
+DDInter968,Ipecac,DB13293,Ipecac,4039,exact normalized-name fallback,exact-name match
+DDInter969,Ipilimumab,DB06186,Ipilimumab,6774,exact normalized-name fallback,exact-name match
+DDInter97,Anidulafungin,DB00362,Anidulafungin,9216,exact normalized-name fallback,exact-name match
+DDInter970,Ipratropium,DB00332,Ipratropium,2942,exact normalized-name fallback,exact-name match
+DDInter971,Ipratropium (nasal),,,,none,unmapped
+DDInter972,Irbesartan,DB01029,Irbesartan,3065,exact normalized-name fallback,exact-name match
+DDInter973,Irinotecan,DB00762,Irinotecan,3014,exact normalized-name fallback,exact-name match
+DDInter974,Irinotecan (liposomal),,,,none,unmapped
+DDInter975,Iron,DB01592,Iron,5124,exact normalized-name fallback,exact-name match
+DDInter976,Iron Dextran,DB00893,Iron Dextran,2897,exact normalized-name fallback,exact-name match
+DDInter977,Iron protein succinylate,,,,none,unmapped
+DDInter978,Iron sucrose,DB09146,Iron sucrose,9322,exact normalized-name fallback,exact-name match
+DDInter979,Isatuximab,DB14811,Isatuximab,8942,exact normalized-name fallback,exact-name match
+DDInter98,Anisindione,,,,none,unmapped
+DDInter980,Isavuconazonium,DB06636,Isavuconazonium,4356,exact normalized-name fallback,exact-name match
+DDInter981,Isocarboxazid,DB01247,Isocarboxazid,8005,exact normalized-name fallback,exact-name match
+DDInter982,Isoetharine,DB00221,Isoetharine,5312,exact normalized-name fallback,exact-name match
+DDInter983,Isoflurane,DB00753,Isoflurane,3011,exact normalized-name fallback,exact-name match
+DDInter984,Isoflurophate (ophthalmic),,,,none,unmapped
+DDInter985,Isometheptene,DB06706,Isometheptene,5140,exact normalized-name fallback,exact-name match
+DDInter986,Isoniazid,DB00951,Isoniazid,3050,exact normalized-name fallback,exact-name match
+DDInter987,Isoprenaline,DB01064,Isoprenaline,4651,exact normalized-name fallback,exact-name match
+DDInter988,Isosorbide,DB09401,Isosorbide,5502,exact normalized-name fallback,exact-name match
+DDInter989,Isosorbide dinitrate,DB00883,Isosorbide dinitrate,4604,exact normalized-name fallback,exact-name match
+DDInter99,Anistreplase,DB00029,Anistreplase,5374,exact normalized-name fallback,exact-name match
+DDInter990,Isosorbide mononitrate,DB01020,Isosorbide mononitrate,3371,exact normalized-name fallback,exact-name match
+DDInter991,Isotretinoin,DB00982,Isotretinoin,3054,exact normalized-name fallback,exact-name match
+DDInter992,Isoxsuprine,DB08941,Isoxsuprine,9270,exact normalized-name fallback,exact-name match
+DDInter993,Isradipine,DB00270,Isradipine,4209,exact normalized-name fallback,exact-name match
+DDInter994,Istradefylline,DB11757,Istradefylline,3235,exact normalized-name fallback,exact-name match
+DDInter995,Itraconazole,DB01167,Itraconazole,3775,exact normalized-name fallback,exact-name match
+DDInter996,Ivabradine,DB09083,Ivabradine,4398,exact normalized-name fallback,exact-name match
+DDInter997,Ivacaftor,DB08820,Ivacaftor,3183,exact normalized-name fallback,exact-name match
+DDInter998,Ivermectin,DB00602,Ivermectin,4233,exact normalized-name fallback,exact-name match
+DDInter999,Ivermectin (topical),,,,none,unmapped

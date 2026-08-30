@@ -1,0 +1,17 @@
+{
+  "ranking_convention": "optimistic strict rank: 1 + count(filtered candidate score > target score)",
+  "target_tie_count_definition": "Number of target-restored available candidates exactly equal to the target score, including the target.",
+  "directional_query_count": 77020,
+  "queries_with_target_score_ties": 4,
+  "proportion_with_target_score_ties": 5.193456245131135e-05,
+  "queries_without_tied_competitors": 77016,
+  "maximum_target_tie_count": 2,
+  "mean_target_tie_count": 1.0000519345624512,
+  "minimum_unique_available_scores": 1784,
+  "maximum_unique_available_scores": 4276,
+  "mean_unique_available_scores": 3298.8742664243055,
+  "target_tie_count_histogram": {
+    "1": 77016,
+    "2": 4
+  }
+}

@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="820" viewBox="0 0 1440 820">
+<rect width="100%" height="100%" fill="#FFFFFF"/>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#18212B}.title{font-size:28px;font-weight:700}.subtitle{font-size:16px;fill:#4B5563}.axis{font-size:14px;fill:#4B5563}.label{font-size:14px;font-weight:600}.value{font-size:12px;font-weight:600}.panel{font-size:18px;font-weight:700}.caption{font-size:14px;fill:#374151}</style>
+<text x="720" y="42" text-anchor="middle" class="title">G3 ranking performance across internal and PrimeKG-absent cohorts</text>
+<text x="720" y="72" text-anchor="middle" class="subtitle">MRR and filtered Hits@K; raw ranking metrics, not probabilities</text>
+<text x="100" y="110" class="panel">A. Full comparison</text>
+<line x1="100" y1="135" x2="100" y2="635" stroke="#263238" stroke-width="1.4"/>
+<line x1="100" y1="635" x2="860" y2="635" stroke="#263238" stroke-width="1.4"/>
+<line x1="100" y1="635.00" x2="860" y2="635.00" stroke="#D7DDE3" stroke-width="1"/>
+<text x="88" y="640.00" text-anchor="end" class="axis">0.00</text>
+<line x1="100" y1="558.08" x2="860" y2="558.08" stroke="#D7DDE3" stroke-width="1"/>
+<text x="88" y="563.08" text-anchor="end" class="axis">0.10</text>
+<line x1="100" y1="481.15" x2="860" y2="481.15" stroke="#D7DDE3" stroke-width="1"/>
+<text x="88" y="486.15" text-anchor="end" class="axis">0.20</text>
+<line x1="100" y1="404.23" x2="860" y2="404.23" stroke="#D7DDE3" stroke-width="1"/>
+<text x="88" y="409.23" text-anchor="end" class="axis">0.30</text>
+<line x1="100" y1="327.31" x2="860" y2="327.31" stroke="#D7DDE3" stroke-width="1"/>
+<text x="88" y="332.31" text-anchor="end" class="axis">0.40</text>
+<line x1="100" y1="250.38" x2="860" y2="250.38" stroke="#D7DDE3" stroke-width="1"/>
+<text x="88" y="255.38" text-anchor="end" class="axis">0.50</text>
+<line x1="100" y1="173.46" x2="860" y2="173.46" stroke="#D7DDE3" stroke-width="1"/>
+<text x="88" y="178.46" text-anchor="end" class="axis">0.60</text>
+<text x="195.00" y="663" text-anchor="middle" class="label">MRR</text>
+<rect x="125.00" y="224.07" width="42" height="410.93" rx="3" fill="#3568A8"/>
+<text x="146.00" y="218.07" text-anchor="middle" class="value">0.534</text>
+<rect x="174.00" y="622.51" width="42" height="12.49" rx="3" fill="#E08B32"/>
+<text x="195.00" y="616.51" text-anchor="middle" class="value">0.016</text>
+<rect x="223.00" y="625.70" width="42" height="9.30" rx="3" fill="#2A8C82"/>
+<text x="244.00" y="619.70" text-anchor="middle" class="value">0.012</text>
+<text x="385.00" y="663" text-anchor="middle" class="label">Hits@1</text>
+<rect x="315.00" y="260.93" width="42" height="374.07" rx="3" fill="#3568A8"/>
+<text x="336.00" y="254.93" text-anchor="middle" class="value">0.486</text>
+<rect x="364.00" y="630.22" width="42" height="4.78" rx="3" fill="#E08B32"/>
+<text x="385.00" y="624.22" text-anchor="middle" class="value">0.006</text>
+<rect x="413.00" y="632.35" width="42" height="2.65" rx="3" fill="#2A8C82"/>
+<text x="434.00" y="626.35" text-anchor="middle" class="value">0.003</text>
+<text x="575.00" y="663" text-anchor="middle" class="label">Hits@5</text>
+<rect x="505.00" y="188.49" width="42" height="446.51" rx="3" fill="#3568A8"/>
+<text x="526.00" y="182.49" text-anchor="middle" class="value">0.580</text>
+<rect x="554.00" y="621.59" width="42" height="13.41" rx="3" fill="#E08B32"/>
+<text x="575.00" y="615.59" text-anchor="middle" class="value">0.017</text>
+<rect x="603.00" y="625.58" width="42" height="9.42" rx="3" fill="#2A8C82"/>
+<text x="624.00" y="619.58" text-anchor="middle" class="value">0.012</text>
+<text x="765.00" y="663" text-anchor="middle" class="label">Hits@10</text>
+<rect x="695.00" y="159.56" width="42" height="475.44" rx="3" fill="#3568A8"/>
+<text x="716.00" y="153.56" text-anchor="middle" class="value">0.618</text>
+<rect x="744.00" y="614.04" width="42" height="20.96" rx="3" fill="#E08B32"/>
+<text x="765.00" y="608.04" text-anchor="middle" class="value">0.027</text>
+<rect x="793.00" y="618.55" width="42" height="16.45" rx="3" fill="#2A8C82"/>
+<text x="814.00" y="612.55" text-anchor="middle" class="value">0.021</text>
+<text x="960" y="110" class="panel">B. External-pilot zoom</text>
+<line x1="960" y1="135" x2="960" y2="635" stroke="#263238" stroke-width="1.4"/>
+<line x1="960" y1="635" x2="1350" y2="635" stroke="#263238" stroke-width="1.4"/>
+<line x1="960" y1="635.00" x2="1350" y2="635.00" stroke="#D7DDE3" stroke-width="1"/>
+<text x="948" y="640.00" text-anchor="end" class="axis">0.00</text>
+<line x1="960" y1="551.67" x2="1350" y2="551.67" stroke="#D7DDE3" stroke-width="1"/>
+<text x="948" y="556.67" text-anchor="end" class="axis">0.01</text>
+<line x1="960" y1="468.33" x2="1350" y2="468.33" stroke="#D7DDE3" stroke-width="1"/>
+<text x="948" y="473.33" text-anchor="end" class="axis">0.01</text>
+<line x1="960" y1="385.00" x2="1350" y2="385.00" stroke="#D7DDE3" stroke-width="1"/>
+<text x="948" y="390.00" text-anchor="end" class="axis">0.01</text>
+<line x1="960" y1="301.67" x2="1350" y2="301.67" stroke="#D7DDE3" stroke-width="1"/>
+<text x="948" y="306.67" text-anchor="end" class="axis">0.02</text>
+<line x1="960" y1="218.33" x2="1350" y2="218.33" stroke="#D7DDE3" stroke-width="1"/>
+<text x="948" y="223.33" text-anchor="end" class="axis">0.03</text>
+<line x1="960" y1="135.00" x2="1350" y2="135.00" stroke="#D7DDE3" stroke-width="1"/>
+<text x="948" y="140.00" text-anchor="end" class="axis">0.03</text>
+<text x="1008.75" y="663" text-anchor="middle" class="label">MRR</text>
+<rect x="971.75" y="364.38" width="34" height="270.62" rx="3" fill="#E08B32"/>
+<text x="988.75" y="358.38" text-anchor="middle" class="value">0.016</text>
+<rect x="1011.75" y="433.53" width="34" height="201.47" rx="3" fill="#2A8C82"/>
+<text x="1028.75" y="427.53" text-anchor="middle" class="value">0.012</text>
+<text x="1106.25" y="663" text-anchor="middle" class="label">Hits@1</text>
+<rect x="1069.25" y="531.35" width="34" height="103.65" rx="3" fill="#E08B32"/>
+<text x="1086.25" y="525.35" text-anchor="middle" class="value">0.006</text>
+<rect x="1109.25" y="577.64" width="34" height="57.36" rx="3" fill="#2A8C82"/>
+<text x="1126.25" y="571.64" text-anchor="middle" class="value">0.003</text>
+<text x="1203.75" y="663" text-anchor="middle" class="label">Hits@5</text>
+<rect x="1166.75" y="344.38" width="34" height="290.62" rx="3" fill="#E08B32"/>
+<text x="1183.75" y="338.38" text-anchor="middle" class="value">0.017</text>
+<rect x="1206.75" y="430.85" width="34" height="204.15" rx="3" fill="#2A8C82"/>
+<text x="1223.75" y="424.85" text-anchor="middle" class="value">0.012</text>
+<text x="1301.25" y="663" text-anchor="middle" class="label">Hits@10</text>
+<rect x="1264.25" y="180.79" width="34" height="454.21" rx="3" fill="#E08B32"/>
+<text x="1281.25" y="174.79" text-anchor="middle" class="value">0.027</text>
+<rect x="1304.25" y="278.62" width="34" height="356.38" rx="3" fill="#2A8C82"/>
+<text x="1321.25" y="272.62" text-anchor="middle" class="value">0.021</text>
+<rect x="100" y="680" width="20" height="14" rx="2" fill="#3568A8"/>
+<text x="130" y="693" class="axis">PrimeKG internal</text>
+<rect x="450" y="680" width="20" height="14" rx="2" fill="#E08B32"/>
+<text x="480" y="693" class="axis">Kaggle source-consistency</text>
+<rect x="800" y="680" width="20" height="14" rx="2" fill="#2A8C82"/>
+<text x="830" y="693" class="axis">DDInter external robustness</text>
+<text x="720" y="745" text-anchor="middle" class="caption">PrimeKG bars are the internal G3 five-seed mean; Kaggle and DDInter bars are G3 seed-44 pilots.</text>
+<text x="720" y="770" text-anchor="middle" class="caption">The cohorts are descriptively informative but not statistically equivalent; no single-seed error bars are shown.</text>
+</svg>

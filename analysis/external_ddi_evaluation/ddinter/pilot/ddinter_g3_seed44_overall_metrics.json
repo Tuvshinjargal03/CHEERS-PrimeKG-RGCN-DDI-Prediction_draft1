@@ -1,0 +1,63 @@
+{
+  "generated_utc": "2026-08-30T15:45:46.984241+00:00",
+  "experiment": "G3 seed-44 DDInter external-ranking pilot",
+  "interpretation_scope": "Secondary external robustness pilot; not a full G0-G3 comparison.",
+  "evaluated_set": "DDInter interactions absent from the PrimeKG snapshot used for training/evaluation.",
+  "model": {
+    "graph": "G3",
+    "seed": 44,
+    "best_epoch": 499,
+    "candidate_count": 4278,
+    "decoder": "DistMult-style raw ranking score; not a probability"
+  },
+  "input_hashes_sha256": {
+    "cohort": "a63c11610075734b18cbc4fa35f19015caebeadacfa29f83f855aa3711ceca36",
+    "mapped_pair_review": "73cd0cb913801956480d4b28569dcfc8dbdc50652e40375170ac3ca220c506b6",
+    "embeddings": "1bde47026e0d6fcfbb2de772b62280bd67df1fc7a3404672bfcdfc2b603de442",
+    "known_mask": "c87cc2e0ab2eac70c2aa98fc995853bf5c6e97ef0ef7881568b550d924120d37",
+    "metadata": "8020ae748baa567d08487c148ba851763fcac54601c183dd6803b587974d857b",
+    "checkpoint": "d4df7c845fe65b175afdfdc8512fe466451029c682a2a34f9d52a84b35811d50"
+  },
+  "input_verification": {
+    "pair_count": 49105,
+    "directional_query_count": 98210,
+    "all_known_overlap_flags_false": true,
+    "all_endpoints_in_candidate_vocabulary": true,
+    "self_pairs": 0,
+    "duplicate_symmetric_pairs": 0,
+    "severity_counts": {
+      "Major": 5876,
+      "Minor": 2402,
+      "Moderate": 26058,
+      "Unknown": 14769
+    },
+    "all_pairs_absent_from_complete_primekg_known_mask": true
+  },
+  "filtering": {
+    "query_self": true,
+    "complete_primekg_known_positive_partners": true,
+    "all_other_mapped_ddinter_positive_partners": true,
+    "current_target_restored": true
+  },
+  "ranking_convention": "1 + number of available candidates with score strictly greater than target score",
+  "pair_count": 49105,
+  "directional_query_count": 98210,
+  "metrics": {
+    "MRR": 0.01208824286870454,
+    "Hits@1": 0.0034416047245697996,
+    "Hits@5": 0.012249261785968843,
+    "Hits@10": 0.021382751247327157,
+    "MeanRank": 1113.2549740352306,
+    "MedianRank": 776,
+    "MinRank": 1,
+    "MaxRank": 4243
+  },
+  "output_verification": {
+    "directional_rows": 98210,
+    "every_pair_appears_once_in_each_direction": true,
+    "all_ranks_within_1_and_4278": true,
+    "no_target_accidentally_filtered": true,
+    "all_scores_finite": true,
+    "severity_counts_reconstruct_pairs": true
+  }
+}

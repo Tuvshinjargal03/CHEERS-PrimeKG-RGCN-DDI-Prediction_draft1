@@ -1,0 +1,21 @@
+Graph,Seed,Checkpoint_found,Loads,Candidate_embeddings,Correct_node_vocabulary,Correct_DDI_decoder,Compatible_with_4278_candidates,Sufficient_without_retraining,External_evaluation_possible,Notes
+G0,42,no,n/a,no,no,no,no,no,no,Checkpoint missing.
+G0,43,no,n/a,no,no,no,no,no,no,Checkpoint missing.
+G0,44,no,n/a,no,no,no,no,no,no,Checkpoint missing.
+G0,45,no,n/a,no,no,no,no,no,no,Checkpoint missing.
+G0,46,no,n/a,no,no,no,no,no,no,Checkpoint missing.
+G1,42,no,n/a,no,no,no,no,no,no,Checkpoint missing.
+G1,43,no,n/a,no,no,no,no,no,no,Checkpoint missing.
+G1,44,no,n/a,no,no,no,no,no,no,Checkpoint missing.
+G1,45,no,n/a,no,no,no,no,no,no,Checkpoint missing.
+G1,46,no,n/a,no,no,no,no,no,no,Checkpoint missing.
+G2,42,no,n/a,no,no,no,no,no,no,Checkpoint missing.
+G2,43,no,n/a,no,no,no,no,no,no,Checkpoint missing.
+G2,44,no,n/a,no,no,no,no,no,no,Checkpoint missing.
+G2,45,no,n/a,no,no,no,no,no,no,Checkpoint missing.
+G2,46,no,n/a,no,no,no,no,no,no,Checkpoint missing.
+G3,42,no,n/a,no,no,no,no,no,no,Checkpoint missing.
+G3,43,no,n/a,no,no,no,no,no,no,Checkpoint missing.
+G3,44,yes,yes,not recomputed; verified 4278x128 NumPy export available,yes (13094 nodes),yes (128-d relation vector),yes,yes,yes,Checkpoint loads; graph/vocabulary/decoder shapes match; verified NumPy embeddings also available.
+G3,45,no,n/a,no,no,no,no,no,no,Checkpoint missing.
+G3,46,no,n/a,no,no,no,no,no,no,Checkpoint missing.

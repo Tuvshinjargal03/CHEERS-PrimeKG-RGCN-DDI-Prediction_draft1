@@ -1,0 +1,4 @@
+cohort,role,graph,seed_scope,pairs,directional_queries,MRR,Hits@1,Hits@5,Hits@10,MeanRank,MedianRank,interpretation
+PrimeKG internal,internal benchmark,G3,five-seed mean (42-46),,,0.534209,0.48629,0.580468,0.618074,,,Internal five-seed mean; mean and median rank unavailable in the approved comparison context.
+Kaggle source-consistency,DrugBank-derived source-consistency control,G3,seed 44 pilot,38510,77020,0.01623748171225116,0.006219163853544534,0.017437029343027786,0.02725266164632563,1142.5726564528693,792,DrugBank-derived control; not independent external validation.
+DDInter external robustness,primary external robustness benchmark,G3,seed 44 pilot,49105,98210,0.01208824286870454,0.0034416047245697996,0.012249261785968843,0.021382751247327157,1113.2549740352306,776,Primary external robustness pilot; exact-name fallback mapping.

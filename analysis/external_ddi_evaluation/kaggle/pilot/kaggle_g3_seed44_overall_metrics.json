@@ -1,0 +1,90 @@
+{
+  "generated_utc": "2026-08-30T15:53:55.886968+00:00",
+  "experiment": "G3 seed-44 Kaggle/DrugBank-derived source-consistency ranking pilot",
+  "interpretation_scope": "Source-consistency control, not independent external validation.",
+  "evaluated_set": "Kaggle/DrugBank-derived interactions absent from the PrimeKG snapshot.",
+  "model": {
+    "graph": "G3",
+    "seed": 44,
+    "best_epoch": 499,
+    "candidate_count": 4278,
+    "decoder": "DistMult-style raw ranking score; not a probability"
+  },
+  "input_hashes_sha256": {
+    "kaggle_source": "95d8399aa9c7479001f90400fbd91c6260cbfe517b22d5153a2b031f39b11328",
+    "embeddings": "1bde47026e0d6fcfbb2de772b62280bd67df1fc7a3404672bfcdfc2b603de442",
+    "known_mask": "c87cc2e0ab2eac70c2aa98fc995853bf5c6e97ef0ef7881568b550d924120d37",
+    "metadata": "8020ae748baa567d08487c148ba851763fcac54601c183dd6803b587974d857b",
+    "checkpoint": "d4df7c845fe65b175afdfdc8512fe466451029c682a2a34f9d52a84b35811d50",
+    "g3_graph": "ee77876d767ac5d92e9657f3dd7c582e02598c2736feb124a3dfbe7d67ead5d3",
+    "ddinter_result": "ee51e20a2805c0af0e66972fa4eac79c45fa18a2f5e62e71e030e2f1e9c75a7c"
+  },
+  "cohort_rebuild": {
+    "physical_rows": 191541,
+    "unique_symmetric_pairs": 191135,
+    "duplicate_rows_beyond_unique_pairs": 406,
+    "unique_drugs": 1701,
+    "drug_mapping_categories": {
+      "exact-name match": 1662,
+      "unmapped": 39,
+      "ambiguous / unsafe": 0
+    },
+    "pair_mapping_categories": {
+      "both mapped": 188271,
+      "one mapped": 2855,
+      "neither mapped": 9
+    },
+    "mapped_model_pairs": 188271,
+    "self_pairs_excluded": 0,
+    "training_overlap": 119706,
+    "complete_known_positive_overlap": 149761,
+    "absent_from_complete_primekg_snapshot": 38510
+  },
+  "filtering": {
+    "query_self": true,
+    "complete_primekg_known_positive_partners": true,
+    "all_other_mapped_kaggle_positive_partners": true,
+    "current_target_restored": true
+  },
+  "ranking_convention": "1 + number of available candidates with score strictly greater than target score",
+  "pair_count": 38510,
+  "directional_query_count": 77020,
+  "metrics": {
+    "MRR": 0.01623748171225116,
+    "Hits@1": 0.006219163853544534,
+    "Hits@5": 0.017437029343027786,
+    "Hits@10": 0.02725266164632563,
+    "MeanRank": 1142.5726564528693,
+    "MedianRank": 792,
+    "MinRank": 1,
+    "MaxRank": 4191
+  },
+  "comparison_context": {
+    "PrimeKG_internal_G3_five_seed_mean": {
+      "MRR": 0.534209,
+      "Hits@1": 0.48629,
+      "Hits@5": 0.580468,
+      "Hits@10": 0.618074
+    },
+    "DDInter_external_G3_seed44_pilot": {
+      "MRR": 0.01208824286870454,
+      "Hits@1": 0.0034416047245697996,
+      "Hits@5": 0.012249261785968843,
+      "Hits@10": 0.021382751247327157
+    },
+    "Kaggle_source_consistency_G3_seed44_pilot": {
+      "MRR": 0.01623748171225116,
+      "Hits@1": 0.006219163853544534,
+      "Hits@5": 0.017437029343027786,
+      "Hits@10": 0.02725266164632563
+    }
+  },
+  "output_verification": {
+    "directional_rows": 77020,
+    "every_pair_appears_once_in_each_direction": true,
+    "all_ranks_within_1_and_4278": true,
+    "all_targets_absent_from_complete_primekg_known_mask": true,
+    "no_target_accidentally_filtered": true,
+    "all_scores_finite": true
+  }
+}
