@@ -13,6 +13,8 @@ const SECTION_NAMES = {
   precautions: 'Precautions',
 }
 
+const INITIAL_LABEL_EXCERPTS = 8
+
 function validPubMedUrl(value) {
   try {
     const url = new URL(value)
@@ -34,6 +36,7 @@ export default function Evidence() {
   const [resolving, setResolving] = useState(Boolean(initialAId || initialBId))
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showAllExcerpts, setShowAllExcerpts] = useState(false)
 
   useEffect(() => {
     if (!initialAId && !initialBId) return undefined
@@ -69,6 +72,7 @@ export default function Evidence() {
     setLoading(true)
     setError('')
     setData(null)
+    setShowAllExcerpts(false)
     try {
       setData(await getJson(pairEndpoint('/api/evidence/pair', drugA.entity_id, drugB.entity_id)))
     } catch (requestError) {
@@ -80,6 +84,9 @@ export default function Evidence() {
 
   const labelEvidence = data?.label_evidence
   const evidenceItems = labelEvidence?.pair_evidence || []
+  const visibleEvidenceItems = showAllExcerpts
+    ? evidenceItems
+    : evidenceItems.slice(0, INITIAL_LABEL_EXCERPTS)
   const literature = data?.literature
   const papers = literature?.papers || []
   const fdaUnavailable = labelEvidence && [labelEvidence.drug_a?.status, labelEvidence.drug_b?.status].some((status) => status === 'error')
@@ -98,8 +105,8 @@ export default function Evidence() {
       </div>
 
       <form className="pair-form" onSubmit={loadEvidence}>
-        <DrugAutocomplete label="Drug A" selection={drugA} onSelect={(value) => { setDrugA(value); setData(null); setError('') }} disabled={resolving} />
-        <DrugAutocomplete label="Drug B" selection={drugB} onSelect={(value) => { setDrugB(value); setData(null); setError('') }} disabled={resolving} />
+        <DrugAutocomplete label="Drug A" selection={drugA} onSelect={(value) => { setDrugA(value); setData(null); setShowAllExcerpts(false); setError('') }} disabled={resolving} />
+        <DrugAutocomplete label="Drug B" selection={drugB} onSelect={(value) => { setDrugB(value); setData(null); setShowAllExcerpts(false); setError('') }} disabled={resolving} />
         <button className="primary-button" type="submit" disabled={!pairReady || loading || resolving}>
           {loading || resolving ? <LoaderCircle className="spin" size={18} /> : <FileSearch size={18} />}
           {loading ? 'Retrieving sources…' : 'Review evidence'}
@@ -121,7 +128,10 @@ export default function Evidence() {
             <article className="external-source-card">
               <span>External supporting evidence</span>
               <h2>openFDA + PubMed</h2>
-              <strong>{evidenceItems.length + papers.length} retrieved items</strong>
+              <div className="evidence-source-counts">
+                <strong>{evidenceItems.length.toLocaleString()} label excerpts</strong>
+                <strong>{papers.length.toLocaleString()} PubMed records</strong>
+              </div>
               <p>{data.ai_context?.note}</p>
             </article>
           </div>
@@ -130,14 +140,27 @@ export default function Evidence() {
             <article className="evidence-panel">
               <div className="panel-title"><FileSearch size={21} /><div><span>Source: openFDA Drug Label</span><h2>Explicit label mentions</h2></div></div>
               {evidenceItems.length ? (
-                <div className="evidence-items">
-                  {evidenceItems.map((item, index) => (
-                    <details key={`${item.source_drug}-${item.section}-${index}`} open={index === 0}>
-                      <summary><strong>{item.source_drug} mentions {item.mentioned_drug}</strong><span>{SECTION_NAMES[item.section] || item.section}</span></summary>
-                      <blockquote>{item.snippet}</blockquote>
-                      <dl className="evidence-metadata"><div><dt>Section</dt><dd>{SECTION_NAMES[item.section] || item.section}</dd></div><div><dt>SPL Set ID</dt><dd>{item.spl_set_id || 'Not provided'}</dd></div><div><dt>Effective time</dt><dd>{item.effective_time || 'Not provided'}</dd></div></dl>
-                    </details>
-                  ))}
+                <div>
+                  <div className="evidence-items">
+                    {visibleEvidenceItems.map((item, index) => (
+                      <details key={`${item.source_drug}-${item.section}-${index}`} open={index === 0}>
+                        <summary><strong>{item.source_drug} mentions {item.mentioned_drug}</strong><span>{SECTION_NAMES[item.section] || item.section}</span></summary>
+                        <blockquote>{item.snippet}</blockquote>
+                        <dl className="evidence-metadata"><div><dt>Section</dt><dd>{SECTION_NAMES[item.section] || item.section}</dd></div><div><dt>SPL Set ID</dt><dd>{item.spl_set_id || 'Not provided'}</dd></div><div><dt>Effective time</dt><dd>{item.effective_time || 'Not provided'}</dd></div></dl>
+                      </details>
+                    ))}
+                  </div>
+                  {evidenceItems.length > INITIAL_LABEL_EXCERPTS && (
+                    <div className="evidence-list-control">
+                      <p>
+                        Showing {visibleEvidenceItems.length.toLocaleString()} of {evidenceItems.length.toLocaleString()} retrieved label excerpts.
+                        All excerpts remain available.
+                      </p>
+                      <button type="button" className="secondary-button" aria-expanded={showAllExcerpts} onClick={() => setShowAllExcerpts((current) => !current)}>
+                        {showAllExcerpts ? 'Show fewer excerpts' : `Show all ${evidenceItems.length.toLocaleString()} excerpts`}
+                      </button>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className={`source-state ${fdaUnavailable ? 'error' : ''}`}><strong>{fdaUnavailable ? 'FDA label retrieval was partially or fully unavailable.' : 'No explicit cross-drug label mention was retrieved.'}</strong><p>This does not establish that the pair is safe or that no interaction exists.</p></div>

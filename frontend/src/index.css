@@ -380,7 +380,7 @@ a {
 
 @media (max-width: 1000px) {
   .app-shell {
-    grid-template-columns: 82px minmax(0, 1fr);
+    grid-template-columns: 156px minmax(0, 1fr);
   }
 
   .sidebar {
@@ -388,18 +388,20 @@ a {
   }
 
   .brand {
-    justify-content: center;
+    gap: 8px;
     padding-inline: 0;
   }
 
-  .brand > div:last-child,
-  .nav-link span,
+  .brand > div:last-child span,
   .sidebar-footer > div {
     display: none;
   }
 
   .nav-link {
-    justify-content: center;
+    gap: 8px;
+    padding-inline: 9px;
+    font-size: 11px;
+    line-height: 1.2;
   }
 
   .sidebar-footer {
@@ -428,7 +430,17 @@ a {
   }
 
   .nav-link {
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
     min-height: 54px;
+    padding: 7px 4px;
+    text-align: center;
+  }
+
+  .nav-link span {
+    display: block;
+    font-size: 10px;
   }
 
   .sidebar-footer {
@@ -932,6 +944,11 @@ select:focus-visible {
   color: #667085;
   font-size: 12px;
   text-align: center;
+}
+
+.autocomplete-empty.error {
+  color: #b42318;
+  background: #fff6f5;
 }
 
 .select-field select {
@@ -1472,6 +1489,50 @@ select:focus-visible {
   color: #101828;
 }
 
+.workflow-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 18px;
+  padding: 18px 20px;
+  border: 1px solid #d9d6fe;
+  border-radius: 15px;
+  background: #f9f8ff;
+}
+
+.workflow-actions > div {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  color: #6941c6;
+}
+
+.workflow-actions p,
+.workflow-actions strong,
+.workflow-actions span {
+  display: block;
+}
+
+.workflow-actions p {
+  margin: 0;
+}
+
+.workflow-actions strong {
+  color: #344054;
+  font-size: 13px;
+}
+
+.workflow-actions span {
+  margin-top: 4px;
+  color: #667085;
+  font-size: 11px;
+}
+
+.workflow-actions .primary-button {
+  flex: 0 0 auto;
+}
+
 /* === EVIDENCE === */
 
 .evidence-separation-grid {
@@ -1510,6 +1571,20 @@ select:focus-visible {
 .external-source-card > strong {
   color: #344054;
   font-size: 24px;
+}
+
+.evidence-source-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.evidence-source-counts strong {
+  padding: 7px 10px;
+  border-radius: 9px;
+  background: #eff8ff;
+  color: #175cd3;
+  font-size: 13px;
 }
 
 .model-result-card p,
@@ -1616,6 +1691,27 @@ select:focus-visible {
 
 .evidence-metadata dt { color: #667085; }
 .evidence-metadata dd { margin: 0; color: #344054; overflow-wrap: anywhere; }
+
+.evidence-list-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #eaecf0;
+}
+
+.evidence-list-control p {
+  margin: 0;
+  color: #667085;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.evidence-list-control .secondary-button {
+  flex: 0 0 auto;
+}
 
 .paper-list > article {
   padding: 14px;
@@ -1884,6 +1980,17 @@ select:focus-visible {
   .graph-inspection-bar {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .workflow-actions,
+  .evidence-list-control {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .workflow-actions .primary-button,
+  .evidence-list-control .secondary-button {
+    width: 100%;
   }
 
   .cytoscape-canvas {
