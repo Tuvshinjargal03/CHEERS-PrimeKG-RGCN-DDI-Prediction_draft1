@@ -1,0 +1,84 @@
+{
+  "generated_utc": "2026-08-30T15:34:24.137665+00:00",
+  "scope": "Preparation only; no model encoding, scoring, evaluation, training, or retraining.",
+  "novel_definition": "Absent from the complete known-positive DDI set in this PrimeKG snapshot; not newly discovered or clinically novel.",
+  "mapping_policy": {
+    "authoritative_local_crosswalk_found": false,
+    "fuzzy_matching_used": false,
+    "fallback_normalization": "Unicode NFKC, trim, collapse whitespace, casefold",
+    "unsafe_entities": "Formulations, salts, combinations, and route-specific entities are not collapsed."
+  },
+  "ddinter": {
+    "physical_rows": 222383,
+    "unique_symmetric_pairs": 160235,
+    "duplicate_rows_across_partitions": 62148,
+    "severity_conflicts": 0,
+    "unique_drugs": 1939,
+    "crosswalk_categories": {
+      "authoritative ID match": 0,
+      "exact-name match": 1614,
+      "unmapped": 325,
+      "ambiguous / unsafe": 0
+    },
+    "pair_mapping_counts": {
+      "both mapped": 138358,
+      "one mapped": 20909,
+      "neither mapped": 968,
+      "ambiguous mappings excluded": 0,
+      "training overlap": 71241,
+      "any-known overlap": 89253,
+      "novel to PrimeKG snapshot": 49105
+    },
+    "severity_all_unique_pairs": {
+      "Major": 26914,
+      "Minor": 6833,
+      "Moderate": 96675,
+      "Unknown": 29813
+    },
+    "severity_novel_pairs": {
+      "Major": 5876,
+      "Minor": 2402,
+      "Moderate": 26058,
+      "Unknown": 14769
+    }
+  },
+  "primekg": {
+    "candidate_drugs": 4278,
+    "known_positive_undirected_pairs": 1336314,
+    "train_undirected_pairs": 1069080,
+    "heldout_union_pairs": 267234,
+    "g3_num_nodes": 13094,
+    "g3_num_relations": 15
+  },
+  "g3_runtime_compatibility": {
+    "candidate_embedding_shape": [
+      4278,
+      128
+    ],
+    "ddi_relation_shape": [
+      128
+    ],
+    "candidate_node_order_matches": true,
+    "external_scoring_executed": false
+  },
+  "split_availability": {
+    "ddi_val_pt_found": false,
+    "ddi_test_pt_found": false,
+    "validation_overlap": "unavailable without original ddi_val.pt",
+    "test_overlap": "unavailable without original ddi_test.pt",
+    "heldout_union_overlap": 18012
+  },
+  "external_set": {
+    "mapped_pairs": 138358,
+    "training_overlap": 71241,
+    "any_known_overlap": 89253,
+    "novel_to_primekg_snapshot": 49105,
+    "directional_queries_proposed": 98210
+  },
+  "checkpoint_decision": {
+    "G3_only_external_pilot_possible_now": true,
+    "full_G0_G3_external_comparison_without_retraining": false,
+    "five_seed_G0_G3_comparison_without_retraining": false,
+    "available_unique_checkpoint": "G3 seed 44"
+  }
+}

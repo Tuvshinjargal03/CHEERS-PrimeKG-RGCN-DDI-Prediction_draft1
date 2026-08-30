@@ -1,0 +1,52 @@
+{
+  "generated_utc": "2026-08-30T16:07:27.064383+00:00",
+  "source": "Frozen, previously verified pilot metric files; no scoring rerun.",
+  "statistical_boundary": "PrimeKG is a five-seed internal mean; Kaggle and DDInter are single-seed pilots. Values are descriptive and not statistically interchangeable.",
+  "rows": [
+    {
+      "cohort": "PrimeKG internal",
+      "role": "internal benchmark",
+      "graph": "G3",
+      "seed_scope": "five-seed mean (42-46)",
+      "pairs": null,
+      "directional_queries": null,
+      "MRR": 0.534209,
+      "Hits@1": 0.48629,
+      "Hits@5": 0.580468,
+      "Hits@10": 0.618074,
+      "MeanRank": null,
+      "MedianRank": null,
+      "interpretation": "Internal five-seed mean; mean and median rank unavailable in the approved comparison context."
+    },
+    {
+      "cohort": "Kaggle source-consistency",
+      "role": "DrugBank-derived source-consistency control",
+      "graph": "G3",
+      "seed_scope": "seed 44 pilot",
+      "pairs": 38510,
+      "directional_queries": 77020,
+      "MRR": 0.01623748171225116,
+      "Hits@1": 0.006219163853544534,
+      "Hits@5": 0.017437029343027786,
+      "Hits@10": 0.02725266164632563,
+      "MeanRank": 1142.5726564528693,
+      "MedianRank": 792,
+      "interpretation": "DrugBank-derived control; not independent external validation."
+    },
+    {
+      "cohort": "DDInter external robustness",
+      "role": "primary external robustness benchmark",
+      "graph": "G3",
+      "seed_scope": "seed 44 pilot",
+      "pairs": 49105,
+      "directional_queries": 98210,
+      "MRR": 0.01208824286870454,
+      "Hits@1": 0.0034416047245697996,
+      "Hits@5": 0.012249261785968843,
+      "Hits@10": 0.021382751247327157,
+      "MeanRank": 1113.2549740352306,
+      "MedianRank": 776,
+      "interpretation": "Primary external robustness pilot; exact-name fallback mapping."
+    }
+  ]
+}

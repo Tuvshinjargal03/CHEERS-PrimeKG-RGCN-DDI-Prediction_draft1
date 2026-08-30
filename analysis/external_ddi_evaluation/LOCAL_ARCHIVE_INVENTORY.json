@@ -1,0 +1,33 @@
+{
+  "scope": "Large external-evaluation artifacts preserved locally but excluded from Git tracking.",
+  "files": [
+    {
+      "original_relative_path": "ddinter/preparation/ddinter_mapped_pair_review.csv",
+      "size_bytes": 42064481,
+      "sha256": "73cd0cb913801956480d4b28569dcfc8dbdc50652e40375170ac3ca220c506b6",
+      "purpose": "Detailed audit table for all mapped DDInter pairs; superseded as an evaluator input by the tracked compact positive-filter universe.",
+      "required_to_reproduce_aggregate_results": false
+    },
+    {
+      "original_relative_path": "ddinter/preparation/ddinter_deduplicated_pairs.csv",
+      "size_bytes": 16346649,
+      "sha256": "cd4d9b6c2a973615c06834ec955bd25e6fa4755d2ba88af65833b14fe3575418",
+      "purpose": "Symmetrically deduplicated DDInter source-level pair table used during preparation review.",
+      "required_to_reproduce_aggregate_results": false
+    },
+    {
+      "original_relative_path": "ddinter/pilot/ddinter_g3_seed44_per_query.csv",
+      "size_bytes": 17096509,
+      "sha256": "fa067911127d37815eefcea69277a30707b3aaf3fa622379a4fd7ffda2502d9e",
+      "purpose": "Saved 98,210-row DDInter directional ranking output used for independent aggregate verification.",
+      "required_to_reproduce_aggregate_results": false
+    },
+    {
+      "original_relative_path": "kaggle/pilot/kaggle_g3_seed44_per_query.csv",
+      "size_bytes": 11179341,
+      "sha256": "dc2ea07489dd5b56695620376879efc77c7e62a46930a5278ec9eb91fb3f5b9d",
+      "purpose": "Saved 77,020-row Kaggle directional ranking output used for independent aggregate verification.",
+      "required_to_reproduce_aggregate_results": false
+    }
+  ]
+}
