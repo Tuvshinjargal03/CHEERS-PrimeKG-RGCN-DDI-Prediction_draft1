@@ -1,0 +1,301 @@
+Drug_A,Drug_B,Rank_G0,Rank_G1,Rank_G2,Rank_G3,Rank_Improvement
+Rhein,Mestranol,647,416,641,479,168
+Spironolactone,Sacubitril,368,400,358,395,-27
+Norethisterone,Fluindione,426,778,384,1169,-743
+Methylene blue,Brexanolone,464,597,602,551,-87
+Fluorouracil,Lofexidine,558,3085,975,1113,-555
+Corticotropin,Interferon alfa,186,116,180,81,105
+Eslicarbazepine,Alfaxalone,185,180,170,161,24
+Framycetin,Testolactone,74,75,75,75,-1
+Obinutuzumab,Indusatumab vedotin,102,106,100,104,-2
+Evening primrose oil,Nilutamide,231,239,237,241,-10
+Patent Blue,Oxyquinoline,63,62,64,63,0
+Lumateperone,Indalpine,501,546,526,517,-16
+Quinidine,Phenazocine,417,692,429,1715,-1298
+Fludiazepam,Ecopipam,212,206,211,204,8
+Montelukast,Norfloxacin,193,542,461,579,-386
+Indomethacin,Hydroxytyrosol,1213,862,1075,1260,-47
+Irinotecan,Tilmicosin,988,405,886,414,574
+Quinestrol,Lucatumumab,148,159,146,149,-1
+Felodipine,Clocortolone acetate,1081,782,969,1280,-199
+Vinorelbine,Cefradine,886,3309,3178,1914,-1028
+Salmeterol,Methyldopa,612,328,673,82,530
+Phenytoin,Mequitazine,1151,356,1043,272,879
+Armodafinil,Bortezomib,2,104,3,117,-115
+Bucindolol,Tinoridine,246,3641,233,3623,-3377
+Aripiprazole,Niaprazine,32,12,10,8,24
+Solifenacin,Ibutilide,1224,2065,1610,2960,-1736
+Pralatrexate,Efalizumab,753,3409,765,3479,-2726
+Ceftazidime,Latamoxef,117,116,114,109,8
+Antithymocyte immunoglobulin (rabbit),Pembrolizumab,214,215,215,218,-4
+Tacrolimus,Reteplase,1485,1388,1441,1562,-77
+Levobupivacaine,Nabilone,1432,2766,1758,1469,-37
+Iloprost,Isocarboxazid,162,1562,315,1874,-1712
+Cyclopentolate,Dicyclomine,45,1892,50,368,-323
+Indenolol,Potassium sulfate,887,1655,946,3213,-2326
+Brivaracetam,Sulfasalazine,1256,1275,1258,1269,-13
+Loxoprofen,Alaproclate,920,946,967,1560,-640
+Nadolol,Foscarnet,363,367,353,406,-43
+Belinostat,Baricitinib,92,45,102,14,78
+Benralizumab,Namilumab,226,240,230,230,-4
+Nimesulide,Milnacipran,858,761,771,661,197
+BCG vaccine,Tiamulin,2343,1821,2315,1714,629
+Etomidate,Linezolid,1149,1093,1120,1134,15
+Mycophenolic acid,Potassium cation,325,318,335,316,9
+Milnacipran,Dimercaprol,934,828,889,935,-1
+Probenecid,Rosuvastatin,716,896,726,774,-58
+Visilizumab,Sulesomab,94,99,99,85,9
+Ritanserin,Benzquinamide,199,207,206,198,1
+Trastuzumab emtansine,Sarilumab,270,272,272,272,-2
+Eplivanserin,Cyclobarbital,27,41,38,48,-21
+"2,5-Dimethoxy-4-ethylthioamphetamine",Sodium ascorbate,1169,1103,1117,1533,-364
+Phenprocoumon,Benzbromarone,1612,1256,1057,966,646
+Plecanatide,Nicomorphine,200,990,174,293,-93
+Rolofylline,Sennosides,545,277,455,562,-17
+Chlorothiazide,Etoperidone,775,4105,2139,3902,-3127
+Tamoxifen,Nicotine,667,558,659,553,114
+Aducanumab,Tigatuzumab,172,174,182,161,11
+Naproxen,Ombitasvir,1763,848,1684,790,973
+Perphenazine,gamma-Hydroxybutyric acid,498,501,488,515,-17
+Zileuton,Umifenovir,1305,1008,684,964,341
+Atomoxetine,Piroxicam,942,1022,922,973,-31
+Sufentanil,Clopenthixol,216,211,215,209,7
+Obiltoxaximab,Lulizumab pegol,28,26,30,44,-16
+Cyclandelate,Rescinnamine,91,72,85,148,-57
+Serotonin,Levetiracetam,273,270,257,263,10
+Inebilizumab,Duligotuzumab,121,119,122,160,-39
+Cefradine,Magnesium trisilicate,515,490,531,506,9
+Oxaflozane,Propanidid,220,213,209,211,9
+Aripiprazole,Maprotiline,420,420,407,381,39
+Ponatinib,Pertussis vaccine,735,1199,768,1892,-1157
+Triamcinolone,Tenoxicam,297,3644,469,1550,-1253
+Celecoxib,Goserelin,382,392,362,400,-18
+Anastrozole,Emapalumab,66,3113,128,2884,-2818
+Pitavastatin,Pyrimethamine,998,319,609,420,578
+Ranolazine,Umeclidinium,1078,3439,1067,1370,-292
+Zomepirac,Prenalterol,954,785,885,892,62
+Oxyquinoline,Pidotimod,35,33,38,34,1
+Trimethadione,Iohexol,2400,1751,2195,2035,365
+Armodafinil,Riluzole,789,254,930,439,350
+Chloroquine,Fluvoxamine,605,580,602,593,12
+Magnesium salicylate,Mangafodipir,26,18,13,18,8
+Esmirtazapine,Emylcamate,2,1,1,1,1
+Orphenadrine,Amobarbital,585,564,592,570,15
+Alprazolam,Brentuximab vedotin,1332,1664,1382,1562,-230
+Choline salicylate,Migalastat,125,152,153,143,-18
+Naftopidil,Penicillamine,1725,2424,1688,1944,-219
+Entacapone,Amperozide,180,166,174,156,24
+Metoclopramide,Fenthion,1622,2387,1473,2942,-1320
+Progesterone,Thiopental,386,893,410,867,-481
+"Synthetic Conjugated Estrogens, A",Loracarbef,79,79,79,74,5
+Triflusal,Procaine,941,2757,872,2951,-2010
+Lovastatin,Revefenacin,538,545,493,416,122
+Halothane,Nilutamide,1425,2851,1553,1860,-435
+Escitalopram,Trihexyphenidyl,142,152,131,166,-24
+Mirtazapine,Tacrine,1361,1975,1286,1424,-63
+Sulfisoxazole,Methyl salicylate,787,371,621,412,375
+Clomipramine,Nizofenone,1948,2086,1863,2397,-449
+Cyclobenzaprine,Gabapentin enacarbil,439,429,413,475,-36
+Technetium Tc-99m arcitumomab,Eldelumab,142,142,145,123,19
+Mirabegron,Difluocortolone,748,755,669,1788,-1040
+Selenium,Fludeoxyglucose (18F),8,8,6,6,2
+Efalizumab,Setrusumab,45,24,27,27,18
+Acyclovir,Canrenone,747,715,732,887,-140
+Difloxacin,Pirprofen,786,2907,586,2285,-1499
+Tridihexethyl,Dopexamine,757,771,755,780,-23
+Triazolam,Megestrol acetate,1133,1144,1155,1127,6
+Balsalazide,Gentamicin C1a,308,298,294,301,7
+Pirlindole,Nitrous acid,1685,1608,1621,1850,-165
+Margetuximab,Urelumab,3,3,3,5,-2
+Sirolimus,Metamizole,176,1231,468,234,-58
+Spironolactone,Valdecoxib,65,84,54,46,19
+Nortriptyline,Loperamide,761,778,763,745,16
+Bencyclane,Sodium ascorbate,1031,382,762,1663,-632
+Hemin,Zinc citrate,51,117,120,133,-82
+Etorphine,Lithium carbonate,674,678,670,673,1
+Tizanidine,Dexpropranolol,864,995,827,1725,-861
+Amphetamine,Pantoprazole,1218,1323,1251,1099,119
+Ravulizumab,Veltuzumab,137,137,147,139,-2
+Domperidone,Capmatinib,1094,136,889,250,844
+Fibrinolysin,Susoctocog alfa,667,563,696,627,40
+Yohimbine,MMDA,512,518,526,519,-7
+Niguldipine,Ammonium chloride,677,2914,885,2179,-1502
+Ebselen,Abediterol,270,217,242,250,20
+Tamsulosin,Rilmenidine,839,750,846,793,46
+Pseudoephedrine,Flupentixol,27,108,48,23,4
+Desipramine,Propantheline,264,266,282,296,-32
+Iron Dextran,Benazepril,1881,1752,1460,705,1176
+Fosphenytoin,Dacomitinib,793,696,738,712,81
+Diethylstilbestrol,Methylphenobarbital,1010,2761,926,1540,-530
+Gemcitabine,Secukinumab,721,1005,714,837,-116
+Sarafloxacin,Metahexamide,210,166,227,176,34
+Carbenicillin,Norethindrone enanthate,290,1899,1385,1026,-736
+Sunitinib,Posaconazole,624,504,496,360,264
+Cisatracurium,Chlorphenoxamine,205,205,205,208,-3
+Orphenadrine,Camylofin,128,141,140,149,-21
+Phenacemide,Valomaciclovir,859,762,812,763,96
+Budesonide,Alefacept,1250,725,858,1614,-364
+Quetiapine,Emetonium iodide,119,108,117,143,-24
+Lubiprostone,Methsuximide,1017,1058,1027,1081,-64
+Chromic citrate,Lumiracoxib,325,275,297,293,32
+Diphenoxylate,Fencamfamin,3,4,5,7,-4
+Clocortolone acetate,Indobufen,67,108,45,19,48
+Droxicam,Guanadrel,900,788,1008,842,58
+Diclofenamide,Tenamfetamine,909,1079,3478,2976,-2067
+Lercanidipine,Bucindolol,439,357,349,317,122
+Oxprenolol,Molindone,262,268,268,249,13
+Lacosamide,Saracatinib,1672,899,1313,1025,647
+Methadone,Botulinum toxin type A,337,343,325,345,-8
+Carbamazepine,Paromomycin,803,871,724,957,-154
+Rasagiline,Linagliptin,1589,1760,1603,1543,46
+Omeprazole,Thiamylal,535,3032,660,2199,-1664
+Captopril,Fenozolone,302,103,182,424,-122
+Pralatrexate,Palonosetron,479,521,482,493,-14
+Lumiracoxib,Dexverapamil,1202,2493,1179,822,380
+Dimetindene,Polycarbophil,791,765,777,777,14
+Dronedarone,Dopamine,751,1586,823,1217,-466
+Fesoterodine,Pinazepam,200,186,199,181,19
+Metamizole,Ethenzamide,159,136,136,137,22
+"Sodium phosphate, monobasic, unspecified form",Aloglutamol,580,843,646,551,29
+Sodium tartrate,Alloin,134,141,92,108,26
+Clomipramine,Estradiol dienanthate,874,868,814,799,75
+Arformoterol,Niclosamide,1944,1316,1720,1260,684
+Dacomitinib,Vilazodone,650,3321,589,1325,-675
+Camptothecin,Novobiocin,282,144,283,936,-654
+Edetate calcium disodium anhydrous,Carfilzomib,288,263,276,369,-81
+Tetrahydropalmatine,Neomycin,1936,3239,1919,3657,-1721
+Teprotumumab,Anetumab ravtansine,233,241,235,222,11
+Sertraline,Mebutamate,65,73,72,53,12
+Aprepitant,Gliquidone,663,2646,961,2165,-1502
+Procaine,Talopram,1,2,2,3,-2
+Topiramate,Rosiglitazone,1235,1260,1236,1245,-10
+Desipramine,Pimozide,522,530,509,517,5
+Pexidartinib,Carbimazole,1129,791,719,1014,115
+Capsaicin,Quinine,143,396,285,774,-631
+Hydroxyprogesterone caproate,Tenecteplase,576,849,860,1109,-533
+Nandrolone decanoate,Insulin tregopil,56,1817,127,1645,-1589
+Chondroitin sulfate,Levobupivacaine,398,402,406,396,2
+Theophylline,Vibrio cholerae CVD 103-HgR strain live antigen,1262,1392,1155,2176,-914
+"Synthetic Conjugated Estrogens, B",Almasilate,444,406,433,452,-8
+Mibefradil,Ramosetron,2114,3528,3481,3518,-1404
+Dapoxetine,Emepronium,197,193,195,189,8
+Propranolol,Oxymetholone,1512,1221,1596,890,622
+Letrozole,Plitidepsin,952,924,736,1263,-311
+Lisinopril,Bumadizone,184,165,181,177,7
+Amoxapine,Zotepine,423,405,396,400,23
+Pseudoephedrine,Antrafenine,129,3186,380,1311,-1182
+Aripiprazole lauroxil,Buclizine,340,328,329,349,-9
+Milnacipran,Phenglutarimide,126,126,125,141,-15
+Naproxen,Albutrepenonacog alfa,80,72,81,77,3
+Norgestimate,Carisbamate,1504,4017,3212,3728,-2224
+Clobetasol propionate,Mitoxantrone,163,239,132,38,125
+Temocapril,Salvia miltiorrhiza root,736,574,469,1178,-442
+Penbutolol,Pirlindole,507,562,526,529,-22
+Ataluren,Clofarabine,2321,1490,2315,1473,848
+Etomidate,Pergolide,725,652,790,616,109
+Clopidogrel,Prednisolone hemisuccinate,781,874,603,1121,-340
+Prucalopride,Dalfampridine,404,351,360,367,37
+Blonanserin,Tositumomab,966,979,960,977,-11
+Phenoxypropazine,NBI-6024,1362,1177,1243,1140,222
+"2,5-Dimethoxy-4-ethylthioamphetamine",Benactyzine,175,172,181,189,-14
+Ceftizoxime,Brinase,794,729,783,817,-23
+Hydromorphone,Escitalopram,1059,823,924,1028,31
+Dotarizine,Benazeprilat,790,822,778,934,-144
+Benazepril,Valsartan,315,187,207,138,177
+Fentiazac,Fenozolone,888,771,854,786,102
+Doxazosin,Milnacipran,735,1085,1096,1016,-281
+Morniflumate,Phenazopyridine,167,165,165,166,1
+Hydromorphone,Ceritinib,1668,3316,3127,1535,133
+Desipramine,Deramciclane,345,337,332,302,43
+Pirlindole,Lithium cation,614,624,575,604,10
+Methylphenidate,Bisoxatin,336,332,352,308,28
+Evolocumab,Eftrenonacog alfa,269,273,269,270,-1
+Dolasetron,Chloral hydrate,335,322,326,336,-1
+Metamizole,Pamidronic acid,483,484,486,511,-28
+Ranolazine,Erythromycin,954,975,962,1222,-268
+Dexniguldipine,Magnesium orotate,1592,1959,1612,3232,-1640
+Tenofovir alafenamide,Amikacin,229,271,240,355,-126
+Ergometrine,"4-Bromo-2,5-dimethoxyphenethylamine",1411,1147,1255,1535,-124
+Morniflumate,Saralasin,793,724,765,755,38
+Benorilate,Methoxyphenamine,1054,873,964,861,193
+Riociguat,Valomaciclovir,1781,1377,1489,2371,-590
+Candesartan,Primidone,732,1680,611,1687,-955
+Istradefylline,Iproniazid,1326,3163,1575,3051,-1725
+Bendroflumethiazide,Gepefrine,651,388,420,397,254
+Ergotamine,Diethylpropion,524,536,537,537,-13
+Tranilast,Mivacurium,2056,1483,1968,3679,-1623
+Carbamazepine,Cinazepam,195,19,227,344,-149
+Bicifadine,Givosiran,1237,3368,1094,3380,-2143
+Carbenicillin,Nomegestrol acetate,286,1800,1259,944,-658
+Propylthiouracil,Deslanoside,1117,822,829,2566,-1449
+Technetium Tc-99m mebrofenin,Epirizole,195,175,187,180,15
+Dobutamine,Nabilone,1123,1392,1091,1414,-291
+Salsalate,Isometheptene,928,916,878,932,-4
+Desmoteplase,Eptifibatide,236,121,311,84,152
+Pranlukast,Sarilumab,362,2328,728,796,-434
+Probenecid,"2,4-thiazolidinedione",1536,3453,1765,3567,-2031
+Dextroamphetamine,"2,5-Dimethoxy-4-ethylamphetamine",370,413,199,1449,-1079
+Omadacycline,Allylestrenol,764,2701,1030,2280,-1516
+Penbutolol,Ethylmorphine,353,337,355,272,81
+Thiabendazole,Colistimethate,214,192,205,201,13
+Clofarabine,Guanoxan,1325,1439,1323,1629,-304
+Hydrocortisone cypionate,Racepinephrine,1512,1105,1735,869,643
+Ropivacaine,Sisomicin,361,340,361,356,5
+Scopolamine,Doxylamine,364,356,356,370,-6
+Levocetirizine,APD791,15,19,21,12,3
+Loperamide,Tertatolol,196,107,175,528,-332
+Phenelzine,Nefazodone,906,979,956,898,8
+Tabalumab,Landogrozumab,99,88,92,88,11
+Nadolol,Dyphylline,430,434,455,431,-1
+Fentanyl,Allopurinol,1220,1220,1206,1143,77
+Tositumomab,Lerdelimumab,63,81,165,212,-149
+Vinblastine,Tranilast,674,461,719,726,-52
+Mecasermin,Trimebutine,255,967,132,2540,-2285
+Desloratadine,Thiazinam,398,394,390,415,-17
+Azacitidine,Cefotaxime,235,242,237,235,0
+Zimelidine,Thiethylperazine,525,535,507,539,-14
+Methimazole,Baclofen,512,495,530,555,-43
+Mangafodipir,Tramadol,658,674,660,670,-12
+Fondaparinux,Potassium Iodide,1095,993,1543,1449,-354
+Lobeglitazone,Pentifylline,1138,800,1015,1036,102
+Apomorphine,Chlorphenoxamine,206,208,205,215,-9
+Galantamine,Darodipine,683,350,457,1120,-437
+Salbutamol,Hydrolyzed Cephalothin,103,108,113,106,-3
+Fluticasone,Peficitinib,753,228,474,1773,-1020
+Fenfluramine,Bupranolol,793,1210,1560,1011,-218
+Testosterone propionate,Migalastat,122,143,149,137,-15
+Methysergide,Isocarboxazid,443,488,456,447,-4
+Fluticasone propionate,Indinavir,1543,1523,1822,1398,145
+Piperazine,Metamfetamine,1370,1106,3018,573,797
+Meperidine,Morniflumate,859,900,831,845,14
+Moricizine,Gaboxadol,271,259,257,256,15
+Risperidone,Promazine,542,532,536,526,16
+Furazolidone,Butobarbital,212,216,213,222,-10
+Clobazam,Medetomidine,269,284,290,275,-6
+Amitriptyline,Capsaicin,1718,1606,1721,1760,-42
+Chondroitin sulfate,Cyclopenthiazide,702,703,710,706,-4
+Pirlindole,Defibrotide,1598,1679,1624,1939,-341
+Levamlodipine,Moclobemide,122,467,91,1061,-939
+Aminosalicylic acid,Lisinopril,1356,2887,1979,3012,-1656
+Methohexital,Tilidine,306,307,301,333,-27
+Benzylpenicillin,Indinavir,363,792,236,485,-122
+Alosetron,Anakinra,817,740,808,815,2
+Bromfenac,Mofebutazone,15,3667,30,3681,-3666
+Cimetidine,Guanidine,2017,1461,1712,2053,-36
+Suvorexant,Anakinra,769,816,785,1607,-838
+Peginterferon beta-1a,Cloricromen,489,593,453,823,-334
+Aripiprazole lauroxil,Leuprolide,1384,2887,1589,2036,-652
+Estrone,Epratuzumab,237,145,215,79,158
+Epinephrine,Teniposide,1000,766,968,529,471
+Daclatasvir,Toremifene,716,442,1034,196,520
+Lesinurad,Ganciclovir,335,338,331,332,3
+Carbutamide,Afelimomab,651,332,564,225,426
+Testosterone enanthate,Balaglitazone,1447,1877,1390,1446,1
+Dusigitumab,Tigatuzumab,172,174,182,162,10
+Glycerol phenylbutyrate,Secobarbital,599,593,601,596,3
+Ketamine,Tolfenamic acid,1218,1205,1213,1197,21
+Paroxetine,Botulinum toxin type A,324,337,318,335,-11
+Cefamandole,Lonazolac,113,111,104,118,-5
+Thiotepa,Cladribine,241,475,178,284,-43
+Celecoxib,Hydracarbazine,725,880,758,1206,-481
+Paramethadione,7-Deazaguanine,1436,844,1140,1081,355
