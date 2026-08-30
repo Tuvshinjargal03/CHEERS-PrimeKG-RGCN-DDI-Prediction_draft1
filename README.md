@@ -400,15 +400,17 @@ Across seeds 42, 43, and 44, the G0 baseline achieved:
 
 The three-seed relation-level results were:
 
-| Variant | Relation | Mean MRR | Mean Delta MRR vs G0 | Positive seeds |
-|---|---|---:|---:|---:|
-| A5 | Indication | 0.535659 ± 0.008666 | +0.006542 ± 0.009709 | 2/3 |
-| A4 | Carrier | 0.535263 ± 0.005680 | +0.006145 ± 0.004079 | 3/3 |
-| A1 | Target | 0.535154 ± 0.009967 | +0.006036 ± 0.013416 | 2/3 |
-| A3 | Transporter | 0.532645 ± 0.010348 | +0.003528 ± 0.003327 | 3/3 |
-| A2 | Enzyme | 0.527979 ± 0.002269 | -0.001138 ± 0.008076 | 1/3 |
-| A6 | Contraindication | 0.525807 ± 0.003087 | -0.003311 ± 0.007487 | 1/3 |
-| A7 | Off-label use | 0.510576 ± 0.038774 | -0.018541 ± 0.030788 | 1/3 |
+| Variant | Relation | MRR | Hits@1 | Hits@5 | Hits@10 | Delta MRR vs G0 | Wins vs G0 |
+|---|---|---:|---:|---:|---:|---:|---:|
+| A5 | Indication | 0.535659 ± 0.008666 | 0.488342 ± 0.008664 | 0.580953 ± 0.009079 | 0.618170 ± 0.009449 | +0.006542 ± 0.009709 | 2/3 |
+| A4 | Carrier | 0.535263 ± 0.005680 | 0.489220 ± 0.005819 | 0.579763 ± 0.005346 | 0.615507 ± 0.005764 | +0.006145 ± 0.004079 | 3/3 |
+| A1 | Target | 0.535154 ± 0.009967 | 0.488838 ± 0.010801 | 0.579732 ± 0.009779 | 0.615822 ± 0.008998 | +0.006036 ± 0.013416 | 2/3 |
+| A3 | Transporter | 0.532645 ± 0.010348 | 0.487096 ± 0.010594 | 0.576221 ± 0.010411 | 0.612906 ± 0.009254 | +0.003528 ± 0.003327 | 3/3 |
+| A2 | Enzyme | 0.527979 ± 0.002269 | 0.481283 ± 0.001599 | 0.572877 ± 0.004044 | 0.610263 ± 0.004990 | -0.001138 ± 0.008076 | 1/3 |
+| A6 | Contraindication | 0.525807 ± 0.003087 | 0.478529 ± 0.003907 | 0.571935 ± 0.001662 | 0.608791 ± 0.001803 | -0.003311 ± 0.007487 | 1/3 |
+| A7 | Off-label use | 0.510576 ± 0.038774 | 0.466068 ± 0.035556 | 0.551745 ± 0.044453 | 0.587364 ± 0.046334 | -0.018541 ± 0.030788 | 1/3 |
+
+Values are means ± sample standard deviations across seeds 42, 43, and 44. This is an exploratory secondary analysis, and no statistical significance is claimed. Paired Delta Hits values are intentionally not reported because exact full-precision G0 Hits provenance is incomplete in the portable repository.
 
 ### Interpretation
 
