@@ -438,37 +438,54 @@ def experiment_results():
             ),
         )
 
+    primary_result = summary["primary_result"]
+    best_graph = primary_result["best_graph"]
+    baseline_graph = "G0"
+    metric_summary = summary["final_results_mean_std"]
+    best_mrr = metric_summary[best_graph]["MRR"]
+    baseline_mrr = metric_summary[baseline_graph]["MRR"]
+    evaluated_metrics = summary["evaluation"]["metrics"]
+    metric_list = ", ".join(evaluated_metrics[:-1])
+    metric_list += f", and {evaluated_metrics[-1]}"
+
     return {
         "summary":
             summary,
 
         "primary_finding": {
             "best_graph":
-                "G3",
+                best_graph,
 
             "composition":
-                (
-                    "DDI + Drug-Gene/Protein "
-                    "+ Drug-Disease"
-                ),
+                summary["graph_variants"][best_graph],
 
             "five_seed_mrr":
-                "0.5342 ± 0.0063",
+                (
+                    f"{best_mrr['mean']:.4f} "
+                    f"± {best_mrr['std']:.4f}"
+                ),
 
             "baseline_G0_mrr":
-                "0.5273 ± 0.0064",
+                (
+                    f"{baseline_mrr['mean']:.4f} "
+                    f"± {baseline_mrr['std']:.4f}"
+                ),
 
             "absolute_mrr_gain":
-                0.006924,
+                primary_result[
+                    "absolute_MRR_improvement_vs_G0"
+                ],
 
             "relative_mrr_gain_percent":
-                1.31,
+                primary_result[
+                    "relative_MRR_improvement_percent"
+                ],
 
             "consistency":
                 (
-                    "G3 exceeded G0 in all "
-                    "five seeds across MRR, "
-                    "Hits@1, Hits@5, and Hits@10."
+                    f"{best_graph} exceeded {baseline_graph} in "
+                    f"{primary_result['seeds_beating_G0']} matched "
+                    f"seeds across {metric_list}."
                 ),
         },
 

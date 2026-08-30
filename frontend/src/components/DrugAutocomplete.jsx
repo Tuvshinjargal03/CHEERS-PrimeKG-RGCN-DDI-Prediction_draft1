@@ -15,6 +15,7 @@ export default function DrugAutocomplete({
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
+  const [searchError, setSearchError] = useState('')
 
   useEffect(() => {
     const trimmed = query.trim()
@@ -24,6 +25,7 @@ export default function DrugAutocomplete({
     requestId.current = currentRequest
     const timer = window.setTimeout(async () => {
       setLoading(true)
+      setSearchError('')
       try {
         const data = await getJson(
           `/api/drugs/search?q=${encodeURIComponent(trimmed)}&limit=8`,
@@ -34,6 +36,7 @@ export default function DrugAutocomplete({
       } catch {
         if (requestId.current !== currentRequest) return
         setResults([])
+        setSearchError('Drug search is unavailable. Please try again.')
         setOpen(true)
       } finally {
         if (requestId.current === currentRequest) setLoading(false)
@@ -47,6 +50,7 @@ export default function DrugAutocomplete({
     requestId.current += 1
     setQuery('')
     setResults([])
+    setSearchError('')
     setOpen(false)
     onSelect(null)
   }
@@ -68,6 +72,7 @@ export default function DrugAutocomplete({
             if (selection) onSelect(null)
             const nextQuery = event.target.value
             setQuery(nextQuery)
+            setSearchError('')
             if (nextQuery.trim().length < 2) {
               requestId.current += 1
               setResults([])
@@ -98,7 +103,11 @@ export default function DrugAutocomplete({
 
       {open && !selection && (
         <div className="autocomplete-menu" role="listbox" aria-label={`${label} results`}>
-          {results.length ? (
+          {searchError ? (
+            <div className="autocomplete-empty error" role="alert">
+              {searchError}
+            </div>
+          ) : results.length ? (
             results.map((item) => (
               <button
                 type="button"

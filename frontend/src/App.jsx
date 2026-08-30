@@ -130,6 +130,8 @@ function AppShell() {
             <NavLink
               key={path}
               to={path}
+              aria-label={label}
+              title={label}
               className={({ isActive }) =>
                 `nav-link ${isActive ? 'active' : ''}`
               }

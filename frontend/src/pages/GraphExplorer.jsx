@@ -1,7 +1,7 @@
 import cytoscape from 'cytoscape'
-import { AlertCircle, Focus, LoaderCircle, Minus, Plus } from 'lucide-react'
+import { AlertCircle, ArrowRight, BookOpen, Focus, LoaderCircle, Minus, Plus } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import DrugAutocomplete from '../components/DrugAutocomplete.jsx'
 import { getJson, pairEndpoint, resolveDrug } from '../lib/api.js'
 
@@ -89,16 +89,28 @@ function relationCounts(drug) {
   return [...counts.entries()]
 }
 
+function evidenceDestination(context, navigationScore) {
+  const params = new URLSearchParams({
+    drug_a_id: context.drug_a.drug_id,
+    drug_b_id: context.drug_b.drug_id,
+  })
+  if (navigationScore) params.set('score', navigationScore)
+  return `/evidence?${params.toString()}`
+}
+
 export default function GraphExplorer() {
   const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
   const initialAId = searchParams.get('drug_a_id') || ''
   const initialBId = searchParams.get('drug_b_id') || ''
+  const initialScore = searchParams.get('score') || ''
   const containerRef = useRef(null)
   const cyRef = useRef(null)
   const [drugA, setDrugA] = useState(null)
   const [drugB, setDrugB] = useState(null)
   const [context, setContext] = useState(null)
   const [displayLimit, setDisplayLimit] = useState(DEFAULT_SHARED_NODES)
+  const [navigationScore, setNavigationScore] = useState(initialScore)
   const [resolving, setResolving] = useState(Boolean(initialAId || initialBId))
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -239,8 +251,8 @@ export default function GraphExplorer() {
       </div>
 
       <form className="pair-form" onSubmit={loadContext}>
-        <DrugAutocomplete label="Drug A" selection={drugA} onSelect={(value) => { setDrugA(value); setContext(null); setError('') }} disabled={resolving} />
-        <DrugAutocomplete label="Drug B" selection={drugB} onSelect={(value) => { setDrugB(value); setContext(null); setError('') }} disabled={resolving} />
+        <DrugAutocomplete label="Drug A" selection={drugA} onSelect={(value) => { setDrugA(value); setContext(null); setNavigationScore(''); setError('') }} disabled={resolving} />
+        <DrugAutocomplete label="Drug B" selection={drugB} onSelect={(value) => { setDrugB(value); setContext(null); setNavigationScore(''); setError('') }} disabled={resolving} />
         <button className="primary-button" type="submit" disabled={!pairReady || loading || resolving}>
           {loading || resolving ? <LoaderCircle className="spin" size={18} /> : <Focus size={18} />}
           {loading ? 'Loading context…' : 'Explore pair'}
@@ -296,6 +308,16 @@ export default function GraphExplorer() {
                 <div className="relation-chip-list">{counts.map(([relation, count]) => <span key={relation}>{relationLabel(relation)} <b>{count.toLocaleString()}</b></span>)}</div>
               </article>
             ))}
+          </div>
+
+          <div className="workflow-actions">
+            <div>
+              <BookOpen size={20} />
+              <p><strong>Continue with external evidence</strong><span>Review openFDA label excerpts and PubMed records for this drug pair.</span></p>
+            </div>
+            <button type="button" className="primary-button" onClick={() => navigate(evidenceDestination(context, navigationScore))}>
+              Review evidence<ArrowRight size={16} />
+            </button>
           </div>
 
           <aside className="safety-notice"><AlertCircle size={21} /><div><strong>Interpretation boundary</strong><p>{context.interpretation}</p></div></aside>
