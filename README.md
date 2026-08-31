@@ -370,9 +370,9 @@ These values are five-seed means ± sample standard deviations. Raw model scores
 
 ## Relation-level ablation study
 
-After the G0-G3 graph-composition experiments, we performed a finer-grained relation-level ablation study to investigate which individual biomedical relation types contribute to R-GCN drug-drug interaction prediction.
+After the G0–G3 graph-composition experiments, we performed a finer-grained relation-level ablation study to investigate how individual biomedical relation types affect R-GCN drug–drug interaction prediction.
 
-The DDI-only graph (**G0**) was used as the baseline. Each ablation variant retained the same DDI backbone and added exactly one biomedical relation type.
+The DDI-only graph (**G0**) was used as the baseline. Each variant retained the same G0 DDI backbone and added exactly one biomedical relation type together with its reverse message-passing edges.
 
 | Variant | Biomedical relation | Original edges | Directed edges |
 |---|---|---:|---:|
@@ -384,81 +384,182 @@ The DDI-only graph (**G0**) was used as the baseline. Each ablation variant reta
 | A6 | Contraindication | 30,675 | 61,350 |
 | A7 | Off-label use | 2,568 | 5,136 |
 
-All relation variants were trained and evaluated using the same DDI train/validation/test setup as the G0 baseline. To account for randomness in model initialization and training, each experiment was repeated using seeds **42, 43, and 44**.
+All variants were evaluated using seeds **42, 43, and 44**. This three-seed relation-level analysis is separate from the five-seed G0–G3 main experiment.
 
-### Evaluation against G0
+### Ranking evaluation
 
-For each seed, the contribution of a biomedical relation was measured using the paired MRR difference:
+For each seed, relation contribution was measured using the paired MRR difference:
 
 **Delta MRR = MRR(Ai, seed) - MRR(G0, seed)**
 
-A positive Delta MRR indicates that adding the biomedical relation improved ranking performance relative to the DDI-only baseline under the same seed.
-
-Across seeds 42, 43, and 44, the G0 baseline achieved:
+Across seeds 42–44, the corresponding three-seed G0 baseline was:
 
 **MRR = 0.529118 ± 0.008136**
 
-The three-seed relation-level results were:
-
-| Variant | Relation | Mean MRR | Mean Delta MRR vs G0 | Positive seeds |
+| Variant | Relation | MRR | Delta MRR vs G0 | Wins vs G0 |
 |---|---|---:|---:|---:|
-| A5 | Indication | 0.535659 ± 0.008666 | +0.006542 ± 0.009709 | 2/3 |
-| A4 | Carrier | 0.535263 ± 0.005680 | +0.006145 ± 0.004079 | 3/3 |
-| A1 | Target | 0.535154 ± 0.009967 | +0.006036 ± 0.013416 | 2/3 |
-| A3 | Transporter | 0.532645 ± 0.010348 | +0.003528 ± 0.003327 | 3/3 |
-| A2 | Enzyme | 0.527979 ± 0.002269 | -0.001138 ± 0.008076 | 1/3 |
-| A6 | Contraindication | 0.525807 ± 0.003087 | -0.003311 ± 0.007487 | 1/3 |
-| A7 | Off-label use | 0.510576 ± 0.038774 | -0.018541 ± 0.030788 | 1/3 |
+| A5 | Indication | 0.535659 ± 0.008666 | +0.006542 | 2/3 |
+| A4 | Carrier | 0.535263 ± 0.005680 | +0.006145 | 3/3 |
+| A1 | Target | 0.535154 ± 0.009967 | +0.006036 | 2/3 |
+| A3 | Transporter | 0.532645 ± 0.010348 | +0.003528 | 3/3 |
+| A2 | Enzyme | 0.527979 ± 0.002269 | -0.001138 | 1/3 |
+| A6 | Contraindication | 0.525807 ± 0.003087 | -0.003311 | 1/3 |
+| A7 | Off-label use | 0.510576 ± 0.038774 | -0.018541 | 1/3 |
 
-### Interpretation
+**Indication** achieved the highest mean MRR. **Carrier** and **transporter** improved over G0 in all three seeds. Carrier is particularly notable because it was the smallest biomedical relation tested, with only 864 original edges.
 
-The experiment shows that adding biomedical knowledge does **not** uniformly improve DDI prediction.
+Target also produced a positive mean ranking effect, while enzyme, contraindication, and off-label use did not improve mean MRR. Off-label use showed substantial variability across seeds.
 
-**Indication** achieved the highest mean MRR (0.535659) and the largest mean improvement over G0 (+0.006542), although it improved over G0 in only two of the three seeds.
+### Complementary classification evaluation
 
-**Carrier** produced a similar mean improvement (+0.006145) and was positive in all three seeds. This is notable because carrier was the smallest biomedical relation tested, with only 864 original edges.
+We also evaluated the same G0 and A1–A7 checkpoints as a binary discrimination task without retraining.
 
-**Transporter** also improved over G0 in all three seeds, although its average gain (+0.003528) was smaller.
+For every graph and seed, the classification threshold was selected on the fixed validation set by maximizing F1 and then frozen for evaluation on the held-out test set.
 
-**Target** achieved a relatively strong mean improvement (+0.006036), but its effect was less consistent across seeds, with one negative seed.
+The test evaluation used:
 
-**Enzyme** and **contraindication** did not improve average MRR relative to G0.
+- 133,614 positive DDI pairs;
+- 133,614 fixed sampled-unobserved pairs.
 
-**Off-label use** showed the weakest and least stable result. Seed 44 produced a substantial decrease in MRR, resulting in a large standard deviation across the three runs.
+Sampled-unobserved pairs are not confirmed clinical non-interactions, and the raw decoder scores are not calibrated probabilities.
 
-These results suggest that the predictive contribution of a biomedical relation is not determined simply by its number of edges. Relation semantics and the structural information introduced into the knowledge graph also appear to matter.
+| Variant | Relation | Accuracy | Precision | Recall | F1 |
+|---|---|---:|---:|---:|---:|
+| **G0** | DDI-only baseline | **0.919125** | 0.935531 | **0.900297** | **0.917575** |
+| A1 | Target | 0.858928 | 0.894695 | 0.813670 | 0.852239 |
+| A2 | Enzyme | 0.870891 | 0.904170 | 0.829726 | 0.865332 |
+| A3 | Transporter | 0.891330 | 0.925309 | 0.851383 | 0.886808 |
+| A4 | Carrier | 0.914057 | **0.937175** | 0.887624 | 0.911718 |
+| A5 | Indication | 0.899425 | 0.931635 | 0.862115 | 0.895528 |
+| A6 | Contraindication | 0.910774 | 0.933388 | 0.884693 | 0.908383 |
+| A7 | Off-label use | 0.912935 | 0.932175 | 0.890578 | 0.910834 |
 
-Because only three seeds were evaluated, these results should be interpreted as evidence of relative trends rather than definitive statistical significance.
+These values are means across seeds 42, 43, and 44.
 
-### Relation-ablation figure
+No individual biomedical relation improved mean F1 over the three-seed G0 baseline. Carrier came closest, with F1 = 0.911718, and achieved slightly higher mean precision than G0.
 
-![Three-seed relation-level ablation results](figures/relation_ablation_delta_mrr_3seed.png)
+### Ranking versus classification
 
-The figure reports paired Delta MRR values relative to the corresponding G0 seed. Values above zero indicate improvement over the DDI-only baseline.
+The two evaluation objectives produced an important result: **relation usefulness depends on the evaluation objective**.
+
+Indication, carrier, target, and transporter improved mean filtered-ranking MRR relative to G0, but none improved mean classification F1.
+
+Carrier showed one of the most balanced outcomes: it improved MRR in all three seeds while producing only a relatively small reduction in mean F1.
+
+Target showed the strongest disagreement between objectives. Its mean MRR increased by approximately **+0.006036**, while its mean F1 decreased by approximately **-0.065336** relative to G0.
+
+Therefore, a biomedical relation that helps place a true DDI target higher among thousands of candidate drugs does not necessarily improve separation between known-positive and sampled-unobserved pairs under a thresholded binary classification protocol.
+
+This result reinforces that relation contribution should not be characterized using a single evaluation metric.
+
+Because only three seeds were evaluated, this remains an exploratory secondary analysis and no statistical significance is claimed.
+
+### Relation-level figure
+
+![Relation-level effects on DDI ranking and classification](figures/relation_ablation/relation_ablation_ranking_vs_classification_final.png)
+
+The figure compares each relation's change in MRR and F1 relative to the corresponding G0 baseline.
+
+## DDI-edge cold-start evaluation
+
+After the transductive G0–G3 comparison and relation-level analysis, we evaluated performance when selected drugs receive no DDI supervision during training.
+
+This experiment is described as **DDI-edge cold-start**, not fully inductive unseen-drug prediction. The R-GCN still uses learned node-ID embeddings, and the selected cold drugs remain graph nodes. In G3, their non-DDI biomedical relationships are retained.
+
+### Cold-drug cohort and protocol
+
+The cold cohort was constructed once using split seed **42**.
+
+A drug was eligible when it satisfied all three conditions:
+
+- total known DDI degree across the fixed split >= 20;
+- G3 biomedical graph degree >= 5;
+- existing test DDI degree >= 10.
+
+This produced **1,969 eligible drugs**. A deterministic stratified 10% sample across total-DDI-degree quartiles selected **196 cold drugs**, with 49 drugs from each quartile.
+
+For each selected cold drug, all training DDI edges touching that drug were removed from DDI supervision and DDI message passing. Cold drugs also received no sampled-negative DDI supervision.
+
+Removed known-positive DDI pairs remained in the full known-positive mask and therefore could not be sampled as negatives. G3 retained the selected drugs' non-DDI biomedical edges. Early stopping used only warm validation examples.
+
+| Quantity | Value |
+|---|---:|
+| Cold drugs | 196 |
+| Original training DDI pairs | 1,069,080 |
+| Warm-only training DDI pairs | 927,782 |
+| Removed training pairs touching cold drugs | 141,298 |
+| Primary cold→warm test pairs | 17,176 |
+| Secondary cold↔cold test pairs | 651 |
+
+The same fixed cold cohort was used for model seeds **42, 43, and 44**. Therefore, the reported standard deviations reflect model-seed variation conditional on this single cohort rather than variation across independently sampled cold cohorts.
+
+### Primary evaluation: cold → warm
+
+The primary evaluation contains test pairs with exactly one cold endpoint. Each pair was oriented with the cold drug as the query and the warm drug as the target.
+
+Filtered ranking used all **4,278 candidate drugs**, the full known-positive DDI mask, self-pair filtering, and restoration of the current target before ranking.
+
+The canonical reproduced results are:
+
+| Graph | MRR | Hits@1 | Hits@5 | Hits@10 | Mean rank |
+|---|---:|---:|---:|---:|---:|
+| **G0** | **0.140603 ± 0.058159** | **0.135130 ± 0.055543** | **0.142932 ± 0.060426** | **0.146483 ± 0.063192** | **1145.03 ± 140.89** |
+| G3 | 0.010184 ± 0.007833 | 0.007006 ± 0.008003 | 0.009975 ± 0.007864 | 0.011896 ± 0.007482 | 1778.06 ± 88.24 |
+
+G0 substantially outperformed G3 in the primary cold→warm evaluation across all three model seeds.
+
+Under this specific DDI-edge cold-start protocol, retaining the complete G3 biomedical context did not improve one-sided cold→warm ranking.
+
+This result should **not** be interpreted as evidence that biomedical knowledge generally harms cold-start prediction. It shows that the current R-GCN architecture and training objective did not successfully convert the retained heterogeneous context into improved cold→warm rankings under this protocol.
+
+### Secondary evaluation: cold ↔ cold
+
+A separate secondary analysis evaluated the **651 test pairs** where both endpoints were cold.
+
+Both directions were ranked. The same trained checkpoints and filtering protocol were used; no separate retraining was performed for this secondary evaluation.
+
+| Graph | MRR | Hits@1 | Hits@5 | Hits@10 | Mean rank |
+|---|---:|---:|---:|---:|---:|
+| G0 | 0.000990 ± 0.000177 | 0.000000 ± 0.000000 | 0.000000 ± 0.000000 | 0.000000 ± 0.000000 | 1132.28 ± 149.86 |
+| **G3** | **0.008430 ± 0.004076** | **0.001280 ± 0.001599** | **0.005376 ± 0.003348** | **0.011009 ± 0.006160** | **642.99 ± 61.39** |
+
+In contrast to the primary evaluation, G3 achieved higher MRR than G0 in the secondary cold↔cold evaluation for all three model seeds.
+
+Absolute performance remained low, so this result should be interpreted cautiously. One plausible interpretation is that retained biomedical context provides useful structural signal when both DDI endpoints lack training DDI supervision. However, this experiment does not establish a causal explanation for the improvement.
+
+Together, the primary and secondary results show that the usefulness of heterogeneous biomedical context depends strongly on the cold-start evaluation setting.
+
+No statistical significance is claimed from three model seeds.
+
+### Protocol limitations
+
+This evaluation has several important limitations:
+
+- it is DDI-edge cold-start, not fully inductive unseen-node prediction;
+- the model retains learned embeddings for the selected drug nodes;
+- G3 retains biomedical context for the selected cold drugs;
+- only one fixed cold cohort, generated with split seed 42, was evaluated;
+- cohort eligibility uses information from the existing fixed split, including test-set DDI degree;
+- the cohort is therefore context-available and test-conditioned rather than a completely test-blind sample;
+- three model seeds are insufficient for statistical significance claims.
+
+A fully inductive experiment in which previously unseen drugs are represented using transferable molecular, textual, or neighborhood-derived features remains future work.
 
 ### Reproducibility
 
-Relation-ablation graph construction:
+Validated cold-start notebook:
 
-[`notebooks/07_build_relation_ablations.ipynb`](notebooks/07_build_relation_ablations.ipynb)
+[`notebooks/10_cold_start_evaluation_validated.ipynb`](notebooks/10_cold_start_evaluation_validated.ipynb)
 
-R-GCN training and evaluation:
+Canonical reproduced results:
 
-[`notebooks/08_train_relation_ablations.ipynb`](notebooks/08_train_relation_ablations.ipynb)
+`results/cold_start/split_seed_42/reproduced/`
 
-Three-seed aggregate results:
+The reproduced outputs are the authoritative values used for the final analysis. Earlier historical G3 cold-start outputs that could not be reproduced from the preserved checkpoint, frozen graph, and canonical evaluator are not used as final thesis results.
 
-[`results/relation_ablation/final/relation_ablation_3seed_summary.csv`](results/relation_ablation/final/relation_ablation_3seed_summary.csv)
+No cold-start figures are included in the final README because the numerical tables provide the primary record of this secondary evaluation.
 
-Paired seed-wise comparison against G0:
 
-[`results/relation_ablation/final/relation_ablation_paired_deltas_vs_G0.csv`](results/relation_ablation/final/relation_ablation_paired_deltas_vs_G0.csv)
-
-Per-seed JSON metrics for all A1-A7 experiments are available under:
-
-`results/relation_ablation/`
-
-Large generated artifacts such as trained model checkpoints, graph tensors, and raw PrimeKG data are intentionally excluded from the repository.
 
 ## Interpretation of graph composition
 
