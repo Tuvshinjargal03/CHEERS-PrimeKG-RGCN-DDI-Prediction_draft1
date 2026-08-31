@@ -1,0 +1,43 @@
+{
+  "study": "Relation-level ablation classification evaluation",
+  "graphs": [
+    "G0",
+    "A1_target",
+    "A2_enzyme",
+    "A3_transporter",
+    "A4_carrier",
+    "A5_indication",
+    "A6_contraindication",
+    "A7_off_label"
+  ],
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "num_evaluations": 24,
+  "validation_positive_pairs": 133620,
+  "validation_negative_pairs": 133620,
+  "test_positive_pairs": 133614,
+  "test_negative_pairs": 133614,
+  "threshold_selection": "Raw decoder-score threshold selected independently for each graph/seed by maximizing F1 on the fixed balanced validation set. Threshold then frozen for test evaluation.",
+  "negative_definition": "Fixed sampled unobserved drug pairs; not clinically confirmed negative DDIs.",
+  "metrics": [
+    "Accuracy",
+    "Precision",
+    "Recall",
+    "F1",
+    "ROC_AUC",
+    "PR_AUC"
+  ],
+  "score_interpretation": "R-GCN DistMult-style decoder outputs raw scores. Scores are not calibrated probabilities.",
+  "negative_integrity_check": {
+    "validation_overlap_with_known_positives": 0,
+    "test_overlap_with_known_positives": 0
+  },
+  "files": {
+    "per_seed": "relation_ablation_classification_per_seed.csv",
+    "summary": "relation_ablation_classification_3seed_summary.csv",
+    "paired_deltas": "relation_ablation_classification_paired_deltas_vs_G0.csv"
+  }
+}

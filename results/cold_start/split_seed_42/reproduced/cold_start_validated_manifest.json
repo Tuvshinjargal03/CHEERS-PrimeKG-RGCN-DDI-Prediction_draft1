@@ -1,0 +1,36 @@
+{
+  "status": "validated_checkpoint_based_reproduction",
+  "experiment": "DDI-edge cold-start",
+  "split_seed": 42,
+  "model_seeds": [
+    42,
+    43,
+    44
+  ],
+  "cold_drugs": 196,
+  "candidate_drugs": 4278,
+  "primary": {
+    "description": "one-sided cold-to-warm DDI ranking",
+    "queries": 17176,
+    "result_source": "cold_start_primary_reproduced_per_seed.csv"
+  },
+  "secondary": {
+    "description": "two-sided cold-to-cold DDI ranking, evaluated in both directions",
+    "undirected_pairs": 651,
+    "queries": 1302,
+    "result_source": "cold_start_secondary_reproduced_per_seed.csv"
+  },
+  "reproducibility": {
+    "G0": "Original saved rank vectors reproduced exactly for all three model seeds in both evaluations.",
+    "G3": "Original saved rank vectors did not reproduce from the preserved checkpoints and frozen G3 graph. Validated results therefore use fresh canonical checkpoint-based evaluation."
+  },
+  "interpretation_constraints": [
+    "This is DDI-edge cold-start, not fully inductive unseen-node evaluation.",
+    "Cold drugs remain represented as graph nodes with learned node embeddings.",
+    "G3 retains non-DDI biomedical edges for cold drugs.",
+    "The cold cohort is fixed using split seed 42.",
+    "Model seeds 42, 43, and 44 measure model variation conditional on this single fixed cohort.",
+    "Cold-cohort eligibility used total DDI degree and existing test DDI degree, so cohort construction is not test-blind.",
+    "No statistical significance claim is made from three model seeds."
+  ]
+}
