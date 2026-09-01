@@ -3,6 +3,7 @@ import { AlertCircle, ArrowRight, BookOpen, Focus, LoaderCircle, Minus, Plus } f
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import DrugAutocomplete from '../components/DrugAutocomplete.jsx'
+import MedicineLabelScanner from '../components/MedicineLabelScanner.jsx'
 import { getJson, pairEndpoint, resolveDrug } from '../lib/api.js'
 
 const DEFAULT_SHARED_NODES = 15
@@ -219,6 +220,20 @@ export default function GraphExplorer() {
     cy.fit(undefined, 58)
   }
 
+  function selectDrugA(value) {
+    setDrugA(value)
+    setContext(null)
+    setNavigationScore('')
+    setError('')
+  }
+
+  function selectDrugB(value) {
+    setDrugB(value)
+    setContext(null)
+    setNavigationScore('')
+    setError('')
+  }
+
   async function loadContext(event) {
     event.preventDefault()
     if (!pairReady) {
@@ -251,8 +266,14 @@ export default function GraphExplorer() {
       </div>
 
       <form className="pair-form" onSubmit={loadContext}>
-        <DrugAutocomplete label="Drug A" selection={drugA} onSelect={(value) => { setDrugA(value); setContext(null); setNavigationScore(''); setError('') }} disabled={resolving} />
-        <DrugAutocomplete label="Drug B" selection={drugB} onSelect={(value) => { setDrugB(value); setContext(null); setNavigationScore(''); setError('') }} disabled={resolving} />
+        <div className="drug-selection-field">
+          <DrugAutocomplete label="Drug A" selection={drugA} onSelect={selectDrugA} disabled={resolving} />
+          <MedicineLabelScanner targetLabel="Drug A" onDrugSelect={selectDrugA} disabled={resolving} />
+        </div>
+        <div className="drug-selection-field">
+          <DrugAutocomplete label="Drug B" selection={drugB} onSelect={selectDrugB} disabled={resolving} />
+          <MedicineLabelScanner targetLabel="Drug B" onDrugSelect={selectDrugB} disabled={resolving} />
+        </div>
         <button className="primary-button" type="submit" disabled={!pairReady || loading || resolving}>
           {loading || resolving ? <LoaderCircle className="spin" size={18} /> : <Focus size={18} />}
           {loading ? 'Loading context…' : 'Explore pair'}

@@ -163,6 +163,23 @@ class PredictionRequest(BaseModel):
     )
 
 
+class DrugTextMatchRequest(BaseModel):
+
+    text: str = Field(
+        ...,
+        min_length=1,
+        max_length=20_000,
+        description="OCR-extracted printed text to match against supported drugs.",
+    )
+
+    limit: int = Field(
+        default=10,
+        ge=1,
+        le=20,
+        description="Maximum number of conservative supported-drug matches.",
+    )
+
+
 # ============================================================
 # Utility
 # ============================================================
@@ -272,6 +289,9 @@ def root():
 
             "drug_search":
                 "/api/drugs/search?q=Colchi",
+
+            "drug_text_match":
+                "POST /api/drugs/match-text",
 
             "prediction":
                 "POST /api/predict",
@@ -776,6 +796,21 @@ def search_drugs(
 
         "results":
             results,
+    }
+
+
+@app.post("/api/drugs/match-text")
+def match_drug_text(request: DrugTextMatchRequest):
+    """Match OCR-extracted printed text without appearance-based inference."""
+    predictor = app.state.predictor
+    matches = predictor.match_drugs_in_text(
+        text=request.text,
+        limit=request.limit,
+    )
+
+    return {
+        "text_received": request.text,
+        "matches": matches,
     }
 
 
