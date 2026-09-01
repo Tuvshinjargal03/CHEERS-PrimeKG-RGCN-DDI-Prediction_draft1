@@ -1072,6 +1072,7 @@ select:focus-visible {
   white-space: nowrap;
 }
 
+.scanner-camera-button,
 .scanner-file-button,
 .scanner-remove-button {
   min-height: 38px;
@@ -1086,10 +1087,18 @@ select:focus-visible {
   cursor: pointer;
 }
 
+.scanner-camera-button,
 .scanner-file-button {
   border: 1px solid #d6bbfb;
   background: #f9f5ff;
   color: #5925dc;
+}
+
+.scanner-camera-button:disabled {
+  border-color: #e4e7ec;
+  background: #f9fafb;
+  color: #98a2b3;
+  cursor: wait;
 }
 
 .scanner-file-input:focus-visible + .scanner-file-button {
@@ -1101,6 +1110,57 @@ select:focus-visible {
   border: 1px solid #e4e7ec;
   background: white;
   color: #475467;
+}
+
+.scanner-capture-canvas {
+  display: none;
+}
+
+.scanner-camera-stage {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid #d6bbfb;
+  border-radius: 13px;
+  background: #101828;
+}
+
+.scanner-camera-stage video {
+  display: block;
+  width: 100%;
+  max-height: 360px;
+  border-radius: 9px;
+  background: #000;
+  object-fit: contain;
+}
+
+.scanner-camera-stage p,
+.scanner-capture-review p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.scanner-camera-stage p {
+  color: #f2f4f7;
+}
+
+.scanner-camera-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.scanner-camera-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
 }
 
 .scanner-initial-state {
@@ -1156,6 +1216,21 @@ select:focus-visible {
   color: #667085;
   font-size: 10px;
   overflow-wrap: anywhere;
+}
+
+.scanner-capture-review {
+  display: grid;
+  justify-items: center;
+  gap: 9px;
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid #d6bbfb;
+  border-radius: 11px;
+  background: #f9f5ff;
+}
+
+.scanner-capture-review p {
+  color: #475467;
 }
 
 .scanner-status {

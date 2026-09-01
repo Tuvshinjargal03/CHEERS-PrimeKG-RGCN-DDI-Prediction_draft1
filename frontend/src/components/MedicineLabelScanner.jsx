@@ -1,4 +1,4 @@
-import { Camera, FileImage, LoaderCircle, ScanText, Trash2, X } from 'lucide-react'
+import { Camera, FileImage, LoaderCircle, RotateCcw, ScanText, Trash2, X } from 'lucide-react'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { postJson } from '../lib/api.js'
@@ -19,9 +19,13 @@ export default function MedicineLabelScanner({ targetLabel, onDrugSelect, disabl
   const closeRef = useRef(null)
   const dialogRef = useRef(null)
   const fileInputRef = useRef(null)
+  const videoRef = useRef(null)
+  const canvasRef = useRef(null)
+  const streamRef = useRef(null)
   const workerRef = useRef(null)
   const ocrJobId = useRef(0)
   const matchRequestId = useRef(0)
+  const cameraRequestId = useRef(0)
   const [open, setOpen] = useState(false)
   const [previewUrl, setPreviewUrl] = useState('')
   const [fileName, setFileName] = useState('')
@@ -30,17 +34,10 @@ export default function MedicineLabelScanner({ targetLabel, onDrugSelect, disabl
   const [status, setStatus] = useState('idle')
   const [message, setMessage] = useState('')
   const [ocrProgress, setOcrProgress] = useState(0)
+  const [cameraMode, setCameraMode] = useState('idle')
+  const [capturedFile, setCapturedFile] = useState(null)
 
-  const busy = status === 'ocr' || status === 'matching'
-
-  useEffect(() => () => {
-    ocrJobId.current += 1
-    matchRequestId.current += 1
-    if (workerRef.current) {
-      void workerRef.current.terminate().catch(() => {})
-      workerRef.current = null
-    }
-  }, [])
+  const busy = status === 'ocr' || status === 'matching' || cameraMode === 'starting' || cameraMode === 'capturing'
 
   useEffect(() => () => {
     if (previewUrl) URL.revokeObjectURL(previewUrl)
@@ -54,7 +51,27 @@ export default function MedicineLabelScanner({ targetLabel, onDrugSelect, disabl
     if (worker) void worker.terminate().catch(() => {})
   }, [])
 
+  const stopCamera = useCallback(() => {
+    const stream = streamRef.current
+    streamRef.current = null
+    if (stream) stream.getTracks().forEach((track) => track.stop())
+    if (videoRef.current) videoRef.current.srcObject = null
+  }, [])
+
+  useEffect(() => () => {
+    cameraRequestId.current += 1
+    stopCamera()
+    ocrJobId.current += 1
+    matchRequestId.current += 1
+    if (workerRef.current) {
+      void workerRef.current.terminate().catch(() => {})
+      workerRef.current = null
+    }
+  }, [stopCamera])
+
   const resetScanner = useCallback(() => {
+    cameraRequestId.current += 1
+    stopCamera()
     cancelWork()
     setPreviewUrl('')
     setFileName('')
@@ -63,8 +80,10 @@ export default function MedicineLabelScanner({ targetLabel, onDrugSelect, disabl
     setStatus('idle')
     setMessage('')
     setOcrProgress(0)
+    setCameraMode('idle')
+    setCapturedFile(null)
     if (fileInputRef.current) fileInputRef.current.value = ''
-  }, [cancelWork])
+  }, [cancelWork, stopCamera])
 
   const closeScanner = useCallback(() => {
     resetScanner()
@@ -186,9 +205,173 @@ export default function MedicineLabelScanner({ targetLabel, onDrugSelect, disabl
     }
   }
 
+  function clearImageResults() {
+    setPreviewUrl('')
+    setFileName('')
+    setDetectedText('')
+    setMatches([])
+    setOcrProgress(0)
+    setCapturedFile(null)
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  function cameraErrorMessage(error) {
+    if (error?.name === 'NotAllowedError' || error?.name === 'SecurityError') {
+      return 'Camera permission was not granted. You can allow camera access or upload a photo instead.'
+    }
+    if (error?.name === 'NotFoundError' || error?.name === 'DevicesNotFoundError') {
+      return 'No camera was found on this device. You can upload a photo instead.'
+    }
+    if (
+      error?.name === 'NotReadableError'
+      || error?.name === 'TrackStartError'
+      || error?.name === 'AbortError'
+    ) {
+      return 'The camera could not start. It may be in use by another application. Close other camera apps or upload a photo instead.'
+    }
+    return 'The camera is unavailable in this browser. Upload a photo instead.'
+  }
+
+  async function startCamera() {
+    cancelWork()
+    cameraRequestId.current += 1
+    const currentRequest = cameraRequestId.current
+    stopCamera()
+    clearImageResults()
+    setCameraMode('starting')
+    setStatus('cameraStarting')
+    setMessage('Starting camera...')
+
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setCameraMode('idle')
+      setStatus('cameraError')
+      setMessage('Camera access is not available in this browser. You can upload a photo instead.')
+      return
+    }
+
+    let stream = null
+    try {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: 'environment' } },
+          audio: false,
+        })
+      } catch (error) {
+        if (error?.name !== 'OverconstrainedError') throw error
+        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+      }
+
+      if (cameraRequestId.current !== currentRequest) {
+        stream.getTracks().forEach((track) => track.stop())
+        return
+      }
+
+      streamRef.current = stream
+      setCameraMode('live')
+      setStatus('idle')
+      setMessage('')
+      await new Promise((resolve) => window.requestAnimationFrame(resolve))
+      const video = videoRef.current
+      if (!video) throw new Error('Camera preview is unavailable')
+      video.srcObject = stream
+      await video.play()
+    } catch (error) {
+      if (stream && streamRef.current !== stream) {
+        stream.getTracks().forEach((track) => track.stop())
+      }
+      if (cameraRequestId.current !== currentRequest) return
+      stopCamera()
+      setCameraMode('idle')
+      setStatus('cameraError')
+      setMessage(cameraErrorMessage(error))
+    }
+  }
+
+  function cancelCamera() {
+    cameraRequestId.current += 1
+    stopCamera()
+    clearImageResults()
+    setCameraMode('idle')
+    setStatus('idle')
+    setMessage('')
+  }
+
+  function capturePhoto() {
+    const video = videoRef.current
+    const canvas = canvasRef.current
+    if (!video || !canvas || !video.videoWidth || !video.videoHeight) {
+      cameraRequestId.current += 1
+      stopCamera()
+      setCameraMode('idle')
+      setStatus('cameraError')
+      setMessage('The camera image was not ready. Try opening the camera again, or upload a photo instead.')
+      return
+    }
+
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    const context = canvas.getContext('2d')
+    if (!context) {
+      cameraRequestId.current += 1
+      stopCamera()
+      setCameraMode('idle')
+      setStatus('cameraError')
+      setMessage('The photo could not be captured in this browser. Upload a photo instead.')
+      return
+    }
+
+    context.drawImage(video, 0, 0, canvas.width, canvas.height)
+    cameraRequestId.current += 1
+    const currentCapture = cameraRequestId.current
+    stopCamera()
+    setCameraMode('capturing')
+    setStatus('cameraStarting')
+    setMessage('Preparing captured photo...')
+    canvas.toBlob((blob) => {
+      if (cameraRequestId.current !== currentCapture) return
+      if (!blob) {
+        setCameraMode('idle')
+        setStatus('cameraError')
+        setMessage('The photo could not be captured in this browser. Upload a photo instead.')
+        return
+      }
+      const file = new File([blob], `medicine-label-${Date.now()}.jpg`, { type: 'image/jpeg' })
+      setCapturedFile(file)
+      setPreviewUrl(URL.createObjectURL(file))
+      setFileName('Camera photo')
+      setCameraMode('captured')
+      setStatus('idle')
+      setMessage('')
+    }, 'image/jpeg', 0.92)
+  }
+
+  function useCapturedPhoto() {
+    if (!capturedFile) return
+    const file = capturedFile
+    setCapturedFile(null)
+    setCameraMode('idle')
+    void readImage(file)
+  }
+
+  function prepareUpload() {
+    if (cameraMode === 'starting' || cameraMode === 'live' || cameraMode === 'capturing') {
+      cameraRequestId.current += 1
+      stopCamera()
+      clearImageResults()
+      setCameraMode('idle')
+      setStatus('idle')
+      setMessage('')
+    }
+  }
+
   function handleFile(event) {
     const file = event.target.files?.[0]
     if (!file) return
+
+    cameraRequestId.current += 1
+    stopCamera()
+    setCameraMode('idle')
+    setCapturedFile(null)
 
     if (!file.type.startsWith('image/')) {
       resetScanner()
@@ -252,36 +435,72 @@ export default function MedicineLabelScanner({ targetLabel, onDrugSelect, disabl
 
         <p className="scanner-privacy">
           Only photograph the medicine/package label. Avoid including your name,
-          prescription number, address, or other personal information. The image
-          is processed in your browser for text recognition and is not uploaded
-          or stored by CHEERS.
+          prescription number, address, or other personal information. The camera
+          is used only to capture the medicine label. Captured images are processed
+          in your browser and are not uploaded or stored by CHEERS.
         </p>
 
         <div className="scanner-file-row">
+          <button
+            type="button"
+            className="scanner-camera-button"
+            disabled={cameraMode === 'starting' || cameraMode === 'capturing'}
+            onClick={() => void startCamera()}
+          >
+            <Camera size={17} />Use camera
+          </button>
           <input
             ref={fileInputRef}
             id={fileInputId}
             className="scanner-file-input"
             type="file"
             accept="image/*"
-            capture="environment"
+            onClick={prepareUpload}
             onChange={handleFile}
           />
           <label className="scanner-file-button" htmlFor={fileInputId}>
-            {previewUrl ? <FileImage size={17} /> : <Camera size={17} />}
-            {previewUrl ? 'Replace photo' : 'Take or upload photo'}
+            <FileImage size={17} />
+            {previewUrl ? 'Replace photo' : 'Upload photo'}
           </label>
-          {previewUrl && (
+          {previewUrl && cameraMode !== 'captured' && (
             <button type="button" className="scanner-remove-button" onClick={resetScanner}>
               <Trash2 size={16} />Remove photo
             </button>
           )}
         </div>
 
-        {!previewUrl && status === 'idle' && (
+        <canvas ref={canvasRef} className="scanner-capture-canvas" aria-hidden="true" />
+
+        {(cameraMode === 'starting' || cameraMode === 'live') && (
+          <div className="scanner-camera-stage">
+            <video
+              ref={videoRef}
+              autoPlay
+              muted
+              playsInline
+              aria-label="Live camera preview of the medicine label"
+            />
+            <p>Position the printed medicine name clearly inside the camera view.</p>
+            <div className="scanner-camera-actions">
+              <button
+                type="button"
+                className="primary-button"
+                disabled={cameraMode !== 'live'}
+                onClick={capturePhoto}
+              >
+                <Camera size={16} />Capture photo
+              </button>
+              <button type="button" className="secondary-button" onClick={cancelCamera}>
+                Cancel camera
+              </button>
+            </div>
+          </div>
+        )}
+
+        {!previewUrl && cameraMode === 'idle' && status === 'idle' && (
           <div className="scanner-initial-state">
             <Camera size={30} aria-hidden="true" />
-            <p>Take or upload a photo of the printed medicine label.</p>
+            <p>Use your camera or upload a photo of the printed medicine label.</p>
             <small>JPEG, PNG, WebP, or another browser-supported image up to 10 MB.</small>
           </div>
         )}
@@ -291,6 +510,20 @@ export default function MedicineLabelScanner({ targetLabel, onDrugSelect, disabl
             <img src={previewUrl} alt="Preview of the selected printed medicine label" />
             <figcaption>{fileName}</figcaption>
           </figure>
+        )}
+
+        {previewUrl && cameraMode === 'captured' && (
+          <div className="scanner-capture-review">
+            <p>Review the captured label before text recognition begins.</p>
+            <div className="scanner-camera-actions">
+              <button type="button" className="secondary-button" onClick={() => void startCamera()}>
+                <RotateCcw size={16} />Retake
+              </button>
+              <button type="button" className="primary-button" onClick={useCapturedPhoto}>
+                <ScanText size={16} />Use photo
+              </button>
+            </div>
+          </div>
         )}
 
         {message && (
