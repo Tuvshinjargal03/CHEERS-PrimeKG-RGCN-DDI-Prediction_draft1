@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import csv
+import re
+import unicodedata
 from pathlib import Path
 
 import numpy as np
@@ -198,6 +200,95 @@ class DDIPredictor:
             offset=offset,
         )
         return results
+
+    @staticmethod
+    def _normalize_label_text(value):
+        """Normalize printed OCR text without making fuzzy identity guesses."""
+        decomposed = unicodedata.normalize("NFKD", str(value)).casefold()
+        without_marks = "".join(
+            character
+            for character in decomposed
+            if not unicodedata.combining(character)
+        )
+        return re.sub(r"[^a-z0-9]+", " ", without_marks).strip()
+
+    def match_drugs_in_text(self, text, limit=10):
+        """Match exact supported names or DrugBank IDs in normalized label text.
+
+        This intentionally avoids edit-distance and appearance-based inference.
+        Short single-token names are excluded from name matching to reduce
+        incidental matches against dosage instructions and package wording.
+        """
+        normalized_text = self._normalize_label_text(text)
+        if not normalized_text:
+            return []
+
+        padded_text = f" {normalized_text} "
+        matches = []
+
+        for row in self.drug_metadata:
+            normalized_name = self._normalize_label_text(row["entity_name"])
+            normalized_id = self._normalize_label_text(row["entity_id"])
+            name_tokens = normalized_name.split()
+            name_characters = len(normalized_name.replace(" ", ""))
+            name_is_specific_enough = (
+                bool(normalized_name)
+                and name_characters >= 6
+                and (len(name_tokens) > 1 or len(name_tokens[0]) >= 6)
+            )
+
+            name_position = (
+                padded_text.find(f" {normalized_name} ")
+                if name_is_specific_enough
+                else -1
+            )
+            id_position = padded_text.find(f" {normalized_id} ")
+
+            if name_position >= 0:
+                match_type = "exact_name_in_text"
+                matched_text = row["entity_name"]
+                priority = 0
+                position = name_position
+            elif id_position >= 0:
+                match_type = "exact_drugbank_id"
+                matched_text = row["entity_id"]
+                priority = 1
+                position = id_position
+            else:
+                continue
+
+            matches.append(
+                {
+                    "name": row["entity_name"],
+                    "entity_id": row["entity_id"],
+                    "node_id": row["node_id"],
+                    "match_type": match_type,
+                    "matched_text": matched_text,
+                    "_priority": priority,
+                    "_position": position,
+                    "_name_length": len(normalized_name),
+                }
+            )
+
+        matches.sort(
+            key=lambda match: (
+                match["_priority"],
+                match["_position"],
+                -match["_name_length"],
+                match["name"].casefold(),
+                match["entity_id"].casefold(),
+                int(match["node_id"]),
+            )
+        )
+
+        return [
+            {
+                key: value
+                for key, value in match.items()
+                if not key.startswith("_")
+            }
+            for match in matches[: max(0, int(limit))]
+        ]
 
     def resolve_drug(self, query):
         query = str(query).strip()

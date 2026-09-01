@@ -14,6 +14,8 @@ export default function DrugAutocomplete({
 }) {
   const inputId = useId()
   const listboxId = `${inputId}-listbox`
+  const rootRef = useRef(null)
+  const inputRef = useRef(null)
   const requestId = useRef(0)
   const menuRef = useRef(null)
   const [query, setQuery] = useState('')
@@ -23,6 +25,13 @@ export default function DrugAutocomplete({
   const [searchError, setSearchError] = useState('')
   const [hasMore, setHasMore] = useState(false)
   const [activeIndex, setActiveIndex] = useState(-1)
+
+  const closeMenu = useCallback(() => {
+    requestId.current += 1
+    setOpen(false)
+    setActiveIndex(-1)
+    setLoading(false)
+  }, [])
 
   const fetchPage = useCallback(async (searchQuery, offset, append) => {
     const currentRequest = requestId.current + 1
@@ -80,6 +89,21 @@ export default function DrugAutocomplete({
       ?.scrollIntoView({ block: 'nearest' })
   }, [activeIndex])
 
+  useEffect(() => {
+    if (!open) return undefined
+
+    const closeIfOutside = (event) => {
+      if (!rootRef.current?.contains(event.target)) closeMenu()
+    }
+
+    document.addEventListener('pointerdown', closeIfOutside, true)
+    document.addEventListener('focusin', closeIfOutside, true)
+    return () => {
+      document.removeEventListener('pointerdown', closeIfOutside, true)
+      document.removeEventListener('focusin', closeIfOutside, true)
+    }
+  }, [closeMenu, open])
+
   function openBrowseMenu() {
     if (selection || disabled) return
     setLoading(true)
@@ -113,14 +137,16 @@ export default function DrugAutocomplete({
     setLoading(true)
     setOpen(true)
     onSelect(null)
+    window.setTimeout(() => inputRef.current?.focus(), 0)
   }
 
   return (
-    <div className="drug-autocomplete">
+    <div ref={rootRef} className="drug-autocomplete">
       <label htmlFor={inputId}>{label}</label>
       <div className={`autocomplete-control ${selection ? 'selected' : ''}`}>
         <Search size={18} aria-hidden="true" />
         <input
+          ref={inputRef}
           id={inputId}
           value={selection?.name || query}
           placeholder={placeholder}
@@ -147,10 +173,7 @@ export default function DrugAutocomplete({
           onClick={openBrowseMenu}
           onKeyDown={(event) => {
             if (event.key === 'Escape') {
-              requestId.current += 1
-              setOpen(false)
-              setActiveIndex(-1)
-              setLoading(false)
+              closeMenu()
               return
             }
             if (event.key === 'ArrowDown') {

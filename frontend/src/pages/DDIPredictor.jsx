@@ -2,6 +2,7 @@ import { AlertCircle, ArrowRight, LoaderCircle, Network, Search } from 'lucide-r
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import DrugAutocomplete from '../components/DrugAutocomplete.jsx'
+import MedicineLabelScanner from '../components/MedicineLabelScanner.jsx'
 import { postJson } from '../lib/api.js'
 
 function destination(path, query, candidate, score) {
@@ -20,6 +21,12 @@ export default function DDIPredictor() {
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
+  function selectDrug(value) {
+    setDrug(value)
+    setResult(null)
+    setError('')
+  }
 
   async function submit(event) {
     event.preventDefault()
@@ -56,7 +63,10 @@ export default function DDIPredictor() {
       </div>
 
       <form className="predictor-form" onSubmit={submit}>
-        <DrugAutocomplete label="Query drug" selection={drug} onSelect={(value) => { setDrug(value); setResult(null); setError('') }} />
+        <div className="drug-selection-field">
+          <DrugAutocomplete label="Query drug" selection={drug} onSelect={selectDrug} />
+          <MedicineLabelScanner targetLabel="Query drug" onDrugSelect={selectDrug} />
+        </div>
         <label className="select-field">
           <span>Number of candidates</span>
           <select value={topK} onChange={(event) => setTopK(event.target.value)}>
