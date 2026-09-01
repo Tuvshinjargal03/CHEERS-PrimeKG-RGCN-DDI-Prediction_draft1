@@ -726,12 +726,11 @@ def verification_results():
 @app.get("/api/drugs/search")
 def search_drugs(
     q: str = Query(
-        ...,
-        min_length=1,
+        default="",
         max_length=200,
         description=(
-            "Partial drug name or exact "
-            "DrugBank identifier."
+            "Optional partial drug name or exact "
+            "DrugBank identifier. Leave empty to browse."
         ),
     ),
 
@@ -740,21 +739,40 @@ def search_drugs(
         ge=1,
         le=50,
     ),
+
+    offset: int = Query(
+        default=0,
+        ge=0,
+    ),
 ):
 
     predictor = app.state.predictor
+    normalized_query = q.strip()
 
-    results = predictor.search_drugs(
-        query=q,
+    results, total_matching = predictor.search_drug_page(
+        query=normalized_query,
         limit=limit,
+        offset=offset,
     )
 
     return {
         "query":
-            q,
+            normalized_query,
 
         "count":
             len(results),
+
+        "offset":
+            offset,
+
+        "limit":
+            limit,
+
+        "total_matching":
+            total_matching,
+
+        "has_more":
+            offset + len(results) < total_matching,
 
         "results":
             results,
