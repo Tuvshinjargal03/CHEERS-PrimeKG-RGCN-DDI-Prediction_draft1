@@ -133,34 +133,71 @@ class DDIPredictor:
         if len(set(metadata_node_ids.tolist())) != self.CANDIDATE_DRUG_COUNT:
             raise ValueError("Drug node IDs are not unique.")
 
-    def search_drugs(self, query, limit=20):
+    def _matching_drugs(self, query):
+        """Return deterministic candidate rows for browsing or text search."""
         query = str(query).strip()
-
-        if not query:
-            return []
-
         query_folded = query.casefold()
-        matches = [
-            row
-            for row in self.drug_metadata
-            if query_folded in row["entity_name"].casefold()
-            or row["entity_id"].casefold() == query_folded
-        ]
+
+        if query_folded:
+            matches = [
+                row
+                for row in self.drug_metadata
+                if query_folded in row["entity_name"].casefold()
+                or row["entity_id"].casefold() == query_folded
+            ]
+        else:
+            matches = list(self.drug_metadata)
+
+        def match_priority(row):
+            name_folded = row["entity_name"].casefold()
+            entity_id_folded = row["entity_id"].casefold()
+            if not query_folded:
+                return 0
+            if name_folded == query_folded:
+                return 0
+            if entity_id_folded == query_folded:
+                return 1
+            if name_folded.startswith(query_folded):
+                return 2
+            return 3
+
         matches.sort(
             key=lambda row: (
-                row["entity_name"].casefold() != query_folded,
-                row["entity_name"],
+                match_priority(row),
+                row["entity_name"].casefold(),
+                row["entity_id"].casefold(),
+                int(row["node_id"]),
             )
         )
+        return matches
 
-        return [
-            {
-                "name": row["entity_name"],
-                "entity_id": row["entity_id"],
-                "node_id": row["node_id"],
-            }
-            for row in matches[: int(limit)]
-        ]
+    def search_drug_page(self, query, limit=20, offset=0):
+        """Return one bounded page plus the total number of matching drugs."""
+        matches = self._matching_drugs(query)
+        offset = max(0, int(offset))
+        limit = max(0, int(limit))
+        page = matches[offset:offset + limit]
+
+        return (
+            [
+                {
+                    "name": row["entity_name"],
+                    "entity_id": row["entity_id"],
+                    "node_id": row["node_id"],
+                }
+                for row in page
+            ],
+            len(matches),
+        )
+
+    def search_drugs(self, query, limit=20, offset=0):
+        """Compatibility wrapper returning only the requested result rows."""
+        results, _ = self.search_drug_page(
+            query=query,
+            limit=limit,
+            offset=offset,
+        )
+        return results
 
     def resolve_drug(self, query):
         query = str(query).strip()
