@@ -14,6 +14,7 @@ CONTEXT_PATH = PROJECT_DIR / "final_release/g3_context_runtime/g3_drug_context.c
 ARTIFACT_PATH = PROJECT_DIR / "final_release/entity_metadata_runtime/gene_metadata.jsonl"
 MANIFEST_PATH = PROJECT_DIR / "final_release/entity_metadata_runtime/GENE_METADATA_MANIFEST.json"
 EXPECTED_COUNT = 3_094
+OPTIONAL_RAW_INPUT = "data/downloads/ncbi/gene_dataset_reports.jsonl"
 EXPECTED_MAPPING_RULE = (
     "Exact decimal NCBI GeneID only: CHEERS context_id == NCBI gene_id. "
     "No name, symbol, synonym, alias, fuzzy, or case-insensitive fallback."
@@ -26,6 +27,21 @@ def sha256(path):
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def verify_raw_inputs(raw_input_sha256, project_dir=PROJECT_DIR):
+    missing_optional_inputs = []
+    for relative_path, expected_hash in raw_input_sha256.items():
+        raw_input_path = project_dir / relative_path
+        if not raw_input_path.is_file():
+            if relative_path == OPTIONAL_RAW_INPUT:
+                missing_optional_inputs.append(relative_path)
+                continue
+            raise FileNotFoundError(
+                f"Unexpected manifest raw input is missing: {relative_path}."
+            )
+        assert sha256(raw_input_path) == expected_hash
+    return missing_optional_inputs
 
 
 def load_context_identity():
@@ -145,8 +161,7 @@ def main():
     assert manifest["project_gene_count"] == EXPECTED_COUNT
     assert manifest["output_sha256"] == sha256(ARTIFACT_PATH)
     assert manifest["project_context_sha256"] == sha256(CONTEXT_PATH)
-    for relative_path, expected_hash in manifest["raw_input_sha256"].items():
-        assert sha256(PROJECT_DIR / relative_path) == expected_hash
+    missing_raw_inputs = verify_raw_inputs(manifest["raw_input_sha256"])
     expected_replacements = [
         {
             "project_gene_id": record["entity_id"],
@@ -170,6 +185,11 @@ def main():
         assert record["source"] == "NCBI"
 
     assert not any(record["entity_type"] in {"drug", "disease"} for record in records)
+    for relative_path in missing_raw_inputs:
+        print(
+            "SKIP: local archived raw NCBI snapshot is not distributed; "
+            f"its recorded SHA-256 is retained for {relative_path}."
+        )
     print(f"PASS: {EXPECTED_COUNT} unique CHEERS gene identities preserved exactly.")
     print("PASS: exact GeneID-only matched metadata and safe unmatched records verified.")
     print("PASS: taxonomy and coverage statistics reproduce the manifest.")

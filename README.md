@@ -573,6 +573,20 @@ The observed comparison supports a restrained interpretation:
 
 These are associations within this experimental design, not causal claims about biology or model reasoning.
 
+## Verified three-pair qualitative case study
+
+The corrected seed-44 G0-versus-G3 case study uses the same complete 4,278-drug filtered-ranking protocol, including known-positive and self filtering, restoration of the evaluated target, and both query directions. All three selected pairs are **Neutral by best rank**:
+
+| Pair | G0 forward / reverse / best | G3 forward / reverse / best | Conclusion |
+|---|---:|---:|---|
+| Colchicine–Probenecid | 1 / 2 / 1 | 1 / 2 / 1 | Neutral |
+| Acetylsalicylic acid–Ibuprofen | 2 / 2 / 2 | 2 / 2 / 2 | Neutral |
+| Metformin–Glipizide | 5 / 1 / 1 | 4 / 1 / 1 | Neutral |
+
+The recovered original G0 seed-44 checkpoint and G0 graph are retained at `checkpoints/rgcn_multiseed/G0_seed44_best.pt` and `data/processed/rgcn_tensors/G0.pt`. Their hashes, checkpoint metadata, directional scores, filtering status, tie diagnostics, and reproduced ranks are recorded in `results/case_study_three_pair/G0_seed44_reproduction_audit.txt`. The authoritative compact table and figure are under `results/case_study_three_pair/` and `figures/case_study_three_pair/`.
+
+This three-pair analysis is qualitative. It does not establish statistical significance, biological mechanism, clinical interaction severity, safety, or model confidence. Raw ranking scores are not probabilities.
+
 ## Final model verification
 
 The included `final_release/FINAL_VERIFICATION_SUMMARY.json` records seven technical verification checks.
@@ -710,6 +724,8 @@ First raw model score: 40.8524
 
 The application can inspect the real forward Drug–Gene/Protein and Drug–Disease support relationships exported from the selected G3 graph.
 
+The React interface provides two complementary context views. **Graph Explorer** is pair-oriented: it compares Drug A and Drug B and shows shared associations available in G3. **Subgraph Explorer** is single-drug-oriented: it displays one selected drug's paginated one-hop neighborhood. Both views present supporting biomedical graph context; neither is a causal explanation of a model score or a clinical safety assessment.
+
 The runtime also includes `final_release/g3_context_runtime/training_ddi_neighbors.npz`, a NumPy CSR adjacency exported only from relation `0` (`drug_drug`) in the frozen `G3.pt` message-passing graph. It contains 2,138,160 directed training entries representing 1,069,080 unique undirected training pairs. It does not contain validation or test DDIs.
 
 This artifact is intentionally distinct from `known_positive_mask_packed.npz`. The known-positive mask contains training, validation, and test positives and is used only for filtered ranking and known-positive exclusion; it must not be presented as G3 message-passing context.
@@ -776,6 +792,20 @@ Verify the context export:
 python final_release\verify_g3_context_runtime.py
 ```
 
+### Supplemental NCBI gene metadata
+
+Subgraph Explorer can supplement gene/protein nodes with exact NCBI GeneID-matched metadata from `final_release/entity_metadata_runtime/gene_metadata.jsonl`. The artifact contains 3,094 project gene identities and preserves each CHEERS graph node ID, GeneID, and graph display name while presenting current NCBI symbols, full names, aliases, organism, and summaries separately.
+
+The mapping is exact: `context_id == NCBI GeneID`. It does not use name, symbol, synonym, fuzzy, or case-insensitive fallback matching. This metadata is provided only for entity identification and supporting context. It was not textual input to R-GCN training, does not alter model scores, does not explain a prediction, and does not establish a DDI mechanism or clinical conclusion.
+
+The exact raw NCBI JSONL snapshot is not distributed in the tracked repository, while its recorded SHA256 is preserved in the metadata manifest. The verifier checks that raw hash when the snapshot is locally available and explicitly reports a skip when it is absent; the tracked derived metadata, exact CHEERS identities, coverage statistics, context CSV, and their hashes are always verified.
+
+Verify the derived artifact and its canonical tracked-file provenance:
+
+```powershell
+python final_release\verify_gene_metadata.py
+```
+
 ## Independent FDA and PubMed evidence
 
 Each ranked candidate retains the separate **Explore context** action and also provides **Review evidence**. Reviewing evidence does not rerun prediction and does not alter the raw R-GCN score.
@@ -803,7 +833,7 @@ python final_release\verify_external_evidence.py
 
 The repository contains two local frontend paths:
 
-- `frontend/` is the current React/Vite graduation-project interface. It provides the Overview, Experiments, Relation Analysis, DDI Predictor, Graph Explorer, Evidence, and Methodology pages.
+- `frontend/` is the current React/Vite graduation-project interface. It provides the Overview, Experiments, Relation Analysis, DDI Predictor, pair-oriented Graph Explorer, single-drug Subgraph Explorer, Evidence, and Methodology pages.
 - `web/` is the earlier no-build vanilla interface that FastAPI still serves at `/` for compatibility.
 
 The current React development architecture is:
@@ -1020,15 +1050,16 @@ This tree reflects the actual portable folder after repository documentation was
 ```text
 .
 ├── api/                         # FastAPI application
-├── checkpoints/                 # selected archival G3 checkpoint
-├── data/processed/              # selected mappings/tensors for archival inspection
+├── checkpoints/                 # selected G3 and recovered G0 archival checkpoints
+├── data/processed/              # selected mappings plus G0/G3 tensors for archival inspection
 ├── figures/                     # relation-ablation figure exports
 ├── final_release/
+│   ├── entity_metadata_runtime/  # supplemental exact-match NCBI gene metadata
 │   ├── g3_context_runtime/      # portable G3 support-context export
 │   ├── lightweight_runtime/     # verified NumPy scoring export
 │   ├── PORTABLE_APP_MANIFEST_V2.json  # historical
 │   ├── PORTABLE_APP_MANIFEST_V3.json  # historical
-│   └── PORTABLE_APP_MANIFEST_V4.json  # current
+│   └── PORTABLE_APP_MANIFEST_V4.json  # historical post-React snapshot
 ├── frontend/                    # current React/Vite interface
 │   ├── public/
 │   └── src/
@@ -1057,11 +1088,13 @@ For the complete lightweight web demonstration:
 - `api/main.py`;
 - `src/lightweight_inference.py`;
 - `src/g3_context.py`;
+- `src/graph_neighborhood.py` and `src/entity_metadata.py`;
 - `src/safety_evidence.py` and `src/pubmed_literature.py`;
 - `frontend/package.json`, `frontend/package-lock.json`, `frontend/vite.config.js`, and `frontend/src/` for the current React interface;
 - `web/index.html`, `web/styles.css`, and `web/app.js` for the FastAPI-served compatibility interface;
 - all files under `final_release/lightweight_runtime/`;
 - all files under `final_release/g3_context_runtime/`;
+- all files under `final_release/entity_metadata_runtime/`;
 - `results/live_5seed/final_experiment_summary.json`;
 - `results/classification_metrics_5seed/classification_metrics_5seed_summary.json`;
 - the two CSV files under `results/relation_ablation/final/`;
@@ -1137,13 +1170,20 @@ Those materials were retained in the university experiment workspace. The includ
 | `final_release/g3_context_runtime/g3_drug_context.csv` | 68,284 real forward G3 support edges |
 | `final_release/g3_context_runtime/g3_context_summary.json` | context counts and interpretation warning |
 | `final_release/g3_context_runtime/G3_CONTEXT_MANIFEST.json` | SHA256 checks for the context CSV and summary |
+| `final_release/g3_context_runtime/training_ddi_neighbors.npz` | compact training-only G3 DDI adjacency for single-drug neighborhood display |
+| `final_release/g3_context_runtime/TRAINING_DDI_NEIGHBORS_MANIFEST.json` | source and runtime hashes plus adjacency invariants |
+| `final_release/entity_metadata_runtime/gene_metadata.jsonl` | exact GeneID-matched supplemental metadata for G3 gene/protein nodes |
+| `final_release/entity_metadata_runtime/GENE_METADATA_MANIFEST.json` | metadata source, mapping rule, coverage statistics, and SHA256 provenance |
 | `final_release/verify_lightweight_runtime.py` | independent Top-10 export check |
 | `final_release/verify_g3_context_runtime.py` | independent edge-count and shared-context check |
+| `final_release/verify_training_ddi_neighbors.py` | training-only DDI adjacency structure and provenance check |
+| `final_release/verify_gene_metadata.py` | exact gene identity, coverage, and provenance check |
+| `final_release/verify_drug_neighborhood.py` | single-drug API, pagination, filtering, and metadata regression check |
 | `final_release/verify_external_evidence.py` | deterministic evidence-schema and live-service availability check |
 | `final_release/FINAL_VERIFICATION_SUMMARY.json` | seven-check final model record |
 | `final_release/PORTABLE_APP_MANIFEST_V2.json` | historical evidence-UI release inventory |
 | `final_release/PORTABLE_APP_MANIFEST_V3.json` | historical five-seed pre-React release inventory |
-| `final_release/PORTABLE_APP_MANIFEST_V4.json` | current post-React repository inventory with SHA256 hashes |
+| `final_release/PORTABLE_APP_MANIFEST_V4.json` | historical post-React repository snapshot; not a current complete inventory |
 | `results/rgcn_multiseed/final_experiment_summary.json` | original three-seed experiment snapshot |
 | `results/live_5seed/final_experiment_summary.json` | current five-seed graph-composition results used by the application |
 | `results/classification_metrics_5seed/` | frozen five-seed classification metrics, per-seed counts, and SHA256 manifest |
@@ -1175,7 +1215,7 @@ The following training-workspace audit files are **not present** in this portabl
 - `web/index.html`;
 - `web/styles.css`.
 
-It must not be presented as a current integrity manifest and is retained only as a historical snapshot. `final_release/PORTABLE_APP_MANIFEST_V2.json` records the evidence-UI release state before five-seed synchronization. V3 records the five-seed state before the React interface and new API endpoints; its README and API hashes no longer match the post-React repository. `final_release/PORTABLE_APP_MANIFEST_V4.json` is the current post-React repository inventory. V4 intentionally does not hash itself, so its metadata and every listed file hash can be verified without a self-referential checksum.
+It must not be presented as a current integrity manifest and is retained only as a historical snapshot. `final_release/PORTABLE_APP_MANIFEST_V2.json` records the evidence-UI release state before five-seed synchronization. V3 records the five-seed state before the React interface and new API endpoints. V4 records a later post-React snapshot but predates subsequently approved application, evaluation, and provenance changes; it is therefore also historical and must not be presented as a complete inventory of the current repository. A V5 manifest should be generated only after all final approved changes are complete.
 
 ## What should be committed
 
@@ -1184,7 +1224,7 @@ It must not be presented as a current integrity manifest and is retained only as
 - `README.md` and `.gitignore`;
 - `api/`, `src/`, `frontend/`, and `web/`;
 - required lightweight runtime and G3 context runtime exports;
-- all three independent verification scripts;
+- included independent verification scripts;
 - five-seed experiment/classification results, relation-ablation results, and verification summaries;
 - the two relation-ablation notebooks and their exported figures;
 - current requirements;
@@ -1205,11 +1245,13 @@ The 6.028 MB G3 context CSV and verified lightweight NPZ/CSV files are runtime d
 
 ### Decide before the first public commit
 
-Two included archive artifacts exceed 25 MB:
+Four included archive artifacts exceed 25 MB:
 
 | File | Bytes | Approximate size | GitHub 100 MB limit |
 |---|---:|---:|---|
+| `data/processed/rgcn_tensors/G0.pt` | 51,317,178 | 48.940 MB | below limit |
 | `data/processed/rgcn_tensors/G3.pt` | 54,594,810 | 52.066 MB | below limit |
+| `checkpoints/rgcn_multiseed/G0_seed44_best.pt` | 26,446,066 | 25.221 MB | below limit |
 | `checkpoints/rgcn_multiseed/G3_seed44_best.pt` | 26,446,322 | 25.221 MB | below limit |
 
 No file exceeds GitHub's normal 100 MB per-file limit. Nevertheless, committing binary model/tensor artifacts directly makes repository history permanently large. If they are retained for academic reproducibility, Git LFS or a versioned release/archive is preferable. If the repository is intended only for Level-1 demonstration, they can be distributed separately with checksums—but they must not be deleted merely to reduce repository size.
@@ -1218,8 +1260,8 @@ Release decisions and verified third-party status:
 
 - **Still requires Team CHEERS approval:** choose a license for original CHEERS code. No project license is currently granted.
 - **Verified source metadata:** the official PrimeKG code repository is MIT-licensed, while the published Harvard Dataverse PrimeKG dataset record reports CC0 1.0. PrimeKG also warns that original upstream data sources can have separate terms; see `THIRD_PARTY_NOTICES.md`.
-- **Completed:** earlier manifests are retained as historical release records, while the versioned V4 manifest is the current operational integrity inventory.
-- **Recommended packaging choice:** use Git LFS or versioned release assets for the two archival `.pt` files if the full academic archive is published. They are not required by the Level-1 NumPy application and were not deleted or rewritten here.
+- **Pending final freeze:** V2, V3, and V4 are retained as historical release records. Generate V5 only after all final approved repository changes are complete.
+- **Recommended packaging choice:** use Git LFS or versioned release assets for the four archival `.pt` files if the full academic archive is published. They are not required by the Level-1 NumPy application and were not deleted or rewritten here.
 
 ## Limitations
 
