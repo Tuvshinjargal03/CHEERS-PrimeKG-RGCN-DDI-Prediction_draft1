@@ -6,3 +6,10 @@ results/classification_metrics_5seed/*.json -text
 results/classification_metrics_5seed/*.sha256 -text
 final_release/entity_metadata_runtime/*.jsonl text eol=lf
 final_release/entity_metadata_runtime/*.json text eol=lf
+analysis/external_ddi_evaluation/.gitignore text eol=lf
+analysis/external_ddi_evaluation/**/*.csv text eol=lf
+analysis/external_ddi_evaluation/**/*.json text eol=lf
+analysis/external_ddi_evaluation/**/*.md text eol=lf
+analysis/external_ddi_evaluation/**/*.py text eol=lf
+analysis/external_ddi_evaluation/**/*.sha256 text eol=lf
+analysis/external_ddi_evaluation/**/*.svg text eol=lf

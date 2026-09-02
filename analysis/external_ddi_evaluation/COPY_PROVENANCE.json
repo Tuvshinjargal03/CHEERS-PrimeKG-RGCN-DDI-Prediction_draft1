@@ -1,5 +1,5 @@
 {
-  "verified_utc": "2026-08-30T16:13:50.382941+00:00",
+  "verified_utc": "2026-09-02T07:02:06.878929+00:00",
   "all_copies_byte_identical": false,
   "file_count": 25,
   "files": [
@@ -8,14 +8,22 @@
       "package_path": "analysis/external_ddi_evaluation/ddinter/preparation/artifact_inventory.csv",
       "size_bytes": 1303,
       "sha256": "be5b39d3e91f2c0fe19930e070e3cebba986f4e767c1dcbec520c2d1a4b68492",
-      "byte_identical": true
+      "byte_identical": false,
+      "current_size_bytes": 1298,
+      "current_sha256": "1ac0fee252f26bc0782165e7bc46b3c6397ff797322646c126a032e5aa13ecee",
+      "evolution_note": "Canonical LF normalization for portable tracked-byte verification; scientific values are unchanged.",
+      "scientific_outputs_unchanged": true
     },
     {
       "original_path": "analysis/ddinter_external_evaluation_preparation/checkpoint_feasibility.csv",
       "package_path": "analysis/external_ddi_evaluation/ddinter/preparation/checkpoint_feasibility.csv",
       "size_bytes": 1414,
       "sha256": "80f78ae399b15efa1a700b89352eba5211537564ad6ee0a0b87f9cd0fbc2fd7c",
-      "byte_identical": true
+      "byte_identical": false,
+      "current_size_bytes": 1393,
+      "current_sha256": "b94aef20ddd663eb79576bd090cfe8ee5380385fed808a29813de5c4983118c7",
+      "evolution_note": "Canonical LF normalization for portable tracked-byte verification; scientific values are unchanged.",
+      "scientific_outputs_unchanged": true
     },
     {
       "original_path": "analysis/ddinter_external_evaluation_preparation/ddinter_deduplicated_pairs.csv",
@@ -29,7 +37,11 @@
       "package_path": "analysis/external_ddi_evaluation/ddinter/preparation/ddinter_drug_crosswalk.csv",
       "size_bytes": 177547,
       "sha256": "711c8f0e8869b18f564848ed3d6d3c8f07e79e4d4cb0bc47cb0f6a0ddf9620d1",
-      "byte_identical": true
+      "byte_identical": false,
+      "current_size_bytes": 175607,
+      "current_sha256": "d55ec27dff04b409d45f60e3f713f43d9538bdafc80d30f719a0b65438ae3de7",
+      "evolution_note": "Canonical LF normalization for portable tracked-byte verification; scientific values are unchanged.",
+      "scientific_outputs_unchanged": true
     },
     {
       "original_path": "analysis/ddinter_external_evaluation_preparation/ddinter_mapped_pair_review.csv",
@@ -43,7 +55,11 @@
       "package_path": "analysis/external_ddi_evaluation/ddinter/preparation/ddinter_primekg_novel_pairs.csv",
       "size_bytes": 7440796,
       "sha256": "a63c11610075734b18cbc4fa35f19015caebeadacfa29f83f855aa3711ceca36",
-      "byte_identical": true
+      "byte_identical": false,
+      "current_size_bytes": 7391690,
+      "current_sha256": "b2a79538655b1499dfd8a9b0418bc9c6d110dca15f032412b56f40f748e5e49a",
+      "evolution_note": "Canonical LF normalization for portable tracked-byte verification; scientific values are unchanged.",
+      "scientific_outputs_unchanged": true
     },
     {
       "original_path": "analysis/ddinter_external_evaluation_preparation/EVALUATION_PROTOCOL.md",
@@ -61,7 +77,11 @@
       "package_path": "analysis/external_ddi_evaluation/ddinter/preparation/preparation_summary.json",
       "size_bytes": 2720,
       "sha256": "0a25789746ed09f9f21beb90829d19bc3659e178bcdcafe4e2d5055ca72471ad",
-      "byte_identical": true
+      "byte_identical": false,
+      "current_size_bytes": 2636,
+      "current_sha256": "97b2f35ac6aaa15e5705d37168028836d488b3c2aeb48e8fae9d9838f8d7d0b8",
+      "evolution_note": "Canonical LF normalization for portable tracked-byte verification; scientific values are unchanged.",
+      "scientific_outputs_unchanged": true
     },
     {
       "original_path": "analysis/ddinter_external_evaluation_preparation/prepare_ddinter_external_set.py",
@@ -80,9 +100,9 @@
       "size_bytes": 854,
       "sha256": "4b9840db93251d3645cb1bffffd52ceac419c9552e60a83523582545ae25219f",
       "byte_identical": false,
-      "current_size_bytes": 854,
-      "current_sha256": "3d23e5b3b58b5cc70c9c602b6e6c41f59b313bcd3a3c9e32621237fb8ee34f61",
-      "evolution_note": "Updated nested hashes for intentionally evolved preparation script and protocol.",
+      "current_size_bytes": 845,
+      "current_sha256": "133aebffb284fabf9bfaeeadf8a133c3d86fcb9324690c5581a7d763ab14e673",
+      "evolution_note": "Updated nested hashes for intentionally evolved preparation script and protocol. Canonical LF tracked-byte normalization applied; scientific values remain unchanged.",
       "scientific_outputs_unchanged": true
     },
     {
@@ -90,7 +110,11 @@
       "package_path": "analysis/external_ddi_evaluation/ddinter/pilot/ddinter_g3_seed44_overall_metrics.json",
       "size_bytes": 2434,
       "sha256": "ee51e20a2805c0af0e66972fa4eac79c45fa18a2f5e62e71e030e2f1e9c75a7c",
-      "byte_identical": true
+      "byte_identical": false,
+      "current_size_bytes": 2371,
+      "current_sha256": "8285c159c5e1d54287de5ff4ced0e3c7d8e9c5a57f7b7fe3e646c0f00413d0a6",
+      "evolution_note": "Canonical LF normalization for portable tracked-byte verification; scientific values are unchanged.",
+      "scientific_outputs_unchanged": true
     },
     {
       "original_path": "analysis/ddinter_external_evaluation_pilot/ddinter_g3_seed44_per_query.csv",
@@ -104,28 +128,44 @@
       "package_path": "analysis/external_ddi_evaluation/ddinter/pilot/ddinter_g3_seed44_sensitivity_metrics.json",
       "size_bytes": 396,
       "sha256": "1910063092d68fb59068bfe6c8be2b2cf9e2c87121374687dd0681247995d5dd",
-      "byte_identical": true
+      "byte_identical": false,
+      "current_size_bytes": 382,
+      "current_sha256": "075f6153528364def7cc06345ee0dce05fc43f6cb6a5882400ca38f1b245e8dc",
+      "evolution_note": "Canonical LF normalization for portable tracked-byte verification; scientific values are unchanged.",
+      "scientific_outputs_unchanged": true
     },
     {
       "original_path": "analysis/ddinter_external_evaluation_pilot/ddinter_g3_seed44_severity_metrics.csv",
       "package_path": "analysis/external_ddi_evaluation/ddinter/pilot/ddinter_g3_seed44_severity_metrics.csv",
       "size_bytes": 636,
       "sha256": "5d7dee2519cf2edded7f74e2afa0b0a32bc032554496ee92844039745a377592",
-      "byte_identical": true
+      "byte_identical": false,
+      "current_size_bytes": 631,
+      "current_sha256": "4581e6de39b44fb32dc1653ad179cad70494e0588ed4005f3036aa68e482361e",
+      "evolution_note": "Canonical LF normalization for portable tracked-byte verification; scientific values are unchanged.",
+      "scientific_outputs_unchanged": true
     },
     {
       "original_path": "analysis/ddinter_external_evaluation_pilot/ddinter_g3_seed44_tie_diagnostics.json",
       "package_path": "analysis/external_ddi_evaluation/ddinter/pilot/ddinter_g3_seed44_tie_diagnostics.json",
       "size_bytes": 750,
       "sha256": "14719d87908e3024bd84039405b91ac0e3f944822d005ec997b74824021ded61",
-      "byte_identical": true
+      "byte_identical": false,
+      "current_size_bytes": 733,
+      "current_sha256": "620d0e98c3c5d8a9a60f4270d1460fba409a13fb7f2f85ce95d03ca19a57ba20",
+      "evolution_note": "Canonical LF normalization for portable tracked-byte verification; scientific values are unchanged.",
+      "scientific_outputs_unchanged": true
     },
     {
       "original_path": "analysis/ddinter_external_evaluation_pilot/EVALUATION_NOTES.md",
       "package_path": "analysis/external_ddi_evaluation/ddinter/pilot/EVALUATION_NOTES.md",
       "size_bytes": 1297,
       "sha256": "76ff3cd2bb5b9c505b5b0c4293203da8bdfcc7a4968b64bbfdfc61ec8362739a",
-      "byte_identical": true
+      "byte_identical": false,
+      "current_size_bytes": 1265,
+      "current_sha256": "9e8eb7781d43a99ebb8e5a2b258199f80354df942a2af32ab553aea3bc7c3fd3",
+      "evolution_note": "Canonical LF normalization for portable tracked-byte verification; scientific values are unchanged.",
+      "scientific_outputs_unchanged": true
     },
     {
       "original_path": "analysis/ddinter_external_evaluation_pilot/run_ddinter_g3_seed44_pilot.py",
@@ -144,9 +184,9 @@
       "size_bytes": 712,
       "sha256": "2c2b32e14fe0c69f52ae9dd972b93e72c18aed814f3996fdf041e2781a2173c8",
       "byte_identical": false,
-      "current_size_bytes": 712,
-      "current_sha256": "1bdba22a09cadb5da57563fa46cd150cdc18a500ede13b3d05694190a3a89ba7",
-      "evolution_note": "Updated stale evaluator hash after intentional portability changes.",
+      "current_size_bytes": 705,
+      "current_sha256": "29c37d9d80d748a9013ef014e3d7d5d5b898eba8e9d50c8fab9758594f0d7e82",
+      "evolution_note": "Updated stale evaluator hash after intentional portability changes. Canonical LF tracked-byte normalization applied; scientific values remain unchanged.",
       "scientific_outputs_unchanged": true
     },
     {
@@ -154,21 +194,33 @@
       "package_path": "analysis/external_ddi_evaluation/kaggle/pilot/COMPARISON_NOTES.md",
       "size_bytes": 1131,
       "sha256": "f3bc4bee63af753a5664185b999d41b415c0b4e48df91ebafe3a17f854fb2920",
-      "byte_identical": true
+      "byte_identical": false,
+      "current_size_bytes": 1108,
+      "current_sha256": "1e401c76651e74966b4aea6f2394116d7e8d00512499555c8f5e318cfa9727b4",
+      "evolution_note": "Canonical LF normalization for portable tracked-byte verification; scientific values are unchanged.",
+      "scientific_outputs_unchanged": true
     },
     {
       "original_path": "analysis/kaggle_external_evaluation_pilot/kaggle_g3_seed44_cohort.csv",
       "package_path": "analysis/external_ddi_evaluation/kaggle/pilot/kaggle_g3_seed44_cohort.csv",
       "size_bytes": 4295417,
       "sha256": "82392958acc919fef4383e1025933c4610996706fb50d5356241bf690da83b64",
-      "byte_identical": true
+      "byte_identical": false,
+      "current_size_bytes": 4256906,
+      "current_sha256": "bb901a6d827f96dc277162a7c65fec0f36ac94d3377732a48ee6c228169099fd",
+      "evolution_note": "Canonical LF normalization for portable tracked-byte verification; scientific values are unchanged.",
+      "scientific_outputs_unchanged": true
     },
     {
       "original_path": "analysis/kaggle_external_evaluation_pilot/kaggle_g3_seed44_overall_metrics.json",
       "package_path": "analysis/external_ddi_evaluation/kaggle/pilot/kaggle_g3_seed44_overall_metrics.json",
       "size_bytes": 3336,
       "sha256": "f2ffc24d0e886354f8793b17d090a22e8465e3a4252c4eba33f5a6dad87e9834",
-      "byte_identical": true
+      "byte_identical": false,
+      "current_size_bytes": 3246,
+      "current_sha256": "cd7c9a5d537a30510cf1d114bdb905b571fc7d057192a319a824d8f6c5c3b8f4",
+      "evolution_note": "Canonical LF normalization for portable tracked-byte verification; scientific values are unchanged.",
+      "scientific_outputs_unchanged": true
     },
     {
       "original_path": "analysis/kaggle_external_evaluation_pilot/kaggle_g3_seed44_per_query.csv",
@@ -182,7 +234,11 @@
       "package_path": "analysis/external_ddi_evaluation/kaggle/pilot/kaggle_g3_seed44_tie_diagnostics.json",
       "size_bytes": 730,
       "sha256": "689599d6665b23fae25b36923dfa0fc6f137a5f98b18ea8e98b8966296e582de",
-      "byte_identical": true
+      "byte_identical": false,
+      "current_size_bytes": 713,
+      "current_sha256": "13d2e955ff521d923f0fa0ba8462f6856010fd68bb4ff78a79e59ff73c86f75d",
+      "evolution_note": "Canonical LF normalization for portable tracked-byte verification; scientific values are unchanged.",
+      "scientific_outputs_unchanged": true
     },
     {
       "original_path": "analysis/kaggle_external_evaluation_pilot/run_kaggle_g3_seed44_pilot.py",
@@ -201,11 +257,11 @@
       "size_bytes": 587,
       "sha256": "276ef15a0d8e5ffaa6d2b23f9bcb189f1ed9c209dd1e1380d3d7643895d38d42",
       "byte_identical": false,
-      "current_size_bytes": 587,
-      "current_sha256": "5bb8b0f61e9d84ad55e06e08534c4509b27e570e4935cd0416259ca2f6c4a9d8",
-      "evolution_note": "Updated nested evaluator hash after intentional portability changes.",
+      "current_size_bytes": 581,
+      "current_sha256": "088da349e4513baaa551d33ad5d4b5e61069265f65171ba60f574f37c15b5d9c",
+      "evolution_note": "Updated nested evaluator hash after intentional portability changes. Canonical LF tracked-byte normalization applied; scientific values remain unchanged.",
       "scientific_outputs_unchanged": true
     }
   ],
-  "verification_model": "Immutable preserved artifacts verify against original size/SHA256. Intentionally evolved scripts/documentation retain original hashes and verify against explicit current size/SHA256 with an evolution note."
+  "verification_model": "Original source/archive size and SHA256 values are preserved. Tracked text copies use canonical LF bytes; any non-identical copy records explicit current size/SHA256 and an evolution note. Optional local archives retain their exact archived-byte hashes."
 }
