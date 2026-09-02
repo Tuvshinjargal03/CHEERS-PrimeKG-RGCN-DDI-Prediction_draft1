@@ -2,6 +2,7 @@ import { AlertCircle, BookOpen, ExternalLink, FileSearch, LoaderCircle } from 'l
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import DrugAutocomplete from '../components/DrugAutocomplete.jsx'
+import MedicineLabelScanner from '../components/MedicineLabelScanner.jsx'
 import { getJson, pairEndpoint, resolveDrug } from '../lib/api.js'
 
 const SECTION_NAMES = {
@@ -63,6 +64,20 @@ export default function Evidence() {
 
   const pairReady = drugA && drugB && drugA.entity_id !== drugB.entity_id
 
+  function selectDrugA(value) {
+    setDrugA(value)
+    setData(null)
+    setShowAllExcerpts(false)
+    setError('')
+  }
+
+  function selectDrugB(value) {
+    setDrugB(value)
+    setData(null)
+    setShowAllExcerpts(false)
+    setError('')
+  }
+
   async function loadEvidence(event) {
     event.preventDefault()
     if (!pairReady) {
@@ -105,8 +120,14 @@ export default function Evidence() {
       </div>
 
       <form className="pair-form" onSubmit={loadEvidence}>
-        <DrugAutocomplete label="Drug A" selection={drugA} onSelect={(value) => { setDrugA(value); setData(null); setShowAllExcerpts(false); setError('') }} disabled={resolving} />
-        <DrugAutocomplete label="Drug B" selection={drugB} onSelect={(value) => { setDrugB(value); setData(null); setShowAllExcerpts(false); setError('') }} disabled={resolving} />
+        <div className="drug-selection-field">
+          <DrugAutocomplete label="Drug A" selection={drugA} onSelect={selectDrugA} disabled={resolving || loading} />
+          <MedicineLabelScanner targetLabel="Drug A" onDrugSelect={selectDrugA} disabled={resolving || loading} />
+        </div>
+        <div className="drug-selection-field">
+          <DrugAutocomplete label="Drug B" selection={drugB} onSelect={selectDrugB} disabled={resolving || loading} />
+          <MedicineLabelScanner targetLabel="Drug B" onDrugSelect={selectDrugB} disabled={resolving || loading} />
+        </div>
         <button className="primary-button" type="submit" disabled={!pairReady || loading || resolving}>
           {loading || resolving ? <LoaderCircle className="spin" size={18} /> : <FileSearch size={18} />}
           {loading ? 'Retrieving sources…' : 'Review evidence'}
