@@ -12,7 +12,9 @@ PROJECT_DIR = Path(__file__).resolve().parents[1]
 if str(PROJECT_DIR) not in sys.path:
     sys.path.insert(0, str(PROJECT_DIR))
 
-from api.main import app
+from api.main import PROJECT_DIR, app, load_entity_metadata_store
+from src.entity_metadata import EntityMetadataStore
+from src.graph_neighborhood import GraphNeighborhoodStore
 
 
 def assert_counts(payload):
@@ -50,6 +52,13 @@ def main():
         ).json()
         xdh = next(node for node in allopurinol["neighbors"] if node["name"] == "XDH")
         assert {edge["relation"] for edge in xdh["relationships"]} == {"target", "enzyme"}
+        assert xdh["entity_id"] == "7498"
+        assert xdh["node_id"] == 1691
+        assert xdh["metadata"]["official_symbol"] == "XDH"
+        assert xdh["metadata"]["official_full_name"] == "xanthine dehydrogenase"
+        assert xdh["metadata"]["taxonomy_id"] == "9606"
+        assert xdh["metadata"]["organism"] == "Homo sapiens"
+        assert xdh["metadata"]["summary"]
         assert_counts(allopurinol)
 
         regression_examples = [
@@ -71,6 +80,61 @@ def main():
                 edge["relation"] for edge in neighbor["relationships"]
             } == expected_relations
             assert_counts(example_payload)
+
+        ampicillin = client.get(
+            "/api/context/drug",
+            params={
+                "drug_id": "DB00415",
+                "relations": "target,transporter",
+                "entity_types": "gene/protein",
+                "limit": 200,
+            },
+        ).json()
+        slc15a1 = next(
+            node for node in ampicillin["neighbors"] if node["name"] == "SLC15A1"
+        )
+        assert slc15a1["entity_id"] == "6564"
+        assert slc15a1["node_id"] == 0
+        assert slc15a1["metadata"]["official_symbol"] == "SLC15A1"
+        assert slc15a1["metadata"]["official_full_name"] == "solute carrier family 15 member 1"
+        assert slc15a1["metadata"]["aliases"]
+        assert slc15a1["metadata"]["summary"]
+
+        cyp = client.get(
+            "/api/context/drug",
+            params={
+                "drug_id": "DB08496",
+                "relations": "enzyme",
+                "entity_types": "gene/protein",
+                "limit": 200,
+            },
+        ).json()
+        cyp2c18 = next(node for node in cyp["neighbors"] if node["name"] == "CYP2C18")
+        assert cyp2c18["entity_id"] == "1562"
+        assert cyp2c18["node_id"] == 361
+        assert cyp2c18["metadata"]["official_symbol"] == "CYP2C18"
+        assert cyp2c18["metadata"]["official_full_name"] == "cytochrome P450 family 2 subfamily C member 18"
+        assert cyp2c18["metadata"]["aliases"]
+        assert cyp2c18["metadata"]["taxonomy_id"] == "9606"
+        assert cyp2c18["metadata"]["organism"] == "Homo sapiens"
+        assert cyp2c18["metadata"]["summary"]
+
+        mismatch = client.get(
+            "/api/context/drug",
+            params={
+                "drug_id": "DB00028",
+                "relations": "target",
+                "entity_types": "gene/protein",
+                "limit": 200,
+            },
+        ).json()
+        fcgr1b = next(
+            node for node in mismatch["neighbors"] if node["name"] == "FCGR1B"
+        )
+        assert fcgr1b["entity_id"] == "2210"
+        assert fcgr1b["node_id"] == 12464
+        assert fcgr1b["name"] == "FCGR1B"
+        assert fcgr1b["metadata"]["official_symbol"] == "FCGR1BP"
 
         ddi = client.get(
             "/api/context/drug",
@@ -107,11 +171,40 @@ def main():
             "/api/context/drug", params={"drug_id": "DB00437", "entity_types": "protein"}
         ).status_code == 422
 
+        missing_store = load_entity_metadata_store(
+            PROJECT_DIR / "final_release/entity_metadata_runtime/does-not-exist.jsonl"
+        )
+        assert not missing_store.enabled
+        assert len(missing_store) == 0
+        graph_without_metadata = GraphNeighborhoodStore(
+            context_store=app.state.context_store,
+            project_dir=PROJECT_DIR,
+            entity_metadata_store=missing_store,
+        )
+        without_metadata = graph_without_metadata.get_drug_neighborhood(
+            "DB00437",
+            limit=200,
+            relations=["target", "enzyme"],
+            entity_types=["gene/protein"],
+        )
+        xdh_without_metadata = next(
+            node for node in without_metadata["neighbors"] if node["name"] == "XDH"
+        )
+        assert xdh_without_metadata["metadata"] is None
+
+        copied_metadata = app.state.entity_metadata_store.get("gene/protein", "7498")
+        copied_metadata["official_symbol"] = "MUTATED"
+        assert app.state.entity_metadata_store.get("gene/protein", "7498")["official_symbol"] == "XDH"
+        assert app.state.entity_metadata_store.get("gene/protein", " 7498") is None
+        assert app.state.entity_metadata_store.get("gene", "7498") is None
+
     print("PASS: valid, unknown-drug, and invalid-filter API behavior verified.")
     print("PASS: unique-neighbor pagination and deterministic offsets verified.")
     print("PASS: relation/entity filters and pre-pagination counts verified.")
     print("PASS: all three multi-relation regression examples were preserved.")
     print("PASS: DDI scope is training_only with no self or duplicate neighbor.")
+    print("PASS: exact NCBI metadata, CHEERS identity, and symbol mismatch verified.")
+    print("PASS: missing-artifact fallback and read-only exact lookup verified.")
 
 
 if __name__ == "__main__":

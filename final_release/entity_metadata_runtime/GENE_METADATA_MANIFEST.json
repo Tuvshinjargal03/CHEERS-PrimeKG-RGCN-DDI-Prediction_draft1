@@ -1,0 +1,63 @@
+{
+  "artifact_name": "CHEERS NCBI gene metadata",
+  "artifact_version": "1.0.0",
+  "deprecated_or_merged_geneids": [],
+  "generated_at": "2026-09-02T01:49:10Z",
+  "human_gene_count": 3094,
+  "license_status": "NCBI states it places no restrictions on molecular-data use or distribution, while noting that some submitted material may carry third-party rights; NCBI/NLM acknowledgment and disclaimer apply.",
+  "mapping_rule": "Exact decimal NCBI GeneID only: CHEERS context_id == NCBI gene_id. No name, symbol, synonym, alias, fuzzy, or case-insensitive fallback.",
+  "matched_count": 3094,
+  "missing_aliases": 133,
+  "missing_official_full_name": 0,
+  "missing_official_symbol": 0,
+  "missing_summary": 0,
+  "missing_taxonomy_count": 0,
+  "nonhuman_gene_count": 0,
+  "output_file": "final_release/entity_metadata_runtime/gene_metadata.jsonl",
+  "output_sha256": "13ec3140262eac9f3f9f4b3dfc069659fc170289c51d2db5af68c5eeb5653af1",
+  "project_context_file": "final_release/g3_context_runtime/g3_drug_context.csv",
+  "project_context_sha256": "d1e39efa503ba3d0271cdafcc97180102914e10ef0c34565d9d159ea91ae3629",
+  "project_gene_count": 3094,
+  "project_graph": "G3",
+  "project_name_symbol_mismatches": 6,
+  "raw_input_files": [
+    "data/downloads/ncbi/gene_dataset_reports.jsonl"
+  ],
+  "raw_input_sha256": {
+    "data/downloads/ncbi/gene_dataset_reports.jsonl": "9b850b77f1c6b0d5e4be2aeb0d32793be40325ff3c2c95dd66c837e16b2947a6"
+  },
+  "retrieval_date": "2026-09-02",
+  "schema_version": "1.0.0",
+  "scientific_scope": [
+    "Metadata is supplemental entity context.",
+    "Metadata was not textual input to R-GCN training.",
+    "Metadata does not explain model scores.",
+    "Metadata does not establish a DDI mechanism.",
+    "Metadata is not clinical advice."
+  ],
+  "source_name": "NCBI Datasets v2 Gene dataset report",
+  "source_release": "Live NCBI Datasets v2 report; retrieval-date snapshot",
+  "source_urls": [
+    "https://www.ncbi.nlm.nih.gov/datasets/docs/v2/how-tos/genes/get-gene-metadata/",
+    "https://www.ncbi.nlm.nih.gov/datasets/docs/v2/reference-docs/data-reports/gene/",
+    "https://www.ncbi.nlm.nih.gov/datasets/docs/v2/api/rest-api/",
+    "https://www.ncbi.nlm.nih.gov/datasets/docs/v2/api/deprecated-apis/",
+    "https://www.ncbi.nlm.nih.gov/home/about/policies/",
+    "https://api.ncbi.nlm.nih.gov/datasets/v2/gene/id/{gene_ids}/dataset_report"
+  ],
+  "taxonomy_counts": {
+    "9606": {
+      "count": 3094,
+      "organism": "Homo sapiens"
+    }
+  },
+  "transformation_rules": [
+    "Trim and collapse whitespace in presentation text.",
+    "Normalize empty strings and '-' placeholders to null.",
+    "Preserve CHEERS graph_node_id, entity_id, display_name, entity_type, and source.",
+    "Deduplicate exact alias strings and sort aliases case-insensitively.",
+    "Use the first non-empty NCBI summary in source order without rewriting it.",
+    "Never replace a project GeneID; record an explicit replacement separately."
+  ],
+  "unmatched_count": 0
+}

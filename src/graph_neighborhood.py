@@ -42,11 +42,12 @@ class GraphNeighborhoodStore:
         "treatment guidance."
     )
 
-    def __init__(self, context_store, project_dir=None):
+    def __init__(self, context_store, project_dir=None, entity_metadata_store=None):
         if project_dir is None:
             project_dir = Path(__file__).resolve().parents[1]
         self.project_dir = Path(project_dir).resolve()
         self.context_store = context_store
+        self.entity_metadata_store = entity_metadata_store
         runtime = self.project_dir / "final_release"
         adjacency_path = runtime / "g3_context_runtime/training_ddi_neighbors.npz"
         metadata_path = runtime / "lightweight_runtime/drug_metadata.csv"
@@ -150,6 +151,14 @@ class GraphNeighborhoodStore:
                         "relationships": [],
                     },
                 )
+                if item["context_group"] == "gene/protein" and "metadata" not in node:
+                    node["metadata"] = (
+                        self.entity_metadata_store.get(
+                            "gene/protein", item["context_id"]
+                        )
+                        if self.entity_metadata_store is not None
+                        else None
+                    )
                 if not any(
                     edge["relation"] == item["relation"]
                     for edge in node["relationships"]

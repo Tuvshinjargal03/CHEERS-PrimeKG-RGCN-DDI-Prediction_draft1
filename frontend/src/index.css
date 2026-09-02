@@ -1775,6 +1775,88 @@ select:focus-visible {
   border-top: 0;
 }
 
+.gene-metadata-section {
+  padding: 16px;
+  border: 1px solid #e9d7fe;
+  border-radius: 13px;
+  background: #fcfaff;
+}
+
+.gene-metadata-section h4 {
+  color: #6941c6;
+}
+
+.gene-metadata-list > div:first-child {
+  border-top: 0;
+}
+
+.gene-alias-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.gene-alias-list > span {
+  max-width: 100%;
+  padding: 4px 7px;
+  border-radius: 7px;
+  background: #f2f4f7;
+  color: #475467;
+  font-size: 10px;
+  overflow-wrap: anywhere;
+}
+
+.gene-summary {
+  margin: 0;
+  color: #475467;
+  font-size: 11px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.gene-summary:not(.expanded) {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+}
+
+.detail-expand-button {
+  margin-top: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #6941c6;
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.detail-expand-button:hover {
+  color: #42307d;
+}
+
+.detail-expand-button:focus-visible {
+  border-radius: 4px;
+  outline: 2px solid #9e77ed;
+  outline-offset: 3px;
+}
+
+.gene-metadata-disclaimer {
+  margin: 13px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid #e9d7fe;
+  color: #667085;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.metadata-unavailable p {
+  color: #667085;
+  font-style: italic;
+}
+
 .subgraph-detail-content dl {
   margin: 0;
 }

@@ -24,6 +24,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
+from src.entity_metadata import EntityMetadataStore
 from src.g3_context import G3ContextStore
 from src.graph_neighborhood import GraphNeighborhoodStore
 from src.lightweight_inference import DDIPredictor
@@ -47,6 +48,28 @@ RESULT_DIR = (
     / "results/rgcn_multiseed"
 )
 
+GENE_METADATA_PATH = (
+    FINAL_DIR
+    / "entity_metadata_runtime"
+    / "gene_metadata.jsonl"
+)
+
+
+def load_entity_metadata_store(path=GENE_METADATA_PATH):
+    try:
+        store = EntityMetadataStore.load(path)
+    except FileNotFoundError:
+        print(
+            "[CHEERS API] WARNING: Optional gene metadata artifact is absent; "
+            "gene neighborhoods will use graph identity only."
+        )
+        return EntityMetadataStore.empty()
+    print(
+        f"[CHEERS API] Loaded {len(store):,} exact gene metadata records "
+        f"from {store.record_count:,} artifact rows."
+    )
+    return store
+
 
 # ============================================================
 # Application lifecycle
@@ -67,9 +90,12 @@ async def lifespan(app: FastAPI):
         project_dir=PROJECT_DIR
     )
 
+    app.state.entity_metadata_store = load_entity_metadata_store()
+
     app.state.neighborhood_store = GraphNeighborhoodStore(
         context_store=app.state.context_store,
         project_dir=PROJECT_DIR,
+        entity_metadata_store=app.state.entity_metadata_store,
     )
 
     app.state.drug_metadata_by_id = {
@@ -93,6 +119,7 @@ async def lifespan(app: FastAPI):
 
     app.state.predictor = None
     app.state.context_store = None
+    app.state.entity_metadata_store = None
     app.state.neighborhood_store = None
     app.state.drug_metadata_by_id = None
     app.state.label_evidence_service = None

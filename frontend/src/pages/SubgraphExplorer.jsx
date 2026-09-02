@@ -140,6 +140,9 @@ function emptyFilteredData(previous, relations, entityTypes) {
 }
 
 function ElementDetails({ selected, center }) {
+  const [showAllAliases, setShowAllAliases] = useState(false)
+  const [showFullSummary, setShowFullSummary] = useState(false)
+
   if (!selected) {
     return <div className="subgraph-detail-empty"><Focus size={24} /><p>Select a node or edge to inspect its graph metadata.</p></div>
   }
@@ -147,6 +150,12 @@ function ElementDetails({ selected, center }) {
     const entity = selected.data.entity
     const isCenter = Boolean(selected.data.isCenter)
     const typeDetails = ENTITY_TYPE_DETAILS[entity.entity_type]
+    const metadata = entity.entity_type === 'gene/protein' && entity.metadata?.matched === true
+      ? entity.metadata
+      : null
+    const aliases = metadata?.aliases || []
+    const visibleAliases = showAllAliases ? aliases : aliases.slice(0, 5)
+    const summaryCanExpand = Boolean(metadata?.summary && metadata.summary.length > 360)
     return (
       <div className="subgraph-detail-content">
         <span className="card-kicker">{isCenter ? 'Center node' : 'Neighbor node'}</span>
@@ -184,6 +193,62 @@ function ElementDetails({ selected, center }) {
               </div>
             </section>
           </>
+        )}
+        {!isCenter && metadata && (
+          <section className="detail-section gene-metadata-section">
+            <h4>Entity metadata</h4>
+            <dl className="gene-metadata-list">
+              {metadata.official_symbol && <div><dt>Current NCBI symbol</dt><dd>{metadata.official_symbol}</dd></div>}
+              {metadata.official_full_name && <div><dt>Official full name</dt><dd>{metadata.official_full_name}</dd></div>}
+              {metadata.organism && (
+                <div>
+                  <dt>Organism</dt>
+                  <dd>{metadata.organism}{metadata.taxonomy_id && <small>Taxonomy ID {metadata.taxonomy_id}</small>}</dd>
+                </div>
+              )}
+              {aliases.length > 0 && (
+                <div>
+                  <dt>Aliases</dt>
+                  <dd>
+                    <span className="gene-alias-list">
+                      {visibleAliases.map((alias) => <span key={alias}>{alias}</span>)}
+                    </span>
+                    {aliases.length > 5 && (
+                      <button className="detail-expand-button" type="button" onClick={() => setShowAllAliases((current) => !current)}>
+                        {showAllAliases ? 'Show fewer' : `Show all aliases (${aliases.length})`}
+                      </button>
+                    )}
+                  </dd>
+                </div>
+              )}
+              {metadata.summary && (
+                <div>
+                  <dt>NCBI summary</dt>
+                  <dd>
+                    <p className={`gene-summary ${showFullSummary ? 'expanded' : ''}`}>{metadata.summary}</p>
+                    {summaryCanExpand && (
+                      <button className="detail-expand-button" type="button" onClick={() => setShowFullSummary((current) => !current)}>
+                        {showFullSummary ? 'Show less' : 'Show full summary'}
+                      </button>
+                    )}
+                    {(metadata.summary_source || metadata.summary_date) && (
+                      <small>{[metadata.summary_source, metadata.summary_date].filter(Boolean).join(' · ')}</small>
+                    )}
+                  </dd>
+                </div>
+              )}
+              {metadata.replacement_gene_id && <div><dt>NCBI replacement GeneID</dt><dd>{metadata.replacement_gene_id}</dd></div>}
+              {metadata.source_modified_date && <div><dt>Source modified</dt><dd>{metadata.source_modified_date}</dd></div>}
+              <div><dt>Metadata source</dt><dd>NCBI Gene</dd></div>
+            </dl>
+            <p className="gene-metadata-disclaimer">Entity metadata is provided for identification and context. It was not used as textual input to the R-GCN model and does not explain the model&apos;s score.</p>
+          </section>
+        )}
+        {!isCenter && entity.entity_type === 'gene/protein' && !metadata && (
+          <section className="detail-section metadata-unavailable">
+            <h4>Entity metadata</h4>
+            <p>No additional NCBI metadata is included for this node.</p>
+          </section>
         )}
         <section className="detail-section entity-information">
           <h4>Entity information</h4>
@@ -458,7 +523,7 @@ export default function SubgraphExplorer() {
                   </div>
                 </div>
               </article>
-              <aside className="subgraph-details-card" aria-live="polite"><ElementDetails selected={selected} center={data.center} /></aside>
+              <aside className="subgraph-details-card" aria-live="polite"><ElementDetails key={selected ? `${selected.kind}:${selected.data.id}` : 'none'} selected={selected} center={data.center} /></aside>
             </div>
           )}
 
