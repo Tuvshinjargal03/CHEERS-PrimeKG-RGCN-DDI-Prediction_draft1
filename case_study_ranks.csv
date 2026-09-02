@@ -1,4 +1,0 @@
-Category,Drug A,Drug B,DrugBank A,DrugBank B,G0 Fwd,G0 Rev,G0 Best,G3 Fwd,G3 Rev,G3 Best
-Improved,Colchicine,Probenecid,DB01394,DB01032,142,150,142,1,2,1
-Neutral,Aspirin,Ibuprofen,DB00945,DB01050,2,2,2,2,2,2
-Neutral,Metformin,Glipizide,DB00331,DB01067,1,1,1,4,1,1
