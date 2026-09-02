@@ -176,9 +176,11 @@ analysis/external_ddi_evaluation/
 ```
 
 `COPY_PROVENANCE.json` maps every consolidated file to its original local analysis path.
-Immutable raw/result artifacts retain byte-identical status. Intentionally evolved
-evaluator/documentation files retain original hashes and separately record current
-hashes plus the reason for change. `EXTERNAL_EVALUATION_SHA256SUMS.sha256` covers every
+Original source/archive hashes remain preserved. Tracked copies that differ because of
+intentional evaluator/documentation evolution or canonical LF normalization separately
+record their current hashes and the reason for change. Tracked text files use LF bytes
+enforced by the repository `.gitattributes`, so their package hashes do not depend on the
+checkout platform. `EXTERNAL_EVALUATION_SHA256SUMS.sha256` covers every
 package file except itself, including hash-recorded local archives when present.
 
 `ddinter/preparation/DDINTER_MAPPED_POSITIVE_FILTER_PROVENANCE.json` documents the
