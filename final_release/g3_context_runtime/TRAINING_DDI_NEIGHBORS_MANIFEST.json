@@ -1,0 +1,38 @@
+{
+  "graph": "G3",
+  "relation": "drug_drug",
+  "relation_id": 0,
+  "scope": "training_only",
+  "candidate_drugs": 4278,
+  "directed_entries": 2138160,
+  "undirected_pairs": 1069080,
+  "self_loops": 0,
+  "duplicate_directed_rows": 0,
+  "missing_reverse_edges": 0,
+  "source_artifact": "data/processed/rgcn_tensors/G3.pt",
+  "runtime_artifact": "final_release/g3_context_runtime/training_ddi_neighbors.npz",
+  "arrays": {
+    "indptr": {
+      "shape": [
+        4279
+      ],
+      "dtype": "uint32"
+    },
+    "indices": {
+      "shape": [
+        2138160
+      ],
+      "dtype": "uint16"
+    },
+    "drug_node_ids": {
+      "shape": [
+        4278
+      ],
+      "dtype": "int64"
+    }
+  },
+  "sha256": {
+    "source_artifact": "ee77876d767ac5d92e9657f3dd7c582e02598c2736feb124a3dfbe7d67ead5d3",
+    "runtime_artifact": "1aef3495e57b630b842a1bd7229b341f7f7ef3b08a8f5f4a335fe96cffbd124f"
+  }
+}

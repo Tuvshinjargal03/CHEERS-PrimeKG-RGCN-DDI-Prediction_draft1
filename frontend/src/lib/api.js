@@ -41,6 +41,23 @@ export function pairEndpoint(path, drugAId, drugBId) {
   return `${path}?${params.toString()}`
 }
 
+export function drugContextEndpoint({
+  drugId,
+  limit = 50,
+  offset = 0,
+  relations,
+  entityTypes,
+}) {
+  const params = new URLSearchParams({
+    drug_id: drugId,
+    limit: String(limit),
+    offset: String(offset),
+  })
+  if (relations?.length) params.set('relations', relations.join(','))
+  if (entityTypes?.length) params.set('entity_types', entityTypes.join(','))
+  return `/api/context/drug?${params.toString()}`
+}
+
 export async function resolveDrug(entityId) {
   if (!entityId) return null
   const data = await getJson(

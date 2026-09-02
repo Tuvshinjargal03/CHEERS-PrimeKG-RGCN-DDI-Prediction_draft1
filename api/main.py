@@ -25,6 +25,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from src.g3_context import G3ContextStore
+from src.graph_neighborhood import GraphNeighborhoodStore
 from src.lightweight_inference import DDIPredictor
 from src.pubmed_literature import PubMedLiteratureService
 from src.safety_evidence import OpenFDALabelEvidenceService
@@ -66,6 +67,11 @@ async def lifespan(app: FastAPI):
         project_dir=PROJECT_DIR
     )
 
+    app.state.neighborhood_store = GraphNeighborhoodStore(
+        context_store=app.state.context_store,
+        project_dir=PROJECT_DIR,
+    )
+
     app.state.drug_metadata_by_id = {
         row["entity_id"].casefold(): {
             "drug_id": row["entity_id"],
@@ -87,6 +93,7 @@ async def lifespan(app: FastAPI):
 
     app.state.predictor = None
     app.state.context_store = None
+    app.state.neighborhood_store = None
     app.state.drug_metadata_by_id = None
     app.state.label_evidence_service = None
     app.state.literature_service = None
@@ -282,6 +289,9 @@ def root():
                     "?drug_a_id=DB01394"
                     "&drug_b_id=DB01032"
                 ),
+
+            "drug_context":
+                "/api/context/drug?drug_id=DB01394",
 
             "pair_evidence":
                 (
@@ -834,6 +844,49 @@ def pair_context(
             status_code=404,
             detail=exc.args[0],
         )
+
+
+# ============================================================
+# Single-drug G3 neighborhood
+# ============================================================
+
+def parse_csv_filter(value):
+    if value is None:
+        return None
+    return [item.strip() for item in value.split(",") if item.strip()]
+
+
+@app.get("/api/context/drug")
+def drug_context(
+    drug_id: str = Query(
+        ...,
+        min_length=1,
+        max_length=100,
+        description="Exact DrugBank ID for the center drug.",
+    ),
+    limit: int = Query(default=50, ge=1, le=200),
+    offset: int = Query(default=0, ge=0),
+    relations: str | None = Query(
+        default=None,
+        description="Comma-separated canonical relation names.",
+    ),
+    entity_types: str | None = Query(
+        default=None,
+        description="Comma-separated canonical entity types.",
+    ),
+):
+    try:
+        return app.state.neighborhood_store.get_drug_neighborhood(
+            drug_id=drug_id,
+            limit=limit,
+            offset=offset,
+            relations=parse_csv_filter(relations),
+            entity_types=parse_csv_filter(entity_types),
+        )
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=exc.args[0])
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
 
 
 # ============================================================
