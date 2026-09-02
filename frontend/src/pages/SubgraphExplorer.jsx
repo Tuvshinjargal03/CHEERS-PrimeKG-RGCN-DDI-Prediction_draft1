@@ -22,6 +22,50 @@ const ENTITY_TYPES = [
 ]
 const ALL_RELATIONS = RELATIONS.map(([value]) => value)
 const ALL_ENTITY_TYPES = ENTITY_TYPES.map(([value]) => value)
+const ENTITY_TYPE_DETAILS = {
+  drug: {
+    label: 'Drug',
+    idLabel: 'DrugBank ID',
+    summary: "A DrugBank-linked drug node in the model's candidate set.",
+  },
+  'gene/protein': {
+    label: 'Gene / Protein',
+    idLabel: 'NCBI ID',
+    summary: 'A gene/protein context node identified by an NCBI ID in the G3 graph.',
+  },
+  disease: {
+    label: 'Disease',
+    idLabel: 'Context ID',
+    summary: 'A disease context node identified from MONDO or MONDO_grouped in the G3 graph.',
+  },
+}
+const RELATION_EXPLANATIONS = {
+  drug_drug: {
+    text: 'The training portion of the G3 graph records a PrimeKG drug–drug relationship between the selected drug and this drug.',
+    note: 'This is graph context, not an interaction severity or safety assessment.',
+  },
+  target: {
+    text: 'The G3 graph records this gene/protein through a target relationship with the selected drug.',
+  },
+  enzyme: {
+    text: 'The G3 graph records this gene/protein through an enzyme relationship with the selected drug.',
+  },
+  carrier: {
+    text: 'The G3 graph records this gene/protein through a carrier relationship with the selected drug.',
+  },
+  transporter: {
+    text: 'The G3 graph records this gene/protein through a transporter relationship with the selected drug.',
+  },
+  indication: {
+    text: 'The G3 graph records this disease through an indication relationship with the selected drug.',
+  },
+  contraindication: {
+    text: 'The G3 graph records this disease through a contraindication relationship with the selected drug.',
+  },
+  'off-label use': {
+    text: 'The G3 graph records this disease through an off-label-use relationship with the selected drug.',
+  },
+}
 
 function edgeId(centerNodeId, relation, neighborNodeId) {
   const safeRelation = relation.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '')
@@ -102,23 +146,55 @@ function ElementDetails({ selected, center }) {
   if (selected.kind === 'node') {
     const entity = selected.data.entity
     const isCenter = Boolean(selected.data.isCenter)
+    const typeDetails = ENTITY_TYPE_DETAILS[entity.entity_type]
     return (
       <div className="subgraph-detail-content">
         <span className="card-kicker">{isCenter ? 'Center node' : 'Neighbor node'}</span>
         <h3>{entity.name}</h3>
-        <dl>
-          <div><dt>Entity type</dt><dd>{entity.entity_type === 'gene/protein' ? 'Gene / Protein' : entity.entity_type[0].toUpperCase() + entity.entity_type.slice(1)}</dd></div>
-          <div><dt>Entity ID</dt><dd>{entity.entity_id}</dd></div>
-          <div><dt>Graph node ID</dt><dd>{entity.node_id}</dd></div>
-          <div><dt>Source</dt><dd>{entity.source}</dd></div>
-          {isCenter && <div><dt>Role</dt><dd>Center drug</dd></div>}
-        </dl>
+        <span className="entity-type-badge">{typeDetails.label}</span>
+        <section className="detail-section">
+          <h4>About this node</h4>
+          <p>{typeDetails.summary}</p>
+        </section>
         {!isCenter && (
-          <div className="detail-relations">
-            <strong>Relations to {center.name}</strong>
-            <div>{entity.relationships.map((edge) => <span key={edge.relation}>{edge.display_relation}</span>)}</div>
-          </div>
+          <>
+            <section className="detail-section">
+              <h4>Why is it shown here?</h4>
+              <div className="relationship-path">
+                <strong>{center.name}</strong>
+                <div className="relationship-path-relations">
+                  {entity.relationships.map((edge) => <span key={edge.relation}>{edge.display_relation}</span>)}
+                </div>
+                <strong>{entity.name}</strong>
+              </div>
+            </section>
+            <section className="detail-section">
+              <h4>Relationships</h4>
+              <div className="relationship-explanations">
+                {entity.relationships.map((edge) => {
+                  const explanation = RELATION_EXPLANATIONS[edge.relation]
+                  return (
+                    <article key={edge.relation}>
+                      <strong>{edge.display_relation}</strong>
+                      <p>{explanation.text}</p>
+                      {explanation.note && <small>{explanation.note}</small>}
+                    </article>
+                  )
+                })}
+              </div>
+            </section>
+          </>
         )}
+        <section className="detail-section entity-information">
+          <h4>Entity information</h4>
+          <dl>
+            <div><dt>Entity type</dt><dd>{typeDetails.label}</dd></div>
+            <div><dt>{typeDetails.idLabel}</dt><dd>{entity.entity_id}</dd></div>
+            <div><dt>Graph node ID</dt><dd>{entity.node_id}</dd></div>
+            <div><dt>Source</dt><dd>{entity.source}</dd></div>
+            {isCenter && <div><dt>Role</dt><dd>Selected drug</dd></div>}
+          </dl>
+        </section>
       </div>
     )
   }
