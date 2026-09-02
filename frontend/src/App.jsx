@@ -6,6 +6,7 @@
   Home,
   Network,
   Search,
+  Share2,
 } from 'lucide-react'
 import { HashRouter, NavLink, Navigate, Route, Routes } from 'react-router-dom'
 import './index.css'
@@ -15,6 +16,7 @@ import Experiments from './pages/Experiments.jsx'
 import GraphExplorer from './pages/GraphExplorer.jsx'
 import Methodology from './pages/Methodology.jsx'
 import RelationAnalysis from './pages/RelationAnalysis.jsx'
+import SubgraphExplorer from './pages/SubgraphExplorer.jsx'
 
 const navigation = [
   { path: '/overview', label: 'Overview', icon: Home },
@@ -22,6 +24,7 @@ const navigation = [
   { path: '/relations', label: 'Relation Analysis', icon: GitBranch },
   { path: '/predictor', label: 'DDI Predictor', icon: Search },
   { path: '/graph', label: 'Graph Explorer', icon: Network },
+  { path: '/subgraph', label: 'Subgraph Explorer', icon: Share2 },
   { path: '/evidence', label: 'Evidence', icon: Beaker },
   { path: '/methodology', label: 'Methodology', icon: FlaskConical },
 ]
@@ -170,6 +173,10 @@ function AppShell() {
           <Route
             path="/graph"
             element={<GraphExplorer />}
+          />
+          <Route
+            path="/subgraph"
+            element={<SubgraphExplorer />}
           />
           <Route
             path="/evidence"

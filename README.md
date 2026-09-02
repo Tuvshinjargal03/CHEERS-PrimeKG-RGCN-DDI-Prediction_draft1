@@ -710,6 +710,10 @@ First raw model score: 40.8524
 
 The application can inspect the real forward Drug–Gene/Protein and Drug–Disease support relationships exported from the selected G3 graph.
 
+The runtime also includes `final_release/g3_context_runtime/training_ddi_neighbors.npz`, a NumPy CSR adjacency exported only from relation `0` (`drug_drug`) in the frozen `G3.pt` message-passing graph. It contains 2,138,160 directed training entries representing 1,069,080 unique undirected training pairs. It does not contain validation or test DDIs.
+
+This artifact is intentionally distinct from `known_positive_mask_packed.npz`. The known-positive mask contains training, validation, and test positives and is used only for filtered ranking and known-positive exclusion; it must not be presented as G3 message-passing context.
+
 ```text
 final_release/g3_context_runtime/
 ├── g3_drug_context.csv
@@ -861,6 +865,7 @@ The implementation in `api/main.py` is the source of truth.
 | GET | `/api/drugs/search` | Autocomplete search | query `q`; optional `limit` 1–50 | matching drug name, DrugBank ID, and node ID |
 | POST | `/api/predict` | Rank unobserved candidate links | JSON body with `drug` and `top_k` 1–50 | query metadata, model metadata, filtering counts, ranked predictions, disclaimer |
 | GET | `/api/context/pair` | Retrieve real G3 support context for a pair | exact `drug_a_id` and `drug_b_id` | complete per-drug context, shared entities, separate relation lists, interpretation warning |
+| GET | `/api/context/drug` | Retrieve a paginated one-hop G3 neighborhood for one drug | exact `drug_id`; optional `limit`, `offset`, comma-separated `relations`, and `entity_types` | unique neighbors with training-only DDI and forward G3 support relationships, filtered counts, pagination, and interpretation warning |
 | GET | `/api/evidence/pair` | Retrieve independent external evidence for a pair | exact `drug_a_id` and `drug_b_id` | pair identity, model-independence notice, openFDA results, PubMed records, limitations |
 | GET | `/docs` | Interactive OpenAPI documentation | none | FastAPI Swagger UI |
 
