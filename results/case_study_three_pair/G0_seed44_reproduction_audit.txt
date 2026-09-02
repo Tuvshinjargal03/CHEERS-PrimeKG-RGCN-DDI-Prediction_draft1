@@ -1,0 +1,78 @@
+CHEERS G0 SEED-44 CASE-STUDY REPRODUCTION AUDIT
+Date: 2026-09-02
+
+MODEL
+Graph: G0
+Seed: 44
+Best epoch: 495
+Nodes: 13094
+Relations: 15
+Directed edges: 2138160
+
+ARTIFACT HASHES
+G0_seed44_best.pt
+SHA256: 5c1f488b7dbaeb5f12c8d218ca73a88a0db0163d30eafcffa70505a0a124dbaa
+
+G0.pt
+SHA256: d3c966baabcbcb0831d72b65e30310ff8a969b8c977d16c8542666635e2b5412
+
+drug_metadata.csv
+SHA256: 8020ae748baa567d08487c148ba851763fcac54601c183dd6803b587974d857b
+
+known_positive_mask_packed.npz
+SHA256: c87cc2e0ab2eac70c2aa98fc995853bf5c6e97ef0ef7881568b550d924120d37
+
+CANONICAL FILTERED-RANKING RESULTS
+
+Colchicine DB01394 -> Probenecid DB01032
+raw_score: 42.2382392883
+target_known_positive: False
+strictly_greater: 0
+other_equal_score_ties: 0
+rank: 1
+
+Probenecid DB01032 -> Colchicine DB01394
+raw_score: 42.2382354736
+target_known_positive: False
+strictly_greater: 1
+other_equal_score_ties: 0
+rank: 2
+
+Acetylsalicylic acid DB00945 -> Ibuprofen DB01050
+raw_score: 47.0746154785
+target_known_positive: True
+strictly_greater: 1
+other_equal_score_ties: 0
+rank: 2
+
+Ibuprofen DB01050 -> Acetylsalicylic acid DB00945
+raw_score: 47.0746154785
+target_known_positive: True
+strictly_greater: 1
+other_equal_score_ties: 0
+rank: 2
+
+Metformin DB00331 -> Glipizide DB01067
+raw_score: 18.0931758881
+target_known_positive: False
+strictly_greater: 4
+other_equal_score_ties: 0
+rank: 5
+
+Glipizide DB01067 -> Metformin DB00331
+raw_score: 18.0931758881
+target_known_positive: False
+strictly_greater: 0
+other_equal_score_ties: 0
+rank: 1
+
+PAIR BEST RANKS
+Colchicine-Probenecid: 1
+Acetylsalicylic acid-Ibuprofen: 2
+Metformin-Glipizide: 1
+
+NOTE
+These results were reproduced directly from the recovered original
+G0 seed-44 checkpoint using the complete 4,278-drug candidate set,
+complete known-positive filtering, self filtering, target restoration,
+and strict rank = count(score > target_score) + 1.
