@@ -2,6 +2,7 @@ import cytoscape from 'cytoscape'
 import { AlertCircle, Focus, LoaderCircle, Minus, Plus, Share2 } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import DrugAutocomplete from '../components/DrugAutocomplete.jsx'
+import MedicineLabelScanner from '../components/MedicineLabelScanner.jsx'
 import { drugContextEndpoint, getJson } from '../lib/api.js'
 
 const PAGE_SIZE = 50
@@ -428,6 +429,18 @@ export default function SubgraphExplorer() {
     requestNeighborhood({ targetDrug: drug })
   }
 
+  function selectDrug(value) {
+    requestId.current += 1
+    setDrug(value)
+    setExploredDrug(null)
+    setData(null)
+    setNeighbors([])
+    setSelected(null)
+    setLoading(false)
+    setPageLoading(false)
+    setError('')
+  }
+
   function toggleFilter(group, value) {
     const current = group === 'relation' ? enabledRelations : enabledEntityTypes
     const next = current.includes(value)
@@ -476,7 +489,10 @@ export default function SubgraphExplorer() {
       <aside className="subgraph-scope-note"><AlertCircle size={20} /><p><strong>Research context</strong>This view shows relationships available in the G3 graph. Drug–drug edges are training-only G3 relationships. The graph is descriptive context, not a causal model explanation or clinical safety assessment.</p></aside>
 
       <form className="subgraph-search-form" onSubmit={explore}>
-        <DrugAutocomplete label="Center drug" selection={drug} onSelect={(value) => { setDrug(value); setError('') }} />
+        <div className="drug-selection-field">
+          <DrugAutocomplete label="Center drug" selection={drug} onSelect={selectDrug} />
+          <MedicineLabelScanner targetLabel="Drug" onDrugSelect={selectDrug} />
+        </div>
         <button type="submit" className="primary-button" disabled={!drug || loading}>
           {loading ? <LoaderCircle className="spin" size={18} /> : <Share2 size={18} />}
           {loading ? 'Fetching graph context…' : 'Explore subgraph'}
