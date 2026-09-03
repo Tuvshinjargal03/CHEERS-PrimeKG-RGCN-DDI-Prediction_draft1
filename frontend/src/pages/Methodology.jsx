@@ -12,9 +12,10 @@ export default function Methodology() {
       getJson('/api/experiment'),
       getJson('/api/classification'),
       getJson('/api/model'),
+      getJson('/api/relation-analysis'),
     ])
-      .then(([experiment, classification, model]) => {
-        if (active) setData({ experiment, classification, model })
+      .then(([experiment, classification, model, relationAnalysis]) => {
+        if (active) setData({ experiment, classification, model, relationAnalysis })
       })
       .catch((requestError) => {
         if (active) setError(requestError.message || 'Methodology metadata could not be loaded.')
@@ -27,6 +28,7 @@ export default function Methodology() {
   const summary = data?.experiment?.summary
   const classification = data?.classification?.summary
   const model = data?.model
+  const relationAnalysis = data?.relationAnalysis
 
   return (
     <section className="page">
@@ -72,9 +74,16 @@ export default function Methodology() {
             </article>
 
             <article className="method-card">
-              <span className="card-kicker">Complementary evaluation</span><h2>Balanced binary classification</h2>
+              <span className="card-kicker">Complementary evaluation · seeds {classification.seeds.join(', ')}</span><h2>Balanced binary classification</h2>
               <p>{classification.test_positive_pairs.toLocaleString()} held-out positives are paired with {classification.test_negative_pairs.toLocaleString()} fixed sampled-unobserved pairs.</p>
               <div className="definition-list"><div><strong>Threshold</strong><span>Chosen per graph and seed by maximizing validation F1, then frozen for test evaluation.</span></div><div><strong>Metrics</strong><span>Accuracy, Precision, Recall, and F1.</span></div></div>
+            </article>
+
+            <article className="method-card">
+              <span className="card-kicker">Relation extension · ranking only</span><h2>Five paired training seeds</h2>
+              <p>Seven single-relation variants produce {relationAnalysis.relation_runs} ranking runs for seeds {relationAnalysis.seeds.join(', ')}, each paired with the matching G0 run on one fixed split.</p>
+              <p>{relationAnalysis.implementation_lineage}</p>
+              <p>{relationAnalysis.classification_note}</p>
             </article>
           </div>
 
