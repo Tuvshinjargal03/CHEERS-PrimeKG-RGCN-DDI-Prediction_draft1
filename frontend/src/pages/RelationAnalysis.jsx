@@ -5,7 +5,7 @@ import { getJson } from '../lib/api.js'
 
 const FAMILY_COLORS = { 'Drug-Gene/Protein': '#6941c6', 'Drug-Disease': '#1570ef' }
 
-function UniqueBulbBadge({ text, label = 'View helper note' }) {
+function UniqueBulbBadge({ text, label = 'View helper note', placement = 'top' }) {
   const [isHovered, setIsHovered] = useState(false)
   const [isPinned, setIsPinned] = useState(false)
   const isOpen = isHovered || isPinned
@@ -53,17 +53,25 @@ function UniqueBulbBadge({ text, label = 'View helper note' }) {
           role="tooltip"
           style={{
             position: 'absolute',
-            bottom: 'calc(100% + 8px)',
+            ...(placement === 'bottom'
+              ? { top: 'calc(100% + 8px)' }
+              : { bottom: 'calc(100% + 8px)' }),
             left: '50%',
             transform: 'translateX(-50%)',
             width: 'min(260px, calc(100vw - 48px))',
             padding: '10px 14px',
-            background: 'rgba(26, 32, 44, 0.96)',
+            background: '#1a202c',
             color: '#f7fafc',
+            display: 'block',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
             fontSize: 12,
             fontWeight: 400,
             lineHeight: 1.55,
+            letterSpacing: 'normal',
+            wordSpacing: 'normal',
+            textTransform: 'none',
             whiteSpace: 'normal',
+            overflowWrap: 'break-word',
             borderRadius: 10,
             boxShadow: '0 8px 24px rgba(0, 0, 0, 0.35)',
             zIndex: 9999,
@@ -113,6 +121,7 @@ export default function RelationAnalysis() {
           Relation Analysis{' '}
           <UniqueBulbBadge
             label="Explain relation analysis"
+            placement="bottom"
             text="Tests one biomedical relation type at a time on top of the G0 DDI-only backbone to compare its descriptive effect on DDI ranking."
           />
         </h1>
@@ -194,7 +203,7 @@ export default function RelationAnalysis() {
 
         <div className="section-block">
           <div className="section-title"><div><span className="eyebrow">All outcomes retained</span><h2>Five-seed relation results</h2></div></div>
-          <div className="results-table-wrap"><table className="results-table relation-table"><thead><tr><th>Rank</th><th>Relation</th><th>Family</th><th>MRR mean ± SD</th><th>Mean ΔMRR ± SD</th><th>95% paired interval</th><th>Wins vs G0{' '}<UniqueBulbBadge label="Explain wins versus G0" text="Number of paired training seeds in which this relation variant had higher MRR than G0." /></th><th>Edges</th></tr></thead><tbody>{data.results.map((row) => <tr key={row.graph}><td><strong>#{row.rank}</strong></td><td>{row.relation}</td><td><span className={`family-pill ${row.family === 'Drug-Disease' ? 'disease' : ''}`}>{row.family}</span></td><td>{row.mrr_mean.toFixed(6)} ± {row.mrr_std.toFixed(6)}</td><td className={row.delta_mrr_mean >= 0 ? 'positive-value' : 'negative-value'}>{signed(row.delta_mrr_mean)} ± {row.delta_mrr_std.toFixed(6)}</td><td>[{signed(row.ci95_low)}, {signed(row.ci95_high)}]</td><td><span className="wins-cell"><CheckCircle2 size={15} />{row.wins_vs_g0}/5</span></td><td>{row.biomedical_edges.toLocaleString()}</td></tr>)}</tbody></table></div>
+          <div className="results-table-wrap"><table className="results-table relation-table"><thead><tr><th>Rank</th><th>Relation</th><th>Family</th><th>MRR mean ± SD</th><th>Mean ΔMRR ± SD</th><th>95% paired interval</th><th>Wins vs G0{' '}<UniqueBulbBadge label="Explain wins versus G0" placement="bottom" text="Number of paired training seeds in which this relation variant had higher MRR than G0." /></th><th>Edges</th></tr></thead><tbody>{data.results.map((row) => <tr key={row.graph}><td><strong>#{row.rank}</strong></td><td>{row.relation}</td><td><span className={`family-pill ${row.family === 'Drug-Disease' ? 'disease' : ''}`}>{row.family}</span></td><td>{row.mrr_mean.toFixed(6)} ± {row.mrr_std.toFixed(6)}</td><td className={row.delta_mrr_mean >= 0 ? 'positive-value' : 'negative-value'}>{signed(row.delta_mrr_mean)} ± {row.delta_mrr_std.toFixed(6)}</td><td>[{signed(row.ci95_low)}, {signed(row.ci95_high)}]</td><td><span className="wins-cell"><CheckCircle2 size={15} />{row.wins_vs_g0}/5</span></td><td>{row.biomedical_edges.toLocaleString()}</td></tr>)}</tbody></table></div>
         </div>
 
         <div className="section-block">

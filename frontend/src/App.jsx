@@ -30,7 +30,7 @@ const navigation = [
   { path: '/methodology', label: 'Methodology', icon: FlaskConical },
 ]
 
-function UniqueBulbBadge({ text, label = 'View helper note' }) {
+function UniqueBulbBadge({ text, label = 'View helper note', placement = 'top' }) {
   const [isHovered, setIsHovered] = useState(false)
   const [isPinned, setIsPinned] = useState(false)
   const isOpen = isHovered || isPinned
@@ -78,17 +78,25 @@ function UniqueBulbBadge({ text, label = 'View helper note' }) {
           role="tooltip"
           style={{
             position: 'absolute',
-            bottom: 'calc(100% + 8px)',
+            ...(placement === 'bottom'
+              ? { top: 'calc(100% + 8px)' }
+              : { bottom: 'calc(100% + 8px)' }),
             left: '50%',
             transform: 'translateX(-50%)',
             width: 'min(260px, calc(100vw - 48px))',
             padding: '10px 14px',
-            background: 'rgba(26, 32, 44, 0.96)',
+            background: '#1a202c',
             color: '#f7fafc',
+            display: 'block',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
             fontSize: 12,
             fontWeight: 400,
             lineHeight: 1.55,
+            letterSpacing: 'normal',
+            wordSpacing: 'normal',
+            textTransform: 'none',
             whiteSpace: 'normal',
+            overflowWrap: 'break-word',
             borderRadius: 10,
             boxShadow: '0 8px 24px rgba(0, 0, 0, 0.35)',
             zIndex: 9999,
@@ -126,6 +134,7 @@ function Overview() {
           Knowledge Graph Composition for DDI Prediction{' '}
           <UniqueBulbBadge
             label="What DDI means in CHEERS"
+            placement="bottom"
             text="Drug–drug interaction (DDI) is represented here as a link-prediction task between drug entities in the knowledge graph."
           />
         </>
