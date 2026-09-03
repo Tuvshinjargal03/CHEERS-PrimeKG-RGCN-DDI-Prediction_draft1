@@ -11,7 +11,7 @@ import {
 } from 'recharts'
 import { AlertCircle, CheckCircle2, LoaderCircle } from 'lucide-react'
 
-function UniqueBulbBadge({ text, label = 'View helper note' }) {
+function UniqueBulbBadge({ text, label = 'View helper note', placement = 'top' }) {
   const [isHovered, setIsHovered] = useState(false)
   const [isPinned, setIsPinned] = useState(false)
   const isOpen = isHovered || isPinned
@@ -59,17 +59,25 @@ function UniqueBulbBadge({ text, label = 'View helper note' }) {
           role="tooltip"
           style={{
             position: 'absolute',
-            bottom: 'calc(100% + 8px)',
+            ...(placement === 'bottom'
+              ? { top: 'calc(100% + 8px)' }
+              : { bottom: 'calc(100% + 8px)' }),
             left: '50%',
             transform: 'translateX(-50%)',
             width: 'min(260px, calc(100vw - 48px))',
             padding: '10px 14px',
-            background: 'rgba(26, 32, 44, 0.96)',
+            background: '#1a202c',
             color: '#f7fafc',
+            display: 'block',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
             fontSize: 12,
             fontWeight: 400,
             lineHeight: 1.55,
+            letterSpacing: 'normal',
+            wordSpacing: 'normal',
+            textTransform: 'none',
             whiteSpace: 'normal',
+            overflowWrap: 'break-word',
             borderRadius: 10,
             boxShadow: '0 8px 24px rgba(0, 0, 0, 0.35)',
             zIndex: 9999,
@@ -221,6 +229,7 @@ function Experiments() {
           Experiments{' '}
           <UniqueBulbBadge
             label="Explain the controlled experiments"
+            placement="bottom"
             text="Controlled comparison of G0–G3 using the same DDI split, model architecture, decoder, and evaluation protocol across five training seeds."
           />
         </h1>
