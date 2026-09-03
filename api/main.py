@@ -607,40 +607,18 @@ def classification_results():
 
 @app.get("/api/relation-analysis")
 def relation_analysis_results():
-    """Return the frozen three-seed single-relation follow-up analysis."""
+    """Return the current five-seed study and labeled three-seed history."""
 
-    result_dir = (
-        PROJECT_DIR
-        / "results/relation_ablation/final"
-    )
-    summary_path = (
-        result_dir
-        / "relation_ablation_3seed_summary.csv"
-    )
-    paired_path = (
-        result_dir
-        / "relation_ablation_paired_deltas_vs_G0.csv"
-    )
+    result_root = PROJECT_DIR / "results/relation_ablation"
+    statistics_path = result_root / "five_seed_v1/statistics.json"
+    history_path = result_root / "final/relation_ablation_3seed_summary.csv"
 
     try:
-        with summary_path.open(
-            "r",
-            encoding="utf-8-sig",
-            newline="",
-        ) as summary_file:
-            summary_rows = list(
-                csv.DictReader(summary_file)
-            )
-
-        with paired_path.open(
-            "r",
-            encoding="utf-8-sig",
-            newline="",
-        ) as paired_file:
-            paired_rows = list(
-                csv.DictReader(paired_file)
-            )
-
+        statistics = load_json(statistics_path)
+        with history_path.open(
+            "r", encoding="utf-8-sig", newline=""
+        ) as history_file:
+            history_rows = list(csv.DictReader(history_file))
     except FileNotFoundError as exc:
         raise HTTPException(
             status_code=500,
@@ -649,17 +627,6 @@ def relation_analysis_results():
                 f"is unavailable: {exc.filename}"
             ),
         )
-
-    if not summary_rows:
-        raise HTTPException(
-            status_code=500,
-            detail="Relation-ablation summary contains no data rows.",
-        )
-
-    summary_rows.sort(
-        key=lambda row: float(row["DeltaMRR_mean"]),
-        reverse=True,
-    )
 
     family_by_graph = {
         "A1_target": "Drug-Gene/Protein",
@@ -671,76 +638,103 @@ def relation_analysis_results():
         "A7_off_label": "Drug-Disease",
     }
 
-    deltas_by_graph = {}
-    for row in paired_rows:
-        graph = row["graph"]
-        deltas_by_graph.setdefault(graph, []).append({
-            "seed": int(row["seed"]),
-            "relation_mrr": float(row["relation_MRR"]),
-            "g0_mrr": float(row["G0_MRR"]),
-            "delta_mrr": float(row["delta_MRR"]),
-        })
+    edges_by_graph = {
+        "A1_target": (16380, 32760),
+        "A2_enzyme": (5317, 10634),
+        "A3_transporter": (3092, 6184),
+        "A4_carrier": (864, 1728),
+        "A5_indication": (9388, 18776),
+        "A6_contraindication": (30675, 61350),
+        "A7_off_label": (2568, 5136),
+    }
 
     results = []
-    for rank, row in enumerate(summary_rows, start=1):
+    for rank, row in enumerate(statistics["relations"], start=1):
         graph = row["graph"]
-        if graph not in family_by_graph:
+        if graph not in family_by_graph or graph not in edges_by_graph:
             raise HTTPException(
                 status_code=500,
                 detail=f"Unexpected relation-ablation graph: {graph}.",
             )
-        seed_deltas = sorted(
-            deltas_by_graph.get(graph, []),
-            key=lambda item: item["seed"],
-        )
-        if len(seed_deltas) != 3:
-            raise HTTPException(
-                status_code=500,
-                detail=f"Expected three paired seed rows for {graph}.",
-            )
-
-        wins = int(row["PositiveSeeds"])
+        original_edges, directed_edges = edges_by_graph[graph]
         results.append({
             "rank": rank,
             "graph": graph,
-            "relation": row["Relation"],
+            "relation": row["relation"],
             "family": family_by_graph[graph],
-            "biomedical_edges": int(row["BiomedicalEdges"]),
-            "biomedical_directed_edges": int(row["BiomedicalDirectedEdges"]),
-            "mrr_mean": float(row["MRR_mean"]),
-            "mrr_std": float(row["MRR_std"]),
-            "hits1_mean": float(row["Hits1_mean"]),
-            "hits1_std": float(row["Hits1_std"]),
-            "hits5_mean": float(row["Hits5_mean"]),
-            "hits5_std": float(row["Hits5_std"]),
-            "hits10_mean": float(row["Hits10_mean"]),
-            "hits10_std": float(row["Hits10_std"]),
-            "delta_mrr_mean": float(row["DeltaMRR_mean"]),
-            "delta_mrr_std": float(row["DeltaMRR_std"]),
-            "delta_mrr_min": float(row["DeltaMRR_min"]),
-            "delta_mrr_max": float(row["DeltaMRR_max"]),
-            "wins_vs_g0": wins,
-            "losses_vs_g0": 3 - wins,
-            "seed_deltas": seed_deltas,
+            "biomedical_edges": original_edges,
+            "biomedical_directed_edges": directed_edges,
+            "mrr_mean": row["mean_MRR"],
+            "mrr_std": row["sd_MRR"],
+            "delta_mrr_mean": row["mean_delta"],
+            "delta_mrr_std": row["sd_delta"],
+            "ci95_low": row["ci95_low"],
+            "ci95_high": row["ci95_high"],
+            "wins_vs_g0": row["wins"],
+            "losses_vs_g0": row["losses"],
+            "sign_flip_p": row["sign_flip_p"],
+            "sign_flip_p_holm": row["sign_flip_p_holm"],
+            "seed_deltas": [
+                {
+                    "seed": item["seed"],
+                    "relation_mrr": item["MRR"],
+                    "g0_mrr": item["G0_MRR"],
+                    "delta_mrr": item["delta"],
+                }
+                for item in row["per_seed"]
+            ],
         })
 
+    history_rows.sort(
+        key=lambda row: float(row["DeltaMRR_mean"]), reverse=True
+    )
+    history = [{
+        "graph": row["graph"],
+        "relation": row["Relation"],
+        "mrr_mean": float(row["MRR_mean"]),
+        "delta_mrr_mean": float(row["DeltaMRR_mean"]),
+        "wins_vs_g0": int(row["PositiveSeeds"]),
+    } for row in history_rows]
+
     return {
+        "study_version": "relation-five-seed-v1",
         "study_type": "secondary follow-up analysis",
         "construction": (
             "Each variant retains the G0 DDI-only backbone and adds "
             "one biomedical relation together with its reverse edges."
         ),
-        "seeds": [42, 43, 44],
+        "seeds": [42, 43, 44, 45, 46],
+        "relation_runs": 35,
+        "paired_baseline_runs": 5,
         "baseline": {
             "graph": "G0",
-            "mrr_mean": float(summary_rows[0]["G0_MRR_mean"]),
-            "mrr_std": float(summary_rows[0]["G0_MRR_std"]),
+            "mrr_mean": statistics["baseline"]["mean_MRR"],
+            "mrr_std": statistics["baseline"]["sd_MRR"],
         },
         "results": results,
+        "uncertainty": statistics["method"],
         "caveat": (
-            "Only three seeds were evaluated. These results show relative "
-            "trends and do not establish statistical significance."
+            "Uncertainty is across five training seeds on one fixed split. "
+            "All pointwise 95% paired intervals include zero; the results "
+            "are descriptive and do not establish improvement."
         ),
+        "classification_note": (
+            "This extension supplies ranking results only. Relation-level "
+            "classification remains the historical three-seed evaluation "
+            "for seeds 42, 43, and 44."
+        ),
+        "implementation_lineage": (
+            "Seeds 45 and 46 use a validated explicit global incoming-edge "
+            "mean. It implements the same mathematical operator as the "
+            "historical route within tested tolerances; numerical agreement "
+            "does not guarantee identical training trajectories."
+        ),
+        "history": {
+            "label": "Historical three-seed ranking study",
+            "seeds": [42, 43, 44],
+            "baseline_mrr_mean": float(history_rows[0]["G0_MRR_mean"]),
+            "results": history,
+        },
     }
 
 

@@ -384,7 +384,7 @@ The DDI-only graph (**G0**) was used as the baseline. Each variant retained the 
 | A6 | Contraindication | 30,675 | 61,350 |
 | A7 | Off-label use | 2,568 | 5,136 |
 
-All variants were evaluated using seeds **42, 43, and 44**. This three-seed relation-level analysis is separate from the five-seed G0–G3 main experiment.
+The current versioned study uses seeds **42, 43, 44, 45, and 46**: seven relations, 35 relation runs, and five paired G0 baselines. It is separate from the G0–G3 graph-composition experiment.
 
 ### Ranking evaluation
 
@@ -392,27 +392,29 @@ For each seed, relation contribution was measured using the paired MRR differenc
 
 **Delta MRR = MRR(Ai, seed) - MRR(G0, seed)**
 
-Across seeds 42–44, the corresponding three-seed G0 baseline was:
+Across seeds 42–46, the five-seed G0 baseline was:
 
-**MRR = 0.529118 ± 0.008136**
+**MRR = 0.527284476729463** (full-precision mean; displayed values below are rounded)
 
-| Variant | Relation | MRR | Delta MRR vs G0 | Wins vs G0 |
-|---|---|---:|---:|---:|
-| A5 | Indication | 0.535659 ± 0.008666 | +0.006542 | 2/3 |
-| A4 | Carrier | 0.535263 ± 0.005680 | +0.006145 | 3/3 |
-| A1 | Target | 0.535154 ± 0.009967 | +0.006036 | 2/3 |
-| A3 | Transporter | 0.532645 ± 0.010348 | +0.003528 | 3/3 |
-| A2 | Enzyme | 0.527979 ± 0.002269 | -0.001138 | 1/3 |
-| A6 | Contraindication | 0.525807 ± 0.003087 | -0.003311 | 1/3 |
-| A7 | Off-label use | 0.510576 ± 0.038774 | -0.018541 | 1/3 |
+| Relation | MRR mean ± SD | Mean paired ΔMRR | Pointwise 95% paired interval | Wins |
+|---|---:|---:|---:|---:|
+| Target | 0.534051 ± 0.007775 | +0.006766 | [-0.005290, +0.018823] | 4/5 |
+| Carrier | 0.529763 ± 0.008544 | +0.002479 | [-0.004763, +0.009721] | 3/5 |
+| Indication | 0.529391 ± 0.010644 | +0.002107 | [-0.009703, +0.013916] | 2/5 |
+| Transporter | 0.528694 ± 0.009603 | +0.001410 | [-0.005538, +0.008357] | 4/5 |
+| Enzyme | 0.523753 ± 0.006030 | -0.003531 | [-0.011735, +0.004672] | 1/5 |
+| Contraindication | 0.523467 ± 0.003972 | -0.003817 | [-0.010881, +0.003247] | 1/5 |
+| Off-label use | 0.514659 ± 0.027999 | -0.012625 | [-0.041582, +0.016332] | 1/5 |
 
-**Indication** achieved the highest mean MRR. **Carrier** and **transporter** improved over G0 in all three seeds. Carrier is particularly notable because it was the smallest biomedical relation tested, with only 864 original edges.
+**Target** has the largest descriptive mean improvement: **+0.006766393212248434**, with four wins in five seeds. Carrier, indication, and transporter have smaller positive means. Enzyme, contraindication, and off-label use have unfavorable means and are retained in full.
 
-Target also produced a positive mean ranking effect, while enzyme, contraindication, and off-label use did not improve mean MRR. Off-label use showed substantial variability across seeds.
+All pointwise 95% paired t intervals include zero. Uncertainty is across training seeds on one fixed split; it does not quantify split, dataset, or clinical uncertainty. These are descriptive, seed-dependent results, not established improvements.
+
+Seeds 42–44 use the historical checkpoint results. The extension for seeds 45–46 uses a validated explicit global incoming-edge mean: messages are aggregated across incoming edges before transformation. Validation supports numerical agreement with the historical mathematical operator within tested tolerances, but numerical agreement does not guarantee identical training trajectories.
 
 ### Complementary classification evaluation
 
-We also evaluated the same G0 and A1–A7 checkpoints as a binary discrimination task without retraining.
+The five-seed extension supplies ranking results only. It does **not** provide new five-seed relation-level classification measurements. The classification table below is preserved historical evidence for seeds **42, 43, and 44** only.
 
 For every graph and seed, the classification threshold was selected on the fixed validation set by maximizing F1 and then frozen for evaluation on the held-out test set.
 
@@ -438,27 +440,17 @@ These values are means across seeds 42, 43, and 44.
 
 No individual biomedical relation improved mean F1 over the three-seed G0 baseline. Carrier came closest, with F1 = 0.911718, and achieved slightly higher mean precision than G0.
 
-### Ranking versus classification
+### Historical three-seed ranking results
 
-The two evaluation objectives produced an important result: **relation usefulness depends on the evaluation objective**.
+The earlier ranking analysis for seeds 42–44 remains available under `results/relation_ablation/final/` and is clearly historical. It ranked indication first by mean ΔMRR, while carrier and transporter won all three paired runs. Adding seeds 45 and 46 changed that descriptive ordering, which illustrates why the historical result must not be presented as the current five-seed estimate.
 
-Indication, carrier, target, and transporter improved mean filtered-ranking MRR relative to G0, but none improved mean classification F1.
+### Publication artifacts and reproducibility
 
-Carrier showed one of the most balanced outcomes: it improved MRR in all three seeds while producing only a relatively small reduction in mean F1.
+The versioned release is in `results/relation_ablation/five_seed_v1/`. It includes full-precision `statistics.json` and `analysis_input.json`, Markdown and LaTeX tables, PNG and PDF figures, and `reproduce_analysis.py`. The reproduction script resolves inputs relative to its own location and contains no server-specific path. Checkpoint binaries, graph tensors, and backup archives are intentionally excluded.
 
-Target showed the strongest disagreement between objectives. Its mean MRR increased by approximately **+0.006036**, while its mean F1 decreased by approximately **-0.065336** relative to G0.
+![Five-seed paired relation-ablation intervals](results/relation_ablation/five_seed_v1/paired_delta_intervals.png)
 
-Therefore, a biomedical relation that helps place a true DDI target higher among thousands of candidate drugs does not necessarily improve separation between known-positive and sampled-unobserved pairs under a thresholded binary classification protocol.
-
-This result reinforces that relation contribution should not be characterized using a single evaluation metric.
-
-Because only three seeds were evaluated, this remains an exploratory secondary analysis and no statistical significance is claimed.
-
-### Relation-level figure
-
-![Relation-level effects on DDI ranking and classification](figures/relation_ablation/relation_ablation_ranking_vs_classification_final.png)
-
-The figure compares each relation's change in MRR and F1 relative to the corresponding G0 baseline.
+![Every five-seed paired relation-ablation delta](results/relation_ablation/five_seed_v1/per_seed_deltas.png)
 
 ## DDI-edge cold-start evaluation
 
