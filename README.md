@@ -27,6 +27,7 @@
 - [Multi-seed results](#multi-seed-results)
 - [Complementary five-seed classification](#complementary-five-seed-classification)
 - [Relation-level ablation study](#relation-level-ablation-study)
+- [External DDI evaluation pilots](#external-ddi-evaluation-pilots)
 - [Interpretation of graph composition](#interpretation-of-graph-composition)
 - [Final model verification](#final-model-verification)
 - [Lightweight NumPy runtime](#lightweight-numpy-runtime)
@@ -384,7 +385,7 @@ The DDI-only graph (**G0**) was used as the baseline. Each variant retained the 
 | A6 | Contraindication | 30,675 | 61,350 |
 | A7 | Off-label use | 2,568 | 5,136 |
 
-The current versioned study uses seeds **42, 43, 44, 45, and 46**: seven relations, 35 relation runs, and five paired G0 baselines. It is separate from the G0–G3 graph-composition experiment.
+The current versioned study uses seeds **42, 43, 44, 45, and 46**: seven single-relation variants, 35 relation runs, and five paired G0 baseline runs, for 40 total ranking records. It is separate from the G0–G3 graph-composition experiment.
 
 ### Ranking evaluation
 
@@ -451,6 +452,10 @@ The versioned release is in `results/relation_ablation/five_seed_v1/`. It includ
 ![Five-seed paired relation-ablation intervals](results/relation_ablation/five_seed_v1/paired_delta_intervals.png)
 
 ![Every five-seed paired relation-ablation delta](results/relation_ablation/five_seed_v1/per_seed_deltas.png)
+
+## External DDI evaluation pilots
+
+**DDInter** is the primary external robustness evaluation, while Kaggle/DrugBank-derived data is used as a source-consistency control. Both current evaluations are G3 seed-44 pilots, and no external G0, G1, or G2 comparison is claimed. The checksum-portability fix changed no scientific metrics: tracked external-evaluation text files use canonical LF bytes through `.gitattributes`, so SHA256 verification uses one cross-platform canonical representation, while original source and local-archive hashes remain preserved separately in provenance. See [`analysis/external_ddi_evaluation/`](analysis/external_ddi_evaluation/) for the complete compact package and interpretation boundaries.
 
 ## DDI-edge cold-start evaluation
 
@@ -866,7 +871,7 @@ Main functionality:
 - known-positive and self-pair filtering;
 - graph-composition experiment information;
 - complementary five-seed classification metrics;
-- three-seed single-relation follow-up analysis;
+- verified five-seed single-relation ranking follow-up analysis;
 - pair-specific interactive G3 context exploration with relation-preserving edges;
 - independent openFDA label and PubMed literature review with explicit empty/error states.
 
@@ -882,7 +887,7 @@ The implementation in `api/main.py` is the source of truth.
 | GET | `/api/model` | Model metadata | none | architecture, decoder, graph composition, dimensions, target relation |
 | GET | `/api/experiment` | Final experiment summary | none | included result JSON plus restrained primary finding |
 | GET | `/api/classification` | Complementary five-seed classification | none | frozen per-seed and aggregate Accuracy, Precision, Recall, and F1 with threshold and negative-class notes |
-| GET | `/api/relation-analysis` | Three-seed single-relation follow-up | none | ranked artifact-backed relation results, paired seed deltas, G0 baseline, and interpretation caveat |
+| GET | `/api/relation-analysis` | Verified five-seed single-relation ranking follow-up | none | `relation-five-seed-v1`; seeds 42–46; current five-seed ranking statistics, paired per-seed results, and uncertainty; historical three-seed ranking under `history`; separate historical three-seed relation-classification scope |
 | GET | `/api/verification` | Seven-check verification record | none | included verification JSON |
 | GET | `/api/drugs/search` | Autocomplete search | query `q`; optional `limit` 1–50 | matching drug name, DrugBank ID, and node ID |
 | POST | `/api/predict` | Rank unobserved candidate links | JSON body with `drug` and `top_k` 1–50 | query metadata, model metadata, filtering counts, ranked predictions, disclaimer |
@@ -1264,7 +1269,7 @@ Release decisions and verified third-party status:
 - Statistical significance is not claimed.
 - Evaluation is transductive; held-out entities remain known.
 - Sampled unobserved negatives are not confirmed non-interactions.
-- The single-relation follow-up used only three seeds and does not establish statistical significance.
+- The current single-relation ranking follow-up uses five training seeds on one fixed split; all paired 95% intervals include zero, so no relation-specific improvement is statistically established. Relation classification remains a separate historical three-seed evaluation.
 - Knowledge-graph incompleteness and source bias can affect training and evaluation.
 - Raw model scores are not calibrated probabilities.
 - Graph context is not a causal explanation of a prediction.
@@ -1275,7 +1280,9 @@ Release decisions and verified third-party status:
 
 ## Future work
 
-- extend the single-relation follow-up to five or more seeds;
+- evaluate additional train/validation/test splits for the relation-level ranking study;
+- increase the relation-ablation seed count beyond five;
+- extend relation-level classification to a matched five-seed scope;
 - bootstrap uncertainty estimates and protocol-defined significance testing;
 - stronger GNN and knowledge-graph baselines;
 - inductive and cold-start evaluation;
