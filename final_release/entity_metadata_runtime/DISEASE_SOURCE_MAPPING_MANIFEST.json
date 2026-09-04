@@ -1,0 +1,75 @@
+{
+  "schema": "cheers.disease-source-mapping",
+  "version": 1,
+  "purpose": "Pinned MONDO source fields for Phase A Disease identities; no generated descriptions.",
+  "phase_a_inventory": {
+    "path": "final_release/entity_metadata_runtime/entity_description_inventory.jsonl",
+    "sha256": "239d8d0be347abc9a47fc93a501fd6efb5391cb352dd20281891fb35c2c7ba9b"
+  },
+  "source": {
+    "name": "Mondo Disease Ontology",
+    "release": "v2026-09-01",
+    "release_commit": "d50a5d1",
+    "artifact": "mondo-base.obo",
+    "url": "https://github.com/monarch-initiative/mondo/releases/download/v2026-09-01/mondo-base.obo",
+    "expected_sha256": "b617457ad70f5eba773700eecf013e59e752096bd57f88821876c3150e148dd6",
+    "observed_sha256": "b617457ad70f5eba773700eecf013e59e752096bd57f88821876c3150e148dd6",
+    "byte_size": 49456765,
+    "retrieval": {
+      "schema": "cheers.mondo-source-acquisition",
+      "version": 1,
+      "source": "Mondo Disease Ontology",
+      "release": "v2026-09-01",
+      "release_commit": "d50a5d1",
+      "artifact": "mondo-base.obo",
+      "url": "https://github.com/monarch-initiative/mondo/releases/download/v2026-09-01/mondo-base.obo",
+      "expected_sha256": "b617457ad70f5eba773700eecf013e59e752096bd57f88821876c3150e148dd6",
+      "observed_sha256": "b617457ad70f5eba773700eecf013e59e752096bd57f88821876c3150e148dd6",
+      "byte_size": 49456765,
+      "retrieved_at": "2026-09-04T08:05:35.286218Z"
+    },
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  "counts": {
+    "disease_total": 2010,
+    "ordinary": 1720,
+    "grouped": 290,
+    "review_status": {
+      "approved": 1287,
+      "needs_review": 576,
+      "unresolved": 147
+    },
+    "ordinary_with_definition": 1513,
+    "ordinary_without_definition": 207,
+    "ordinary_obsolete": 80,
+    "ordinary_missing_term": 0,
+    "grouped_components_total": 1597,
+    "grouped_components_resolved": 1597,
+    "grouped_components_missing": 0
+  },
+  "reason_code_counts": {
+    "consider_available": 29,
+    "grouped_entity": 290,
+    "label_mismatch": 276,
+    "no_definition": 147,
+    "obsolete_term": 80,
+    "replacement_available": 37
+  },
+  "output": {
+    "path": "final_release/entity_metadata_runtime/disease_source_mapping.jsonl",
+    "sha256": "f22ee4b7f2fc495b7256d72aa7e38ca0058ba8e06de81911d55cdceedf0fb277",
+    "encoding": "UTF-8",
+    "line_endings": "LF",
+    "final_newline": true
+  },
+  "deterministic_build_policy": {
+    "ordering": "Exact Phase A Disease record order.",
+    "ordinary_mapping": "MONDO: + ASCII-decimal CHEERS entity_id zero-filled to seven digits.",
+    "label_comparison": "Unicode NFKC, casefold, and whitespace collapse; no fuzzy matching.",
+    "replacement_policy": "Preserve obsolete source identity, replaced_by, and consider; never follow automatically.",
+    "grouped_policy": "Split exact composite ID on underscores for component provenance only; never choose a primary component or synthesize a definition.",
+    "description_generation": false
+  },
+  "scientific_boundary": "Source definitions are for UI identification/general context only; they are not R-GCN textual input, DDI evidence, explanations of model scores, mechanism inference, or clinical guidance."
+}
