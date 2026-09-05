@@ -1,4 +1,10 @@
 .gitattributes text eol=lf
+scripts/acquire_drug_information_sources.py text eol=lf
+scripts/build_drug_information.py text eol=lf
+final_release/verify_drug_information.py text eol=lf
+final_release/test_drug_information.py text eol=lf
+final_release/source_provenance/drug_information/*.json text eol=lf
+final_release/source_provenance/drug_information/*.md text eol=lf
 .gitignore text eol=lf
 scripts/build_entity_descriptions.py text eol=lf
 final_release/verify_entity_descriptions.py text eol=lf

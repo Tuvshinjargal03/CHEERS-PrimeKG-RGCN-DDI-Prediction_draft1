@@ -68,6 +68,13 @@ const RELATION_EXPLANATIONS = {
   },
 }
 
+function displaySubstance(value, entityName) {
+  // Reuse existing name casing only when the letters identify the same substance.
+  if (value === value.toUpperCase() && entityName !== entityName.toUpperCase()
+    && value.toLowerCase() === entityName.toLowerCase()) return entityName
+  return value
+}
+
 function edgeId(centerNodeId, relation, neighborNodeId) {
   const safeRelation = relation.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '')
   return `edge-${centerNodeId}-${safeRelation}-${neighborNodeId}`
@@ -251,7 +258,51 @@ function ElementDetails({ selected, center }) {
             <p>No additional NCBI metadata is included for this node.</p>
           </section>
         )}
-        {['drug', 'disease'].includes(entity.entity_type) && (
+        {entity.entity_type === 'drug' && (
+          <section className="detail-section drug-information-card">
+            <h4>Entity information</h4>
+            <dl className="gene-metadata-list">
+              {[
+                ['what_is_this_drug', 'What is this drug?'],
+                ['general_use', 'General use'],
+                ['active_substance', 'Active substance'],
+                ['drug_class', 'Drug class'],
+              ].map(([field, label]) => (
+                <div key={field}>
+                  <dt>{label}</dt>
+                  <dd>{field === 'active_substance'
+                    ? displaySubstance(entity.metadata?.drug_information?.[field] || entity.name, entity.name)
+                    : entity.metadata?.drug_information?.[field] || 'Not available from the verified source.'}</dd>
+                </div>
+              ))}
+            </dl>
+            <div className="drug-information-sources">
+              <h5>Source</h5>
+              <ul>
+                {(entity.metadata?.drug_information?.sources?.length
+                  ? entity.metadata.drug_information.sources
+                  : ['CHEERS entity inventory (substance label only)']).map((source) => (
+                  <li key={source}>{source}</li>
+                ))}
+              </ul>
+            </div>
+            {(entity.metadata?.drug_information?.unii || entity.metadata?.drug_information?.provenance?.chembl_id) && (
+              <div className="drug-information-identifiers">
+                {entity.metadata?.drug_information?.unii && <div><strong>UNII:</strong> {entity.metadata.drug_information.unii}</div>}
+                {entity.metadata?.drug_information?.provenance?.chembl_id && (
+                  <div><strong>ChEMBL 37:</strong> {entity.metadata.drug_information.provenance.chembl_id}</div>
+                )}
+              </div>
+            )}
+            {entity.metadata?.drug_information?.general_use && (
+              <aside className="drug-information-notice" aria-label="Source indication notice">
+                Selected source-listed indications. These do not establish current approval for every formulation.
+              </aside>
+            )}
+            <p className="drug-information-disclaimer">General entity information only.<br />Not used by the R-GCN model.</p>
+          </section>
+        )}
+        {entity.entity_type === 'disease' && (
           <section className="detail-section gene-metadata-section">
             <h4>Entity description</h4>
             <p>{entity.metadata?.description || 'No additional description is available for this entity.'}</p>
@@ -262,7 +313,7 @@ function ElementDetails({ selected, center }) {
         )}
         <p className="gene-metadata-disclaimer">Entity descriptions are provided only for identification and general context. They were not used as textual input to the R-GCN model, do not explain the model&apos;s scores or predictions, and are not evidence of a drug–drug interaction or clinical guidance.</p>
         <section className="detail-section entity-information">
-          <h4>Entity information</h4>
+          <h4>{entity.entity_type === 'drug' ? 'Graph identity' : 'Entity information'}</h4>
           <dl>
             <div><dt>Entity type</dt><dd>{typeDetails.label}</dd></div>
             <div><dt>{typeDetails.idLabel}</dt><dd>{entity.entity_id}</dd></div>

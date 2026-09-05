@@ -5,6 +5,7 @@ from __future__ import annotations
 from copy import deepcopy
 import json
 import hashlib
+import re
 from pathlib import Path
 from types import MappingProxyType
 
@@ -141,6 +142,60 @@ class EntityMetadataStore:
             raise ValueError('Duplicate metadata across stores')
         return type(self)({**self._records, **other._records},
                           self.record_count + other.record_count, self.enabled or other.enabled)
+
+    def with_drug_information(self, directory, inventory_path):
+        """Overlay an optional local drug card without changing gene/disease records."""
+        directory = Path(directory)
+        artifact, manifest_path = directory / 'drug_information.jsonl', directory / 'DRUG_INFORMATION_MANIFEST.json'
+        if not artifact.exists() and not manifest_path.exists():
+            return self
+        manifest = json.loads(manifest_path.read_bytes())
+        raw = artifact.read_bytes()
+        if (manifest['schema_version'] != 1 or len(raw) != manifest['output_byte_size']
+                or hashlib.sha256(raw).hexdigest() != manifest['output_sha256']):
+            raise ValueError('Drug information fingerprint/schema mismatch')
+        if b'\r' in raw or not raw.endswith(b'\n'):
+            raise ValueError('Drug information newline mismatch')
+        rows = [json.loads(line) for line in raw.decode('utf-8').splitlines()]
+        inventory = [json.loads(line) for line in Path(inventory_path).read_text(encoding='utf-8').splitlines()]
+        identities = [r for r in inventory if r['entity_type'] == 'drug']
+        if len(rows) != 4278 or manifest['record_count'] != 4278 or len(identities) != 4278:
+            raise ValueError('Drug information count mismatch')
+        records = dict(self._records)
+        seen = set()
+        fields = {'what_is_this_drug','general_use','active_substance','drug_class','mapping_status',
+                  'unii','sources','field_provenance','provenance'}
+        for row, identity in zip(rows, identities):
+            if set(row) != set(identity) | {'information'} or any(row[k] != v for k,v in identity.items()):
+                raise ValueError('Drug information exact identity/order mismatch')
+            info = row['information']
+            if not isinstance(info, dict) or set(info) != fields:
+                raise ValueError('Unsupported drug information fields')
+            for key in ('what_is_this_drug','general_use','active_substance','drug_class'):
+                if info[key] is not None and (not isinstance(info[key],str) or not info[key]):
+                    raise ValueError('Invalid drug information text')
+            if info['mapping_status'] not in {'approved','needs_review','unresolved','rejected'}:
+                raise ValueError('Invalid drug mapping status')
+            if not isinstance(info['sources'],list) or any(not isinstance(s,str) or not s for s in info['sources']):
+                raise ValueError('Invalid drug sources')
+            if info['unii'] is not None and (not isinstance(info['unii'],str) or not re.fullmatch(r'[A-Z0-9]{10}',info['unii'])):
+                raise ValueError('Invalid UNII')
+            provenance_fields={'what_is_this_drug','general_use','active_substance','drug_class'}
+            if not isinstance(info['field_provenance'],dict) or set(info['field_provenance']) != provenance_fields:
+                raise ValueError('Invalid field provenance')
+            if any(v is not None and not isinstance(v,str) for v in info['field_provenance'].values()):
+                raise ValueError('Invalid field provenance text')
+            if not isinstance(info['provenance'],dict) or set(info['provenance']) != {
+                    'chembl_id','unii_candidates','epc','indications','selected_mesh_ids','identity_basis'}:
+                raise ValueError('Invalid drug provenance')
+            if info['mapping_status'] != 'approved' and any(info[k] is not None for k in
+                    ('what_is_this_drug','general_use','drug_class','unii')):
+                raise ValueError('Unreviewed therapeutic information')
+            key = ('drug',identity['entity_id'])
+            if key in seen: raise ValueError('Duplicate drug information identity')
+            seen.add(key)
+            records[key] = {**deepcopy(records.get(key, {})), 'drug_information':deepcopy(info)}
+        return type(self)(records, self.record_count + len(records.keys() - self._records.keys()), True)
 
     def __len__(self):
         return len(self._records)
