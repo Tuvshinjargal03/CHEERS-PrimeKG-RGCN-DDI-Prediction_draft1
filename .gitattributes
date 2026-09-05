@@ -13,3 +13,9 @@ analysis/external_ddi_evaluation/**/*.md text eol=lf
 analysis/external_ddi_evaluation/**/*.py text eol=lf
 analysis/external_ddi_evaluation/**/*.sha256 text eol=lf
 analysis/external_ddi_evaluation/**/*.svg text eol=lf
+scripts/acquire_chembl37_source.py text eol=lf
+final_release/verify_chembl37_source.py text eol=lf
+data/downloads/chembl/chembl_37/acquisition_metadata.json text eol=lf
+data/downloads/chembl/chembl_37/LICENSE -text
+data/downloads/chembl/chembl_37/REQUIRED.ATTRIBUTION -text
+data/downloads/chembl/chembl_37/chembl_37_release_notes.txt -text
