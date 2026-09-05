@@ -137,6 +137,20 @@ describe('MedicineLabelScanner', () => {
     await user.click(screen.getByText('Detected text'))
     expect(await screen.findByDisplayValue('ASPIRIN 100 mg')).toBeVisible()
     await waitFor(() => expect(mocks.postJson).toHaveBeenCalledTimes(1))
+    expect(mocks.createWorker).toHaveBeenCalledTimes(1)
+    const [language, oem, ocrOptions] = mocks.createWorker.mock.calls[0]
+    expect(language).toBe('eng')
+    expect(oem).toBeUndefined()
+    expect(ocrOptions).toEqual(expect.objectContaining({
+      workerPath: '/tesseract/worker.min.js',
+      corePath: '/tesseract/core',
+      langPath: '/tesseract/lang',
+      logger: expect.any(Function),
+    }))
+    for (const assetPath of [ocrOptions.workerPath, ocrOptions.corePath, ocrOptions.langPath]) {
+      expect(assetPath).not.toMatch(/^https?:\/\//i)
+      expect(assetPath).not.toMatch(/cdn|jsdelivr|unpkg|projectnaptha/i)
+    }
     for (const call of mocks.postJson.mock.calls) {
       expect(call).toHaveLength(2)
       const [url, payload] = call

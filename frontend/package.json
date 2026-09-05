@@ -4,9 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "predev": "npm run prepare:tesseract",
     "dev": "vite",
+    "prebuild": "npm run prepare:tesseract",
     "build": "vite build",
-    "lint": "eslint .",
+    "lint": "eslint . --ignore-pattern \"public/tesseract/**\"",
+    "prepare:tesseract": "node scripts/prepare-tesseract-assets.mjs",
     "test": "vitest run",
     "preview": "vite preview"
   },
@@ -21,6 +24,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@tesseract.js-data/eng": "1.0.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.7",

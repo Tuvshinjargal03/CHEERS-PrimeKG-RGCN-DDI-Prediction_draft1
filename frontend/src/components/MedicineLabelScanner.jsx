@@ -6,6 +6,15 @@ import { postJson } from '../lib/api.js'
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024
 const MATCH_LIMIT = 10
 
+function getLocalOcrAssetPaths(baseUrl = import.meta.env.BASE_URL) {
+  const normalizedBase = (baseUrl || '/').endsWith('/') ? (baseUrl || '/') : `${baseUrl}/`
+  return {
+    workerPath: `${normalizedBase}tesseract/worker.min.js`,
+    corePath: `${normalizedBase}tesseract/core`,
+    langPath: `${normalizedBase}tesseract/lang`,
+  }
+}
+
 const MATCH_LABELS = {
   exact_name_in_text: 'Exact label match',
   exact_drugbank_id: 'Exact DrugBank ID match',
@@ -174,6 +183,7 @@ export default function MedicineLabelScanner({ targetLabel, onDrugSelect, disabl
       const { createWorker } = await import('tesseract.js')
       if (ocrJobId.current !== currentJob) return
       worker = await createWorker('eng', undefined, {
+        ...getLocalOcrAssetPaths(),
         logger: (event) => {
           if (ocrJobId.current !== currentJob) return
           if (event.status === 'recognizing text' && Number.isFinite(event.progress)) {
