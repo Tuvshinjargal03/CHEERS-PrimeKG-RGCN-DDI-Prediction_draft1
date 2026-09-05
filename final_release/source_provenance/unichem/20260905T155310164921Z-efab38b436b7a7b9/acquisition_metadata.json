@@ -1,0 +1,101 @@
+{
+  "schema": "cheers.unichem-pair-acquisition",
+  "version": 1,
+  "snapshot_id": "20260905T155310164921Z-efab38b436b7a7b9",
+  "acquisition_started_utc": "2026-09-05T15:53:10.164921Z",
+  "acquisition_completed_utc": "2026-09-05T15:53:48.961698Z",
+  "upstream": {
+    "filename": "src1src2.txt.gz",
+    "mutable_url": true,
+    "publisher_sha256": null,
+    "transfer": {
+      "url": "https://ftp.ebi.ac.uk/pub/databases/chembl/UniChem/data/wholeSourceMapping/src_id1/src1src2.txt.gz",
+      "status": 200,
+      "headers": {
+        "Content-Length": "74874",
+        "Last-Modified": "Sat, 29 Aug 2026 19:50:14 GMT",
+        "ETag": "\"1247a-65a34e0a94a7f\"",
+        "Content-Encoding": null,
+        "Accept-Ranges": "bytes",
+        "Content-Type": "application/x-gzip",
+        "Content-Range": null,
+        "Transfer-Encoding": null
+      },
+      "preflight_headers": {
+        "Content-Length": "74874",
+        "Last-Modified": "Sat, 29 Aug 2026 19:50:14 GMT",
+        "ETag": "\"1247a-65a34e0a94a7f\"",
+        "Content-Encoding": null,
+        "Accept-Ranges": "bytes",
+        "Content-Type": "application/x-gzip",
+        "Content-Range": null,
+        "Transfer-Encoding": null
+      },
+      "started_utc": "2026-09-05T15:53:10.166958Z",
+      "completed_utc": "2026-09-05T15:53:14.167537Z"
+    },
+    "compressed": {
+      "byte_size": 74874,
+      "sha256": "efab38b436b7a7b9b3c51f66db91e33202450ed0ed34e08381206bb10c57ddbd"
+    }
+  },
+  "local_verification": {
+    "gzip_valid": true,
+    "decompressed": {
+      "byte_size": 236699,
+      "sha256": "c3370b5727a1da2d5abbbf98e3a1f6e34f752a5f4f887c46e0f2d8702ec0d4da"
+    },
+    "parser": {
+      "schema": "unichem.source1-source2.tsv",
+      "version": 1,
+      "header": "From src:'1'\tTo src:'2'",
+      "columns": [
+        "chembl_id",
+        "drugbank_id"
+      ],
+      "encoding": "UTF-8 (ASCII identifiers)",
+      "newline": "LF",
+      "final_newline_required": true,
+      "duplicates": "preserved and counted",
+      "blank_or_comment_lines": "rejected"
+    },
+    "statistics": {
+      "data_row_count": 11168,
+      "unique_chembl_ids": 11160,
+      "unique_drugbank_ids": 11168,
+      "exact_duplicate_pair_count": 0,
+      "chembl_ids_with_multiple_drugbank_mappings": 8,
+      "drugbank_ids_with_multiple_chembl_mappings": 0,
+      "malformed_row_count": 0,
+      "blank_line_count": 0,
+      "comment_line_count": 0
+    }
+  },
+  "limitations": {
+    "evidence_type": "unichem_reported_cross_reference",
+    "contains_full_inchi": false,
+    "contains_inchikey": false,
+    "contains_uci": false,
+    "independent_molecular_identity_proven": false,
+    "connectivity_search_used": false,
+    "cheers_entities_mapped": false,
+    "cryptographically_tied_to_chembl37": false,
+    "source_metadata_proves_pair_generation_state": false,
+    "public_mapping_redistribution": "deferred_pending_licensing_review"
+  },
+  "local_chembl_reference": {
+    "release": 37,
+    "archive_sha256": "33c203740555f96067710cdfc1c3c55d890660e5908ec5cbf5817492c290d281",
+    "sqlite_sha256": "4be13df3b68e25dcd0bff44bf094033b5aebe98f415acdc8c1cdf380e0c15142"
+  },
+  "provenance_files": {
+    "source_metadata.json": {
+      "byte_size": 2241,
+      "sha256": "2fdcaf20dcee884e3f748b462a89362a8c0a8fc4a3fe1439ee658fa6a6b4f896"
+    },
+    "SOURCE_NOTICES.md": {
+      "byte_size": 2450,
+      "sha256": "441d79512866f81ff4937607df8c8ab8e0e41fc817b0a6dd3c643a6ac0124a7f"
+    }
+  }
+}

@@ -2342,6 +2342,95 @@ textarea:focus-visible {
   color: #98a2b3;
 }
 
+.drug-information-card {
+  padding: 16px;
+  border: 1px solid #e9d7fe;
+  border-radius: 13px;
+  background: #fefcff;
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.drug-information-card h4 {
+  margin-bottom: 14px;
+  color: #6941c6;
+  font-size: 11px;
+}
+
+.drug-information-card dl > div {
+  padding: 12px 0;
+  border-color: #f0e7fa;
+}
+
+.drug-information-card dl > div:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.drug-information-card dt,
+.drug-information-card h5 {
+  margin: 0;
+  color: #6941c6;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.drug-information-card dd {
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.drug-information-sources {
+  padding-top: 12px;
+  border-top: 1px solid #e9d7fe;
+}
+
+.drug-information-sources ul {
+  display: grid;
+  gap: 4px;
+  margin: 5px 0 0;
+  padding: 0;
+  list-style: none;
+  color: #475467;
+}
+
+.drug-information-identifiers {
+  display: grid;
+  gap: 4px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid #ede4f7;
+  border-radius: 8px;
+  background: #f9f7fc;
+  color: #475467;
+  font-size: 11px;
+}
+
+.drug-information-notice {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-left: 3px solid #b692f6;
+  border-radius: 6px;
+  background: #f4ebff;
+  color: #53389e;
+  font-size: 11px;
+}
+
+.drug-information-card > .drug-information-disclaimer {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #e9d7fe;
+  color: #667085;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
 .detail-relations {
   margin-top: 16px;
 }

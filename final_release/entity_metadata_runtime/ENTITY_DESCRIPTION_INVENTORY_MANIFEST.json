@@ -1,0 +1,610 @@
+{
+  "schema": "cheers.entity-description-inventory",
+  "version": 1,
+  "purpose": "Frozen identities of Drug and Disease entities exposed by CHEERS Subgraph Explorer.",
+  "counts": {
+    "total": 6288,
+    "drug": 4278,
+    "disease": 2010,
+    "MONDO": 1720,
+    "MONDO_grouped": 290
+  },
+  "source_inputs": [
+    {
+      "path": "final_release/lightweight_runtime/drug_metadata.csv",
+      "sha256": "4cbcfd2a62a9a06118c64fb5c6a6e715c90722f0ea7fb047667875681d967495"
+    },
+    {
+      "path": "final_release/g3_context_runtime/training_ddi_neighbors.npz",
+      "sha256": "1aef3495e57b630b842a1bd7229b341f7f7ef3b08a8f5f4a335fe96cffbd124f"
+    },
+    {
+      "path": "final_release/g3_context_runtime/g3_drug_context.csv",
+      "sha256": "d1e39efa503ba3d0271cdafcc97180102914e10ef0c34565d9d159ea91ae3629"
+    }
+  ],
+  "inventory": {
+    "path": "final_release/entity_metadata_runtime/entity_description_inventory.jsonl",
+    "sha256": "239d8d0be347abc9a47fc93a501fd6efb5391cb352dd20281891fb35c2c7ba9b",
+    "encoding": "UTF-8",
+    "line_endings": "LF"
+  },
+  "ordering_rule": "entity_type rank (drug, disease), then graph_node_id ascending",
+  "identity_key_rule": "Exact (entity_type, entity_id); no normalization or inferred identifiers.",
+  "scope_definition": "All candidate-center Drugs, verified equal to Drugs exposed as training-DDI neighbors, plus Disease support neighbors reachable from those candidate Drugs in forward G3 context.",
+  "descriptions_included": false,
+  "phase_a_external_retrieval_or_llm_generation": false,
+  "ambiguity_audit": {
+    "drug": {
+      "duplicate_exact_display_names": {
+        "duplicate_name_groups": 0,
+        "records_in_duplicate_name_groups": 0
+      },
+      "duplicate_case_insensitive_display_names": {
+        "duplicate_name_groups": 0,
+        "records_in_duplicate_name_groups": 0
+      },
+      "empty_entity_ids": 0,
+      "empty_display_names": 0,
+      "unusual_code_like_name_heuristic": "Full match of ^[A-Za-z]{0,12}[ _-]?\\d[A-Za-z0-9_/-]*$; syntax-only and not a biomedical classification.",
+      "unusual_code_like_names": [
+        {
+          "entity_id": "DB01629",
+          "display_name": "5-fluorouridine"
+        },
+        {
+          "entity_id": "DB02342",
+          "display_name": "2-Methoxyestradiol"
+        },
+        {
+          "entity_id": "DB08455",
+          "display_name": "Ro 12-7310"
+        },
+        {
+          "entity_id": "DB06804",
+          "display_name": "Nonoxynol-9"
+        },
+        {
+          "entity_id": "DB01472",
+          "display_name": "4-Methoxyamphetamine"
+        },
+        {
+          "entity_id": "DB01667",
+          "display_name": "8-azaguanine"
+        },
+        {
+          "entity_id": "DB02489",
+          "display_name": "9-Methylguanine"
+        },
+        {
+          "entity_id": "DB04356",
+          "display_name": "9-Deazaguanine"
+        },
+        {
+          "entity_id": "DB05115",
+          "display_name": "NN344"
+        },
+        {
+          "entity_id": "DB05708",
+          "display_name": "GTS-21"
+        },
+        {
+          "entity_id": "DB14132",
+          "display_name": "8-chlorotheophylline"
+        },
+        {
+          "entity_id": "DB01456",
+          "display_name": "5-androstenedione"
+        },
+        {
+          "entity_id": "DB05212",
+          "display_name": "HE3286"
+        },
+        {
+          "entity_id": "DB05482",
+          "display_name": "7-ethyl-10-hydroxycamptothecin"
+        },
+        {
+          "entity_id": "DB05814",
+          "display_name": "GPI-1485"
+        },
+        {
+          "entity_id": "DB05903",
+          "display_name": "KOS-1584"
+        },
+        {
+          "entity_id": "DB06318",
+          "display_name": "AVE9633"
+        },
+        {
+          "entity_id": "DB11752",
+          "display_name": "Bryostatin 1"
+        },
+        {
+          "entity_id": "DB11919",
+          "display_name": "6-O-benzylguanine"
+        },
+        {
+          "entity_id": "DB12515",
+          "display_name": "9-aminocamptothecin"
+        },
+        {
+          "entity_id": "DB13950",
+          "display_name": "WIN 55212-2"
+        },
+        {
+          "entity_id": "DB02207",
+          "display_name": "7-Nitroindazole"
+        },
+        {
+          "entity_id": "DB05797",
+          "display_name": "TNX-901"
+        },
+        {
+          "entity_id": "DB06050",
+          "display_name": "TB-402"
+        },
+        {
+          "entity_id": "DB06101",
+          "display_name": "IMC-1C11"
+        },
+        {
+          "entity_id": "DB05077",
+          "display_name": "SLV319"
+        },
+        {
+          "entity_id": "DB05152",
+          "display_name": "NGX267"
+        },
+        {
+          "entity_id": "DB01481",
+          "display_name": "1-Testosterone"
+        },
+        {
+          "entity_id": "DB07954",
+          "display_name": "3-isobutyl-1-methyl-7H-xanthine"
+        },
+        {
+          "entity_id": "DB02067",
+          "display_name": "Triglu-5-formyl-tetrahydrofolate"
+        },
+        {
+          "entity_id": "DB05607",
+          "display_name": "PRX-08066"
+        },
+        {
+          "entity_id": "DB05227",
+          "display_name": "APD791"
+        },
+        {
+          "entity_id": "DB05687",
+          "display_name": "BL-1020"
+        },
+        {
+          "entity_id": "DB06109",
+          "display_name": "YKP-1358"
+        },
+        {
+          "entity_id": "DB04988",
+          "display_name": "IGN311"
+        },
+        {
+          "entity_id": "DB06021",
+          "display_name": "AV-412"
+        },
+        {
+          "entity_id": "DB09207",
+          "display_name": "AS-8112"
+        },
+        {
+          "entity_id": "DB04978",
+          "display_name": "SP1049C"
+        },
+        {
+          "entity_id": "DB12579",
+          "display_name": "JNJ-37822681"
+        },
+        {
+          "entity_id": "DB06011",
+          "display_name": "AMG-222"
+        },
+        {
+          "entity_id": "DB06584",
+          "display_name": "TG4010"
+        },
+        {
+          "entity_id": "DB14069",
+          "display_name": "ONT-093"
+        },
+        {
+          "entity_id": "DB05107",
+          "display_name": "16-Bromoepiandrosterone"
+        },
+        {
+          "entity_id": "DB05892",
+          "display_name": "RI 624"
+        },
+        {
+          "entity_id": "DB01933",
+          "display_name": "7-Hydroxystaurosporine"
+        },
+        {
+          "entity_id": "DB08633",
+          "display_name": "TNP-470"
+        },
+        {
+          "entity_id": "DB04581",
+          "display_name": "1-benzylimidazole"
+        },
+        {
+          "entity_id": "DB05532",
+          "display_name": "BMS-488043"
+        },
+        {
+          "entity_id": "DB05793",
+          "display_name": "PRO-542"
+        },
+        {
+          "entity_id": "DB05139",
+          "display_name": "CR002"
+        },
+        {
+          "entity_id": "DB05915",
+          "display_name": "MYO-029"
+        },
+        {
+          "entity_id": "DB05916",
+          "display_name": "CT-011"
+        },
+        {
+          "entity_id": "DB06324",
+          "display_name": "XmAb 2513"
+        },
+        {
+          "entity_id": "DB07447",
+          "display_name": "5beta-dihydrotestosterone"
+        },
+        {
+          "entity_id": "DB14059",
+          "display_name": "SC-236"
+        },
+        {
+          "entity_id": "DB03825",
+          "display_name": "Rhodamine 6G"
+        },
+        {
+          "entity_id": "DB01485",
+          "display_name": "4-Hydroxytestosterone"
+        },
+        {
+          "entity_id": "DB01543",
+          "display_name": "18-methyl-19-nortestosterone"
+        },
+        {
+          "entity_id": "DB01572",
+          "display_name": "Methyl-1-testosterone"
+        },
+        {
+          "entity_id": "DB03410",
+          "display_name": "4-hydroxycoumarin"
+        },
+        {
+          "entity_id": "DB14060",
+          "display_name": "NS-398"
+        },
+        {
+          "entity_id": "DB02806",
+          "display_name": "2-Methoxyethanol"
+        },
+        {
+          "entity_id": "DB04914",
+          "display_name": "G17DT"
+        },
+        {
+          "entity_id": "DB05144",
+          "display_name": "PEV3A"
+        },
+        {
+          "entity_id": "DB05325",
+          "display_name": "INGN 225"
+        },
+        {
+          "entity_id": "DB05440",
+          "display_name": "SRP 299"
+        },
+        {
+          "entity_id": "DB05942",
+          "display_name": "GI-5005"
+        },
+        {
+          "entity_id": "DB11891",
+          "display_name": "CUDC-907"
+        },
+        {
+          "entity_id": "DB12174",
+          "display_name": "CUDC-101"
+        },
+        {
+          "entity_id": "DB15654",
+          "display_name": "mRNA-1273"
+        },
+        {
+          "entity_id": "DB05405",
+          "display_name": "XTL-001"
+        },
+        {
+          "entity_id": "DB05437",
+          "display_name": "NAV 1800"
+        },
+        {
+          "entity_id": "DB05545",
+          "display_name": "AMG 108"
+        },
+        {
+          "entity_id": "DB06049",
+          "display_name": "IPH 2101"
+        },
+        {
+          "entity_id": "DB06304",
+          "display_name": "BIIB015"
+        },
+        {
+          "entity_id": "DB11720",
+          "display_name": "Angiotensin 1-7"
+        },
+        {
+          "entity_id": "DB12054",
+          "display_name": "BQ-123"
+        },
+        {
+          "entity_id": "DB12296",
+          "display_name": "GS-5745"
+        },
+        {
+          "entity_id": "DB15397",
+          "display_name": "GMA-161"
+        },
+        {
+          "entity_id": "DB05819",
+          "display_name": "NBI-6024"
+        },
+        {
+          "entity_id": "DB02245",
+          "display_name": "7-Deazaguanine"
+        },
+        {
+          "entity_id": "DB11903",
+          "display_name": "GW842166"
+        },
+        {
+          "entity_id": "DB12111",
+          "display_name": "MK-212"
+        },
+        {
+          "entity_id": "DB12461",
+          "display_name": "GLPG-0492"
+        },
+        {
+          "entity_id": "DB12576",
+          "display_name": "AZD-3043"
+        },
+        {
+          "entity_id": "DB12725",
+          "display_name": "TD-8954"
+        },
+        {
+          "entity_id": "DB13993",
+          "display_name": "MRK-409"
+        },
+        {
+          "entity_id": "DB15122",
+          "display_name": "PCS-499"
+        },
+        {
+          "entity_id": "DB15203",
+          "display_name": "JNJ-26489112"
+        },
+        {
+          "entity_id": "DB11871",
+          "display_name": "PF-00610355"
+        },
+        {
+          "entity_id": "DB02699",
+          "display_name": "4-Oxoretinol"
+        },
+        {
+          "entity_id": "DB05143",
+          "display_name": "OXI-4503"
+        },
+        {
+          "entity_id": "DB02567",
+          "display_name": "PD173955"
+        },
+        {
+          "entity_id": "DB15213",
+          "display_name": "25-desacetylrifapentine"
+        },
+        {
+          "entity_id": "DB07706",
+          "display_name": "2-Hydroxyestradiol"
+        },
+        {
+          "entity_id": "DB15623",
+          "display_name": "TMC-310911"
+        },
+        {
+          "entity_id": "DB12057",
+          "display_name": "ORM-12741"
+        },
+        {
+          "entity_id": "DB12806",
+          "display_name": "GSK-1004723"
+        },
+        {
+          "entity_id": "DB15120",
+          "display_name": "GSK-239512"
+        },
+        {
+          "entity_id": "DB15192",
+          "display_name": "ABT-288"
+        },
+        {
+          "entity_id": "DB02975",
+          "display_name": "GE-2270A"
+        },
+        {
+          "entity_id": "DB13077",
+          "display_name": "LCB01-0371"
+        },
+        {
+          "entity_id": "DB13135",
+          "display_name": "AGN-201904"
+        },
+        {
+          "entity_id": "DB12259",
+          "display_name": "CG-200745"
+        },
+        {
+          "entity_id": "DB12279",
+          "display_name": "OBP-801"
+        },
+        {
+          "entity_id": "DB12382",
+          "display_name": "R-306465"
+        },
+        {
+          "entity_id": "DB01434",
+          "display_name": "19-norandrostenedione"
+        },
+        {
+          "entity_id": "DB06181",
+          "display_name": "IMO-2055"
+        },
+        {
+          "entity_id": "DB11688",
+          "display_name": "2-chloroethyl-3-sarcosinamide-1-nitrosourea"
+        },
+        {
+          "entity_id": "DB11795",
+          "display_name": "GSK-2636771"
+        },
+        {
+          "entity_id": "DB12085",
+          "display_name": "LCL-161"
+        },
+        {
+          "entity_id": "DB12232",
+          "display_name": "KRN-7000"
+        },
+        {
+          "entity_id": "DB12385",
+          "display_name": "10-hydroxycamptothecin"
+        },
+        {
+          "entity_id": "DB12730",
+          "display_name": "Dolastatin 10"
+        },
+        {
+          "entity_id": "DB12881",
+          "display_name": "Indole-3-carbinol"
+        },
+        {
+          "entity_id": "DB13104",
+          "display_name": "X-396"
+        },
+        {
+          "entity_id": "DB14792",
+          "display_name": "AZD-5991"
+        },
+        {
+          "entity_id": "DB14844",
+          "display_name": "ONC-201"
+        },
+        {
+          "entity_id": "DB15057",
+          "display_name": "NUC-1031"
+        },
+        {
+          "entity_id": "DB15215",
+          "display_name": "KRN-5500"
+        },
+        {
+          "entity_id": "DB06071",
+          "display_name": "DTS-201"
+        },
+        {
+          "entity_id": "DB13103",
+          "display_name": "GPX-150"
+        },
+        {
+          "entity_id": "DB05871",
+          "display_name": "UC-781"
+        },
+        {
+          "entity_id": "DB14813",
+          "display_name": "PF-232798"
+        },
+        {
+          "entity_id": "DB15193",
+          "display_name": "BMS-955176"
+        },
+        {
+          "entity_id": "DB15686",
+          "display_name": "GS-441524"
+        },
+        {
+          "entity_id": "DB05631",
+          "display_name": "ALT-2074"
+        },
+        {
+          "entity_id": "DB12341",
+          "display_name": "LY-2456302"
+        },
+        {
+          "entity_id": "DB12137",
+          "display_name": "GSK-256066"
+        },
+        {
+          "entity_id": "DB12776",
+          "display_name": "E-6005"
+        },
+        {
+          "entity_id": "DB13029",
+          "display_name": "MK-0873"
+        },
+        {
+          "entity_id": "DB12416",
+          "display_name": "VTP-27999"
+        },
+        {
+          "entity_id": "DB13075",
+          "display_name": "Menaquinone 7"
+        },
+        {
+          "entity_id": "DB14936",
+          "display_name": "Menaquinone 6"
+        }
+      ]
+    },
+    "disease": {
+      "duplicate_exact_display_names": {
+        "duplicate_name_groups": 0,
+        "records_in_duplicate_name_groups": 0
+      },
+      "duplicate_case_insensitive_display_names": {
+        "duplicate_name_groups": 0,
+        "records_in_duplicate_name_groups": 0
+      },
+      "empty_entity_ids": 0,
+      "empty_display_names": 0,
+      "MONDO_records": 1720,
+      "MONDO_grouped_records": 290,
+      "grouped_component_count": {
+        "minimum": 2,
+        "maximum": 87,
+        "mean": 5.506896551724138,
+        "median": 3.0
+      }
+    }
+  }
+}
