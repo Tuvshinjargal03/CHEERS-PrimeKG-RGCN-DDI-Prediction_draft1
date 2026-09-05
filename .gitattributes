@@ -19,3 +19,9 @@ data/downloads/chembl/chembl_37/acquisition_metadata.json text eol=lf
 data/downloads/chembl/chembl_37/LICENSE -text
 data/downloads/chembl/chembl_37/REQUIRED.ATTRIBUTION -text
 data/downloads/chembl/chembl_37/chembl_37_release_notes.txt -text
+scripts/acquire_unichem_source.py text eol=lf
+final_release/verify_unichem_source.py text eol=lf
+final_release/test_unichem_source.py text eol=lf
+final_release/source_provenance/unichem/20260905T155310164921Z-efab38b436b7a7b9/acquisition_metadata.json text eol=lf
+final_release/source_provenance/unichem/20260905T155310164921Z-efab38b436b7a7b9/source_metadata.json text eol=lf
+final_release/source_provenance/unichem/20260905T155310164921Z-efab38b436b7a7b9/SOURCE_NOTICES.md text eol=lf
