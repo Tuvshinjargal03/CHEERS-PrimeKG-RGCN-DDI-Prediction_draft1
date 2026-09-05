@@ -1,0 +1,20 @@
+{
+  "inputs": {
+    "final_release/entity_metadata_runtime/disease_source_mapping.jsonl": {
+      "byte_size": 1986975,
+      "sha256": "f22ee4b7f2fc495b7256d72aa7e38ca0058ba8e06de81911d55cdceedf0fb277"
+    },
+    "final_release/entity_metadata_runtime/entity_description_inventory.jsonl": {
+      "byte_size": 766746,
+      "sha256": "239d8d0be347abc9a47fc93a501fd6efb5391cb352dd20281891fb35c2c7ba9b"
+    }
+  },
+  "outputs": {
+    "final_release/entity_metadata_runtime/disease_descriptions.jsonl": {
+      "byte_size": 1041488,
+      "record_count": 2010,
+      "sha256": "99c56dd05d26e77f1d9f687831ede418a63a5fe24d9237a4e5646f267abd5dda"
+    }
+  },
+  "schema_version": 1
+}

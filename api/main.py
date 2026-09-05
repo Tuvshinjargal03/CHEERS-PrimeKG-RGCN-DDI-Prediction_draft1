@@ -91,6 +91,15 @@ async def lifespan(app: FastAPI):
     )
 
     app.state.entity_metadata_store = load_entity_metadata_store()
+    description_runtime = FINAL_DIR / 'entity_metadata_runtime'
+    local_descriptions = PROJECT_DIR / 'data/derived/entity_descriptions'
+    for artifact, manifest in (
+        (description_runtime / 'disease_descriptions.jsonl', description_runtime / 'DISEASE_DESCRIPTIONS_MANIFEST.json'),
+        (local_descriptions / 'drug_descriptions.jsonl', local_descriptions / 'MANIFEST.json'),
+    ):
+        descriptions = EntityMetadataStore.load_descriptions(
+            artifact, manifest, description_runtime / 'entity_description_inventory.jsonl', PROJECT_DIR)
+        app.state.entity_metadata_store = app.state.entity_metadata_store.combined(descriptions)
 
     app.state.neighborhood_store = GraphNeighborhoodStore(
         context_store=app.state.context_store,

@@ -1,4 +1,14 @@
 .gitattributes text eol=lf
+.gitignore text eol=lf
+scripts/build_entity_descriptions.py text eol=lf
+final_release/verify_entity_descriptions.py text eol=lf
+final_release/test_entity_descriptions.py text eol=lf
+final_release/verify_gene_metadata.py text eol=lf
+src/entity_metadata.py text eol=lf
+src/graph_neighborhood.py text eol=lf
+api/main.py text eol=lf
+frontend/src/pages/SubgraphExplorer.jsx text eol=lf
+final_release/entity_metadata_runtime/ENTITY_DESCRIPTIONS.md text eol=lf
 scripts/evaluate_classification_metrics.py text eol=lf
 data/processed/rgcn_tensors/ddi_test_negatives.pt binary
 results/classification_metrics_5seed/*.csv binary

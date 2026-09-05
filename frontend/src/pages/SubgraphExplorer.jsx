@@ -251,6 +251,16 @@ function ElementDetails({ selected, center }) {
             <p>No additional NCBI metadata is included for this node.</p>
           </section>
         )}
+        {['drug', 'disease'].includes(entity.entity_type) && (
+          <section className="detail-section gene-metadata-section">
+            <h4>Entity description</h4>
+            <p>{entity.metadata?.description || 'No additional description is available for this entity.'}</p>
+            {entity.metadata?.description && (
+              <small>Source: {entity.metadata.source} · {entity.metadata.source_id} · {entity.metadata.license}</small>
+            )}
+          </section>
+        )}
+        <p className="gene-metadata-disclaimer">Entity descriptions are provided only for identification and general context. They were not used as textual input to the R-GCN model, do not explain the model&apos;s scores or predictions, and are not evidence of a drug–drug interaction or clinical guidance.</p>
         <section className="detail-section entity-information">
           <h4>Entity information</h4>
           <dl>
