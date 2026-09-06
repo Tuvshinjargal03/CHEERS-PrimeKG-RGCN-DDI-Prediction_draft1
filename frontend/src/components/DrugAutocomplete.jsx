@@ -11,6 +11,7 @@ export default function DrugAutocomplete({
   onSelect,
   placeholder = 'Search by drug name or DrugBank ID',
   disabled = false,
+  getOptionAnnotation,
 }) {
   const inputId = useId()
   const listboxId = `${inputId}-listbox`
@@ -229,22 +230,32 @@ export default function DrugAutocomplete({
             </div>
           ) : results.length ? (
             <>
-              {results.map((item, index) => (
-                <button
-                  id={`${inputId}-option-${index}`}
-                  type="button"
-                  role="option"
-                  aria-selected={index === activeIndex}
-                  data-option-index={index}
-                  className={index === activeIndex ? 'active' : ''}
-                  key={`${item.entity_id}-${item.node_id}`}
-                  onMouseEnter={() => setActiveIndex(index)}
-                  onClick={() => choose(item)}
-                >
-                  <span>{item.name}</span>
-                  <small>{item.entity_id}</small>
-                </button>
-              ))}
+              {results.map((item, index) => {
+                const annotation = getOptionAnnotation?.(item)
+                return (
+                  <button
+                    id={`${inputId}-option-${index}`}
+                    type="button"
+                    role="option"
+                    aria-selected={index === activeIndex}
+                    data-option-index={index}
+                    className={index === activeIndex ? 'active' : ''}
+                    key={`${item.entity_id}-${item.node_id}`}
+                    onMouseEnter={() => setActiveIndex(index)}
+                    onClick={() => choose(item)}
+                  >
+                    <span>{item.name}</span>
+                    <small className={annotation ? 'autocomplete-option-details' : undefined}>
+                      {item.entity_id}
+                      {annotation && (
+                        <em className={annotation.available ? 'available' : 'unavailable'}>
+                          {annotation.label}
+                        </em>
+                      )}
+                    </small>
+                  </button>
+                )
+              })}
               {loading && <div className="autocomplete-empty">Loading drugs…</div>}
             </>
           ) : (

@@ -128,4 +128,14 @@ describe('DrugAutocomplete', () => {
     expect(within(listbox).getByRole('option', { name: /Aspirin/ })).toBeVisible()
     expect(getJson).toHaveBeenLastCalledWith('/api/drugs/search?q=a&limit=50&offset=1')
   })
+
+  it('does not add availability annotations unless the optional prop is supplied', async () => {
+    getJson.mockResolvedValue(searchResponse([ASPIRIN]))
+    const { input } = renderAutocomplete()
+
+    fireEvent.change(input, { target: { value: 'a' } })
+
+    expect(await screen.findByRole('option', { name: /Aspirin/ })).toBeVisible()
+    expect(screen.queryByText('G3 context')).not.toBeInTheDocument()
+  })
 })
