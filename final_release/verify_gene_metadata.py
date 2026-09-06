@@ -160,7 +160,11 @@ def main():
         assert manifest[key] == value, f"Manifest mismatch for {key}."
     assert manifest["project_gene_count"] == EXPECTED_COUNT
     assert manifest["output_sha256"] == sha256(ARTIFACT_PATH)
-    assert manifest["project_context_sha256"] == sha256(CONTEXT_PATH)
+    # Git's Windows checkout may expand LF to CRLF. Verify the exact canonical
+    # tracked text, without changing graph data or normalizing any other bytes.
+    context_bytes = CONTEXT_PATH.read_bytes().replace(b"\r\n", b"\n")
+    if manifest["project_context_sha256"] != hashlib.sha256(context_bytes).hexdigest():
+        raise ValueError("Project context canonical-LF SHA-256 mismatch.")
     missing_raw_inputs = verify_raw_inputs(manifest["raw_input_sha256"])
     expected_replacements = [
         {
