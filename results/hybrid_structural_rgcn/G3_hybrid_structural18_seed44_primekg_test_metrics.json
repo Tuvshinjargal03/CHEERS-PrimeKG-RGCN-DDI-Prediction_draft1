@@ -1,0 +1,20 @@
+{
+  "model_variant": "hybrid_structural18",
+  "graph": "G3",
+  "seed": 44,
+  "best_epoch": 500,
+  "best_val_loss": 0.2549234628677368,
+  "test_pairs": 133614,
+  "directional_queries": 267228,
+  "candidate_drugs": 4278,
+  "evaluation": "full filtered ranking",
+  "MRR": 0.5425426363945007,
+  "Hits@1": 0.4960520565509796,
+  "Hits@5": 0.5881868600845337,
+  "Hits@10": 0.6251253485679626,
+  "MeanRank": 108.55290222167969,
+  "MedianRank": 2,
+  "MinRank": 1,
+  "MaxRank": 3849,
+  "evaluation_time_seconds": 4.109703063964844
+}

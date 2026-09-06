@@ -1,0 +1,63 @@
+{
+  "model": "G3_structural18",
+  "seed": 44,
+  "best_epoch": 498,
+  "runtime_file": "ddi_runtime_embeddings.npz",
+  "runtime_sha256": "c964d001d4a6c9416d73db10f9252d300a34cde49f930876c832b53742da82db",
+  "candidate_embeddings": {
+    "shape": [
+      4278,
+      128
+    ],
+    "dtype": "float32"
+  },
+  "ddi_relation": {
+    "shape": [
+      128
+    ],
+    "dtype": "float32"
+  },
+  "drug_node_ids": {
+    "shape": [
+      4278
+    ],
+    "dtype": "int64",
+    "strictly_sorted": true
+  },
+  "source_artifacts": {
+    "checkpoint": {
+      "path": "checkpoints/structural_rgcn_pilot/G3_structural18_seed44_best.pt",
+      "sha256": "90cc105f44078d6efab706564318d8dd17957af87ae2e10b1311d1ed279534f0"
+    },
+    "features": {
+      "path": "checkpoints/structural_rgcn_pilot/G3_structural18_features.pt",
+      "sha256": "e98598902eb13673731a4607e7a7cf5f2f265d872430b688ce6c0e3aa94b2095"
+    },
+    "graph": {
+      "path": "data/processed/rgcn_tensors/G3.pt",
+      "sha256": "ee77876d767ac5d92e9657f3dd7c582e02598c2736feb124a3dfbe7d67ead5d3"
+    },
+    "test_pairs": {
+      "path": "data/processed/rgcn_tensors/ddi_test.pt",
+      "sha256": "dcc8f075ba3785b1e2fb15223c30ff028067848fab4db13b5d469d3dcf149604",
+      "pairs": 133614,
+      "directional_queries": 267228
+    },
+    "known_positive_mask": {
+      "path": "data/processed/rgcn_tensors/ddi_known_positive_mask.pt",
+      "sha256": "9b00f12fa96fbd7ff78a62b9456ac0f36edc3813e9b97ec9d3db36b7f18049e4"
+    }
+  },
+  "internal_reproduction": {
+    "mrr": 0.11955447494983673,
+    "hits_at_1": 0.07531770318746567,
+    "hits_at_5": 0.15076638758182526,
+    "hits_at_10": 0.19349394738674164,
+    "mean_rank": 326.54534912109375,
+    "median_rank": 119,
+    "exact_rank_match": true,
+    "num_rank_differences": 0,
+    "max_absolute_rank_difference": 0
+  },
+  "scientific_scope": "Exploratory structural-feature R-GCN runtime. Uses fixed structural features instead of learned node-ID embeddings. Raw decoder outputs are ranking scores, not probabilities or clinical risk."
+}

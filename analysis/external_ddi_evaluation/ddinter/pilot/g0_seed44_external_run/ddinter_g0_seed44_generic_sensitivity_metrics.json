@@ -1,0 +1,14 @@
+{
+  "subset": "Known severity: Major + Moderate + Minor",
+  "severity_is_not_a_class_label": true,
+  "pair_count": 34336,
+  "directional_query_count": 68672,
+  "MRR": 0.013027871112034283,
+  "Hits@1": 0.003800675675675676,
+  "Hits@5": 0.013440703634669152,
+  "Hits@10": 0.02334284715750233,
+  "MeanRank": 1131.5806879077354,
+  "MedianRank": 808,
+  "MinRank": 1,
+  "MaxRank": 4243
+}

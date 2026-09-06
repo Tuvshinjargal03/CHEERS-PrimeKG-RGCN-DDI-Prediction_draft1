@@ -1,0 +1,66 @@
+{
+  "generated_utc": "2026-09-06T04:44:29.491105+00:00",
+  "experiment": "G3 structural18 seed 44 DDInter external-ranking reproduction",
+  "interpretation_scope": "Evaluator reproduction only; raw ranking metrics are not clinical validation.",
+  "model": {
+    "label": "G3 structural18 seed 44",
+    "graph": "G3",
+    "seed": 44,
+    "best_epoch": 498,
+    "candidate_count": 4278,
+    "decoder": "DistMult-style raw ranking score; not a probability"
+  },
+  "input_hashes_sha256": {
+    "cohort": "b2a79538655b1499dfd8a9b0418bc9c6d110dca15f032412b56f40f748e5e49a",
+    "mapped_positive_filter": "1af413b3c23ac08d8966252c86069dc7ab01cf75f578ce6b4f8536bede46b64a",
+    "candidate_embeddings": "c964d001d4a6c9416d73db10f9252d300a34cde49f930876c832b53742da82db",
+    "ddi_relation": "c964d001d4a6c9416d73db10f9252d300a34cde49f930876c832b53742da82db",
+    "candidate_node_ids": "c964d001d4a6c9416d73db10f9252d300a34cde49f930876c832b53742da82db",
+    "known_positive_mask": "c87cc2e0ab2eac70c2aa98fc995853bf5c6e97ef0ef7881568b550d924120d37",
+    "drug_metadata": "8020ae748baa567d08487c148ba851763fcac54601c183dd6803b587974d857b",
+    "runtime_manifest": "b6864b30436f7fbda531940e0a67d555b003f876cefc046caa8cdadf597b5007",
+    "checkpoint": "90cc105f44078d6efab706564318d8dd17957af87ae2e10b1311d1ed279534f0"
+  },
+  "input_verification": {
+    "pair_count": 49105,
+    "directional_query_count": 98210,
+    "all_known_overlap_flags_false": true,
+    "all_endpoints_in_candidate_vocabulary": true,
+    "self_pairs": 0,
+    "duplicate_symmetric_pairs": 0,
+    "severity_counts": {
+      "Major": 5876,
+      "Minor": 2402,
+      "Moderate": 26058,
+      "Unknown": 14769
+    },
+    "all_pairs_absent_from_complete_primekg_known_mask": true
+  },
+  "filtering": {
+    "query_self": true,
+    "complete_primekg_known_positive_partners": true,
+    "all_other_mapped_ddinter_positive_partners": true,
+    "current_target_restored": true
+  },
+  "ranking_convention": "1 + number of available candidates with score strictly greater than target score",
+  "pair_count": 49105,
+  "directional_query_count": 98210,
+  "metrics": {
+    "MRR": 0.01650303855710166,
+    "Hits@1": 0.0047856633744017925,
+    "Hits@5": 0.01734039303533245,
+    "Hits@10": 0.030088585683738928,
+    "MeanRank": 990.8140922512982,
+    "MedianRank": 596,
+    "MinRank": 1,
+    "MaxRank": 4244
+  },
+  "output_verification": {
+    "directional_rows": 98210,
+    "every_pair_appears_once_in_each_direction": true,
+    "all_ranks_within_1_and_4278": true,
+    "no_target_accidentally_filtered": true,
+    "all_scores_finite": true,
+    "severity_counts_reconstruct_pairs": true
+  }
+}

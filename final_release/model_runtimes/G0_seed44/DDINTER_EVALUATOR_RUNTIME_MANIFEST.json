@@ -1,0 +1,10 @@
+{
+  "runtime": "NumPy lightweight inference",
+  "source_model": "G0_seed44_best.pt",
+  "graph": "G0",
+  "seed": 44,
+  "best_epoch": 495,
+  "candidate_drugs": 4278,
+  "embedding_dimension": 128,
+  "verification": "Exported NumPy runtime reproduced all 267228 internal filtered-ranking query ranks exactly against the verified G0 seed-44 PyTorch runtime."
+}

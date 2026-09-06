@@ -1,0 +1,10 @@
+{
+  "runtime": "NumPy lightweight inference",
+  "source_model": "G3_structural18_seed44_best.pt",
+  "graph": "G3",
+  "seed": 44,
+  "best_epoch": 498,
+  "candidate_drugs": 4278,
+  "embedding_dimension": 128,
+  "verification": "Exported NumPy runtime reproduced all 267228 internal filtered-ranking query ranks exactly against the frozen structural G3 seed-44 PyTorch runtime."
+}

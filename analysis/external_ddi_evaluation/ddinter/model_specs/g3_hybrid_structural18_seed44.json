@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "model_label": "G3 hybrid structural18 seed 44",
+  "result_prefix": "ddinter_g3_hybrid_structural18_seed44_generic",
+  "graph": "G3",
+  "seed": 44,
+  "best_epoch": 500,
+  "candidate_embeddings": {
+    "path": "final_release/model_runtimes/G3_hybrid_structural18_seed44/ddi_runtime_embeddings.npz",
+    "key": "candidate_embeddings",
+    "sha256": "092507b0a57673c2f90283cfe86847e720adcb1d5b06dc217063bbaefdfb0d1b"
+  },
+  "ddi_relation": {
+    "path": "final_release/model_runtimes/G3_hybrid_structural18_seed44/ddi_runtime_embeddings.npz",
+    "key": "ddi_relation",
+    "sha256": "092507b0a57673c2f90283cfe86847e720adcb1d5b06dc217063bbaefdfb0d1b"
+  },
+  "candidate_node_ids": {
+    "path": "final_release/model_runtimes/G3_hybrid_structural18_seed44/ddi_runtime_embeddings.npz",
+    "key": "drug_node_ids",
+    "sha256": "092507b0a57673c2f90283cfe86847e720adcb1d5b06dc217063bbaefdfb0d1b"
+  },
+  "known_positive_mask": {
+    "path": "final_release/lightweight_runtime/known_positive_mask_packed.npz",
+    "key": "packed_mask",
+    "count_key": "num_drugs",
+    "sha256": "c87cc2e0ab2eac70c2aa98fc995853bf5c6e97ef0ef7881568b550d924120d37"
+  },
+  "drug_metadata": {
+    "path": "final_release/lightweight_runtime/drug_metadata.csv",
+    "sha256": "8020ae748baa567d08487c148ba851763fcac54601c183dd6803b587974d857b"
+  },
+  "runtime_manifest": {
+    "path": "final_release/model_runtimes/G3_hybrid_structural18_seed44/DDINTER_EVALUATOR_RUNTIME_MANIFEST.json",
+    "sha256": "e616665529e4ddbf37ba080063ee7b908b5c3ab8b8e3edcbe621432a476f50d0"
+  },
+  "checkpoint": {
+    "path": "checkpoints/hybrid_structural_rgcn/G3_hybrid_structural18_seed44_best.pt",
+    "sha256": "d6cb6ef8901c61b389ba5898112eb31ea0ed780eae99f0b9d64328fda68d4320"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "runtime": "NumPy lightweight inference",
+  "source_model": "G3_hybrid_structural18_seed44_best.pt",
+  "model_variant": "hybrid_structural18",
+  "graph": "G3",
+  "seed": 44,
+  "best_epoch": 500,
+  "candidate_drugs": 4278,
+  "embedding_dimension": 128,
+  "runtime_npz_sha256": "092507b0a57673c2f90283cfe86847e720adcb1d5b06dc217063bbaefdfb0d1b",
+  "verification": "Exported NumPy runtime reproduced all 267228 PrimeKG internal filtered-ranking query ranks exactly against the frozen hybrid G3 seed-44 PyTorch runtime.",
+  "primekg_metrics": {
+    "MRR": 0.5425426363945007,
+    "Hits@1": 0.4960520565509796,
+    "Hits@5": 0.5881868600845337,
+    "Hits@10": 0.6251253485679626,
+    "MeanRank": 108.55290222167969,
+    "MedianRank": 2
+  }
+}
