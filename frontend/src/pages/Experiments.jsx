@@ -11,6 +11,7 @@ import {
   YAxis,
 } from 'recharts'
 import { AlertCircle, CheckCircle2, LoaderCircle } from 'lucide-react'
+import RobustnessSection from '../components/RobustnessSection.jsx'
 
 function UniqueBulbBadge({ text, label = 'View helper note', placement = 'top' }) {
   const [isHovered, setIsHovered] = useState(false)
@@ -449,6 +450,8 @@ function Experiments() {
           <p>{ranking.reporting_note}</p>
         </article>
       </div>
+
+      <RobustnessSection />
     </section>
   )
 }
