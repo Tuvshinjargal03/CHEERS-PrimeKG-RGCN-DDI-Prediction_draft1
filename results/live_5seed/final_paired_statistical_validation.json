@@ -1,0 +1,329 @@
+{
+  "schema": "cheers.paired_statistical_validation",
+  "schema_version": "1.0.0",
+  "analysis_id": "g3_vs_g0_fixed_split_five_seed_paired_validation",
+  "purpose": "Final paired statistical validation of the primary G3-versus-G0 full filtered-ranking result.",
+  "comparison": {
+    "graph_a": "G3",
+    "graph_b": "G0",
+    "difference_definition": "G3 - G0",
+    "paired_seeds": [
+      42,
+      43,
+      44,
+      45,
+      46
+    ]
+  },
+  "evaluation_scope": {
+    "dataset": "PrimeKG",
+    "split_design": "one fixed train/validation/test split shared by every paired run",
+    "evaluation_type": "full filtered ranking",
+    "candidate_drugs": 4278,
+    "test_pairs": 133614,
+    "directional_ranking_queries": 267228,
+    "uncertainty_scope": "Uncertainty is training-seed variation on one fixed split; it is not split-level, dataset-level, or clinical uncertainty."
+  },
+  "source_artifacts": {
+    "g0": {
+      "location_type": "local_frozen_verified_artifact",
+      "path": "results/relation_ablation/five_seed_v1/analysis_input.json",
+      "selection": "graph == G0 and seeds 42, 43, 44, 45, 46"
+    },
+    "g3": {
+      "location_type": "original_training_server_provenance",
+      "local_file_status": "These paths identify the original training-server artifacts and are not local files in this checkout.",
+      "artifacts": [
+        {
+          "seed": 42,
+          "server_path": "/workspace/primekg_ddi_rgcn/results/rgcn/G3_test_metrics.json",
+          "sha256": "05795dc4e5cc42c02614259373815313a12d0c4797dc5c20af64dc2e5f73fa5f"
+        },
+        {
+          "seed": 43,
+          "server_path": "/workspace/primekg_ddi_rgcn/results/rgcn_multiseed/G3_seed43_test_metrics.json",
+          "sha256": "da06251d2426a32b51922141b69a131dc967378117e7a4b0ba6310e515a40edc"
+        },
+        {
+          "seed": 44,
+          "server_path": "/workspace/primekg_ddi_rgcn/results/rgcn_multiseed/G3_seed44_test_metrics.json",
+          "sha256": "52d8950a136a5881ab95a36b42b9f4fa26ab4bb5ef15d74e6b7c07db2a13bddb"
+        },
+        {
+          "seed": 45,
+          "server_path": "/workspace/primekg_ddi_rgcn/results/rgcn_multiseed_extension_5seed/G3_seed45_test_metrics.json",
+          "sha256": "1a82c5b81b69b78f5544da0c53542bb3a89aa6564e9721bcc1bb305c368a3200"
+        },
+        {
+          "seed": 46,
+          "server_path": "/workspace/primekg_ddi_rgcn/results/rgcn_multiseed_extension_5seed/G3_seed46_test_metrics.json",
+          "sha256": "6e73ee711fa3d2ef0e67c736ad8c278e387d2d15a9f4e1111663e7ee2cf7bf97"
+        }
+      ]
+    }
+  },
+  "per_seed_results": [
+    {
+      "seed": 42,
+      "G0": {
+        "MRR": 0.5325565288743038,
+        "Hits@1": 0.484174562545841,
+        "Hits@5": 0.5806202942805395,
+        "Hits@10": 0.6196094720613109
+      },
+      "G3": {
+        "MRR": 0.5374753603914614,
+        "Hits@1": 0.4899898214258985,
+        "Hits@5": 0.5842164743215531,
+        "Hits@10": 0.6212747167213016
+      },
+      "G3_minus_G0": {
+        "MRR": 0.004918831517157551,
+        "Hits@1": 0.005815258880057461,
+        "Hits@5": 0.003596180041013586,
+        "Hits@10": 0.001665244659990739
+      }
+    },
+    {
+      "seed": 43,
+      "G0": {
+        "MRR": 0.534969564516065,
+        "Hits@1": 0.4883582558713907,
+        "Hits@5": 0.5798830960827458,
+        "Hits@10": 0.6169937282021345
+      },
+      "G3": {
+        "MRR": 0.538354807734973,
+        "Hits@1": 0.49107503704701605,
+        "Hits@5": 0.5836177346685227,
+        "Hits@10": 0.6219894621821067
+      },
+      "G3_minus_G0": {
+        "MRR": 0.003385243218907985,
+        "Hits@1": 0.002716781175625349,
+        "Hits@5": 0.0037346385857769393,
+        "Hits@10": 0.004995733979972217
+      }
+    },
+    {
+      "seed": 44,
+      "G0": {
+        "MRR": 0.5198267516263032,
+        "Hits@1": 0.4737527504602811,
+        "Hits@5": 0.5642672175071475,
+        "Hits@10": 0.5998884847396231
+      },
+      "G3": {
+        "MRR": 0.5403593428996026,
+        "Hits@1": 0.49065591928989477,
+        "Hits@5": 0.5882729354708339,
+        "Hits@10": 0.626229287350128
+      },
+      "G3_minus_G0": {
+        "MRR": 0.020532591273299428,
+        "Hits@1": 0.01690316882961368,
+        "Hits@5": 0.024005717963686446,
+        "Hits@10": 0.026340802610504865
+      }
+    },
+    {
+      "seed": 45,
+      "G0": {
+        "MRR": 0.5260908179448947,
+        "Hits@1": 0.4771543401140599,
+        "Hits@5": 0.5733568338647148,
+        "Hits@10": 0.6114104809376263
+      },
+      "G3": {
+        "MRR": 0.5279111950545274,
+        "Hits@1": 0.47917882856586885,
+        "Hits@5": 0.5743484964150464,
+        "Hits@10": 0.6120391575733082
+      },
+      "G3_minus_G0": {
+        "MRR": 0.001820377109632787,
+        "Hits@1": 0.00202448845180897,
+        "Hits@5": 0.0009916625503315624,
+        "Hits@10": 0.0006286766356818907
+      }
+    },
+    {
+      "seed": 46,
+      "G0": {
+        "MRR": 0.5229787206857482,
+        "Hits@1": 0.47887945873935367,
+        "Hits@5": 0.5653412067597707,
+        "Hits@10": 0.59933465056057
+      },
+      "G3": {
+        "MRR": 0.526943470133522,
+        "Hits@1": 0.4805484455221758,
+        "Hits@5": 0.571886179591959,
+        "Hits@10": 0.6088359004295957
+      },
+      "G3_minus_G0": {
+        "MRR": 0.003964749447773808,
+        "Hits@1": 0.0016689867828221239,
+        "Hits@5": 0.006544972832188245,
+        "Hits@10": 0.009501249869025674
+      }
+    }
+  ],
+  "methods": {
+    "paired_design": "Runs are paired by matched training seed; seeds are not treated as independent datasets.",
+    "mean_difference": "Arithmetic mean of the five per-seed G3-minus-G0 differences.",
+    "sample_sd": "Sample standard deviation of paired differences with ddof = 1.",
+    "standard_error": "Sample SD of paired differences divided by sqrt(5).",
+    "paired_t_interval": {
+      "confidence_level": 0.95,
+      "degrees_of_freedom": 4,
+      "two_sided_t_critical": 2.7764451051977987,
+      "multiplicity_status": "pointwise; not simultaneous or multiplicity-adjusted"
+    },
+    "exact_sign_flip_permutation_test": {
+      "statistic": "absolute paired mean difference",
+      "sidedness": "two-sided",
+      "assignments_enumerated": 32,
+      "total_assignments": "2^5",
+      "minimum_attainable_two_sided_p_value": 0.0625
+    },
+    "multiple_testing": {
+      "procedure": "Holm step-down correction",
+      "family": [
+        "MRR",
+        "Hits@1",
+        "Hits@5",
+        "Hits@10"
+      ],
+      "family_size": 4,
+      "input_p_values": "the four exact two-sided sign-flip permutation p-values"
+    },
+    "excluded_methods": [
+      "independent-sample tests"
+    ]
+  },
+  "metric_statistics": {
+    "MRR": {
+      "paired_mean_difference": 0.006924358513354312,
+      "sample_sd_of_differences_ddof_1": 0.007689951014787136,
+      "standard_error": 0.003439050642541505,
+      "pointwise_95_percent_paired_t_interval": {
+        "lower": -0.002623976809657396,
+        "upper": 0.016472693836366018,
+        "includes_zero": true
+      },
+      "wins": 5,
+      "losses": 0,
+      "ties": 0,
+      "exact_two_sided_sign_flip_permutation_p_value": 0.0625,
+      "holm_adjusted_p_value": 0.25
+    },
+    "Hits@1": {
+      "paired_mean_difference": 0.005825736823985517,
+      "sample_sd_of_differences_ddof_1": 0.006405140024655617,
+      "standard_error": 0.002864465700106928,
+      "pointwise_95_percent_paired_t_interval": {
+        "lower": -0.002127294948083348,
+        "upper": 0.013778768596054381,
+        "includes_zero": true
+      },
+      "wins": 5,
+      "losses": 0,
+      "ties": 0,
+      "exact_two_sided_sign_flip_permutation_p_value": 0.0625,
+      "holm_adjusted_p_value": 0.25
+    },
+    "Hits@5": {
+      "paired_mean_difference": 0.007774634394599356,
+      "sample_sd_of_differences_ddof_1": 0.009283720904696462,
+      "standard_error": 0.004151806205407427,
+      "pointwise_95_percent_paired_t_interval": {
+        "lower": -0.003752627622133943,
+        "upper": 0.019301896411332654,
+        "includes_zero": true
+      },
+      "wins": 5,
+      "losses": 0,
+      "ties": 0,
+      "exact_two_sided_sign_flip_permutation_p_value": 0.0625,
+      "holm_adjusted_p_value": 0.25
+    },
+    "Hits@10": {
+      "paired_mean_difference": 0.008626341551035078,
+      "sample_sd_of_differences_ddof_1": 0.010490095573351536,
+      "standard_error": 0.004691313358496733,
+      "pointwise_95_percent_paired_t_interval": {
+        "lower": -0.004398832460112223,
+        "upper": 0.02165151556218238,
+        "includes_zero": true
+      },
+      "wins": 5,
+      "losses": 0,
+      "ties": 0,
+      "exact_two_sided_sign_flip_permutation_p_value": 0.0625,
+      "holm_adjusted_p_value": 0.25
+    }
+  },
+  "frozen_summary_reproduction": {
+    "tolerance_statement": "Full-precision per-seed values reproduce the frozen six-decimal means and sample SDs after rounding.",
+    "G0": {
+      "MRR": {
+        "mean": 0.527284476729463,
+        "sample_sd": 0.0063725412556915545,
+        "frozen_six_decimal_display": "0.527284 +/- 0.006373"
+      },
+      "Hits@1": {
+        "mean": 0.4804638735461852,
+        "sample_sd": 0.0058007120261503444,
+        "frozen_six_decimal_display": "0.480464 +/- 0.005801"
+      },
+      "Hits@5": {
+        "mean": 0.5726937296989837,
+        "sample_sd": 0.007746334996160619,
+        "frozen_six_decimal_display": "0.572694 +/- 0.007746"
+      },
+      "Hits@10": {
+        "mean": 0.6094473633002531,
+        "sample_sd": 0.009456598580545513,
+        "frozen_six_decimal_display": "0.609447 +/- 0.009457"
+      }
+    },
+    "G3": {
+      "MRR": {
+        "mean": 0.5342088352428174,
+        "sample_sd": 0.006287563538469004,
+        "frozen_six_decimal_display": "0.534209 +/- 0.006288"
+      },
+      "Hits@1": {
+        "mean": 0.48628961037017077,
+        "sample_sd": 0.005898743840833779,
+        "frozen_six_decimal_display": "0.486290 +/- 0.005899"
+      },
+      "Hits@5": {
+        "mean": 0.5804683640935832,
+        "sample_sd": 0.006999729832369025,
+        "frozen_six_decimal_display": "0.580468 +/- 0.007000"
+      },
+      "Hits@10": {
+        "mean": 0.6180737048512881,
+        "sample_sd": 0.007311736280542828,
+        "frozen_six_decimal_display": "0.618074 +/- 0.007312"
+      }
+    },
+    "status": "PASS"
+  },
+  "interpretation": {
+    "paired_direction_consistency": "G3 has positive paired differences on all five seeds for all four metrics.",
+    "exact_test_result": "The exact two-sided sign-flip permutation p-value is 0.0625 for each metric.",
+    "multiplicity_result": "The Holm-adjusted p-value is 0.25 for each metric across the four-metric family.",
+    "interval_result": "Every pointwise 95% paired t interval includes zero.",
+    "conclusion": "The results show a consistent descriptive improvement across these five training seeds but do not meet a conventional 0.05 significance threshold.",
+    "limitations": "With n = 5 paired seeds, estimates are imprecise and the exact two-sided sign-flip test cannot attain a p-value below 0.0625. The analysis quantifies training-seed variation on one fixed split only.",
+    "prohibited_inferences": [
+      "Do not conclude no effect.",
+      "Do not conclude that G3 and G0 are equivalent.",
+      "Do not treat seeds as independent datasets.",
+      "Do not interpret these intervals or p-values as dataset-level or clinical uncertainty."
+    ]
+  }
+}
