@@ -1,0 +1,66 @@
+{
+  "generated_utc": "2026-09-06T02:43:09.305201+00:00",
+  "experiment": "G0 seed 44 DDInter external-ranking reproduction",
+  "interpretation_scope": "Evaluator reproduction only; raw ranking metrics are not clinical validation.",
+  "model": {
+    "label": "G0 seed 44",
+    "graph": "G0",
+    "seed": 44,
+    "best_epoch": 495,
+    "candidate_count": 4278,
+    "decoder": "DistMult-style raw ranking score; not a probability"
+  },
+  "input_hashes_sha256": {
+    "cohort": "b2a79538655b1499dfd8a9b0418bc9c6d110dca15f032412b56f40f748e5e49a",
+    "mapped_positive_filter": "1af413b3c23ac08d8966252c86069dc7ab01cf75f578ce6b4f8536bede46b64a",
+    "candidate_embeddings": "b58f3bc307eb74bb5d6196ac6e4c27fb30fa60f49060ee39adeca79751bf031e",
+    "ddi_relation": "b58f3bc307eb74bb5d6196ac6e4c27fb30fa60f49060ee39adeca79751bf031e",
+    "candidate_node_ids": "b58f3bc307eb74bb5d6196ac6e4c27fb30fa60f49060ee39adeca79751bf031e",
+    "known_positive_mask": "c87cc2e0ab2eac70c2aa98fc995853bf5c6e97ef0ef7881568b550d924120d37",
+    "drug_metadata": "8020ae748baa567d08487c148ba851763fcac54601c183dd6803b587974d857b",
+    "runtime_manifest": "d3983c5f961d0a688567943da3fc8843073a32cda8d294ebf435f012cb99521e",
+    "checkpoint": "5c1f488b7dbaeb5f12c8d218ca73a88a0db0163d30eafcffa70505a0a124dbaa"
+  },
+  "input_verification": {
+    "pair_count": 49105,
+    "directional_query_count": 98210,
+    "all_known_overlap_flags_false": true,
+    "all_endpoints_in_candidate_vocabulary": true,
+    "self_pairs": 0,
+    "duplicate_symmetric_pairs": 0,
+    "severity_counts": {
+      "Major": 5876,
+      "Minor": 2402,
+      "Moderate": 26058,
+      "Unknown": 14769
+    },
+    "all_pairs_absent_from_complete_primekg_known_mask": true
+  },
+  "filtering": {
+    "query_self": true,
+    "complete_primekg_known_positive_partners": true,
+    "all_other_mapped_ddinter_positive_partners": true,
+    "current_target_restored": true
+  },
+  "ranking_convention": "1 + number of available candidates with score strictly greater than target score",
+  "pair_count": 49105,
+  "directional_query_count": 98210,
+  "metrics": {
+    "MRR": 0.012543713052457044,
+    "Hits@1": 0.0035026982995621627,
+    "Hits@5": 0.01269728133591284,
+    "Hits@10": 0.02242134202219733,
+    "MeanRank": 1114.6445575806945,
+    "MedianRank": 781,
+    "MinRank": 1,
+    "MaxRank": 4243
+  },
+  "output_verification": {
+    "directional_rows": 98210,
+    "every_pair_appears_once_in_each_direction": true,
+    "all_ranks_within_1_and_4278": true,
+    "no_target_accidentally_filtered": true,
+    "all_scores_finite": true,
+    "severity_counts_reconstruct_pairs": true
+  }
+}

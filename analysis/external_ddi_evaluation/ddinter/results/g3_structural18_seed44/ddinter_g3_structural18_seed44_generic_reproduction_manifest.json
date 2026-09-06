@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "generated_utc": "2026-09-06T04:44:29.939819+00:00",
+  "purpose": "Generic-evaluator G3 reproduction; not a new scientific result.",
+  "evaluator": {
+    "path": "analysis\\external_ddi_evaluation\\ddinter\\run_ddinter_external_evaluation.py",
+    "sha256": "640bf4f2165ef732742d9b1bee7616d796d8ddc99bd447571a1ad3176fc9d345"
+  },
+  "model_spec": {
+    "path": "analysis\\external_ddi_evaluation\\ddinter\\model_specs\\g3_structural18_seed44.json",
+    "sha256": "2c8b978362be48a40526b95ae2465f2e65ccb208cd4237137d66f38df08c9112"
+  },
+  "model_identity": {
+    "label": "G3 structural18 seed 44",
+    "graph": "G3",
+    "seed": 44,
+    "best_epoch": 498
+  },
+  "input_hashes_sha256": {
+    "cohort": "b2a79538655b1499dfd8a9b0418bc9c6d110dca15f032412b56f40f748e5e49a",
+    "mapped_positive_filter": "1af413b3c23ac08d8966252c86069dc7ab01cf75f578ce6b4f8536bede46b64a",
+    "candidate_embeddings": "c964d001d4a6c9416d73db10f9252d300a34cde49f930876c832b53742da82db",
+    "ddi_relation": "c964d001d4a6c9416d73db10f9252d300a34cde49f930876c832b53742da82db",
+    "candidate_node_ids": "c964d001d4a6c9416d73db10f9252d300a34cde49f930876c832b53742da82db",
+    "known_positive_mask": "c87cc2e0ab2eac70c2aa98fc995853bf5c6e97ef0ef7881568b550d924120d37",
+    "drug_metadata": "8020ae748baa567d08487c148ba851763fcac54601c183dd6803b587974d857b",
+    "runtime_manifest": "b6864b30436f7fbda531940e0a67d555b003f876cefc046caa8cdadf597b5007",
+    "checkpoint": "90cc105f44078d6efab706564318d8dd17957af87ae2e10b1311d1ed279534f0"
+  },
+  "protocol": {
+    "score": "query_embedding @ (candidate_embeddings * ddi_relation).T",
+    "rank": "1 + count(available candidate score > target score)",
+    "both_pair_directions": true,
+    "query_self_filtered": true,
+    "primekg_known_positive_partners_filtered": true,
+    "mapped_ddinter_positive_partners_filtered": true,
+    "current_target_restored": true,
+    "threshold_or_calibration": false
+  },
+  "pair_count": 49105,
+  "directional_query_count": 98210,
+  "metrics": {
+    "MRR": 0.01650303855710166,
+    "Hits@1": 0.0047856633744017925,
+    "Hits@5": 0.01734039303533245,
+    "Hits@10": 0.030088585683738928,
+    "MeanRank": 990.8140922512982,
+    "MedianRank": 596,
+    "MinRank": 1,
+    "MaxRank": 4244
+  },
+  "outputs_sha256": {
+    "per_query": "4e0dc4c29fda181fd9462a00e5c9a4c48498c55283532640a6b32c21604d2fd1",
+    "overall": "316505bee9dcd8165a2fe51a73491d364678ef90c51b655c9e5bc378619ad270",
+    "severity": "117c4315b8e5053d4d5ab2519e14a37ad41918d83753e77c50d8e981a3d8ce3b",
+    "sensitivity": "13f58ba94831336e83393bf0b53c09d57b9e9442e2f97e7a6b7839cb0312d485",
+    "ties": "8883c3c21bb44f622d7eaf0688ed994e0b45f16cacb4879c141f223c68957bc6"
+  }
+}

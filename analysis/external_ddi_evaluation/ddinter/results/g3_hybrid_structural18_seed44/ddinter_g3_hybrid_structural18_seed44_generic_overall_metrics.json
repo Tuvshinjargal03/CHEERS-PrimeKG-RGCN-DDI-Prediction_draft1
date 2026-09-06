@@ -1,0 +1,66 @@
+{
+  "generated_utc": "2026-09-06T06:10:07.655065+00:00",
+  "experiment": "G3 hybrid structural18 seed 44 DDInter external-ranking reproduction",
+  "interpretation_scope": "Evaluator reproduction only; raw ranking metrics are not clinical validation.",
+  "model": {
+    "label": "G3 hybrid structural18 seed 44",
+    "graph": "G3",
+    "seed": 44,
+    "best_epoch": 500,
+    "candidate_count": 4278,
+    "decoder": "DistMult-style raw ranking score; not a probability"
+  },
+  "input_hashes_sha256": {
+    "cohort": "b2a79538655b1499dfd8a9b0418bc9c6d110dca15f032412b56f40f748e5e49a",
+    "mapped_positive_filter": "1af413b3c23ac08d8966252c86069dc7ab01cf75f578ce6b4f8536bede46b64a",
+    "candidate_embeddings": "092507b0a57673c2f90283cfe86847e720adcb1d5b06dc217063bbaefdfb0d1b",
+    "ddi_relation": "092507b0a57673c2f90283cfe86847e720adcb1d5b06dc217063bbaefdfb0d1b",
+    "candidate_node_ids": "092507b0a57673c2f90283cfe86847e720adcb1d5b06dc217063bbaefdfb0d1b",
+    "known_positive_mask": "c87cc2e0ab2eac70c2aa98fc995853bf5c6e97ef0ef7881568b550d924120d37",
+    "drug_metadata": "8020ae748baa567d08487c148ba851763fcac54601c183dd6803b587974d857b",
+    "runtime_manifest": "e616665529e4ddbf37ba080063ee7b908b5c3ab8b8e3edcbe621432a476f50d0",
+    "checkpoint": "d6cb6ef8901c61b389ba5898112eb31ea0ed780eae99f0b9d64328fda68d4320"
+  },
+  "input_verification": {
+    "pair_count": 49105,
+    "directional_query_count": 98210,
+    "all_known_overlap_flags_false": true,
+    "all_endpoints_in_candidate_vocabulary": true,
+    "self_pairs": 0,
+    "duplicate_symmetric_pairs": 0,
+    "severity_counts": {
+      "Major": 5876,
+      "Minor": 2402,
+      "Moderate": 26058,
+      "Unknown": 14769
+    },
+    "all_pairs_absent_from_complete_primekg_known_mask": true
+  },
+  "filtering": {
+    "query_self": true,
+    "complete_primekg_known_positive_partners": true,
+    "all_other_mapped_ddinter_positive_partners": true,
+    "current_target_restored": true
+  },
+  "ranking_convention": "1 + number of available candidates with score strictly greater than target score",
+  "pair_count": 49105,
+  "directional_query_count": 98210,
+  "metrics": {
+    "MRR": 0.01244574728819736,
+    "Hits@1": 0.003573974137053253,
+    "Hits@5": 0.01258527644842684,
+    "Hits@10": 0.022329701659708788,
+    "MeanRank": 1123.5320435800834,
+    "MedianRank": 780,
+    "MinRank": 1,
+    "MaxRank": 4232
+  },
+  "output_verification": {
+    "directional_rows": 98210,
+    "every_pair_appears_once_in_each_direction": true,
+    "all_ranks_within_1_and_4278": true,
+    "no_target_accidentally_filtered": true,
+    "all_scores_finite": true,
+    "severity_counts_reconstruct_pairs": true
+  }
+}

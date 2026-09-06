@@ -8,16 +8,17 @@
   Search,
   Share2,
 } from 'lucide-react'
-import { useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { HashRouter, NavLink, Navigate, Route, Routes } from 'react-router-dom'
 import './index.css'
-import DDIPredictor from './pages/DDIPredictor.jsx'
-import Evidence from './pages/Evidence.jsx'
-import Experiments from './pages/Experiments.jsx'
-import GraphExplorer from './pages/GraphExplorer.jsx'
-import Methodology from './pages/Methodology.jsx'
-import RelationAnalysis from './pages/RelationAnalysis.jsx'
-import SubgraphExplorer from './pages/SubgraphExplorer.jsx'
+
+const DDIPredictor = lazy(() => import('./pages/DDIPredictor.jsx'))
+const Evidence = lazy(() => import('./pages/Evidence.jsx'))
+const Experiments = lazy(() => import('./pages/Experiments.jsx'))
+const GraphExplorer = lazy(() => import('./pages/GraphExplorer.jsx'))
+const Methodology = lazy(() => import('./pages/Methodology.jsx'))
+const RelationAnalysis = lazy(() => import('./pages/RelationAnalysis.jsx'))
+const SubgraphExplorer = lazy(() => import('./pages/SubgraphExplorer.jsx'))
 
 const navigation = [
   { path: '/overview', label: 'Overview', icon: Home },
@@ -230,6 +231,28 @@ function Overview() {
   )
 }
 
+function RouteLoadingFallback() {
+  return (
+    <div className="page" role="status" aria-live="polite" aria-busy="true">
+      <p>Loading page…</p>
+    </div>
+  )
+}
+
+function NotFound() {
+  return (
+    <Page
+      eyebrow="Navigation"
+      title="Page not found"
+      description="This page does not exist or may have moved."
+    >
+      <NavLink className="primary-button" to="/overview">
+        Back to Overview
+      </NavLink>
+    </Page>
+  )
+}
+
 function AppShell() {
   return (
     <div className="app-shell">
@@ -271,38 +294,41 @@ function AppShell() {
       </aside>
 
       <main className="main-content">
-        <Routes>
-          <Route path="/" element={<Navigate to="/overview" replace />} />
-          <Route path="/overview" element={<Overview />} />
-          <Route
-            path="/experiments"
-            element={<Experiments />}
-          />
-          <Route
-            path="/relations"
-            element={<RelationAnalysis />}
-          />
-          <Route
-            path="/predictor"
-            element={<DDIPredictor />}
-          />
-          <Route
-            path="/graph"
-            element={<GraphExplorer />}
-          />
-          <Route
-            path="/subgraph"
-            element={<SubgraphExplorer />}
-          />
-          <Route
-            path="/evidence"
-            element={<Evidence />}
-          />
-          <Route
-            path="/methodology"
-            element={<Methodology />}
-          />
-        </Routes>
+        <Suspense fallback={<RouteLoadingFallback />}>
+          <Routes>
+            <Route path="/" element={<Navigate to="/overview" replace />} />
+            <Route path="/overview" element={<Overview />} />
+            <Route
+              path="/experiments"
+              element={<Experiments />}
+            />
+            <Route
+              path="/relations"
+              element={<RelationAnalysis />}
+            />
+            <Route
+              path="/predictor"
+              element={<DDIPredictor />}
+            />
+            <Route
+              path="/graph"
+              element={<GraphExplorer />}
+            />
+            <Route
+              path="/subgraph"
+              element={<SubgraphExplorer />}
+            />
+            <Route
+              path="/evidence"
+              element={<Evidence />}
+            />
+            <Route
+              path="/methodology"
+              element={<Methodology />}
+            />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </main>
     </div>
   )

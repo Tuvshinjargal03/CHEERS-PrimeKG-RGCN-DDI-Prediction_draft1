@@ -3,6 +3,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  ErrorBar,
   Legend,
   ResponsiveContainer,
   Tooltip,
@@ -10,6 +11,7 @@ import {
   YAxis,
 } from 'recharts'
 import { AlertCircle, CheckCircle2, LoaderCircle } from 'lucide-react'
+import RobustnessSection from '../components/RobustnessSection.jsx'
 
 function UniqueBulbBadge({ text, label = 'View helper note', placement = 'top' }) {
   const [isHovered, setIsHovered] = useState(false)
@@ -123,36 +125,40 @@ function Experiments() {
   const [ranking, setRanking] = useState(null)
   const [classification, setClassification] = useState(null)
   const [error, setError] = useState('')
+  const [classificationError, setClassificationError] = useState('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     let active = true
 
     async function load() {
-      try {
-        const [rankingResponse, classificationResponse] = await Promise.all([
-          fetch('/api/experiment'),
-          fetch('/api/classification'),
-        ])
+      const [rankingResult, classificationResult] = await Promise.allSettled([
+        fetch('/api/experiment').then((response) => {
+          if (!response.ok) throw new Error('Ranking experiment data is unavailable.')
+          return response.json()
+        }),
+        fetch('/api/classification').then((response) => {
+          if (!response.ok) throw new Error('Classification metrics are unavailable.')
+          return response.json()
+        }),
+      ])
 
-        if (!rankingResponse.ok || !classificationResponse.ok) {
-          throw new Error('Experiment endpoints are unavailable.')
-        }
+      if (!active) return
 
-        const [rankingData, classificationData] = await Promise.all([
-          rankingResponse.json(),
-          classificationResponse.json(),
-        ])
-
-        if (!active) return
-
-        setRanking(rankingData)
-        setClassification(classificationData)
-      } catch (err) {
-        if (active) setError(err.message || 'Experiment data could not be loaded.')
-      } finally {
-        if (active) setLoading(false)
+      if (rankingResult.status === 'fulfilled') {
+        setRanking(rankingResult.value)
+      } else {
+        setError(rankingResult.reason?.message || 'Experiment data could not be loaded.')
       }
+
+      if (classificationResult.status === 'fulfilled') {
+        setClassification(classificationResult.value)
+      } else {
+        setClassificationError(
+          classificationResult.reason?.message || 'Classification metrics could not be loaded.',
+        )
+      }
+      setLoading(false)
     }
 
     load()
@@ -169,9 +175,13 @@ function Experiments() {
     return ['G0', 'G1', 'G2', 'G3'].map((graph) => ({
       graph,
       MRR: results[graph].MRR.mean,
+      MRRSD: results[graph].MRR.std,
       Hits1: results[graph]['Hits@1'].mean,
+      Hits1SD: results[graph]['Hits@1'].std,
       Hits5: results[graph]['Hits@5'].mean,
+      Hits5SD: results[graph]['Hits@5'].std,
       Hits10: results[graph]['Hits@10'].mean,
+      Hits10SD: results[graph]['Hits@10'].std,
     }))
   }, [ranking])
 
@@ -182,9 +192,13 @@ function Experiments() {
     return rows.map((row) => ({
       graph: row.Graph,
       Accuracy: row.Accuracy_mean,
+      AccuracySD: row.Accuracy_std,
       Precision: row.Precision_mean,
+      PrecisionSD: row.Precision_std,
       Recall: row.Recall_mean,
+      RecallSD: row.Recall_std,
       F1: row.F1_mean,
+      F1SD: row.F1_std,
     }))
   }, [classification])
 
@@ -203,7 +217,7 @@ function Experiments() {
     )
   }
 
-  if (error || !ranking || !classification) {
+  if (error || !ranking) {
     return (
       <section className="page">
         <div className="page-heading">
@@ -281,18 +295,22 @@ function Experiments() {
           detail={`${primary.relative_MRR_improvement_percent}% relative`}
           tipText="Difference between the five-seed mean MRR of G3 and G0 under the controlled graph-composition experiment."
         />
-        <MetricCard
-          label="G3 Accuracy"
-          value={formatMetric(g3Class.Accuracy)}
-          detail="five-seed mean"
-          tipText="Fraction of examples correctly classified in the complementary balanced binary evaluation using a validation-selected threshold."
-        />
-        <MetricCard
-          label="G3 F1"
-          value={formatMetric(g3Class.F1)}
-          detail="five-seed mean"
-          tipText="Harmonic mean of precision and recall in the complementary binary evaluation."
-        />
+        {g3Class && (
+          <>
+            <MetricCard
+              label="G3 Accuracy"
+              value={formatMetric(g3Class.Accuracy)}
+              detail="five-seed mean"
+              tipText="Fraction of examples correctly classified in the complementary balanced binary evaluation using a validation-selected threshold."
+            />
+            <MetricCard
+              label="G3 F1"
+              value={formatMetric(g3Class.F1)}
+              detail="five-seed mean"
+              tipText="Harmonic mean of precision and recall in the complementary binary evaluation."
+            />
+          </>
+        )}
       </div>
 
       <div className="experiment-grid">
@@ -308,7 +326,7 @@ function Experiments() {
                 />
               </h2>
             </div>
-            <span className="chart-note">5-seed mean</span>
+            <span className="chart-note">Full 0–1 scale · mean ± SD</span>
           </div>
 
           <div className="chart-area">
@@ -316,49 +334,63 @@ function Experiments() {
               <BarChart data={rankingRows}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                 <XAxis dataKey="graph" />
-                <YAxis domain={[0.45, 0.64]} />
+                <YAxis domain={[0, 1]} />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="MRR" fill="#6941c6" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Hits1" name="Hits@1" fill="#7f56d9" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Hits5" name="Hits@5" fill="#9e77ed" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Hits10" name="Hits@10" fill="#b692f6" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="MRR" fill="#6941c6" radius={[4, 4, 0, 0]}><ErrorBar dataKey="MRRSD" direction="y" width={4} stroke="#667085" strokeWidth={1} /></Bar>
+                <Bar dataKey="Hits1" name="Hits@1" fill="#7f56d9" radius={[4, 4, 0, 0]}><ErrorBar dataKey="Hits1SD" direction="y" width={4} stroke="#667085" strokeWidth={1} /></Bar>
+                <Bar dataKey="Hits5" name="Hits@5" fill="#9e77ed" radius={[4, 4, 0, 0]}><ErrorBar dataKey="Hits5SD" direction="y" width={4} stroke="#667085" strokeWidth={1} /></Bar>
+                <Bar dataKey="Hits10" name="Hits@10" fill="#b692f6" radius={[4, 4, 0, 0]}><ErrorBar dataKey="Hits10SD" direction="y" width={4} stroke="#667085" strokeWidth={1} /></Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
+          <p><small>Bars use the full 0–1 metric scale. Error bars show ±1 SD across five training seeds for the fixed evaluation split.</small></p>
         </article>
 
-        <article className="chart-card">
-          <div className="chart-heading">
-            <div>
-              <span className="eyebrow">Complementary evaluation</span>
-              <h2>
-                Binary discrimination metrics{' '}
-                <UniqueBulbBadge
-                  label="Explain complementary classification"
-                  text="Accuracy, Precision, Recall, and F1 provide a complementary balanced binary evaluation using thresholds selected on validation data."
-                />
-              </h2>
+        {classification ? (
+          <article className="chart-card">
+            <div className="chart-heading">
+              <div>
+                <span className="eyebrow">Complementary evaluation</span>
+                <h2>
+                  Binary discrimination metrics{' '}
+                  <UniqueBulbBadge
+                    label="Explain complementary classification"
+                    text="Accuracy, Precision, Recall, and F1 provide a complementary balanced binary evaluation using thresholds selected on validation data."
+                  />
+                </h2>
+              </div>
+              <span className="chart-note">Full 0–1 scale · mean ± SD</span>
             </div>
-            <span className="chart-note">balanced test set</span>
-          </div>
 
-          <div className="chart-area">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={classificationRows}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="graph" />
-                <YAxis domain={[0.88, 0.95]} />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="Accuracy" fill="#1570ef" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Precision" fill="#2e90fa" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Recall" fill="#53b1fd" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="F1" fill="#84caff" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </article>
+            <div className="chart-area">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={classificationRows}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis dataKey="graph" />
+                  <YAxis domain={[0, 1]} />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="Accuracy" fill="#1570ef" radius={[4, 4, 0, 0]}><ErrorBar dataKey="AccuracySD" direction="y" width={4} stroke="#667085" strokeWidth={1} /></Bar>
+                  <Bar dataKey="Precision" fill="#2e90fa" radius={[4, 4, 0, 0]}><ErrorBar dataKey="PrecisionSD" direction="y" width={4} stroke="#667085" strokeWidth={1} /></Bar>
+                  <Bar dataKey="Recall" fill="#53b1fd" radius={[4, 4, 0, 0]}><ErrorBar dataKey="RecallSD" direction="y" width={4} stroke="#667085" strokeWidth={1} /></Bar>
+                  <Bar dataKey="F1" fill="#84caff" radius={[4, 4, 0, 0]}><ErrorBar dataKey="F1SD" direction="y" width={4} stroke="#667085" strokeWidth={1} /></Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <p><small>Bars use the full 0–1 metric scale. Error bars show ±1 SD across five training seeds for the fixed evaluation split.</small></p>
+          </article>
+        ) : (
+          <article className="chart-card">
+            <div className="chart-heading">
+              <div>
+                <span className="eyebrow">Complementary evaluation</span>
+                <h2>Binary discrimination metrics</h2>
+              </div>
+            </div>
+            <div className="inline-alert error"><AlertCircle size={20} />{classificationError || 'Classification metrics are unavailable.'} Primary ranking results remain available.</div>
+          </article>
+        )}
       </div>
 
       <div className="section-block">
@@ -385,10 +417,7 @@ function Experiments() {
                 <th>Hits@1</th>
                 <th>Hits@5</th>
                 <th>Hits@10</th>
-                <th>Accuracy</th>
-                <th>Precision</th>
-                <th>Recall</th>
-                <th>F1</th>
+                {classification && <><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1</th></>}
               </tr>
             </thead>
             <tbody>
@@ -405,10 +434,7 @@ function Experiments() {
                     <td>{formatMetric(row.Hits1)}</td>
                     <td>{formatMetric(row.Hits5)}</td>
                     <td>{formatMetric(row.Hits10)}</td>
-                    <td>{formatMetric(cls.Accuracy)}</td>
-                    <td>{formatMetric(cls.Precision)}</td>
-                    <td>{formatMetric(cls.Recall)}</td>
-                    <td>{formatMetric(cls.F1)}</td>
+                    {cls && <><td>{formatMetric(cls.Accuracy)}</td><td>{formatMetric(cls.Precision)}</td><td>{formatMetric(cls.Recall)}</td><td>{formatMetric(cls.F1)}</td></>}
                   </tr>
                 )
               })}
@@ -418,23 +444,14 @@ function Experiments() {
       </div>
 
       <div className="experiment-notes">
-        <article>
-          <strong>Ranking remains primary.</strong>
-          <p>{classification.interpretation}</p>
-        </article>
-        <article>
-          <strong>Negative-class definition.</strong>
-          <p>{classification.negative_class_note}</p>
-        </article>
-        <article>
-          <strong>Threshold selection.</strong>
-          <p>{classification.threshold_note}</p>
-        </article>
+        {classification && <><article><strong>Ranking remains primary.</strong><p>{classification.interpretation}</p></article><article><strong>Negative-class definition.</strong><p>{classification.negative_class_note}</p></article><article><strong>Threshold selection.</strong><p>{classification.threshold_note}</p></article></>}
         <article>
           <strong>Reporting caveat.</strong>
           <p>{ranking.reporting_note}</p>
         </article>
       </div>
+
+      <RobustnessSection />
     </section>
   )
 }

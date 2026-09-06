@@ -1,13 +1,38 @@
 import cytoscape from 'cytoscape'
-import { AlertCircle, ArrowRight, BookOpen, Focus, LoaderCircle, Minus, Plus } from 'lucide-react'
+import { AlertCircle, ArrowRight, BookOpen, CheckCircle2, Focus, Info, LoaderCircle, Minus, Plus } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import DrugAutocomplete from '../components/DrugAutocomplete.jsx'
 import MedicineLabelScanner from '../components/MedicineLabelScanner.jsx'
+import { G3_CONTEXT_CANDIDATE_IDS } from '../data/g3ContextCandidateIds.js'
 import { getJson, pairEndpoint, resolveDrug } from '../lib/api.js'
+import './GraphExplorerAvailability.css'
 
 const DEFAULT_SHARED_NODES = 15
 const MAX_SHARED_NODES = 30
+const G3_CONTEXT_CANDIDATE_ID_SET = new Set(G3_CONTEXT_CANDIDATE_IDS)
+
+function hasVerifiedG3Context(drug) {
+  return Boolean(drug?.entity_id && G3_CONTEXT_CANDIDATE_ID_SET.has(drug.entity_id.toUpperCase()))
+}
+
+function g3ContextAnnotation(drug) {
+  const available = hasVerifiedG3Context(drug)
+  return {
+    available,
+    label: available ? 'G3 context' : 'No G3 context',
+  }
+}
+
+function ContextAvailability({ drug, available }) {
+  if (!drug) return null
+  return (
+    <p className={`graph-context-status ${available ? 'available' : 'unavailable'}`} role="status">
+      {available ? <CheckCircle2 size={14} aria-hidden="true" /> : <Info size={14} aria-hidden="true" />}
+      {available ? 'G3 context available' : 'No verified G3 context'}
+    </p>
+  )
+}
 
 function relationLabel(value) {
   return String(value || '')
@@ -200,7 +225,13 @@ export default function GraphExplorer() {
     }
   }, [context, displayedEntities])
 
+  const drugAHasContext = hasVerifiedG3Context(drugA)
+  const drugBHasContext = hasVerifiedG3Context(drugB)
+  const hasUnavailableContext = Boolean(
+    (drugA && !drugAHasContext) || (drugB && !drugBHasContext),
+  )
   const pairReady = drugA && drugB && drugA.entity_id !== drugB.entity_id
+  const contextReady = pairReady && drugAHasContext && drugBHasContext
   const displayedCount = displayedEntities.length
   const displayedRelations = useMemo(() => {
     const relations = new Set()
@@ -236,7 +267,8 @@ export default function GraphExplorer() {
 
   async function loadContext(event) {
     event.preventDefault()
-    if (!pairReady) {
+    if (!contextReady) {
+      if (hasUnavailableContext) return
       setError('Choose two different drugs from the search results.')
       return
     }
@@ -267,22 +299,42 @@ export default function GraphExplorer() {
 
       <form className="pair-form" onSubmit={loadContext}>
         <div className="drug-selection-field">
-          <DrugAutocomplete label="Drug A" selection={drugA} onSelect={selectDrugA} disabled={resolving} />
+          <DrugAutocomplete label="Drug A" selection={drugA} onSelect={selectDrugA} disabled={resolving} getOptionAnnotation={g3ContextAnnotation} />
           <MedicineLabelScanner targetLabel="Drug A" onDrugSelect={selectDrugA} disabled={resolving} />
+          <ContextAvailability drug={drugA} available={drugAHasContext} />
         </div>
         <div className="drug-selection-field">
-          <DrugAutocomplete label="Drug B" selection={drugB} onSelect={selectDrugB} disabled={resolving} />
+          <DrugAutocomplete label="Drug B" selection={drugB} onSelect={selectDrugB} disabled={resolving} getOptionAnnotation={g3ContextAnnotation} />
           <MedicineLabelScanner targetLabel="Drug B" onDrugSelect={selectDrugB} disabled={resolving} />
+          <ContextAvailability drug={drugB} available={drugBHasContext} />
         </div>
-        <button className="primary-button" type="submit" disabled={!pairReady || loading || resolving}>
+        <button className="primary-button" type="submit" disabled={!contextReady || loading || resolving}>
           {loading || resolving ? <LoaderCircle className="spin" size={18} /> : <Focus size={18} />}
           {loading ? 'Loading context…' : 'Explore pair'}
         </button>
       </form>
 
+      {hasUnavailableContext && (
+        <div className="graph-context-unavailable" role="status">
+          <Info size={20} aria-hidden="true" />
+          <div>
+            <strong>Verified G3 support context is unavailable for one or more selected drugs.</strong>
+            <p>
+              This drug is recognized and remains available in the DDI Predictor, but no gene/protein
+              or disease relationships are available for it in the verified G3 context artifact.
+            </p>
+            <p>
+              Missing context does not imply no drug-drug interaction, safety, or an absence of
+              biomedical relationships generally.
+            </p>
+            <Link className="secondary-button" to="/predictor">Open DDI Predictor</Link>
+          </div>
+        </div>
+      )}
+
       {error && <div className="inline-alert error"><AlertCircle size={20} />{error}</div>}
 
-      {!context && !loading && !error && (
+      {!context && !loading && !error && !hasUnavailableContext && (
         <div className="empty-feature-state"><Focus size={28} /><div><strong>Choose a drug pair.</strong><p>Shared G3 context will appear as an interactive, limited subgraph.</p></div></div>
       )}
 

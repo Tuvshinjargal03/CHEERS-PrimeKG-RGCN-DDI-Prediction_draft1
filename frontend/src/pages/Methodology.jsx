@@ -5,20 +5,33 @@ import { getJson } from '../lib/api.js'
 export default function Methodology() {
   const [data, setData] = useState(null)
   const [error, setError] = useState('')
+  const [sourceErrors, setSourceErrors] = useState({})
 
   useEffect(() => {
     let active = true
-    Promise.all([
+    Promise.allSettled([
       getJson('/api/experiment'),
       getJson('/api/classification'),
       getJson('/api/model'),
       getJson('/api/relation-analysis'),
     ])
-      .then(([experiment, classification, model, relationAnalysis]) => {
-        if (active) setData({ experiment, classification, model, relationAnalysis })
-      })
-      .catch((requestError) => {
-        if (active) setError(requestError.message || 'Methodology metadata could not be loaded.')
+      .then(([experimentResult, classificationResult, modelResult, relationResult]) => {
+        if (!active) return
+        if (experimentResult.status === 'rejected') {
+          setError(experimentResult.reason?.message || 'Primary experiment methodology could not be loaded.')
+          return
+        }
+        setData({
+          experiment: experimentResult.value,
+          classification: classificationResult.status === 'fulfilled' ? classificationResult.value : null,
+          model: modelResult.status === 'fulfilled' ? modelResult.value : null,
+          relationAnalysis: relationResult.status === 'fulfilled' ? relationResult.value : null,
+        })
+        setSourceErrors({
+          classification: classificationResult.status === 'rejected' ? classificationResult.reason?.message || 'Classification methodology is unavailable.' : '',
+          model: modelResult.status === 'rejected' ? modelResult.reason?.message || 'Model metadata is unavailable.' : '',
+          relationAnalysis: relationResult.status === 'rejected' ? relationResult.reason?.message || 'Relation-analysis methodology is unavailable.' : '',
+        })
       })
     return () => {
       active = false
@@ -48,9 +61,9 @@ export default function Methodology() {
       {data && (
         <>
           <div className="methodology-flow">
-            <article><Database size={23} /><span>1</span><h2>PrimeKG</h2><p>Canonical biomedical entities and relations, targeting <em>{model.target_relation.primekg_display_relation}</em>.</p></article>
+            {model ? <article><Database size={23} /><span>1</span><h2>PrimeKG</h2><p>Canonical biomedical entities and relations, targeting <em>{model.target_relation.primekg_display_relation}</em>.</p></article> : <article><AlertCircle size={23} /><span>1</span><h2>Target metadata unavailable</h2><p>{sourceErrors.model}</p></article>}
             <article><GitCompareArrows size={23} /><span>2</span><h2>G0–G3</h2><p>Controlled DDI-only, molecular-context, disease-context, and combined graphs.</p></article>
-            <article><Layers3 size={23} /><span>3</span><h2>{model.architecture}</h2><p>{model.embedding_dim}-dimensional embeddings with a {model.decoder}.</p></article>
+            {model ? <article><Layers3 size={23} /><span>3</span><h2>{model.architecture}</h2><p>{model.embedding_dim}-dimensional embeddings with a {model.decoder}.</p></article> : <article><AlertCircle size={23} /><span>3</span><h2>Model metadata unavailable</h2><p>{sourceErrors.model}</p></article>}
             <article><Target size={23} /><span>4</span><h2>Evaluation</h2><p>Full filtered ranking plus complementary balanced binary discrimination.</p></article>
           </div>
 
@@ -73,18 +86,18 @@ export default function Methodology() {
               <div className="definition-list"><div><strong>MRR</strong><span>Rewards placing the true target near the top.</span></div><div><strong>Hits@1</strong><span>True target ranks first.</span></div><div><strong>Hits@5 / Hits@10</strong><span>True target appears in the top 5 or 10.</span></div></div>
             </article>
 
-            <article className="method-card">
+            {classification ? <article className="method-card">
               <span className="card-kicker">Complementary evaluation · seeds {classification.seeds.join(', ')}</span><h2>Balanced binary classification</h2>
               <p>{classification.test_positive_pairs.toLocaleString()} held-out positives are paired with {classification.test_negative_pairs.toLocaleString()} fixed sampled-unobserved pairs.</p>
               <div className="definition-list"><div><strong>Threshold</strong><span>Chosen per graph and seed by maximizing validation F1, then frozen for test evaluation.</span></div><div><strong>Metrics</strong><span>Accuracy, Precision, Recall, and F1.</span></div></div>
-            </article>
+            </article> : <article className="method-card"><span className="card-kicker">Complementary evaluation</span><h2>Classification methodology unavailable</h2><p>{sourceErrors.classification}</p></article>}
 
-            <article className="method-card">
+            {relationAnalysis ? <article className="method-card">
               <span className="card-kicker">Relation extension · ranking only</span><h2>Five paired training seeds</h2>
               <p>Seven single-relation variants produce {relationAnalysis.relation_runs} ranking runs for seeds {relationAnalysis.seeds.join(', ')}, each paired with the matching G0 run on one fixed split.</p>
               <p>{relationAnalysis.implementation_lineage}</p>
               <p>{relationAnalysis.classification_note}</p>
-            </article>
+            </article> : <article className="method-card"><span className="card-kicker">Relation extension</span><h2>Relation methodology unavailable</h2><p>{sourceErrors.relationAnalysis}</p></article>}
           </div>
 
           <div className="method-parameters section-block">

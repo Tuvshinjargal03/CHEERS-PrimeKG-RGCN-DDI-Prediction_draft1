@@ -1,0 +1,85 @@
+.graph-page .graph-context-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 7px 0 0;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.graph-page .graph-context-status.available {
+  color: #027a48;
+}
+
+.graph-page .graph-context-status.unavailable {
+  color: #667085;
+}
+
+.graph-page .autocomplete-option-details {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.graph-page .autocomplete-option-details em {
+  color: #667085;
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.graph-page .autocomplete-option-details em.available {
+  color: #027a48;
+}
+
+.graph-page .graph-context-unavailable {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 16px 0;
+  padding: 16px;
+  border: 1px solid #d0d5dd;
+  border-radius: 14px;
+  background: #f9fafb;
+  color: #667085;
+}
+
+.graph-page .graph-context-unavailable > div {
+  min-width: 0;
+}
+
+.graph-page .graph-context-unavailable strong {
+  color: #344054;
+  font-size: 13px;
+}
+
+.graph-page .graph-context-unavailable p {
+  margin: 5px 0 0;
+  color: #667085;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.graph-page .graph-context-unavailable .secondary-button {
+  width: fit-content;
+  margin-top: 12px;
+}
+
+@media (max-width: 700px) {
+  .graph-page .autocomplete-option-details {
+    align-items: flex-start;
+  }
+
+  .graph-page .autocomplete-menu button {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .graph-page .graph-context-unavailable .secondary-button {
+    width: 100%;
+  }
+}

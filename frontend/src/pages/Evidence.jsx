@@ -113,9 +113,8 @@ export default function Evidence() {
         <span className="eyebrow">Independent external sources</span>
         <h1>Evidence</h1>
         <p>
-          Review openFDA label text and related PubMed records separately from
-          the R-GCN result. External retrieval does not calculate, calibrate, or
-          change the model score.
+          Review openFDA label text and related PubMed records retrieved
+          independently from the R-GCN ranking score.
         </p>
       </div>
 
@@ -144,16 +143,16 @@ export default function Evidence() {
               <span>Navigation context</span>
               <h2>Predictor context</h2>
               {Number.isFinite(score) ? <strong>{score.toFixed(4)}</strong> : <strong>No Predictor score supplied</strong>}
-              <p>{Number.isFinite(score) ? 'Raw ranking score passed from the Predictor page. This value is carried through navigation and is not recomputed by the Evidence page. It is not a probability.' : 'This evidence request was started without a score from the Predictor page.'}</p>
+              <p>{Number.isFinite(score) ? 'Raw ranking score passed from the Predictor page. This value is carried through navigation and is not recomputed here. It is not a probability, confidence measure, or clinical-risk estimate.' : 'This external-information request was started without a score from the Predictor page.'}</p>
             </article>
             <article className="external-source-card">
-              <span>External supporting evidence</span>
+              <span>Independent external information</span>
               <h2>openFDA + PubMed</h2>
               <div className="evidence-source-counts">
                 <strong>{evidenceItems.length.toLocaleString()} label excerpts</strong>
                 <strong>{papers.length.toLocaleString()} PubMed records</strong>
               </div>
-              <p>{data.ai_context?.note}</p>
+              <p>openFDA and PubMed information is retrieved independently of the R-GCN model. It was not used as model input, does not explain the model score, and does not validate or prove a predicted drug–drug interaction.</p>
             </article>
           </div>
 
@@ -198,7 +197,7 @@ export default function Evidence() {
                   })}
                 </div>
               ) : (
-                <div className={`source-state ${literature?.status === 'error' ? 'error' : ''}`}><strong>{literature?.status === 'error' ? 'PubMed literature could not be retrieved.' : 'No related PubMed records were retrieved.'}</strong><p>Unavailable or empty retrieval does not mean relevant literature is absent.</p></div>
+                <div className={`source-state ${literature?.status === 'error' ? 'error' : ''}`}><strong>{literature?.status === 'error' ? 'PubMed literature could not be retrieved.' : 'No related PubMed records were retrieved.'}</strong><p>Unavailable or empty retrieval does not indicate safety, absence of a DDI, or absence of relevant literature.</p></div>
               )}
             </article>
           </div>
