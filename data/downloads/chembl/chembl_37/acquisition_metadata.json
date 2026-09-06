@@ -1,0 +1,132 @@
+{
+  "schema": "cheers.chembl37-source-acquisition",
+  "version": 3,
+  "source": "ChEMBL",
+  "release": "chembl_37",
+  "artifact": "chembl_37_sqlite.tar.gz",
+  "official_url": "https://ftp.ebi.ac.uk/pub/databases/chembl/ChEMBLdb/releases/chembl_37/chembl_37_sqlite.tar.gz",
+  "expected_sha256": "33c203740555f96067710cdfc1c3c55d890660e5908ec5cbf5817492c290d281",
+  "observed_sha256": "33c203740555f96067710cdfc1c3c55d890660e5908ec5cbf5817492c290d281",
+  "observed_byte_size": 5764252857,
+  "expected_http_byte_size": 5764252857,
+  "retrieval_timestamp_utc": null,
+  "http_last_modified": null,
+  "http_etag": null,
+  "http_content_length": null,
+  "transfer": {
+    "mode": "reused_archive",
+    "response_status": null,
+    "resume_offset": null,
+    "last_modified": null,
+    "etag": null,
+    "content_length": null,
+    "content_range": null
+  },
+  "license": "CC BY-SA 3.0",
+  "license_source_url": "https://ftp.ebi.ac.uk/pub/databases/chembl/ChEMBLdb/releases/chembl_37/LICENSE",
+  "release_notes_url": "https://ftp.ebi.ac.uk/pub/databases/chembl/ChEMBLdb/releases/chembl_37/chembl_37_release_notes.txt",
+  "archive": {
+    "member_count": 3,
+    "sqlite_member": "chembl_37/chembl_37_sqlite/chembl_37.db",
+    "sqlite_member_uncompressed_byte_size": 30480314368
+  },
+  "extracted_database": {
+    "filename": "chembl_37.db",
+    "byte_size": 30480314368,
+    "sha256": "4be13df3b68e25dcd0bff44bf094033b5aebe98f415acdc8c1cdf380e0c15142",
+    "version_evidence": {
+      "sqlite_quick_check": "ok",
+      "version_tables": [
+        "version"
+      ],
+      "release_verified": true,
+      "version": {
+        "columns": [
+          "name",
+          "creation_date",
+          "comments"
+        ],
+        "rows": [
+          [
+            "Bioassay Ontology 2.0",
+            null,
+            "BAO version used for assays (http://bioassayontology.org/)"
+          ],
+          [
+            "COCONUT 2025-07",
+            null,
+            "COCONUT version used for natural product flagging (https://coconut.naturalproducts.net/)"
+          ],
+          [
+            "ChEMBL_37",
+            "2026-05-01 00:00:00.000000",
+            "ChEMBL Release 37 (https://www.ebi.ac.uk/chembl)"
+          ],
+          [
+            "ChEMBL_Structure_Pipeline 1.2.0",
+            null,
+            "ChEMBL_Structure_Pipeline version used for chemical structure curation (https://github.com/chembl/ChEMBL_Structure_Pipeline)"
+          ],
+          [
+            "EFO 3.74.0",
+            null,
+            "EFO version used for indication and warning data (https://www.ebi.ac.uk/efo/)"
+          ],
+          [
+            "Gene Ontology 2024-02-22",
+            null,
+            "GO version used for genes (https://www.ebi.ac.uk/QuickGO/)"
+          ],
+          [
+            "InChI v1.06",
+            null,
+            "InChI version used for compound registration (https://github.com/IUPAC-InChI/InChI)"
+          ],
+          [
+            "MeSH 2025",
+            null,
+            "MeSH version used for indication data (https://www.nlm.nih.gov/mesh/meshhome.html)"
+          ],
+          [
+            "RDKit 2022.09.4",
+            null,
+            "RDKit version used for standardisation and salt stripping of chemical structures (https://www.rdkit.org/)"
+          ],
+          [
+            "Swiss-Prot 2025_03",
+            null,
+            "UniProtKB version used for component_sequences data (https://www.expasy.org/resources/uniprotkb)"
+          ],
+          [
+            "UBERON 2024-03-22",
+            null,
+            "UBERON version used for tissues (http://obophenotype.github.io/uberon/)"
+          ]
+        ]
+      }
+    }
+  },
+  "provenance_files": [
+    {
+      "filename": "LICENSE",
+      "url": "https://ftp.ebi.ac.uk/pub/databases/chembl/ChEMBLdb/releases/chembl_37/LICENSE",
+      "sha256": "f0c22ca33207ad8a85129a71f1454fcf8f2f71c99e68da5da01538210fa3ffba",
+      "byte_size": 21142
+    },
+    {
+      "filename": "REQUIRED.ATTRIBUTION",
+      "url": "https://ftp.ebi.ac.uk/pub/databases/chembl/ChEMBLdb/releases/chembl_37/REQUIRED.ATTRIBUTION",
+      "sha256": "41eb0cf5eb2ceec5954db84f6c73969c7d928799fe39a7771140cdb0afc4a0df",
+      "byte_size": 733
+    },
+    {
+      "filename": "chembl_37_release_notes.txt",
+      "url": "https://ftp.ebi.ac.uk/pub/databases/chembl/ChEMBLdb/releases/chembl_37/chembl_37_release_notes.txt",
+      "sha256": "218202b6e5e3747838073b86034c8da29836de6ad239d503cfe91897df8f40c7",
+      "byte_size": 12208
+    }
+  ],
+  "verification_timestamp_utc": "2026-09-05T13:54:25.544702Z",
+  "timestamp_semantics": "retrieval_timestamp_utc is the recorded acquisition completion time, preserved on reuse; null means the original acquisition time is unknown. verification_timestamp_utc is the completion time of local verification. transfer describes this run; acquisition_transfer preserves known original HTTP acquisition information.",
+  "acquisition_transfer": null
+}

@@ -1,0 +1,75 @@
+{
+  "schema": "cheers.unichem-source-metadata",
+  "version": 1,
+  "snapshot_id": "20260905T155310164921Z-efab38b436b7a7b9",
+  "sources": [
+    {
+      "filename": "source_1.json",
+      "fingerprint": {
+        "byte_size": 509,
+        "sha256": "0be518ee7c5fc8df34dc4259515d1057dd81fb9f7c8cdc62e6e9fba1cb87e064"
+      },
+      "observation": {
+        "url": "https://www.ebi.ac.uk/unichem/api/v1/sources/1",
+        "status": 200,
+        "headers": {
+          "Content-Length": "509",
+          "Last-Modified": null,
+          "ETag": null,
+          "Content-Encoding": null,
+          "Accept-Ranges": null,
+          "Content-Type": "application/json",
+          "Content-Range": null,
+          "Transfer-Encoding": null
+        },
+        "preflight_headers": null,
+        "started_utc": "2026-09-05T15:53:14.216532Z",
+        "completed_utc": "2026-09-05T15:53:16.108590Z"
+      },
+      "values": {
+        "sourceID": 1,
+        "name": "chembl",
+        "nameLabel": "ChEMBL",
+        "nameLong": "ChEMBL",
+        "srcReleaseNumber": "37",
+        "srcReleaseDate": "2025-02-28",
+        "lastUpdated": "2026-09-01",
+        "UCICount": 2897819
+      }
+    },
+    {
+      "filename": "source_2.json",
+      "fingerprint": {
+        "byte_size": 552,
+        "sha256": "e46982d765f18e9ec7a2ced2aaa696ae48ea44173212ae8ed04716cd90a14b0a"
+      },
+      "observation": {
+        "url": "https://www.ebi.ac.uk/unichem/api/v1/sources/2",
+        "status": 200,
+        "headers": {
+          "Content-Length": "552",
+          "Last-Modified": null,
+          "ETag": null,
+          "Content-Encoding": null,
+          "Accept-Ranges": null,
+          "Content-Type": "application/json",
+          "Content-Range": null,
+          "Transfer-Encoding": null
+        },
+        "preflight_headers": null,
+        "started_utc": "2026-09-05T15:53:16.117678Z",
+        "completed_utc": "2026-09-05T15:53:48.950626Z"
+      },
+      "values": {
+        "sourceID": 2,
+        "name": "drugbank",
+        "nameLabel": "DrugBank",
+        "nameLong": "DrugBank",
+        "srcReleaseNumber": "2026-04-25 00:54:40",
+        "srcReleaseDate": "2025-06-23",
+        "lastUpdated": "2026-09-01",
+        "UCICount": 14622
+      }
+    }
+  ]
+}

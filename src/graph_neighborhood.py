@@ -194,6 +194,11 @@ class GraphNeighborhoodStore:
         )
         total_relationships = sum(by_relation.values())
         selected = filtered[int(offset) : int(offset) + int(limit)]
+        # Enrich response copies only; model inputs and the stored graph stay unchanged.
+        if self.entity_metadata_store is not None:
+            center = {**center, 'metadata': self.entity_metadata_store.get('drug', center['entity_id'])}
+            selected = [{**node, 'metadata': self.entity_metadata_store.get(
+                node['entity_type'], node['entity_id'])} for node in selected]
         returned_relationships = sum(
             len(item["relationships"]) for item in selected
         )
