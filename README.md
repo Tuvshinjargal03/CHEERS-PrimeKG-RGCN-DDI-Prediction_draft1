@@ -25,14 +25,19 @@
 - [Training and model selection](#training-and-model-selection)
 - [Filtered ranking evaluation](#filtered-ranking-evaluation)
 - [Multi-seed results](#multi-seed-results)
+- [Final paired statistical validation](#final-paired-statistical-validation)
 - [Complementary five-seed classification](#complementary-five-seed-classification)
 - [Relation-level ablation study](#relation-level-ablation-study)
 - [External DDI evaluation pilots](#external-ddi-evaluation-pilots)
+- [DDI-edge cold-start evaluation](#ddi-edge-cold-start-evaluation)
 - [Interpretation of graph composition](#interpretation-of-graph-composition)
+- [Verified three-pair qualitative case study](#verified-three-pair-qualitative-case-study)
 - [Final model verification](#final-model-verification)
 - [Lightweight NumPy runtime](#lightweight-numpy-runtime)
 - [G3 graph-context runtime](#g3-graph-context-runtime)
+- [Grounded entity metadata and descriptions](#grounded-entity-metadata-and-descriptions)
 - [Independent FDA and PubMed evidence](#independent-fda-and-pubmed-evidence)
+- [Medicine-label OCR and conservative drug matching](#medicine-label-ocr-and-conservative-drug-matching)
 - [Web application](#web-application)
 - [API reference](#api-reference)
 - [Local Windows setup](#local-windows-setup)
@@ -55,7 +60,7 @@ CHEERS studies the question:
 
 The final controlled experiment compares four PrimeKG graph variants while holding the DDI split, R-GCN architecture, decoder, training procedure, and evaluation protocol fixed. The graph variants range from DDI-only topology to a heterogeneous graph combining Drug–Drug, Drug–Gene/Protein, and Drug–Disease relationships.
 
-The repository also contains a lightweight local demonstration application. The application serves the independently verified final G3/seed-44 export with NumPy, so a local user does not need the university GPU environment, PyTorch, or PyTorch Geometric.
+The repository also contains a lightweight local demonstration application. The application serves the independently verified final G3/seed-44 export with NumPy, so a local user does not need the university GPU environment, PyTorch, or PyTorch Geometric. The current React interface also surfaces robustness/generalization diagnostics, grounded graph/entity context, browser-side medicine-label OCR, and independent external evidence review.
 
 Three scopes must be distinguished:
 
@@ -63,7 +68,7 @@ Three scopes must be distinguished:
 |---|---|---|
 | Final graduation experiment | Controlled G0–G3 R-GCN graph-composition comparison | Results, selected checkpoint, selected G3 graph artifacts, summaries, and original inference code are included; full preprocessing/retraining workspace is not |
 | Earlier project stages | Broader clinical-inference concept and KGE exploration | Documented historically; not presented as the final R-GCN experiment |
-| Lightweight demonstration | React dashboards, relation analysis, Top-K ranking, interactive G3 context, methodology, and independent FDA/PubMed review | Fully supported locally; external evidence retrieval additionally requires network access to openFDA and NCBI |
+| Lightweight demonstration | React dashboards, relation analysis, robustness/generalization diagnostics, Top-K ranking, interactive G3 context, grounded entity information, browser-side medicine-label OCR, methodology, and independent FDA/PubMed review | Core application is supported locally; openFDA/PubMed retrieval requires network access, and optional local drug-description bundles remain subject to source/licensing constraints |
 
 ## Scientific scope
 
@@ -356,6 +361,27 @@ Main comparison:
 
 **The gain was modest but consistent across the five evaluated seeds.** Five seeds were evaluated, so statistical significance is not claimed.
 
+## Final paired statistical validation
+
+The primary five-seed G3-versus-G0 result has an additional matched-seed statistical validation at:
+
+```text
+results/live_5seed/final_paired_statistical_validation.json
+```
+
+For each metric, the paired difference is defined as **G3 − G0**. All five paired differences are positive for MRR, Hits@1, Hits@5, and Hits@10.
+
+| Metric | Mean paired difference | Pointwise 95% paired t interval | Exact two-sided sign-flip p | Holm-adjusted p |
+|---|---:|---:|---:|---:|
+| MRR | +0.006924 | [-0.002624, +0.016473] | 0.0625 | 0.25 |
+| Hits@1 | +0.005826 | [-0.002127, +0.013779] | 0.0625 | 0.25 |
+| Hits@5 | +0.007775 | [-0.003753, +0.019302] | 0.0625 | 0.25 |
+| Hits@10 | +0.008626 | [-0.004399, +0.021652] | 0.0625 | 0.25 |
+
+The exact test enumerates all `2^5 = 32` sign-flip assignments. With five paired seeds, **0.0625 is the minimum attainable two-sided exact p-value**. Every pointwise 95% paired t interval also includes zero.
+
+The appropriate conclusion is that G3 shows a **consistent descriptive improvement across these five training seeds**, but the result does not meet a conventional `0.05` significance threshold. This does not establish equivalence or “no effect.” The uncertainty is training-seed variation on one fixed split, not split-level, dataset-level, biological, or clinical uncertainty.
+
 ## Complementary five-seed classification
 
 Binary discrimination metrics complement the primary full filtered-ranking evaluation. For each graph and seed, the classification threshold was selected by maximizing F1 on the validation split only and was then frozen for held-out test evaluation. The test set contains 133,614 positive DDI pairs and 133,614 fixed sampled-unobserved pairs.
@@ -455,7 +481,31 @@ The versioned release is in `results/relation_ablation/five_seed_v1/`. It includ
 
 ## External DDI evaluation pilots
 
-**DDInter** is the primary external robustness evaluation, while Kaggle/DrugBank-derived data is used as a source-consistency control. Both current evaluations are G3 seed-44 pilots, and no external G0, G1, or G2 comparison is claimed. The checksum-portability fix changed no scientific metrics: tracked external-evaluation text files use canonical LF bytes through `.gitattributes`, so SHA256 verification uses one cross-platform canonical representation, while original source and local-archive hashes remain preserved separately in provenance. See [`analysis/external_ddi_evaluation/`](analysis/external_ddi_evaluation/) for the complete compact package and interpretation boundaries.
+**DDInter** is the primary external robustness evaluation, while Kaggle/DrugBank-derived data is used as a source-consistency control. The current external comparisons are exploratory **seed-44** pilots rather than a five-seed external benchmark, and they are not clinical validation.
+
+The generic, reproducible DDInter evaluator and model-specific reproduction artifacts are preserved under [`analysis/external_ddi_evaluation/`](analysis/external_ddi_evaluation/). For the G0 seed-44 reproduction, the frozen mapped cohort contains **49,105 pairs** and **98,210 directional ranking queries**; all evaluated pairs are absent from the complete PrimeKG known-positive mask.
+
+### Seed-44 DDInter ranking diagnostic
+
+| Model | MRR | Hits@1 | Hits@5 | Hits@10 | Mean rank | Median rank |
+|---|---:|---:|---:|---:|---:|---:|
+| G0 | 0.0125437 | 0.0035027 | 0.0126973 | 0.0224213 | 1114.6 | 781 |
+| G3 | 0.0120882 | 0.0034416 | 0.0122493 | 0.0213828 | 1113.3 | 776 |
+| **Structural-only** | **0.0165030** | **0.0047857** | **0.0173404** | **0.0300886** | **990.8** | **596** |
+| Hybrid | 0.0124457 | 0.0035740 | 0.0125853 | 0.0223297 | 1123.5 | 780 |
+
+The exploratory **Structural-only** R-GCN uses 18 structural input features—15 standardized `log1p` outgoing relation-degree features plus three node-type one-hot features—and no learned node-ID embedding. The **Hybrid** R-GCN keeps the learned node-ID embedding and adds a projected structural residual initialized at zero so the shared baseline parameters begin from an equivalent state.
+
+### Internal-versus-external representation diagnostic
+
+| Exploratory model | PrimeKG internal MRR | DDInter MRR | Observed pattern |
+|---|---:|---:|---|
+| Structural-only | 0.119554 | 0.0165030 | lower internal performance, higher observed external MRR |
+| Hybrid | 0.542543 | 0.0124457 | strong internal performance, no retained external advantage |
+
+These single-seed results suggest a possible internal transductive-performance versus external-transfer trade-off that requires additional seeds and datasets. No external G0–G3 five-seed comparison is claimed.
+
+The checksum-portability fix changed no scientific metrics: tracked external-evaluation text files use canonical LF bytes through `.gitattributes`, so SHA256 verification uses one cross-platform canonical representation, while original source and local-archive hashes remain preserved separately in provenance.
 
 ## DDI-edge cold-start evaluation
 
@@ -803,6 +853,50 @@ Verify the derived artifact and its canonical tracked-file provenance:
 python final_release\verify_gene_metadata.py
 ```
 
+## Grounded entity metadata and descriptions
+
+The graph-exploration runtime now has a provenance-aware entity-information layer for identification and general context. These fields are **not R-GCN inputs, score explanations, DDI evidence, or clinical guidance**.
+
+The frozen Drug/Disease inventory contains:
+
+| Entity inventory | Count |
+|---|---:|
+| Candidate Drug entities | 4,278 |
+| Disease entities exposed by G3 context | 2,010 |
+| **Total** | **6,288** |
+
+Identity joins use exact `(entity_type, entity_id)` keys with no fuzzy, synonym, display-name, or case-insensitive fallback.
+
+### Disease context
+
+The repository commits `2,010` disease-description records in `final_release/entity_metadata_runtime/disease_descriptions.jsonl`. Approved ordinary MONDO definitions are preserved without scientific rewriting. Grouped, unresolved, and needs-review identities retain their source/mapping status instead of receiving invented definitions.
+
+### Drug context and source provenance
+
+Drug enrichment uses a deliberately conservative local pipeline:
+
+1. preserve the CHEERS DrugBank identity;
+2. use the frozen exact UniChem cross-reference assignment when available;
+3. resolve against a verified **ChEMBL 37** snapshot without name/fuzzy fallback;
+4. optionally derive limited structured context through the documented FDA UNII / DailyMed source pipeline.
+
+Tracked provenance includes ChEMBL 37 license/attribution/release metadata, UniChem acquisition records, MONDO mapping/description manifests, and entity-inventory verification. Drug-linked generated mappings/descriptions remain local under `data/derived/entity_descriptions/` and are ignored because redistribution/licensing review is still required.
+
+If an optional local drug-information bundle is absent or incomplete, the application retains the canonical CHEERS entity identity and renders neutral unavailable fields rather than inferring replacements.
+
+Verification entry points include:
+
+```powershell
+python final_release\verify_entity_description_inventory.py
+python final_release\verify_disease_source_mapping.py
+python final_release\verify_entity_descriptions.py
+python final_release\verify_chembl37_source.py
+python final_release\verify_unichem_source.py
+python final_release\verify_drug_information.py
+```
+
+Subgraph Explorer is the main UI surface for enriched entity details. This metadata layer does not alter graph membership, filtering, ranking order, model embeddings, or prediction scores.
+
 ## Independent FDA and PubMed evidence
 
 Each ranked candidate retains the separate **Explore context** action and also provides **Review evidence**. Reviewing evidence does not rerun prediction and does not alter the raw R-GCN score.
@@ -826,37 +920,76 @@ Verify the deterministic schemas, route registration, forbidden-verdict guard, a
 python final_release\verify_external_evidence.py
 ```
 
+## Medicine-label OCR and conservative drug matching
+
+The React interface includes a browser-side medicine-label scanner to help select a supported CHEERS drug from printed text. It is available from the **DDI Predictor, Graph Explorer, Subgraph Explorer, and Evidence** pages.
+
+Workflow:
+
+1. upload a medicine-label image or capture one with the browser camera;
+2. run English OCR in the browser with `tesseract.js`;
+3. send only the extracted text to the backend;
+4. conservatively match that text against supported CHEERS drugs;
+5. let the user explicitly choose a returned match.
+
+The scanner uses repository-local Tesseract worker/core/language assets prepared from pinned npm packages. `npm run dev` and `npm run build` invoke `prepare:tesseract` automatically through `predev` / `prebuild`, so OCR does not depend on an external CDN at runtime.
+
+```http
+POST /api/drugs/match-text
+```
+
+Example body:
+
+```json
+{
+  "text": "ASPIRIN 100 mg",
+  "limit": 10
+}
+```
+
+Frontend regression tests verify that the raw image is **not** included in the backend matching request; only OCR-extracted text is posted. The scanner also has explicit no-text, no-match, camera-permission, OCR-error, and matching-error states.
+
+This feature is a selection aid only. OCR can misread packaging text, and a match is not a clinical identification, prescription verification, DDI result, or safety conclusion.
+
 ## Web application
 
 The repository contains two local frontend paths:
 
-- `frontend/` is the current React/Vite graduation-project interface. It provides the Overview, Experiments, Relation Analysis, DDI Predictor, pair-oriented Graph Explorer, single-drug Subgraph Explorer, Evidence, and Methodology pages.
+- `frontend/` is the current React/Vite graduation-project interface. It provides **Home** (route `/overview`), DDI Predictor, pair-oriented Graph Explorer, single-drug Subgraph Explorer, Experiments, Relation Analysis, Evidence, and Methodology.
 - `web/` is the earlier no-build vanilla interface that FastAPI still serves at `/` for compatibility.
+
+The React application uses `HashRouter`, route-level lazy loading, grouped navigation, responsive research dashboards, and contextual helper tooltips.
 
 The current React development architecture is:
 
 ```mermaid
 flowchart LR
     B[Browser: React + Vite] --> F[FastAPI API]
+    B --> OCR[Local Tesseract.js OCR]
+    OCR --> F
     F --> N[NumPy inference]
     N --> L[Lightweight embeddings and packed mask]
     F --> C[Standard-library G3 context store]
     C --> CSV[G3 support-context CSV]
+    F --> MD[Grounded entity metadata]
     F --> E[Independent evidence services]
     E --> O[openFDA labels]
     E --> P[NCBI PubMed]
     F --> R[Experiment and verification JSON]
+    X[Frozen robustness diagnostics] --> B
 ```
 
 Components:
 
 | Layer | Technology | Role |
 |---|---|---|
-| Backend | FastAPI | API lifecycle, validation, JSON responses, and static-file serving |
+| Backend | FastAPI | API lifecycle, validation, JSON responses, and compatibility static-file serving |
 | Inference | NumPy | Verified candidate scoring, filtering, and Top-K ranking |
-| Context indexing | Python standard library | CSV loading, per-drug indexes, shared-entity calculation, relation preservation |
+| Context indexing | Python standard library | CSV/NPZ loading, per-drug indexes, pair/shared-entity calculation, relation preservation |
+| Entity metadata | Python standard library + frozen artifacts | Exact-key gene/disease/drug identification and optional grounded descriptions without changing graph/model outputs |
 | Evidence retrieval | Python standard library | Independent openFDA label and NCBI PubMed requests with bounded timeouts and explicit status values |
-| Current frontend | React, Vite, Recharts, Cytoscape, Lucide | Experiment and classification dashboards, relation analysis, prediction, interactive graph context, evidence review, and methodology |
+| Medicine-label OCR | Tesseract.js with local assets | Browser-side image-to-text extraction followed by conservative supported-drug matching |
+| Current frontend | React, Vite, Recharts, Cytoscape, Lucide | Home, experiment/classification dashboards, robustness/generalization, relation analysis, prediction, interactive graph context, evidence review, and methodology |
 | Compatibility frontend | HTML, CSS, vanilla JavaScript | Earlier no-build local demonstration served directly by FastAPI |
 
 The backend and compatibility frontend require no React, Node.js, npm, external CDN runtime, PyTorch, PyG, CUDA, or GPU. Developing or building the current React interface requires Node.js and npm; model inference remains CPU-only NumPy.
@@ -866,14 +999,22 @@ Main functionality:
 - drug search by partial name;
 - exact-name and DrugBank-ID resolution;
 - autocomplete;
+- browser-side medicine-label OCR and conservative text-to-drug matching;
 - configurable Top-K prediction;
 - raw model-score ranking;
 - known-positive and self-pair filtering;
 - graph-composition experiment information;
 - complementary five-seed classification metrics;
+- final matched-seed G3-versus-G0 statistical validation;
 - verified five-seed single-relation ranking follow-up analysis;
+- Robustness & Generalization presentation for DDInter transfer, structural/hybrid representation diagnostics, and DDI-edge cold-start;
 - pair-specific interactive G3 context exploration with relation-preserving edges;
-- independent openFDA label and PubMed literature review with explicit empty/error states.
+- single-drug one-hop neighborhood exploration with training-only DDI and forward biomedical context;
+- grounded entity identification/descriptions with provenance boundaries;
+- independent openFDA label and PubMed literature review with explicit empty/error states;
+- contextual helper tooltips, route-loading fallbacks, and responsive long-name handling.
+
+The current `.github/workflows/static.yml` GitHub Pages workflow still deploys the **legacy `web/` compatibility frontend**, not a built `frontend/dist/` React bundle.
 
 ## API reference
 
@@ -890,6 +1031,7 @@ The implementation in `api/main.py` is the source of truth.
 | GET | `/api/relation-analysis` | Verified five-seed single-relation ranking follow-up | none | `relation-five-seed-v1`; seeds 42–46; current five-seed ranking statistics, paired per-seed results, and uncertainty; historical three-seed ranking under `history`; separate historical three-seed relation-classification scope |
 | GET | `/api/verification` | Seven-check verification record | none | included verification JSON |
 | GET | `/api/drugs/search` | Autocomplete search | query `q`; optional `limit` 1–50 | matching drug name, DrugBank ID, and node ID |
+| POST | `/api/drugs/match-text` | Conservatively match OCR-extracted text to supported drugs | JSON body with `text` and optional `limit` 1–20 | exact-ID/name and possible text matches; no raw image payload |
 | POST | `/api/predict` | Rank unobserved candidate links | JSON body with `drug` and `top_k` 1–50 | query metadata, model metadata, filtering counts, ranked predictions, disclaimer |
 | GET | `/api/context/pair` | Retrieve real G3 support context for a pair | exact `drug_a_id` and `drug_b_id` | complete per-drug context, shared entities, separate relation lists, interpretation warning |
 | GET | `/api/context/drug` | Retrieve a paginated one-hop G3 neighborhood for one drug | exact `drug_id`; optional `limit`, `offset`, comma-separated `relations`, and `entity_types` | unique neighbors with training-only DDI and forward G3 support relationships, filtered counts, pagination, and interpretation warning |
@@ -959,11 +1101,14 @@ python -m pip install -r final_release\app_requirements.txt
 
 `app_requirements.txt` is the full local application environment. It includes `lightweight_requirements.txt`, which intentionally contains only NumPy for standalone lightweight scoring and export verification.
 
-Run all three independent checks:
+Run the core runtime checks:
 
 ```powershell
 python final_release\verify_lightweight_runtime.py
 python final_release\verify_g3_context_runtime.py
+python final_release\verify_training_ddi_neighbors.py
+python final_release\verify_gene_metadata.py
+python final_release\verify_drug_neighborhood.py
 python final_release\verify_external_evidence.py
 ```
 
@@ -981,13 +1126,25 @@ npm ci
 npm run dev
 ```
 
+`npm run dev` automatically prepares the pinned local Tesseract worker/core/English-language assets through the `predev` hook.
+
 Open:
 
 - React application: <http://127.0.0.1:5173>
 - API documentation: <http://127.0.0.1:8001/docs>
 - compatibility frontend served by FastAPI: <http://127.0.0.1:8001>
 
-The Vite development server proxies `/api` to `http://127.0.0.1:8001`. A production React bundle can be created with `npm run build`; `api/main.py` does not currently serve `frontend/dist/` automatically.
+The Vite development server proxies `/api` to `http://127.0.0.1:8001`. The React application uses hash routes such as `http://127.0.0.1:5173/#/predictor`.
+
+Frontend QA commands:
+
+```powershell
+npm test
+npm run lint
+npm run build
+```
+
+`npm run build` also prepares the local OCR assets through `prebuild`. `api/main.py` does not currently serve `frontend/dist/` automatically.
 
 ## University training environment
 
@@ -1019,12 +1176,15 @@ Full retraining requires the original PrimeKG source data, preprocessing outputs
 
 ## Original notebook pipeline
 
-The portable repository includes the two relation-ablation notebooks used for the A1–A7 follow-up:
+The portable repository now includes notebooks from the relation-ablation, qualitative case-study, and cold-start stages:
 
-| Included notebook | Purpose |
+| Included notebook | Purpose / status |
 |---|---|
+| `05_case_study_rank_analysis_legacy_exploratory.ipynb` | legacy exploratory case-study notebook; not the authoritative corrected three-pair result |
 | `07_build_relation_ablations.ipynb` | Construct the seven DDI-plus-one-relation graph variants |
-| `08_train_relation_ablations.ipynb` | Train/evaluate seeds 42–44 and produce the frozen follow-up results |
+| `08_train_relation_ablations.ipynb` | Train/evaluate seeds 42–44 and produce the frozen follow-up inputs |
+| `10_cold_start_evaluation.ipynb` | original DDI-edge cold-start work retained for history |
+| `10_cold_start_evaluation_validated.ipynb` | validated notebook for the authoritative reproduced cold-start results |
 
 The earlier notebooks below remain in the university training workspace and are **not included** in this portable repository:
 
@@ -1038,7 +1198,7 @@ The earlier notebooks below remain in the university training workspace and are 
 | `05_repeat_seeds.ipynb` | seeds 42–44, robustness evaluation, and mean ± SD generation |
 | `06_finalize_project.ipynb` | verification summaries, experiment freeze, portable application packaging, NumPy export, and G3 context export |
 
-The included relation notebooks do not replace the missing raw PrimeKG source, preprocessing artifacts, G0–G3 construction pipeline, or original training notebooks. This repository therefore should not claim complete from-scratch retraining.
+The included notebooks do not replace the missing raw PrimeKG source, preprocessing artifacts, complete G0–G3 construction pipeline, or original full training workspace. This repository therefore should not claim complete from-scratch retraining.
 
 ## Repository structure
 
@@ -1046,27 +1206,35 @@ This tree reflects the actual portable folder after repository documentation was
 
 ```text
 .
+├── .github/workflows/           # GitHub Pages compatibility-frontend deployment
+├── analysis/
+│   └── external_ddi_evaluation/ # DDInter evaluator/results/provenance
 ├── api/                         # FastAPI application
-├── checkpoints/                 # selected G3 and recovered G0 archival checkpoints
+├── checkpoints/                 # selected G0/G3 plus exploratory structural/hybrid checkpoints
 ├── data/processed/              # selected mappings plus G0/G3 tensors for archival inspection
+├── data/downloads/chembl/       # tracked ChEMBL 37 license/provenance files
 ├── figures/                     # relation-ablation figure exports
 ├── final_release/
-│   ├── entity_metadata_runtime/  # supplemental exact-match NCBI gene metadata
+│   ├── entity_metadata_runtime/  # gene metadata plus Drug/Disease inventory and disease descriptions
 │   ├── g3_context_runtime/      # portable G3 support-context export
 │   ├── lightweight_runtime/     # verified NumPy scoring export
+│   ├── model_runtimes/          # portable external-evaluator runtimes
+│   ├── source_provenance/       # UniChem/drug-information source provenance
 │   ├── PORTABLE_APP_MANIFEST_V2.json  # historical
 │   ├── PORTABLE_APP_MANIFEST_V3.json  # historical
 │   └── PORTABLE_APP_MANIFEST_V4.json  # historical post-React snapshot
 ├── frontend/                    # current React/Vite interface
-│   ├── public/
+│   ├── public/                   # includes local Tesseract OCR assets
 │   └── src/
 │       ├── components/
 │       ├── lib/
 │       └── pages/
-├── notebooks/                   # included A1–A7 relation follow-up notebooks
+├── notebooks/                   # relation, case-study, and cold-start notebooks
 ├── results/
 │   ├── classification_metrics_5seed/
 │   ├── live_5seed/
+│   ├── cold_start/
+│   ├── hybrid_structural_rgcn/
 │   ├── relation_ablation/
 │   └── rgcn_multiseed/          # historical three-seed snapshot
 ├── scripts/                     # evaluation utilities
@@ -1087,30 +1255,35 @@ For the complete lightweight web demonstration:
 - `src/g3_context.py`;
 - `src/graph_neighborhood.py` and `src/entity_metadata.py`;
 - `src/safety_evidence.py` and `src/pubmed_literature.py`;
-- `frontend/package.json`, `frontend/package-lock.json`, `frontend/vite.config.js`, and `frontend/src/` for the current React interface;
+- `frontend/package.json`, `frontend/package-lock.json`, `frontend/vite.config.js`, `frontend/scripts/prepare-tesseract-assets.mjs`, `frontend/public/tesseract/`, and `frontend/src/` for the current React interface and local OCR;
 - `web/index.html`, `web/styles.css`, and `web/app.js` for the FastAPI-served compatibility interface;
 - all files under `final_release/lightweight_runtime/`;
 - all files under `final_release/g3_context_runtime/`;
 - all files under `final_release/entity_metadata_runtime/`;
 - `results/live_5seed/final_experiment_summary.json`;
 - `results/classification_metrics_5seed/classification_metrics_5seed_summary.json`;
-- the two CSV files under `results/relation_ablation/final/`;
+- current relation-analysis artifacts used by `/api/relation-analysis`, including the five-seed ranking package and preserved historical files;
 - `final_release/FINAL_VERIFICATION_SUMMARY.json`;
 - `final_release/app_requirements.txt` and its included `lightweight_requirements.txt`.
 
-The three verification scripts are not required for serving requests, but they should be retained to validate the export and evidence response contracts.
+Verification scripts are not required for serving requests, but they should be retained to validate runtime exports, context structure, metadata provenance, neighborhood behavior, evidence contracts, and source acquisitions. Optional local drug-information bundles under `data/derived/entity_descriptions/` are not required for core prediction or graph behavior.
 
 ### Included research/archive files
 
 The following are preserved original PyTorch/research artifacts and are not loaded by the NumPy application:
 
+- `checkpoints/rgcn_multiseed/G0_seed44_best.pt`;
 - `checkpoints/rgcn_multiseed/G3_seed44_best.pt`;
+- exploratory structural-only and hybrid checkpoints under `checkpoints/structural_rgcn_pilot/` and `checkpoints/hybrid_structural_rgcn/`;
 - `data/processed/rgcn_tensors/G3.pt`;
 - `data/processed/rgcn_tensors/ddi_known_positive_mask.pt`;
 - `data/processed/rgcn_tensors/drug_node_ids.pt`;
 - `data/processed/mappings/drug_metadata.parquet`;
 - `src/inference.py`;
-- `src/rgcn_model.py`.
+- `src/rgcn_model.py`;
+- `src/structural_rgcn_model.py` and `src/hybrid_rgcn_model.py`;
+- external DDInter evaluator/model-runtime artifacts under `analysis/external_ddi_evaluation/` and `final_release/model_runtimes/`;
+- cold-start and corrected three-pair case-study research outputs.
 
 Use `final_release/app_requirements.txt` for the complete web application. Use `final_release/lightweight_requirements.txt` only for standalone NumPy scoring or the lightweight export verifier.
 
@@ -1171,20 +1344,39 @@ Those materials were retained in the university experiment workspace. The includ
 | `final_release/g3_context_runtime/TRAINING_DDI_NEIGHBORS_MANIFEST.json` | source and runtime hashes plus adjacency invariants |
 | `final_release/entity_metadata_runtime/gene_metadata.jsonl` | exact GeneID-matched supplemental metadata for G3 gene/protein nodes |
 | `final_release/entity_metadata_runtime/GENE_METADATA_MANIFEST.json` | metadata source, mapping rule, coverage statistics, and SHA256 provenance |
+| `final_release/entity_metadata_runtime/entity_description_inventory.jsonl` | exact 4,278-Drug + 2,010-Disease identity inventory |
+| `final_release/entity_metadata_runtime/disease_descriptions.jsonl` | committed MONDO-derived disease descriptions |
+| `final_release/entity_metadata_runtime/ENTITY_DESCRIPTION_INVENTORY_MANIFEST.json` | exact inventory counts, identities, and fingerprints |
+| `final_release/entity_metadata_runtime/DISEASE_SOURCE_MAPPING_MANIFEST.json` | disease source-mapping provenance |
+| `final_release/entity_metadata_runtime/DISEASE_DESCRIPTIONS_MANIFEST.json` | disease-description output provenance |
 | `final_release/verify_lightweight_runtime.py` | independent Top-10 export check |
 | `final_release/verify_g3_context_runtime.py` | independent edge-count and shared-context check |
 | `final_release/verify_training_ddi_neighbors.py` | training-only DDI adjacency structure and provenance check |
 | `final_release/verify_gene_metadata.py` | exact gene identity, coverage, and provenance check |
 | `final_release/verify_drug_neighborhood.py` | single-drug API, pagination, filtering, and metadata regression check |
 | `final_release/verify_external_evidence.py` | deterministic evidence-schema and live-service availability check |
+| `final_release/verify_entity_description_inventory.py` | Drug/Disease inventory identity and fingerprint check |
+| `final_release/verify_disease_source_mapping.py` | disease source-mapping verification |
+| `final_release/verify_entity_descriptions.py` | deterministic disease/local-drug description verification |
+| `final_release/verify_chembl37_source.py` | pinned ChEMBL 37 acquisition verification |
+| `final_release/verify_unichem_source.py` | frozen UniChem source verification |
+| `final_release/verify_drug_information.py` | optional local grounded drug-information verification |
 | `final_release/FINAL_VERIFICATION_SUMMARY.json` | seven-check final model record |
 | `final_release/PORTABLE_APP_MANIFEST_V2.json` | historical evidence-UI release inventory |
 | `final_release/PORTABLE_APP_MANIFEST_V3.json` | historical five-seed pre-React release inventory |
 | `final_release/PORTABLE_APP_MANIFEST_V4.json` | historical post-React repository snapshot; not a current complete inventory |
 | `results/rgcn_multiseed/final_experiment_summary.json` | original three-seed experiment snapshot |
 | `results/live_5seed/final_experiment_summary.json` | current five-seed graph-composition results used by the application |
+| `results/live_5seed/final_paired_statistical_validation.json` | final paired G3-versus-G0 intervals, exact sign-flip tests, and Holm correction |
 | `results/classification_metrics_5seed/` | frozen five-seed classification metrics, per-seed counts, and SHA256 manifest |
-| `results/relation_ablation/final/` | frozen three-seed single-relation summary and paired deltas versus G0 |
+| `results/relation_ablation/final/` | frozen historical three-seed single-relation summary and paired deltas versus G0 |
+| `results/relation_ablation/five_seed_v1/` | current verified five-seed single-relation ranking analysis and reproducibility package |
+| `results/cold_start/split_seed_42/reproduced/` | authoritative reproduced DDI-edge cold-start results |
+| `results/case_study_three_pair/` | corrected three-pair G0/G3 qualitative ranking audit |
+| `analysis/external_ddi_evaluation/ddinter/` | generic external evaluator, metrics, per-query outputs, and reproduction manifests |
+| `final_release/model_runtimes/` | G0/structural/hybrid portable evaluator runtimes |
+| `final_release/source_provenance/` | tracked UniChem and drug-information source provenance |
+| `data/downloads/chembl/chembl_37/` | tracked ChEMBL 37 license, attribution, release notes, and acquisition metadata |
 | `THIRD_PARTY_NOTICES.md` | PrimeKG software and published-dataset license metadata |
 
 The G3 context manifest currently matches its files.
@@ -1218,12 +1410,12 @@ It must not be presented as a current integrity manifest and is retained only as
 
 ### Commit
 
-- `README.md` and `.gitignore`;
+- `README.md`, `.gitignore`, and `.gitattributes`;
 - `api/`, `src/`, `frontend/`, and `web/`;
 - required lightweight runtime and G3 context runtime exports;
-- included independent verification scripts;
-- five-seed experiment/classification results, relation-ablation results, and verification summaries;
-- the two relation-ablation notebooks and their exported figures;
+- included independent verification, acquisition, mapping, and evaluation scripts;
+- five-seed experiment/classification results, final paired statistical validation, relation-ablation results, cold-start results, DDInter diagnostics, corrected case-study outputs, and verification summaries;
+- the included relation-ablation, case-study, and cold-start notebooks plus exported figures;
 - current requirements;
 - valid manifests and any clearly labeled historical manifests.
 
@@ -1238,7 +1430,8 @@ The 6.028 MB G3 context CSV and verified lightweight NPZ/CSV files are runtime d
 - logs and PID files;
 - `.env` files, keys, or credentials;
 - raw PrimeKG `kg.csv`;
-- future raw/downloaded datasets under `data/raw/` or `data/downloads/`.
+- future raw/downloaded datasets under `data/raw/` or `data/downloads/`, except intentionally tracked license/release/provenance files;
+- local drug-linked derived bundles under `data/derived/entity_descriptions/` while redistribution/licensing review remains unresolved.
 
 ### Decide before the first public commit
 
@@ -1257,6 +1450,7 @@ Release decisions and verified third-party status:
 
 - **Still requires Team CHEERS approval:** choose a license for original CHEERS code. No project license is currently granted.
 - **Verified source metadata:** the official PrimeKG code repository is MIT-licensed, while the published Harvard Dataverse PrimeKG dataset record reports CC0 1.0. PrimeKG also warns that original upstream data sources can have separate terms; see `THIRD_PARTY_NOTICES.md`.
+- **Additional grounded metadata provenance:** preserve the ChEMBL 37, MONDO, UniChem, NLM/FDA, and DailyMed attribution/redistribution boundaries documented under `final_release/` and tracked notices. Drug-linked local derived data should not be force-added while licensing review remains unresolved.
 - **Pending final freeze:** V2, V3, and V4 are retained as historical release records. Generate V5 only after all final approved repository changes are complete.
 - **Recommended packaging choice:** use Git LFS or versioned release assets for the four archival `.pt` files if the full academic archive is published. They are not required by the Level-1 NumPy application and were not deleted or rewritten here.
 
@@ -1265,14 +1459,20 @@ Release decisions and verified third-party status:
 - The final experiment uses PrimeKG only.
 - The target is PrimeKG's synergistic-interaction `drug_drug` relation, not every clinical DDI type.
 - One principal GNN architecture was evaluated.
-- Robustness evaluation used five seeds.
-- Statistical significance is not claimed.
+- The primary G0–G3 robustness evaluation used five training seeds on one fixed split.
+- G3 was descriptively higher than G0 on all four ranking metrics in all five paired seeds, but every pointwise 95% paired interval includes zero; the exact two-sided sign-flip p-value is 0.0625 and the Holm-adjusted p-value is 0.25 for each metric.
+- With `n = 5`, 0.0625 is the minimum attainable two-sided exact sign-flip p-value; the result should not be interpreted as proof of no effect or equivalence.
 - Evaluation is transductive; held-out entities remain known.
 - Sampled unobserved negatives are not confirmed non-interactions.
 - The current single-relation ranking follow-up uses five training seeds on one fixed split; all paired 95% intervals include zero, so no relation-specific improvement is statistically established. Relation classification remains a separate historical three-seed evaluation.
+- The DDInter external comparison and structural/hybrid representation diagnostics are exploratory seed-44 analyses rather than multi-seed external validation.
+- The DDI-edge cold-start study uses three model seeds conditional on one fixed, test-conditioned cold cohort and is not a fully inductive unseen-node experiment.
 - Knowledge-graph incompleteness and source bias can affect training and evaluation.
 - Raw model scores are not calibrated probabilities.
-- Graph context is not a causal explanation of a prediction.
+- Graph context and enriched entity metadata are not causal explanations of a prediction.
+- Optional local drug-information fields can remain unavailable because of strict identity/provenance safeguards and redistribution/licensing boundaries.
+- Browser OCR can fail or misread medicine-label text; scanner matches are selection aids rather than clinical identification.
+- openFDA/PubMed retrieval is network-dependent and conservative; missing retrieval does not establish safety, absence of a DDI, or absence of relevant literature.
 - An unobserved predicted link is not a confirmed interaction.
 - Full preprocessing and retraining assets are not included in this portable folder.
 - The application is a research demonstration, not clinical decision support.
@@ -1283,10 +1483,12 @@ Release decisions and verified third-party status:
 - evaluate additional train/validation/test splits for the relation-level ranking study;
 - increase the relation-ablation seed count beyond five;
 - extend relation-level classification to a matched five-seed scope;
-- bootstrap uncertainty estimates and protocol-defined significance testing;
+- add protocol-defined uncertainty analyses that vary both model seed and data split;
 - stronger GNN and knowledge-graph baselines;
-- inductive and cold-start evaluation;
-- external DDI validation;
+- fully inductive unseen-node evaluation using transferable molecular, textual, or neighborhood-derived features;
+- repeat DDI-edge cold-start across independently sampled cohorts/splits;
+- extend DDInter transfer evaluation to multiple model seeds and additional external datasets;
+- validate the structural-only/hybrid representation finding beyond the current seed-44 diagnostic;
 - calibrated classification where scientifically appropriate;
 - additional biomedical data sources;
 - broader DailyMed/openFDA coverage and synonym-aware label matching;
@@ -1294,7 +1496,7 @@ Release decisions and verified third-party status:
 - pair-level explanatory paths;
 - stronger UI communication of relation semantics.
 
-The current application already retrieves bounded openFDA label evidence and PubMed records. It deliberately displays source-backed text without LLM summarization and does not convert retrieved or missing evidence into clinical conclusions.
+The current application already retrieves bounded openFDA label evidence and PubMed records, includes browser-side OCR for supported-drug selection, and presents grounded graph/entity context. It deliberately avoids converting model output, retrieved evidence, missing evidence, OCR matches, or metadata into clinical conclusions.
 
 ## Safety and responsible use
 
@@ -1309,7 +1511,11 @@ Predicted candidates represent unobserved links according to the model and Prime
 - determining whether a drug combination is dangerous;
 - making clinical decisions.
 
-Graph context is descriptive knowledge-graph context, not causal medical evidence. Any clinical interpretation requires qualified professionals and appropriate external evidence.
+Graph context, grounded entity descriptions, OCR-derived drug matches, openFDA excerpts, and PubMed records are separate supporting information streams. None is a causal explanation of the R-GCN score, and none should be treated as a clinical verdict.
+
+Medicine-label OCR is only a convenience for selecting a supported graph entity; users must verify the selected drug themselves. Absence of retrieved external evidence must never be interpreted as evidence of safety.
+
+Any clinical interpretation requires qualified professionals and appropriate external evidence.
 
 ## Acknowledgment
 
