@@ -297,7 +297,12 @@ export default function GraphExplorer() {
         </p>
       </div>
 
-      <form className="pair-form" onSubmit={loadContext}>
+      <form className="pair-form graph-pair-form" onSubmit={loadContext}>
+        <div className="graph-form-heading">
+          <span className="eyebrow">Pair selection</span>
+          <h2>Choose two drugs</h2>
+          <p>Select candidates with verified G3 context to explore their shared relationships.</p>
+        </div>
         <div className="drug-selection-field">
           <DrugAutocomplete label="Drug A" selection={drugA} onSelect={selectDrugA} disabled={resolving} getOptionAnnotation={g3ContextAnnotation} />
           <MedicineLabelScanner targetLabel="Drug A" onDrugSelect={selectDrugA} disabled={resolving} />
@@ -308,7 +313,7 @@ export default function GraphExplorer() {
           <MedicineLabelScanner targetLabel="Drug B" onDrugSelect={selectDrugB} disabled={resolving} />
           <ContextAvailability drug={drugB} available={drugBHasContext} />
         </div>
-        <button className="primary-button" type="submit" disabled={!contextReady || loading || resolving}>
+        <button className="primary-button graph-explore-button" type="submit" disabled={!contextReady || loading || resolving}>
           {loading || resolving ? <LoaderCircle className="spin" size={18} /> : <Focus size={18} />}
           {loading ? 'Loading context…' : 'Explore pair'}
         </button>
@@ -332,22 +337,26 @@ export default function GraphExplorer() {
         </div>
       )}
 
-      {error && <div className="inline-alert error"><AlertCircle size={20} />{error}</div>}
+      {error && <div className="inline-alert error graph-page-state" role="alert"><AlertCircle size={20} />{error}</div>}
 
       {!context && !loading && !error && !hasUnavailableContext && (
-        <div className="empty-feature-state"><Focus size={28} /><div><strong>Choose a drug pair.</strong><p>Shared G3 context will appear as an interactive, limited subgraph.</p></div></div>
+        <div className="empty-feature-state graph-page-state"><Focus size={28} /><div><strong>Choose a drug pair.</strong><p>Shared G3 context will appear as an interactive, limited subgraph.</p></div></div>
       )}
 
       {context && (
         <>
-          <div className="context-metrics">
+          <div className="graph-result-heading">
+            <span className="eyebrow">Verified G3 context</span>
+            <h2>Shared context overview</h2>
+          </div>
+          <div className="context-metrics graph-context-metrics">
             <article><span>Shared entities</span><strong>{context.shared.total.toLocaleString()}</strong></article>
             <article><span>Gene / protein</span><strong>{context.shared.gene_protein_count.toLocaleString()}</strong></article>
             <article><span>Disease</span><strong>{context.shared.disease_count.toLocaleString()}</strong></article>
             <article><span>Displayed</span><strong>{displayedCount}</strong><small>{displayLimit === DEFAULT_SHARED_NODES ? 'focused view' : 'expanded view'}</small></article>
           </div>
 
-          <article className="graph-card">
+          <article className="graph-card graph-pair-card">
             <div className="graph-toolbar">
               <div><span className="eyebrow">G3 pair subgraph</span><h2>{context.drug_a.drug_name} + {context.drug_b.drug_name}</h2></div>
               <div className="graph-controls" aria-label="Graph controls">

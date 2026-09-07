@@ -11,89 +11,8 @@ import {
   YAxis,
 } from 'recharts'
 import { AlertCircle, CheckCircle2, LoaderCircle } from 'lucide-react'
-import RobustnessSection from '../components/RobustnessSection.jsx'
-
-function UniqueBulbBadge({ text, label = 'View helper note', placement = 'top' }) {
-  const [isHovered, setIsHovered] = useState(false)
-  const [isPinned, setIsPinned] = useState(false)
-  const isOpen = isHovered || isPinned
-
-  return (
-    <span
-      style={{
-        position: 'relative',
-        display: 'inline-flex',
-        alignItems: 'center',
-        marginLeft: 5,
-        verticalAlign: 'middle',
-      }}
-    >
-      <button
-        type="button"
-        aria-label={label}
-        aria-expanded={isOpen}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onClick={() => setIsPinned((current) => !current)}
-        style={{
-          border: 0,
-          background: 'transparent',
-          cursor: 'pointer',
-          padding: '0 2px',
-          display: 'inline-flex',
-          lineHeight: 1,
-        }}
-      >
-        <span
-          aria-hidden="true"
-          style={{
-            fontSize: 12,
-            filter: isOpen
-              ? 'drop-shadow(0 0 6px #f59e0b)'
-              : 'drop-shadow(0 0 3px rgba(245, 158, 11, 0.7))',
-          }}
-        >
-          💡
-        </span>
-      </button>
-      {isOpen && (
-        <span
-          role="tooltip"
-          style={{
-            position: 'absolute',
-            ...(placement === 'bottom'
-              ? { top: 'calc(100% + 8px)' }
-              : { bottom: 'calc(100% + 8px)' }),
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: 'min(260px, calc(100vw - 48px))',
-            padding: '10px 14px',
-            background: '#1a202c',
-            color: '#f7fafc',
-            display: 'block',
-            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-            fontSize: 12,
-            fontWeight: 400,
-            lineHeight: 1.55,
-            letterSpacing: 'normal',
-            wordSpacing: 'normal',
-            textTransform: 'none',
-            whiteSpace: 'normal',
-            overflowWrap: 'break-word',
-            borderRadius: 10,
-            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.35)',
-            zIndex: 9999,
-            pointerEvents: 'none',
-            textAlign: 'left',
-            border: '1px solid rgba(255, 255, 255, 0.12)',
-          }}
-        >
-          {text}
-        </span>
-      )}
-    </span>
-  )
-}
+import InfoTooltip from '../components/InfoTooltip.jsx'
+import RobustnessSection, { RobustnessLimitations } from '../components/RobustnessSection.jsx'
 
 const GRAPH_LABELS = {
   G0: 'DDI only',
@@ -106,13 +25,18 @@ function formatMetric(value, digits = 4) {
   return Number(value).toFixed(digits)
 }
 
+function scrollToExperimentSection(event, sectionId) {
+  event.preventDefault()
+  document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
 function MetricCard({ label, value, detail, tipText }) {
   return (
     <article className="metric-card">
       <span>
         {label}{' '}
         {tipText && (
-          <UniqueBulbBadge label={`Explain ${label}`} text={tipText} />
+          <InfoTooltip label={`Explain ${label}`} text={tipText} />
         )}
       </span>
       <strong>{value}</strong>
@@ -236,17 +160,10 @@ function Experiments() {
   const g3Class = classificationRows.find((row) => row.graph === 'G3')
 
   return (
-    <section className="page">
+    <section className="page experiments-page">
       <div className="page-heading">
         <span className="eyebrow">Evaluation</span>
-        <h1>
-          Experiments{' '}
-          <UniqueBulbBadge
-            label="Explain the controlled experiments"
-            placement="bottom"
-            text="Controlled comparison of G0–G3 using the same DDI split, model architecture, decoder, and evaluation protocol across five training seeds."
-          />
-        </h1>
+        <h1>Experiments</h1>
         <p>
           Controlled five-seed comparison of G0–G3. MRR and Hits@K are the
           primary link-ranking metrics; Accuracy, Precision, Recall, and F1
@@ -254,78 +171,96 @@ function Experiments() {
         </p>
       </div>
 
-      <div className="experiment-highlight">
-        <div>
-          <span className="card-kicker">Primary finding</span>
-          <h2>
-            G3 provides the strongest overall performance{' '}
-            <UniqueBulbBadge
-              label="Explain the primary G3 finding"
-              text="G3 has the strongest overall five-seed mean across the reported graph-composition metrics and beats G0 in MRR in all five paired seeds."
-            />
-          </h2>
+      <nav className="experiment-section-nav" aria-label="Experiments sections">
+        <a href="#experiment-overview" onClick={(event) => scrollToExperimentSection(event, 'experiment-overview')}>Overview</a>
+        <a href="#experiment-ranking" onClick={(event) => scrollToExperimentSection(event, 'experiment-ranking')}>Ranking</a>
+        <a href="#experiment-classification" onClick={(event) => scrollToExperimentSection(event, 'experiment-classification')}>Classification</a>
+        <a href="#experiment-robustness" onClick={(event) => scrollToExperimentSection(event, 'experiment-robustness')}>Robustness</a>
+      </nav>
+
+      <section id="experiment-overview" className="experiment-major-section experiment-overview">
+        <div className="experiments-section-heading">
+          <span className="eyebrow">Primary results</span>
+          <h2>G0–G3 five-seed evaluation</h2>
           <p>
-            The full heterogeneous graph combines DDI, Drug–Gene/Protein, and
-            Drug–Disease information while keeping the model and DDI split fixed.
+            The controlled internal comparison and complementary classification
+            results are the primary evidence for the graph-composition study.
           </p>
         </div>
-        <div className="highlight-badge">
-          <CheckCircle2 size={22} />
-          <strong>5 / 5</strong>
-          <span>
-            seeds beat G0{' '}
-            <UniqueBulbBadge
-              label="Explain the five-of-five result"
-              text="G3’s MRR is higher than the paired G0 result for each of the five reported training seeds. This describes seed consistency and is not a general proof of statistical significance."
-            />
-          </span>
+
+        <div className="experiment-highlight">
+          <div>
+            <span className="card-kicker">Primary finding</span>
+            <h2>G3 provides the strongest overall performance</h2>
+            <p>
+              The full heterogeneous graph combines DDI, Drug–Gene/Protein, and
+              Drug–Disease information while keeping the model and DDI split fixed.
+            </p>
+          </div>
+          <div className="highlight-badge">
+            <CheckCircle2 size={22} />
+            <strong>5 / 5</strong>
+            <span>paired seeds</span>
+            <small>
+              positive G3−G0 deltas on all ranking metrics{' '}
+              <InfoTooltip
+                label="Explain the five-of-five result"
+                text="G3’s MRR is higher than the paired G0 result for each of the five reported training seeds. This describes seed consistency and is not a general proof of statistical significance."
+              />
+            </small>
+          </div>
         </div>
-      </div>
 
-      <div className="metric-grid">
-        <MetricCard
-          label="G3 MRR"
-          value={formatMetric(primary.mean_MRR)}
-          detail={`± ${formatMetric(primary.MRR_std)}`}
-          tipText="Mean Reciprocal Rank summarizes how highly the correct held-out interaction partner is ranked. Higher values are better."
-        />
-        <MetricCard
-          label="MRR gain vs G0"
-          value={`+${formatMetric(primary.absolute_MRR_improvement_vs_G0)}`}
-          detail={`${primary.relative_MRR_improvement_percent}% relative`}
-          tipText="Difference between the five-seed mean MRR of G3 and G0 under the controlled graph-composition experiment."
-        />
-        {g3Class && (
-          <>
-            <MetricCard
-              label="G3 Accuracy"
-              value={formatMetric(g3Class.Accuracy)}
-              detail="five-seed mean"
-              tipText="Fraction of examples correctly classified in the complementary balanced binary evaluation using a validation-selected threshold."
-            />
-            <MetricCard
-              label="G3 F1"
-              value={formatMetric(g3Class.F1)}
-              detail="five-seed mean"
-              tipText="Harmonic mean of precision and recall in the complementary binary evaluation."
-            />
-          </>
-        )}
-      </div>
+        <div className="experiment-inline-heading">
+          <span className="eyebrow">At a glance</span>
+          <h3>Headline metrics</h3>
+        </div>
+        <div className="metric-grid">
+          <MetricCard
+            label="G3 MRR"
+            value={formatMetric(primary.mean_MRR)}
+            detail={`± ${formatMetric(primary.MRR_std)}`}
+            tipText="Mean Reciprocal Rank summarizes how highly the correct held-out interaction partner is ranked. Higher values are better."
+          />
+          <MetricCard
+            label="MRR gain vs G0"
+            value={`+${formatMetric(primary.absolute_MRR_improvement_vs_G0)}`}
+            detail={`${primary.relative_MRR_improvement_percent}% relative`}
+            tipText="Difference between the five-seed mean MRR of G3 and G0 under the controlled graph-composition experiment."
+          />
+          {g3Class && (
+            <>
+              <MetricCard
+                label="G3 Accuracy"
+                value={formatMetric(g3Class.Accuracy)}
+                detail="five-seed mean"
+                tipText="Fraction of examples correctly classified in the complementary balanced binary evaluation using a validation-selected threshold."
+              />
+              <MetricCard
+                label="G3 F1"
+                value={formatMetric(g3Class.F1)}
+                detail="five-seed mean"
+                tipText="Harmonic mean of precision and recall in the complementary binary evaluation."
+              />
+            </>
+          )}
+        </div>
+      </section>
 
-      <div className="experiment-grid">
+      <section id="experiment-ranking" className="experiment-major-section">
+        <div className="experiments-section-heading">
+          <span className="eyebrow">Primary evaluation</span>
+          <h2>
+            Link-ranking performance{' '}
+            <InfoTooltip
+              label="Explain Hits at K"
+              text="Hits@K is the fraction of ranking queries where the correct held-out drug appears within the top K candidates."
+            />
+          </h2>
+          <p>MRR and Hits@K are the primary link-ranking metrics.</p>
+        </div>
         <article className="chart-card">
-          <div className="chart-heading">
-            <div>
-              <span className="eyebrow">Primary evaluation</span>
-              <h2>
-                Link-ranking performance{' '}
-                <UniqueBulbBadge
-                  label="Explain Hits at K"
-                  text="Hits@K is the fraction of ranking queries where the correct held-out drug appears within the top K candidates."
-                />
-              </h2>
-            </div>
+          <div className="chart-heading chart-heading--compact">
             <span className="chart-note">Full 0–1 scale · mean ± SD</span>
           </div>
 
@@ -346,20 +281,23 @@ function Experiments() {
           </div>
           <p><small>Bars use the full 0–1 metric scale. Error bars show ±1 SD across five training seeds for the fixed evaluation split.</small></p>
         </article>
+      </section>
 
+      <section id="experiment-classification" className="experiment-major-section">
+        <div className="experiments-section-heading">
+          <span className="eyebrow">Complementary evaluation</span>
+          <h2>
+            Binary discrimination metrics{' '}
+            <InfoTooltip
+              label="Explain complementary classification"
+              text="Accuracy, Precision, Recall, and F1 provide a complementary balanced binary evaluation using thresholds selected on validation data."
+            />
+          </h2>
+          <p>Accuracy, Precision, Recall, and F1 provide a complementary binary discrimination view.</p>
+        </div>
         {classification ? (
           <article className="chart-card">
-            <div className="chart-heading">
-              <div>
-                <span className="eyebrow">Complementary evaluation</span>
-                <h2>
-                  Binary discrimination metrics{' '}
-                  <UniqueBulbBadge
-                    label="Explain complementary classification"
-                    text="Accuracy, Precision, Recall, and F1 provide a complementary balanced binary evaluation using thresholds selected on validation data."
-                  />
-                </h2>
-              </div>
+            <div className="chart-heading chart-heading--compact">
               <span className="chart-note">Full 0–1 scale · mean ± SD</span>
             </div>
 
@@ -382,24 +320,18 @@ function Experiments() {
           </article>
         ) : (
           <article className="chart-card">
-            <div className="chart-heading">
-              <div>
-                <span className="eyebrow">Complementary evaluation</span>
-                <h2>Binary discrimination metrics</h2>
-              </div>
-            </div>
             <div className="inline-alert error"><AlertCircle size={20} />{classificationError || 'Classification metrics are unavailable.'} Primary ranking results remain available.</div>
           </article>
         )}
-      </div>
+      </section>
 
-      <div className="section-block">
+      <section className="section-block experiment-major-section experiment-details">
         <div className="section-title">
           <div>
             <span className="eyebrow">Graph comparison</span>
             <h2>
               Five-seed mean results{' '}
-              <UniqueBulbBadge
+              <InfoTooltip
                 label="Explain the five-seed mean"
                 text="Results are averaged across training seeds 42–46. This captures training-seed variation for one fixed split."
               />
@@ -441,17 +373,34 @@ function Experiments() {
             </tbody>
           </table>
         </div>
-      </div>
+      </section>
 
-      <div className="experiment-notes">
-        {classification && <><article><strong>Ranking remains primary.</strong><p>{classification.interpretation}</p></article><article><strong>Negative-class definition.</strong><p>{classification.negative_class_note}</p></article><article><strong>Threshold selection.</strong><p>{classification.threshold_note}</p></article></>}
-        <article>
-          <strong>Reporting caveat.</strong>
-          <p>{ranking.reporting_note}</p>
-        </article>
-      </div>
+      <section id="experiment-robustness" className="experiment-major-section experiment-robustness">
+        <RobustnessSection />
+      </section>
 
-      <RobustnessSection />
+      <section className="experiment-major-section experiment-interpretation">
+        <div className="experiments-section-heading">
+          <span className="eyebrow">Interpretation &amp; limitations</span>
+          <h2>Evaluation notes and scientific boundaries</h2>
+        </div>
+        <div className="experiment-limitations-layout">
+          <section className="experiment-limitations-group">
+            <h3>Scientific boundaries</h3>
+            <RobustnessLimitations />
+          </section>
+          <section className="experiment-limitations-group">
+            <h3>Evaluation protocol notes</h3>
+            <div className="experiment-notes">
+              {classification && <><article><strong>Ranking remains primary.</strong><p>{classification.interpretation}</p></article><article><strong>Negative-class definition.</strong><p>{classification.negative_class_note}</p></article><article><strong>Threshold selection.</strong><p>{classification.threshold_note}</p></article></>}
+              <article>
+                <strong>Reporting caveat.</strong>
+                <p>{ranking.reporting_note}</p>
+              </article>
+            </div>
+          </section>
+        </div>
+      </section>
     </section>
   )
 }
