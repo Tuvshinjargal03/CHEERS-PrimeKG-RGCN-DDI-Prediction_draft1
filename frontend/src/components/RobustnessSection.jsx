@@ -11,6 +11,7 @@ import {
   YAxis,
 } from 'recharts'
 import { robustnessResults } from '../data/robustnessResults.js'
+import InfoTooltip from './InfoTooltip.jsx'
 import './RobustnessSection.css'
 
 const EXTERNAL_BAR_COLORS = {
@@ -26,6 +27,22 @@ function fixed(value, digits = 6) {
 
 function EvidenceBadge({ level, tone }) {
   return <span className={`robustness-evidence-badge robustness-evidence-badge--${tone}`}>{level}</span>
+}
+
+function RobustnessLimitations() {
+  return (
+    <aside className="robustness-limitations">
+      <AlertTriangle size={22} aria-hidden="true" />
+      <ul>
+        <li>Primary G0/G3 values are five-seed means on one fixed internal split.</li>
+        <li>DDInter and representation comparisons are exploratory seed-44 results.</li>
+        <li>Cold-start uses three model seeds conditional on one fixed cold cohort.</li>
+        <li>DDI-edge cold-start is not a fully inductive unseen-node evaluation.</li>
+        <li>No result is clinical validation, and raw scores are not probabilities or clinical risk.</li>
+        <li>Observed differences do not establish causal mechanisms.</li>
+      </ul>
+    </aside>
+  )
 }
 
 function RobustnessSection() {
@@ -62,7 +79,7 @@ function RobustnessSection() {
         <div className="robustness-panel-heading">
           <div>
             <EvidenceBadge level={evidenceLevels.primary} tone="primary" />
-            <h3>Primary internal result</h3>
+            <h3>Primary result reference</h3>
           </div>
           <span>{primaryInternal.scope}</span>
         </div>
@@ -81,7 +98,13 @@ function RobustnessSection() {
         <div className="robustness-panel-heading">
           <div>
             <EvidenceBadge level={evidenceLevels.exploratory} tone="exploratory" />
-            <h3>External DDInter diagnostic</h3>
+            <h3>
+              External DDInter diagnostic{' '}
+              <InfoTooltip
+                label="Explain the external DDInter diagnostic"
+                text="Single-seed exploratory evaluation; not clinical validation. Raw model outputs are ranking scores, not probabilities, confidence measures, or clinical-risk estimates."
+              />
+            </h3>
           </div>
           <span>{externalDdinter.scope}</span>
         </div>
@@ -187,7 +210,13 @@ function RobustnessSection() {
         <div className="robustness-panel-heading">
           <div>
             <EvidenceBadge level={evidenceLevels.robustness} tone="robustness" />
-            <h3>DDI-edge cold-start</h3>
+            <h3>
+              DDI-edge cold-start{' '}
+              <InfoTooltip
+                label="Explain DDI-edge cold-start"
+                text="This is not a fully inductive unseen-drug evaluation. Cold drugs remain represented graph nodes, and the result does not establish a causal mechanism."
+              />
+            </h3>
           </div>
           <span>{coldStart.scope}</span>
         </div>
@@ -222,23 +251,10 @@ function RobustnessSection() {
         </Link>
       </article>
 
-      <aside className="robustness-limitations">
-        <AlertTriangle size={22} aria-hidden="true" />
-        <div>
-          <strong>Interpretation boundaries</strong>
-          <ul>
-            <li>Primary G0/G3 values are five-seed means on one fixed internal split.</li>
-            <li>DDInter and representation comparisons are exploratory seed-44 results.</li>
-            <li>Cold-start uses three model seeds conditional on one fixed cold cohort.</li>
-            <li>DDI-edge cold-start is not a fully inductive unseen-node evaluation.</li>
-            <li>No result is clinical validation, and raw scores are not probabilities or clinical risk.</li>
-            <li>Observed differences do not establish causal mechanisms.</li>
-          </ul>
-        </div>
-      </aside>
     </section>
   )
 }
 
+export { RobustnessLimitations }
 export default RobustnessSection
 

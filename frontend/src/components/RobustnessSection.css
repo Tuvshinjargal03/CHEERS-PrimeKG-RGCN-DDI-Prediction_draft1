@@ -37,7 +37,7 @@
   padding: 6px 9px;
   border: 1px solid transparent;
   border-radius: 999px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 750;
   letter-spacing: 0.045em;
   line-height: 1;
@@ -77,6 +77,7 @@
 }
 
 .robustness-primary-anchor {
+  padding: 18px 20px;
   border-color: #d6bbfb;
   background: linear-gradient(140deg, #f9f5ff, white 55%);
 }
@@ -99,14 +100,15 @@
 
 .robustness-panel-heading > span {
   color: #667085;
-  font-size: 11px;
+  font-size: 12px;
   text-align: right;
 }
 
 .robustness-primary-anchor > p {
   max-width: 760px;
-  margin: 14px 0 0;
+  margin: 10px 0 0;
   color: #475467;
+  font-size: 13px;
   line-height: 1.65;
 }
 
@@ -114,7 +116,7 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
-  margin-top: 20px;
+  margin-top: 13px;
 }
 
 .robustness-primary-metrics > div,
@@ -123,6 +125,15 @@
   border: 1px solid #e4e7ec;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.82);
+}
+
+.robustness-primary-metrics > div {
+  padding: 12px 14px;
+  border-radius: 11px;
+}
+
+.robustness-primary-metrics strong {
+  font-size: 20px;
 }
 
 .robustness-primary-metrics span,
@@ -137,7 +148,7 @@
 .robustness-primary-metrics span,
 .robustness-cold-metric span {
   color: #667085;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -279,7 +290,7 @@
 
 .robustness-representation-card dt {
   color: #667085;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -383,7 +394,7 @@
 }
 
 .robustness-limitations ul {
-  margin: 8px 0 0;
+  margin: 0;
   padding-left: 18px;
   color: #667085;
   font-size: 12px;
@@ -436,6 +447,31 @@
 
   .robustness-link {
     width: 100%;
+  }
+
+  .robustness-table-wrap::before {
+    content: 'Swipe to view more →';
+    display: block;
+    position: sticky;
+    left: 0;
+    width: fit-content;
+    margin-bottom: 8px;
+    color: #667085;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .robustness-table th:first-child,
+  .robustness-table td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: white;
+    box-shadow: 1px 0 0 #eaecf0;
+  }
+
+  .robustness-table th:first-child {
+    background: #f9fafb;
   }
 }
 

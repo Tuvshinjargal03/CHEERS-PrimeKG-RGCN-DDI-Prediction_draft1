@@ -1,9 +1,49 @@
+.graph-page .page-heading {
+  margin-bottom: 26px;
+}
+
+.graph-page .graph-pair-form {
+  gap: 18px;
+  padding: 26px;
+}
+
+.graph-page .graph-form-heading {
+  grid-column: 1 / -1;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #eaecf0;
+}
+
+.graph-page .graph-form-heading h2,
+.graph-page .graph-result-heading h2 {
+  margin: 6px 0 5px;
+  color: #101828;
+  font-size: 24px;
+  letter-spacing: -0.025em;
+}
+
+.graph-page .graph-form-heading p {
+  margin: 0;
+  color: #667085;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.graph-page .selection-meta {
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.graph-page .graph-explore-button {
+  min-width: 150px;
+}
+
 .graph-page .graph-context-status {
   display: flex;
   align-items: center;
   gap: 5px;
   margin: 7px 0 0;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -25,7 +65,7 @@
 
 .graph-page .autocomplete-option-details em {
   color: #667085;
-  font-size: 9px;
+  font-size: 11px;
   font-style: normal;
   font-weight: 700;
   white-space: nowrap;
@@ -68,7 +108,93 @@
   margin-top: 12px;
 }
 
+.graph-page .graph-page-state {
+  margin-top: 0;
+}
+
+.graph-page .graph-result-heading {
+  margin-top: 44px;
+}
+
+.graph-page .graph-context-metrics {
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.graph-page .graph-pair-card {
+  padding: 24px;
+}
+
+.graph-page .graph-toolbar > div:first-child {
+  min-width: 0;
+}
+
+.graph-page .graph-toolbar h2,
+.graph-page .context-detail-card h3 {
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.graph-page .graph-controls {
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+}
+
+.graph-page .graph-legend {
+  width: fit-content;
+  margin-top: 18px;
+  padding: 9px 11px;
+  border: 1px solid #eaecf0;
+  border-radius: 10px;
+  background: #f9fafb;
+  font-size: 12px;
+}
+
+.graph-page .graph-inspection-bar {
+  margin-top: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eaecf0;
+}
+
+.graph-page .displayed-relations,
+.graph-page .graph-limit-note,
+.graph-page .relation-chip-list span {
+  font-size: 12px;
+}
+
 @media (max-width: 700px) {
+  .graph-page .graph-pair-form {
+    gap: 16px;
+    padding: 20px;
+  }
+
+  .graph-page .graph-explore-button,
+  .graph-page .graph-display-toggle {
+    width: 100%;
+  }
+
+  .graph-page .graph-result-heading {
+    margin-top: 36px;
+  }
+
+  .graph-page .graph-pair-card {
+    padding: 18px;
+  }
+
+  .graph-page .graph-controls,
+  .graph-page .graph-legend {
+    width: 100%;
+  }
+
+  .graph-page .graph-controls button:last-child {
+    flex: 1 1 auto;
+  }
+
+  .graph-page .displayed-relations {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .graph-page .autocomplete-option-details {
     align-items: flex-start;
   }

@@ -51,7 +51,7 @@ export default function DDIPredictor() {
   }
 
   return (
-    <section className="page">
+    <section className="page predictor-page">
       <div className="page-heading">
         <span className="eyebrow">Verified G3 inference</span>
         <h1>DDI Predictor</h1>
@@ -63,6 +63,11 @@ export default function DDIPredictor() {
       </div>
 
       <form className="predictor-form" onSubmit={submit}>
+        <div className="predictor-form-heading">
+          <span className="eyebrow">Prediction setup</span>
+          <h2>Choose a query drug</h2>
+          <p>Select one verified candidate drug, then choose how many ranked links to return.</p>
+        </div>
         <div className="drug-selection-field">
           <DrugAutocomplete label="Query drug" selection={drug} onSelect={selectDrug} />
           <MedicineLabelScanner targetLabel="Query drug" onDrugSelect={selectDrug} />
@@ -73,16 +78,23 @@ export default function DDIPredictor() {
             {[5, 10, 15, 20].map((value) => <option key={value} value={value}>{value}</option>)}
           </select>
         </label>
-        <button type="submit" className="primary-button" disabled={!drug || loading}>
+        <button type="submit" className="primary-button predictor-submit-button" disabled={!drug || loading}>
           {loading ? <LoaderCircle className="spin" size={18} /> : <Search size={18} />}
           {loading ? 'Ranking candidates…' : 'Find predicted links'}
         </button>
       </form>
 
-      {error && <div className="inline-alert error"><AlertCircle size={20} />{error}</div>}
+      {error && <div className="inline-alert error predictor-state" role="alert"><AlertCircle size={20} />{error}</div>}
+
+      {loading && (
+        <div className="empty-feature-state predictor-state" role="status" aria-live="polite">
+          <LoaderCircle className="spin" size={28} />
+          <div><strong>Ranking candidate links…</strong><p>The verified G3 model is evaluating eligible unobserved candidates.</p></div>
+        </div>
+      )}
 
       {!result && !loading && !error && (
-        <div className="empty-feature-state">
+        <div className="empty-feature-state predictor-state">
           <Search size={28} />
           <div><strong>Select a query drug to begin.</strong><p>The verified G3 seed-44 model will return the highest-ranked unobserved candidates.</p></div>
         </div>
@@ -90,14 +102,18 @@ export default function DDIPredictor() {
 
       {result && (
         <>
+          <div className="predictor-result-heading">
+            <span className="eyebrow">Model output</span>
+            <h2>Prediction overview</h2>
+          </div>
           <div className="prediction-summary">
-            <div><span>Query</span><strong>{result.query.name}</strong><small>{result.query.entity_id}</small></div>
+            <div className="prediction-summary-primary"><span>Query</span><strong>{result.query.name}</strong><small>{result.query.entity_id}</small></div>
             <div><span>Model</span><strong>{result.model.graph} R-GCN</strong><small>Seed {result.model.seed} · epoch {result.model.best_epoch}</small></div>
             <div><span>Candidate space</span><strong>{result.candidate_drug_count.toLocaleString()}</strong><small>{result.known_positive_candidates_filtered.toLocaleString()} known links filtered</small></div>
             <div><span>Returned</span><strong>{result.predictions.length}</strong><small>unobserved candidate links</small></div>
           </div>
 
-          <div className="section-block">
+          <div className="section-block predictor-results-block">
             <div className="section-title"><div><span className="eyebrow">Prediction results</span><h2>Ranked candidate links</h2></div></div>
             {result.predictions.length ? (
               <div className="prediction-list">

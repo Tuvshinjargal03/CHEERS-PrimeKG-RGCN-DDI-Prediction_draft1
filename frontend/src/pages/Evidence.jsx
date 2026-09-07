@@ -108,7 +108,7 @@ export default function Evidence() {
   const limitations = Array.isArray(data?.limitations) ? data.limitations : []
 
   return (
-    <section className="page">
+    <section className="page evidence-page">
       <div className="page-heading">
         <span className="eyebrow">Independent external sources</span>
         <h1>Evidence</h1>
@@ -118,7 +118,12 @@ export default function Evidence() {
         </p>
       </div>
 
-      <form className="pair-form" onSubmit={loadEvidence}>
+      <form className="pair-form evidence-pair-form" onSubmit={loadEvidence}>
+        <div className="evidence-form-heading">
+          <span className="eyebrow">Evidence query</span>
+          <h2>Choose two drugs</h2>
+          <p>Select a pair to retrieve independent openFDA and PubMed information.</p>
+        </div>
         <div className="drug-selection-field">
           <DrugAutocomplete label="Drug A" selection={drugA} onSelect={selectDrugA} disabled={resolving || loading} />
           <MedicineLabelScanner targetLabel="Drug A" onDrugSelect={selectDrugA} disabled={resolving || loading} />
@@ -127,35 +132,56 @@ export default function Evidence() {
           <DrugAutocomplete label="Drug B" selection={drugB} onSelect={selectDrugB} disabled={resolving || loading} />
           <MedicineLabelScanner targetLabel="Drug B" onDrugSelect={selectDrugB} disabled={resolving || loading} />
         </div>
-        <button className="primary-button" type="submit" disabled={!pairReady || loading || resolving}>
+        <button className="primary-button evidence-submit-button" type="submit" disabled={!pairReady || loading || resolving}>
           {loading || resolving ? <LoaderCircle className="spin" size={18} /> : <FileSearch size={18} />}
           {loading ? 'Retrieving sources…' : 'Review evidence'}
         </button>
       </form>
 
-      {error && <div className="inline-alert error"><AlertCircle size={20} />{error}</div>}
-      {!data && !loading && !error && <div className="empty-feature-state"><BookOpen size={28} /><div><strong>Choose a drug pair.</strong><p>FDA label and PubMed retrieval will remain visibly separate from model output.</p></div></div>}
+      {error && <div className="inline-alert error evidence-page-state" role="alert"><AlertCircle size={20} />{error}</div>}
+      {loading && <div className="empty-feature-state evidence-page-state" role="status" aria-live="polite"><LoaderCircle className="spin" size={28} /><div><strong>Retrieving external sources…</strong><p>openFDA label information and PubMed records are being retrieved independently.</p></div></div>}
+      {!data && !loading && !error && <div className="empty-feature-state evidence-page-state"><BookOpen size={28} /><div><strong>Choose a drug pair.</strong><p>FDA label and PubMed retrieval will remain visibly separate from model output.</p></div></div>}
 
       {data && (
         <>
+          <div className="evidence-query-context">
+            <span className="eyebrow">Current drug pair</span>
+            <div className="evidence-pair-display">
+              <article>
+                <span>Drug A</span>
+                <strong>{drugA?.name}</strong>
+                <small>{drugA?.entity_id}</small>
+              </article>
+              <span className="evidence-pair-connector" aria-hidden="true">+</span>
+              <article>
+                <span>Drug B</span>
+                <strong>{drugB?.name}</strong>
+                <small>{drugB?.entity_id}</small>
+              </article>
+            </div>
+          </div>
           <div className="evidence-separation-grid">
             <article className="model-result-card">
               <span>Navigation context</span>
               <h2>Predictor context</h2>
-              {Number.isFinite(score) ? <strong>{score.toFixed(4)}</strong> : <strong>No Predictor score supplied</strong>}
+              {Number.isFinite(score) ? <strong>{score.toFixed(4)}</strong> : <strong className="evidence-muted-value">No score supplied</strong>}
               <p>{Number.isFinite(score) ? 'Raw ranking score passed from the Predictor page. This value is carried through navigation and is not recomputed here. It is not a probability, confidence measure, or clinical-risk estimate.' : 'This external-information request was started without a score from the Predictor page.'}</p>
             </article>
             <article className="external-source-card">
               <span>Independent external information</span>
               <h2>openFDA + PubMed</h2>
               <div className="evidence-source-counts">
-                <strong>{evidenceItems.length.toLocaleString()} label excerpts</strong>
-                <strong>{papers.length.toLocaleString()} PubMed records</strong>
+                <div><strong>{evidenceItems.length.toLocaleString()}</strong><span>label excerpts</span></div>
+                <div><strong>{papers.length.toLocaleString()}</strong><span>PubMed records</span></div>
               </div>
               <p>openFDA and PubMed information is retrieved independently of the R-GCN model. It was not used as model input, does not explain the model score, and does not validate or prove a predicted drug–drug interaction.</p>
             </article>
           </div>
 
+          <div className="evidence-record-heading">
+            <span className="eyebrow">Retrieved sources</span>
+            <h2>Evidence records</h2>
+          </div>
           <div className="evidence-grid">
             <article className="evidence-panel">
               <div className="panel-title"><FileSearch size={21} /><div><span>Source: openFDA Drug Label</span><h2>Explicit label mentions</h2></div></div>
