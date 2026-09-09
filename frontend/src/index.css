@@ -22,6 +22,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  line-height: 1.5;
 }
 
 button,
@@ -45,7 +46,7 @@ a {
   position: sticky;
   top: 0;
   height: 100vh;
-  padding: 26px 18px 20px;
+  padding: 24px 18px 18px;
   background: #101828;
   color: #d0d5dd;
   display: flex;
@@ -57,7 +58,7 @@ a {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 0 10px 28px;
+  padding: 0 10px 24px;
 }
 
 .brand-mark {
@@ -98,7 +99,7 @@ a {
 }
 
 .nav-link {
-  min-height: 48px;
+  min-height: 46px;
   display: flex;
   align-items: center;
   gap: 11px;
@@ -109,12 +110,14 @@ a {
   font-weight: 600;
   transition:
     background 0.15s ease,
-    color 0.15s ease;
+    color 0.15s ease,
+    transform 0.15s ease;
 }
 
 .nav-link:hover {
   color: white;
   background: #1d2939;
+  transform: translateX(1px);
 }
 
 .nav-link:focus-visible {
@@ -169,24 +172,29 @@ a {
   padding: 16px 10px 4px;
   border-top: 1px solid #344054;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
 }
 
-.sidebar-footer strong,
-.sidebar-footer span {
-  display: block;
+.sidebar-scope-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #98a2b3;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.35;
+  transition: color 150ms ease;
 }
 
-.sidebar-footer strong {
+.sidebar-scope-link:hover,
+.sidebar-scope-link:focus-visible {
   color: #f2f4f7;
-  font-size: 12px;
 }
 
-.sidebar-footer span {
-  margin-top: 3px;
-  color: #667085;
-  font-size: 10px;
-  line-height: 1.4;
+.sidebar-scope-link:focus-visible {
+  border-radius: 5px;
+  outline: 3px solid rgba(127, 86, 217, 0.4);
+  outline-offset: 3px;
 }
 
 .main-content {
@@ -196,12 +204,12 @@ a {
 .page {
   width: min(1240px, calc(100% - 64px));
   margin: 0 auto;
-  padding: 58px 0 80px;
+  padding: 48px 0 70px;
 }
 
 .page-heading {
   max-width: 800px;
-  margin-bottom: 34px;
+  margin-bottom: 28px;
 }
 
 .eyebrow,
@@ -217,17 +225,17 @@ a {
 .page-heading h1 {
   margin: 8px 0 12px;
   color: #101828;
-  font-size: clamp(34px, 4.5vw, 54px);
-  line-height: 1.04;
-  letter-spacing: -0.04em;
+  font-size: clamp(32px, 4vw, 48px);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
 }
 
 .page-heading p {
   max-width: 740px;
   margin: 0;
   color: #667085;
-  font-size: 17px;
-  line-height: 1.7;
+  font-size: 16px;
+  line-height: 1.65;
 }
 
 .home-actions {
@@ -627,7 +635,7 @@ a {
   }
 
   .brand > div:last-child span,
-  .sidebar-footer > div {
+  .sidebar-scope-link span {
     display: none;
   }
 
@@ -1311,10 +1319,13 @@ a {
   color: white;
   font-weight: 750;
   box-shadow: 0 7px 16px rgba(105, 65, 198, 0.2);
+  transition: background 150ms ease, box-shadow 150ms ease, transform 150ms ease;
 }
 
 .primary-button:hover:not(:disabled) {
   background: #5925dc;
+  box-shadow: 0 10px 22px rgba(89, 37, 220, 0.24);
+  transform: translateY(-1px);
 }
 
 .primary-button:disabled {
@@ -1333,6 +1344,13 @@ a {
   color: #5925dc;
   font-size: 12px;
   font-weight: 750;
+  transition: border-color 150ms ease, background 150ms ease, transform 150ms ease;
+}
+
+.secondary-button:hover:not(:disabled) {
+  border-color: #b692f6;
+  background: #f4ebff;
+  transform: translateY(-1px);
 }
 
 .text-action {
@@ -1354,6 +1372,20 @@ input:focus-visible,
 select:focus-visible {
   outline: 3px solid rgba(46, 144, 250, 0.3);
   outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-link,
+  .primary-button,
+  .secondary-button {
+    transition: none;
+  }
+
+  .nav-link:hover,
+  .primary-button:hover:not(:disabled),
+  .secondary-button:hover:not(:disabled) {
+    transform: none;
+  }
 }
 
 .pair-form,
