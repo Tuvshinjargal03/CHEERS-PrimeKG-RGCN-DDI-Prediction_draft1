@@ -1478,23 +1478,7 @@ Release decisions and verified third-party status:
 - The application is a research demonstration, not clinical decision support.
 - No medication or prescribing guidance should be derived from its output.
 
-## Future work
 
-- evaluate additional train/validation/test splits for the relation-level ranking study;
-- increase the relation-ablation seed count beyond five;
-- extend relation-level classification to a matched five-seed scope;
-- add protocol-defined uncertainty analyses that vary both model seed and data split;
-- stronger GNN and knowledge-graph baselines;
-- fully inductive unseen-node evaluation using transferable molecular, textual, or neighborhood-derived features;
-- repeat DDI-edge cold-start across independently sampled cohorts/splits;
-- extend DDInter transfer evaluation to multiple model seeds and additional external datasets;
-- validate the structural-only/hybrid representation finding beyond the current seed-44 diagnostic;
-- calibrated classification where scientifically appropriate;
-- additional biomedical data sources;
-- broader DailyMed/openFDA coverage and synonym-aware label matching;
-- systematic, protocol-driven literature review beyond the current conservative PubMed lookup;
-- pair-level explanatory paths;
-- stronger UI communication of relation semantics.
 
 The current application already retrieves bounded openFDA label evidence and PubMed records, includes browser-side OCR for supported-drug selection, and presents grounded graph/entity context. It deliberately avoids converting model output, retrieved evidence, missing evidence, OCR matches, or metadata into clinical conclusions.
 
