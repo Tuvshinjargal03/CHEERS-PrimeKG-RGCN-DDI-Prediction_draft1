@@ -498,7 +498,15 @@ export default function MedicineGuide() {
         {drug && (
           <div className="medicine-header-actions">
             <Link className="primary-button" to={`/check?drug_a_id=${encodeURIComponent(drug.drug_id)}`}><Beaker size={17} /> Check with another medicine</Link>
-            <Link className="secondary-button" to="/subgraph"><Network size={17} /> Explore graph</Link>
+            <Link
+              className="secondary-button"
+              to={`/subgraph?${new URLSearchParams({
+                drug_id: drug.drug_id,
+                drug_name: drug.drug_name,
+              }).toString()}`}
+            >
+              <Network size={17} /> Explore graph
+            </Link>
           </div>
         )}
       </header>

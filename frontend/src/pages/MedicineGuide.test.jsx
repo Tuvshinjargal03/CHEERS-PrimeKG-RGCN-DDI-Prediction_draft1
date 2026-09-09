@@ -126,6 +126,15 @@ describe('MedicineGuide', () => {
     expect(screen.getByText(/1 label record reviewed · 4 label sections available/)).toBeVisible()
   })
 
+  it('passes the displayed medicine to the Subgraph Explorer', async () => {
+    renderGuide('/medicines/DB00331')
+
+    expect(await screen.findByRole('link', { name: /explore graph/i })).toHaveAttribute(
+      'href',
+      '/subgraph?drug_id=DB00331&drug_name=Metformin',
+    )
+  })
+
   it('renders the Food & lifestyle tab with grouped bounded source details', async () => {
     renderGuide('/medicines/DB00331?section=food-lifestyle')
 

@@ -1,6 +1,7 @@
 import cytoscape from 'cytoscape'
 import { AlertCircle, Focus, LoaderCircle, Minus, Plus, Share2 } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import DrugAutocomplete from '../components/DrugAutocomplete.jsx'
 import MedicineLabelScanner from '../components/MedicineLabelScanner.jsx'
 import { drugContextEndpoint, getJson } from '../lib/api.js'
@@ -344,9 +345,13 @@ function ElementDetails({ selected, center }) {
 }
 
 export default function SubgraphExplorer() {
+  const [searchParams] = useSearchParams()
+  const incomingDrugId = searchParams.get('drug_id')?.trim() || ''
+  const incomingDrugName = searchParams.get('drug_name')?.trim() || ''
   const containerRef = useRef(null)
   const cyRef = useRef(null)
   const requestId = useRef(0)
+  const automaticallyLoadedDrugId = useRef('')
   const [drug, setDrug] = useState(null)
   const [exploredDrug, setExploredDrug] = useState(null)
   const [data, setData] = useState(null)
@@ -434,13 +439,13 @@ export default function SubgraphExplorer() {
     }
   }, [data, elements])
 
-  async function requestNeighborhood({
+  const requestNeighborhood = useCallback(async ({
     targetDrug,
     relations = enabledRelations,
     entityTypes = enabledEntityTypes,
     offset = 0,
     pageChange = false,
-  }) {
+  }) => {
     if (!relations.length || !entityTypes.length) {
       requestId.current += 1
       setData((current) => current ? emptyFilteredData(current, relations, entityTypes) : current)
@@ -479,7 +484,23 @@ export default function SubgraphExplorer() {
         setPageLoading(false)
       }
     }
-  }
+  }, [enabledEntityTypes, enabledRelations])
+
+  useEffect(() => {
+    if (!incomingDrugId || automaticallyLoadedDrugId.current === incomingDrugId) return
+
+    automaticallyLoadedDrugId.current = incomingDrugId
+    const incomingDrug = {
+      entity_id: incomingDrugId,
+      name: incomingDrugName || incomingDrugId,
+    }
+    setDrug(incomingDrug)
+    setExploredDrug(incomingDrug)
+    setData(null)
+    setNeighbors([])
+    setSelected(null)
+    requestNeighborhood({ targetDrug: incomingDrug })
+  }, [incomingDrugId, incomingDrugName, requestNeighborhood])
 
   function explore(event) {
     event.preventDefault()
