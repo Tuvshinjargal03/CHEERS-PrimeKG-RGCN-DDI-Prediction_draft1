@@ -145,11 +145,87 @@ describe('MedicineGuide', () => {
     expect(screen.getAllByText('Single-ingredient / direct medicine product')).toHaveLength(2)
     expect(screen.getByText('Warnings', { selector: '.medicine-label-section-meta strong' })).toBeVisible()
     expect(screen.getAllByText('Source ID set-1')).toHaveLength(2)
-    expect(screen.getAllByRole('link', { name: /open the openFDA source/i })[0]).toHaveAttribute(
-      'href',
-      'https://api.fda.gov/drug/label.json?search=metformin',
-    )
+    expect(screen.getAllByRole('button', { name: 'View full label text' })).toHaveLength(2)
+    expect(screen.queryByRole('link', { name: /open.*openFDA/i })).not.toBeInTheDocument()
     expect(document.body).not.toHaveTextContent(/\b(?:safe|unsafe|recommended)\b/i)
+  })
+
+  it('switches between bounded previews and complete FDA section text', async () => {
+    const user = userEvent.setup()
+    const fullFoodText = 'Complete alcohol section text returned by openFDA without a character limit.'
+    const fullWarningText = 'Complete warning section text returned by openFDA without a character limit.'
+    getJson.mockImplementation((path) => Promise.resolve(path.startsWith('/api/public/medicine')
+      ? {
+          ...LABEL_PAYLOAD,
+          label_information: {
+            ...LABEL_PAYLOAD.label_information,
+            food_lifestyle_information: {
+              ...LABEL_PAYLOAD.label_information.food_lifestyle_information,
+              topics: [{
+                ...LABEL_PAYLOAD.label_information.food_lifestyle_information.topics[0],
+                excerpt: 'Bounded alcohol preview',
+                full_text: fullFoodText,
+                excerpt_truncated: true,
+              }],
+            },
+            records: [{
+              ...LABEL_PAYLOAD.label_information.records[0],
+              sections: {
+                ...LABEL_PAYLOAD.label_information.records[0].sections,
+                warnings: [{ text: 'Bounded warning preview', full_text: fullWarningText, truncated: true }],
+              },
+            }],
+          },
+        }
+      : CONTEXT))
+
+    renderGuide('/medicines/DB00331?section=food-lifestyle')
+    let toggle = await screen.findByRole('button', { name: 'View full label text' })
+    expect(screen.getByText(/Bounded alcohol preview/)).toBeVisible()
+    expect(screen.queryByText(fullFoodText)).not.toBeInTheDocument()
+    await user.click(toggle)
+    expect(screen.getByText(fullFoodText)).toBeVisible()
+    expect(screen.queryByText(/Bounded alcohol preview/)).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Show less' }))
+    expect(screen.getByText(/Bounded alcohol preview/)).toBeVisible()
+
+    await user.click(screen.getByRole('link', { name: 'Warnings' }))
+    toggle = await screen.findByRole('button', { name: 'View full label text' })
+    await user.click(toggle)
+    expect(screen.getByText(fullWarningText)).toBeVisible()
+    expect(screen.queryByText(/Bounded warning preview/)).not.toBeInTheDocument()
+  })
+
+  it('sends very long FDA sections to the official label instead of expanding inline', async () => {
+    const longSection = `Complete regulatory section ${'word '.repeat(600)}`
+    getJson.mockImplementation((path) => Promise.resolve(path.startsWith('/api/public/medicine')
+      ? {
+          ...LABEL_PAYLOAD,
+          label_information: {
+            ...LABEL_PAYLOAD.label_information,
+            food_lifestyle_information: {
+              ...LABEL_PAYLOAD.label_information.food_lifestyle_information,
+              topics: [{
+                ...LABEL_PAYLOAD.label_information.food_lifestyle_information.topics[0],
+                excerpt: 'Short alcohol preview.',
+                full_text: longSection,
+                excerpt_truncated: true,
+              }],
+            },
+          },
+        }
+      : CONTEXT))
+
+    renderGuide('/medicines/DB00331?section=food-lifestyle')
+
+    expect(await screen.findByText('Short alcohol preview.')).toBeVisible()
+    expect(screen.getByText(/shortened in CHEERS for readability/i)).toBeVisible()
+    expect(screen.queryByRole('button', { name: 'View full label text' })).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /open official FDA label/i })).toHaveAttribute(
+      'href',
+      'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=set-1',
+    )
+    expect(screen.queryByText(longSection)).not.toBeInTheDocument()
   })
 
   it('shows the narrow no-explicit-mentions state without a safety conclusion', async () => {
@@ -284,7 +360,12 @@ describe('MedicineGuide', () => {
     expect(screen.getByText('Combination product containing Metformin')).toBeVisible()
     expect(screen.getByText('Product type not confirmed')).toBeVisible()
     expect(screen.queryByText('Single-ingredient products')).not.toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /open the openFDA source query/i })).toBeVisible()
+    expect(screen.getAllByRole('link', { name: /view official FDA label/i })).toHaveLength(2)
+    expect(screen.getAllByRole('link', { name: /view official FDA label/i })[0]).toHaveAttribute(
+      'href',
+      'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=set-1',
+    )
+    expect(document.body).not.toHaveTextContent(/source query/i)
   })
 
   it('distinguishes an empty label source from an API failure', async () => {

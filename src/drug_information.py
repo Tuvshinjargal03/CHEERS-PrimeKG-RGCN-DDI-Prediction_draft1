@@ -206,6 +206,7 @@ class OpenFDADrugInformationService:
             entries.append(
                 {
                     "text": normalized[: self.max_section_chars],
+                    "full_text": normalized,
                     "truncated": truncated,
                 }
             )
@@ -374,7 +375,7 @@ class OpenFDADrugInformationService:
             source_id = record["spl_set_id"] or record["application_number"]
             for section in self.FOOD_LIFESTYLE_SECTIONS:
                 for entry in record["sections"].get(section, []):
-                    text = entry["text"]
+                    text = entry["full_text"]
                     for topic in self.FOOD_LIFESTYLE_PATTERNS:
                         match = self._topic_match(topic, text)
                         if match is None:
@@ -407,6 +408,7 @@ class OpenFDADrugInformationService:
                                 "application_number": record["application_number"],
                                 "effective_time": record["effective_time"],
                                 "excerpt": excerpt,
+                                "full_text": text,
                                 "excerpt_truncated": truncated,
                                 "source": "openFDA Drug Label",
                                 "source_url": self.ENDPOINT,

@@ -70,6 +70,7 @@ const MEDICINE_EXAMPLES = [
   { name: 'Warfarin', id: 'DB00682' },
   { name: 'Ibuprofen', id: 'DB01050' },
 ]
+const MAX_INLINE_LABEL_CHARS = 2_500
 
 function productClassification(record) {
   return record.product_classification || {
@@ -100,13 +101,10 @@ function sectionEntries(labelInformation, sectionKey) {
   return entries
 }
 
-function safeSourceUrl(value) {
-  try {
-    const url = new URL(value)
-    return url.protocol === 'https:' && url.hostname === 'api.fda.gov' ? url.href : null
-  } catch {
-    return null
-  }
+function officialLabelUrl(splSetId) {
+  const normalizedId = String(splSetId || '').trim()
+  if (!normalizedId) return null
+  return `https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=${encodeURIComponent(normalizedId)}`
 }
 
 function foodProductClassification(item) {
@@ -130,6 +128,36 @@ function foodLifestyleGroups(foodLifestyleInformation) {
     groups.get(item.topic).push(item)
   }
   return [...groups.entries()]
+}
+
+function ExpandableLabelText({ previewText, fullText = previewText, labelUrl }) {
+  const [expanded, setExpanded] = useState(false)
+  const resolvedPreviewText = previewText || ''
+  const resolvedFullText = fullText || resolvedPreviewText
+  const isVeryLong = resolvedFullText.length > MAX_INLINE_LABEL_CHARS
+  const displayedText = expanded ? resolvedFullText : resolvedPreviewText
+  return (
+    <>
+      <p className={`medicine-label-text ${expanded && !isVeryLong ? '' : 'is-clamped'}`}>
+        {isVeryLong ? resolvedPreviewText : displayedText}
+      </p>
+      {isVeryLong ? (
+        <div className="medicine-long-label-action">
+          <p>This section is shortened in CHEERS for readability. View the complete regulatory text in the official FDA label.</p>
+          {labelUrl && <a className="product-source-link" href={labelUrl} target="_blank" rel="noopener noreferrer">Open official FDA label <ExternalLink size={14} /></a>}
+        </div>
+      ) : (
+        <button
+          type="button"
+          className="product-inline-button"
+          aria-expanded={expanded}
+          onClick={() => setExpanded((current) => !current)}
+        >
+          {expanded ? 'Show less' : 'View full label text'}
+        </button>
+      )}
+    </>
+  )
 }
 
 function MedicineLanding({ onSelect }) {
@@ -166,7 +194,6 @@ function MedicineLanding({ onSelect }) {
 function LabelSection({ labelInformation, sectionKey }) {
   const entries = sectionEntries(labelInformation, sectionKey)
   const title = SECTIONS.find(([key]) => key === sectionKey)?.[1] || 'Label information'
-  const [expanded, setExpanded] = useState({})
 
   return (
     <section className="medicine-content-panel" aria-labelledby={`medicine-${sectionKey}-heading`}>
@@ -180,7 +207,6 @@ function LabelSection({ labelInformation, sectionKey }) {
             const entryKey = `${entry.recordIndex}-${entry.section}-${entry.valueIndex}`
             const classification = productClassification(entry.record)
             const ingredients = classification.active_ingredients || []
-            const isExpanded = Boolean(expanded[entryKey])
             return (
               <article className="medicine-label-entry" key={entryKey}>
                 <header className="medicine-label-record-heading">
@@ -197,18 +223,7 @@ function LabelSection({ labelInformation, sectionKey }) {
                 {ingredients.length > 0 && (
                   <p className="medicine-ingredient-line"><strong>Active ingredients:</strong> {ingredients.join(', ')}</p>
                 )}
-                <p className={`medicine-label-text ${isExpanded ? '' : 'is-clamped'}`}>
-                  {entry.text}{entry.truncated ? ' …' : ''}
-                </p>
-                <button
-                  type="button"
-                  className="product-inline-button"
-                  aria-expanded={isExpanded}
-                  onClick={() => setExpanded((current) => ({ ...current, [entryKey]: !current[entryKey] }))}
-                >
-                  {isExpanded ? 'Show less' : 'View full label text'}
-                </button>
-                {entry.truncated && <small className="product-count-note">This long section is shortened in CHEERS; open the source query for the complete record.</small>}
+                <ExpandableLabelText previewText={entry.text} fullText={entry.full_text} labelUrl={officialLabelUrl(entry.record.spl_set_id)} />
               </article>
             )
           })}
@@ -255,7 +270,6 @@ function FoodLifestyleSection({ labelInformation }) {
                   {items.map((item, index) => {
                     const classification = foodProductClassification(item)
                     const sourceId = item.source_id || item.spl_set_id || item.application_number
-                    const sourceUrl = safeSourceUrl(labelInformation?.query_url || item.source_url)
                     return (
                       <article
                         className="medicine-label-entry medicine-food-item"
@@ -277,12 +291,7 @@ function FoodLifestyleSection({ labelInformation }) {
                             <strong>Active ingredients:</strong> {item.active_ingredients.join(', ')}
                           </p>
                         )}
-                        <p className="medicine-label-text">{item.excerpt}</p>
-                        {sourceUrl && (
-                          <a className="product-source-link" href={sourceUrl} target="_blank" rel="noopener noreferrer">
-                            Open the openFDA source <ExternalLink size={14} />
-                          </a>
-                        )}
+                        <ExpandableLabelText previewText={item.excerpt} fullText={item.full_text} labelUrl={officialLabelUrl(item.spl_set_id)} />
                       </article>
                     )
                   })}
@@ -345,7 +354,6 @@ function RelatedDiseases({ context, contextError }) {
 }
 
 function SourceRecords({ labelInformation }) {
-  const sourceUrl = safeSourceUrl(labelInformation?.query_url)
   const records = labelInformation?.records || []
   return (
     <section className="medicine-content-panel" aria-labelledby="medicine-sources-heading">
@@ -364,6 +372,7 @@ function SourceRecords({ labelInformation }) {
                 {groupRecords.map((record, index) => {
                   const classification = productClassification(record)
                   const ingredients = classification.active_ingredients || []
+                  const labelUrl = officialLabelUrl(record.spl_set_id)
                   return (
                     <article key={`${record.spl_set_id || 'record'}-${index}`}>
                       <span className={`medicine-product-badge is-${classification.category}`}>{classification.label}</span>
@@ -375,6 +384,7 @@ function SourceRecords({ labelInformation }) {
                         <div><dt>SPL Set ID</dt><dd>{record.spl_set_id || 'Not provided'}</dd></div>
                         <div><dt>Application</dt><dd>{record.application_number || 'Not provided'}</dd></div>
                       </dl>
+                      {labelUrl && <a className="product-source-link medicine-record-label-link" href={labelUrl} target="_blank" rel="noopener noreferrer">View official FDA label <ExternalLink size={14} /></a>}
                     </article>
                   )
                 })}
@@ -383,7 +393,6 @@ function SourceRecords({ labelInformation }) {
           )
         })}
       </div>
-      {sourceUrl && <a className="product-source-link" href={sourceUrl} target="_blank" rel="noopener noreferrer">Open the openFDA source query <ExternalLink size={14} /></a>}
     </section>
   )
 }
