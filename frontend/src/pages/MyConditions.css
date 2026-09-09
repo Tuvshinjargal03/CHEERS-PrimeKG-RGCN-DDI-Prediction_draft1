@@ -1,0 +1,397 @@
+.my-conditions-page {
+  padding-bottom: 54px;
+}
+
+.my-conditions-builder,
+.my-conditions-saved,
+.my-conditions-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.my-conditions-builder-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.my-conditions-builder-heading h2 {
+  margin: 6px 0 0;
+  color: #25283a;
+  font-size: 1.35rem;
+  letter-spacing: -0.025em;
+}
+
+.my-conditions-search {
+  display: grid;
+  gap: 8px;
+}
+
+.my-conditions-search > label {
+  color: #4f5264;
+  font-size: 0.78rem;
+  font-weight: 740;
+}
+
+.my-conditions-search > div {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 7px 7px 13px;
+  border: 1px solid #dcd6e7;
+  border-radius: 13px;
+  background: #fbfafc;
+  color: #786a8b;
+}
+
+.my-conditions-search input {
+  min-width: 0;
+  padding: 6px 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #303344;
+  font: inherit;
+  font-size: 0.88rem;
+}
+
+.my-conditions-search > div:focus-within {
+  border-color: #9d85d5;
+  box-shadow: 0 0 0 3px rgba(105, 65, 198, 0.1);
+}
+
+.my-conditions-search .secondary-button {
+  min-height: 37px;
+}
+
+.my-conditions-search-results {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid #e3dfea;
+  border-radius: 14px;
+  background: #faf9fb;
+}
+
+.my-conditions-search-results article {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.my-conditions-search-results span {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.my-conditions-search-results strong {
+  overflow-wrap: anywhere;
+  color: #3a3d4f;
+  font-size: 0.82rem;
+}
+
+.my-conditions-search-results small {
+  color: #818696;
+  font-size: 0.67rem;
+}
+
+.my-conditions-search-results button,
+.my-conditions-clear {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  background: transparent;
+  color: #6545ad;
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 730;
+  cursor: pointer;
+}
+
+.my-conditions-search-results button:disabled {
+  color: #8a8e9a;
+  cursor: default;
+}
+
+.my-conditions-search-message,
+.my-conditions-privacy {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  color: #73788a;
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.my-conditions-search-message.is-error {
+  color: #a04740;
+}
+
+.my-conditions-privacy {
+  padding-top: 13px;
+  border-top: 1px solid #ece9f0;
+}
+
+.my-conditions-clear {
+  padding: 6px 0;
+}
+
+.my-conditions-clear:hover,
+.my-conditions-clear:focus-visible,
+.my-conditions-search-results button:not(:disabled):hover,
+.my-conditions-search-results button:not(:disabled):focus-visible {
+  color: #4f318e;
+  text-decoration: underline;
+  outline: none;
+}
+
+.my-conditions-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.my-conditions-card {
+  display: grid;
+  align-content: start;
+  gap: 15px;
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid #e1ddea;
+  border-radius: 17px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(35, 28, 58, 0.04);
+}
+
+.my-conditions-card-heading {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 11px;
+}
+
+.my-conditions-card-icon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 12px;
+  background: #f0ebff;
+  color: #6744c0;
+}
+
+.my-conditions-card-heading > div {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.my-conditions-card-heading > div > span {
+  color: #858999;
+  font-size: 0.63rem;
+  font-weight: 760;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.my-conditions-card-heading h3 {
+  overflow-wrap: anywhere;
+  margin: 2px 0 0;
+  color: #303344;
+  font-size: 1rem;
+}
+
+.my-conditions-card-heading small {
+  color: #858999;
+  font-size: 0.67rem;
+}
+
+.my-conditions-card-heading > button {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #7c7287;
+  cursor: pointer;
+}
+
+.my-conditions-card-heading > button:hover,
+.my-conditions-card-heading > button:focus-visible {
+  background: #eee8f8;
+  color: #50348f;
+  outline: none;
+}
+
+.my-conditions-card-state {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 54px;
+  padding: 11px 12px;
+  border-radius: 11px;
+  background: #f7f6f9;
+  color: #696f80;
+  font-size: 0.78rem;
+}
+
+.my-conditions-card-state.is-error {
+  color: #8b4843;
+}
+
+.my-conditions-description {
+  margin: 0;
+  color: #606678;
+  font-size: 0.82rem;
+  line-height: 1.62;
+}
+
+.my-conditions-description.is-unavailable {
+  color: #7b7f8d;
+  font-style: italic;
+}
+
+.my-conditions-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.my-conditions-facts > div {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 3px 7px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid #e8e4ec;
+  border-radius: 11px;
+  background: #fbfafc;
+  color: #6b4bb3;
+}
+
+.my-conditions-facts strong {
+  color: #3b3e50;
+  font-size: 0.9rem;
+}
+
+.my-conditions-facts span {
+  grid-column: 1 / -1;
+  color: #74798a;
+  font-size: 0.68rem;
+  line-height: 1.4;
+}
+
+.my-conditions-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding-top: 12px;
+  border-top: 1px solid #ece9ef;
+}
+
+.my-conditions-actions a,
+.my-conditions-disease-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 10px;
+  border: 1px solid #ded7eb;
+  border-radius: 9px;
+  color: #6546ad;
+  font-size: 0.72rem;
+  font-weight: 720;
+  text-decoration: none;
+}
+
+.my-conditions-actions a:hover,
+.my-conditions-actions a:focus-visible,
+.my-conditions-disease-link:hover,
+.my-conditions-disease-link:focus-visible {
+  border-color: #ae9ad8;
+  background: #faf7ff;
+  outline: none;
+}
+
+.my-conditions-empty {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 19px;
+  border: 1px dashed #dcd7e4;
+  border-radius: 14px;
+  color: #7456b2;
+}
+
+.my-conditions-empty strong {
+  color: #454859;
+  font-size: 0.84rem;
+}
+
+.my-conditions-empty p {
+  margin: 3px 0 0;
+  color: #787d8d;
+  font-size: 0.75rem;
+}
+
+.my-conditions-boundary {
+  max-width: 880px;
+  text-align: center;
+}
+
+.my-conditions-disease-link {
+  justify-self: center;
+  border: 0;
+}
+
+@media (max-width: 820px) {
+  .my-conditions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .my-conditions-builder-heading,
+  .my-conditions-search-results article {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .my-conditions-builder-heading,
+  .my-conditions-search-results article {
+    display: flex;
+  }
+
+  .my-conditions-search > div {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .my-conditions-search .secondary-button {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .my-conditions-search-results button,
+  .my-conditions-actions a {
+    width: 100%;
+  }
+
+  .my-conditions-facts {
+    grid-template-columns: 1fr;
+  }
+
+  .my-conditions-card {
+    padding: 17px;
+  }
+}

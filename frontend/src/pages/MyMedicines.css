@@ -1,0 +1,454 @@
+.my-medicines-page {
+  padding-bottom: 54px;
+}
+
+.my-medicines-builder {
+  display: grid;
+  gap: 20px;
+}
+
+.my-medicines-builder-heading,
+.my-medicines-selected-heading,
+.my-medicines-builder-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.my-medicines-builder-heading h2 {
+  margin: 6px 0 0;
+  color: #25283a;
+  font-size: 1.35rem;
+  letter-spacing: -0.025em;
+}
+
+.my-medicines-add {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.my-medicines-add .secondary-button {
+  min-height: 45px;
+}
+
+.my-medicines-form-note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: -10px 0 0;
+  color: #725aa2;
+  font-size: 0.8rem;
+}
+
+.my-medicines-selected-heading {
+  padding-top: 2px;
+  border-top: 1px solid #ece9f0;
+}
+
+.my-medicines-selected-heading strong {
+  color: #3b3e50;
+  font-size: 0.84rem;
+}
+
+.my-medicines-selected-heading button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 0;
+  border: 0;
+  background: transparent;
+  color: #745a94;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 720;
+  cursor: pointer;
+}
+
+.my-medicines-selected-heading button:hover,
+.my-medicines-selected-heading button:focus-visible {
+  color: #54358b;
+  text-decoration: underline;
+  outline: none;
+}
+
+.my-medicines-selected-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.my-medicines-selected-list li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  max-width: 100%;
+  padding: 9px 9px 9px 11px;
+  border: 1px solid #ded6ed;
+  border-radius: 13px;
+  background: #faf7ff;
+  color: #6545af;
+}
+
+.my-medicines-selected-list span {
+  display: grid;
+  min-width: 0;
+}
+
+.my-medicines-selected-list strong {
+  overflow-wrap: anywhere;
+  color: #3f4050;
+  font-size: 0.79rem;
+}
+
+.my-medicines-selected-list small {
+  color: #81798e;
+  font-size: 0.65rem;
+}
+
+.my-medicines-selected-list button {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #7c7287;
+  cursor: pointer;
+}
+
+.my-medicines-selected-list button:hover,
+.my-medicines-selected-list button:focus-visible {
+  background: #eee8f8;
+  color: #50348f;
+  outline: none;
+}
+
+.my-medicines-empty-list {
+  margin: 0;
+  padding: 16px;
+  border: 1px dashed #ded9e6;
+  border-radius: 12px;
+  color: #7a7f90;
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+.my-medicines-builder-actions {
+  justify-content: flex-start;
+}
+
+.my-medicines-builder-actions span {
+  color: #7a7f8f;
+  font-size: 0.77rem;
+}
+
+.my-medicines-privacy {
+  margin: -4px 0 0;
+  color: #74798b;
+  font-size: 0.74rem;
+  line-height: 1.55;
+}
+
+.my-medicines-progress {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 17px 20px;
+  border: 1px solid #ded6ef;
+  border-radius: 15px;
+  background: #faf7ff;
+  color: #6948b5;
+}
+
+.my-medicines-progress strong {
+  color: #3e3f50;
+  font-size: 0.88rem;
+}
+
+.my-medicines-progress p {
+  margin: 3px 0 0;
+  color: #74798b;
+  font-size: 0.76rem;
+}
+
+.my-medicines-review,
+.my-medicines-pair-list {
+  display: grid;
+  gap: 16px;
+}
+
+.my-medicines-summary {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.my-medicines-summary article {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid #e1ddea;
+  border-radius: 13px;
+  background: #fff;
+}
+
+.my-medicines-summary strong {
+  color: #343648;
+  font-size: 1.15rem;
+}
+
+.my-medicines-summary span {
+  color: #74798b;
+  font-size: 0.7rem;
+  line-height: 1.35;
+}
+
+.my-medicines-summary .is-important {
+  border-color: #efc6c1;
+  background: #fff7f5;
+}
+
+.my-medicines-summary .is-review {
+  border-color: #ead7aa;
+  background: #fffaf0;
+}
+
+.my-medicines-summary .is-insufficient {
+  border-color: #dfe1e6;
+  background: #f8f9fa;
+}
+
+.my-medicines-pair-card {
+  display: grid;
+  gap: 15px;
+  padding: 20px;
+  border: 1px solid #dfe1e6;
+  border-left-width: 4px;
+  border-radius: 17px;
+  background: #fff;
+}
+
+.my-medicines-pair-card.is-important {
+  border-left-color: #c8574d;
+}
+
+.my-medicines-pair-card.is-review {
+  border-left-color: #bc8a28;
+}
+
+.my-medicines-pair-card.is-insufficient {
+  border-left-color: #8b909c;
+}
+
+.my-medicines-pair-heading {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.my-medicines-status-icon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 12px;
+  background: #f5f3f8;
+  color: #676c79;
+}
+
+.my-medicines-pair-card.is-important .my-medicines-status-icon {
+  background: #fff0ed;
+  color: #a43e36;
+}
+
+.my-medicines-pair-card.is-review .my-medicines-status-icon {
+  background: #fff5dc;
+  color: #866018;
+}
+
+.my-medicines-pair-heading > div > span {
+  color: #868a98;
+  font-size: 0.65rem;
+  font-weight: 760;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.my-medicines-pair-heading h3 {
+  overflow-wrap: anywhere;
+  margin: 4px 0 0;
+  color: #313344;
+  font-size: 1rem;
+}
+
+.my-medicines-pair-heading h3 b {
+  color: #918899;
+}
+
+.my-medicines-status-label {
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #f0f1f3;
+  color: #5d6370;
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+.my-medicines-pair-card.is-important .my-medicines-status-label {
+  background: #fff0ed;
+  color: #963a32;
+}
+
+.my-medicines-pair-card.is-review .my-medicines-status-label {
+  background: #fff4d8;
+  color: #795817;
+}
+
+.my-medicines-status-copy,
+.my-medicines-pair-error {
+  margin: 0;
+  color: #696f80;
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+.my-medicines-pair-error {
+  padding: 9px 11px;
+  border-radius: 9px;
+  background: #f4f4f6;
+  color: #676c78;
+}
+
+.my-medicines-source-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.my-medicines-source-counts > div {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 1px 7px;
+  align-items: center;
+  min-width: 155px;
+  padding: 10px 12px;
+  border: 1px solid #e7e4eb;
+  border-radius: 11px;
+  background: #fbfafc;
+  color: #6a4eb0;
+}
+
+.my-medicines-source-counts strong {
+  color: #383a4b;
+  font-size: 0.9rem;
+}
+
+.my-medicines-source-counts span {
+  grid-column: 1 / -1;
+  color: #777c8c;
+  font-size: 0.67rem;
+}
+
+.my-medicines-pair-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding-top: 12px;
+  border-top: 1px solid #ece9ef;
+}
+
+.my-medicines-pair-actions a,
+.my-medicines-checker-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 10px;
+  border: 1px solid #ded7eb;
+  border-radius: 9px;
+  color: #6546ad;
+  font-size: 0.72rem;
+  font-weight: 720;
+  text-decoration: none;
+}
+
+.my-medicines-pair-actions a:hover,
+.my-medicines-pair-actions a:focus-visible,
+.my-medicines-checker-link:hover,
+.my-medicines-checker-link:focus-visible {
+  border-color: #ae9ad8;
+  background: #faf7ff;
+  outline: none;
+}
+
+.my-medicines-boundary {
+  max-width: 870px;
+  text-align: center;
+}
+
+.my-medicines-checker-link {
+  justify-self: center;
+  gap: 5px;
+  border: 0;
+}
+
+@media (max-width: 900px) {
+  .my-medicines-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 660px) {
+  .my-medicines-add,
+  .my-medicines-pair-heading {
+    grid-template-columns: 1fr;
+  }
+
+  .my-medicines-add .secondary-button {
+    justify-self: stretch;
+  }
+
+  .my-medicines-status-icon {
+    display: none;
+  }
+
+  .my-medicines-status-label {
+    justify-self: start;
+  }
+}
+
+@media (max-width: 480px) {
+  .my-medicines-builder-heading,
+  .my-medicines-selected-heading,
+  .my-medicines-builder-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .my-medicines-builder-actions .primary-button,
+  .my-medicines-add .secondary-button {
+    width: 100%;
+  }
+
+  .my-medicines-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .my-medicines-pair-card {
+    padding: 17px;
+  }
+
+  .my-medicines-source-counts > div,
+  .my-medicines-pair-actions a {
+    width: 100%;
+  }
+}

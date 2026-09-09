@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "artifact_version": "1.0.0",
+  "purpose": "Frozen, manually reviewed general disease nutrition education for supported CHEERS disease identities.",
+  "cheers_reviewed_date": "2026-09-09",
+  "record_count": 3,
+  "supported_disease_ids": [
+    "5148",
+    "5393",
+    "1356"
+  ],
+  "excluded_disease_ids": {
+    "1200_1134_15512_5080_100078": "Hypertension is excluded because the CHEERS disease mapping is a grouped entity marked needs_review."
+  },
+  "sources": [
+    {
+      "organization": "National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK)",
+      "url": "https://www.niddk.nih.gov/health-information/diabetes/overview/healthy-living-with-diabetes",
+      "source_date": "October 2023",
+      "cheers_disease_id": "5148"
+    },
+    {
+      "organization": "National Institute of Arthritis and Musculoskeletal and Skin Diseases (NIAMS)",
+      "url": "https://www.niams.nih.gov/health-topics/gout/diagnosis-treatment-and-steps-to-take",
+      "source_date": "December 2023",
+      "cheers_disease_id": "5393"
+    },
+    {
+      "organization": "National Heart, Lung, and Blood Institute (NHLBI)",
+      "url": "https://www.nhlbi.nih.gov/health/anemia/iron-deficiency-anemia",
+      "source_date": "March 24, 2022",
+      "cheers_disease_id": "1356"
+    }
+  ],
+  "outputs": {
+    "final_release/disease_nutrition_runtime/disease_nutrition.jsonl": {
+      "byte_size": 5408,
+      "record_count": 3,
+      "sha256": "7617ef3f0cc634b3c47f3e0c9f8134811a5f8f234c5f40afe87576b96513fab6"
+    }
+  },
+  "not_personalized": true
+}

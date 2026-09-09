@@ -24,11 +24,14 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
+from src.disease_information import DiseaseInformationService
+from src.drug_information import OpenFDADrugInformationService
 from src.entity_metadata import EntityMetadataStore
 from src.g3_context import G3ContextStore
 from src.graph_neighborhood import GraphNeighborhoodStore
 from src.lightweight_inference import DDIPredictor
 from src.pubmed_literature import PubMedLiteratureService
+from src.public_search import PublicSearchService
 from src.safety_evidence import OpenFDALabelEvidenceService
 
 
@@ -90,6 +93,20 @@ async def lifespan(app: FastAPI):
         project_dir=PROJECT_DIR
     )
 
+    app.state.disease_information = DiseaseInformationService(
+        project_dir=PROJECT_DIR
+    )
+
+    app.state.label_evidence_service = OpenFDALabelEvidenceService()
+    app.state.literature_service = PubMedLiteratureService()
+
+    app.state.public_search = PublicSearchService(
+        project_dir=PROJECT_DIR,
+        disease_information_service=app.state.disease_information,
+        label_evidence_service=app.state.label_evidence_service,
+        literature_service=app.state.literature_service,
+    )
+
     app.state.entity_metadata_store = load_entity_metadata_store()
     description_runtime = FINAL_DIR / 'entity_metadata_runtime'
     local_descriptions = PROJECT_DIR / 'data/derived/entity_descriptions'
@@ -119,8 +136,7 @@ async def lifespan(app: FastAPI):
         for row in app.state.predictor.drug_metadata
     }
 
-    app.state.label_evidence_service = OpenFDALabelEvidenceService()
-    app.state.literature_service = PubMedLiteratureService()
+    app.state.drug_information_service = OpenFDADrugInformationService()
 
     print(
         "[CHEERS API] Lightweight runtime and G3 context loaded successfully."
@@ -130,10 +146,13 @@ async def lifespan(app: FastAPI):
 
     app.state.predictor = None
     app.state.context_store = None
+    app.state.public_search = None
+    app.state.disease_information = None
     app.state.entity_metadata_store = None
     app.state.neighborhood_store = None
     app.state.drug_metadata_by_id = None
     app.state.label_evidence_service = None
+    app.state.drug_information_service = None
     app.state.literature_service = None
 
 
@@ -779,6 +798,65 @@ def verification_results():
         )
 
     return verification
+
+
+# ============================================================
+# Public search
+# ============================================================
+
+@app.get("/api/public/search")
+def public_search(
+    q: str = Query(
+        ...,
+        min_length=1,
+        max_length=200,
+        description="A short drug, disease, side-effect, interaction, or drug-pair query.",
+    ),
+):
+    """Resolve a short query to source-grounded, non-personalized information."""
+    return app.state.public_search.search(q)
+
+
+@app.get("/api/public/medicine")
+def public_medicine_information(
+    drug_id: str = Query(
+        ...,
+        min_length=1,
+        max_length=100,
+        description="Exact DrugBank ID for one candidate medicine.",
+    ),
+):
+    """Return bounded official-label information for one recognized medicine."""
+    drug = app.state.drug_metadata_by_id.get(drug_id.strip().casefold())
+    if drug is None:
+        raise HTTPException(status_code=404, detail=f"Unknown drug ID: {drug_id}.")
+
+    return {
+        "drug": drug,
+        "label_information": app.state.drug_information_service.get_drug_information(
+            drug["drug_name"]
+        ),
+        "safety_note": (
+            "Official label information is provided for education and source review. "
+            "It is not personalized medical advice."
+        ),
+    }
+
+
+@app.get("/api/public/disease")
+def public_disease_information(
+    disease_id: str = Query(
+        ...,
+        min_length=1,
+        max_length=500,
+        description="Exact disease entity ID from the frozen CHEERS inventory.",
+    ),
+):
+    """Return an approved description and typed medicine relationships."""
+    try:
+        return app.state.disease_information.get_disease_information(disease_id)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=exc.args[0])
 
 
 # ============================================================
