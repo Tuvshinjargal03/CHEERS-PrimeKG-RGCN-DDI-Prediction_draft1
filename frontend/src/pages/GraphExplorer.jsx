@@ -1,11 +1,12 @@
 import cytoscape from 'cytoscape'
 import { AlertCircle, ArrowRight, BookOpen, CheckCircle2, Focus, Info, LoaderCircle, Minus, Plus } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import DrugAutocomplete from '../components/DrugAutocomplete.jsx'
+import EntityDetailsPanel from '../components/EntityDetailsPanel.jsx'
 import MedicineLabelScanner from '../components/MedicineLabelScanner.jsx'
 import { G3_CONTEXT_CANDIDATE_IDS } from '../data/g3ContextCandidateIds.js'
-import { getJson, pairEndpoint, resolveDrug } from '../lib/api.js'
+import { drugContextEndpoint, getJson, pairEndpoint, resolveDrug } from '../lib/api.js'
 import './GraphExplorerAvailability.css'
 
 const DEFAULT_SHARED_NODES = 15
@@ -39,37 +40,79 @@ function relationLabel(value) {
     .replaceAll('_', ' ')
 }
 
+const DISPLAY_RELATIONS = {
+  drug_drug: 'DDI',
+  target: 'Target',
+  enzyme: 'Enzyme',
+  carrier: 'Carrier',
+  transporter: 'Transporter',
+  indication: 'Indication',
+  contraindication: 'Contraindication',
+  'off-label use': 'Off-label use',
+}
+
 function selectDisplayedEntities(entities, limit) {
   const geneProtein = entities.filter((entity) => entity.context_group === 'gene/protein')
   const disease = entities.filter((entity) => entity.context_group === 'disease')
   return [...geneProtein, ...disease].slice(0, limit)
 }
 
-function makeElements(context, entities) {
+function relationship(relation) {
+  return { relation, display_relation: DISPLAY_RELATIONS[relation] || relationLabel(relation) }
+}
+
+function pairCenter(drug, selection) {
+  return {
+    node_id: drug.drug_node_id,
+    entity_id: drug.drug_id,
+    name: drug.drug_name,
+    entity_type: 'drug',
+    source: selection?.source || 'DrugBank',
+  }
+}
+
+function makeElements(context, entities, drugA, drugB) {
   const columns = entities.length > DEFAULT_SHARED_NODES ? 5 : 3
   const horizontalGap = entities.length > DEFAULT_SHARED_NODES ? 150 : 220
   const verticalGap = entities.length > DEFAULT_SHARED_NODES ? 110 : 100
   const firstX = 500 - ((columns - 1) * horizontalGap) / 2
   const rows = Math.max(1, Math.ceil(entities.length / columns))
   const centerY = 80 + ((rows - 1) * verticalGap) / 2
+  const centerA = pairCenter(context.drug_a, drugA)
+  const centerB = pairCenter(context.drug_b, drugB)
   const elements = [
     {
-      data: { id: 'drug-a', label: context.drug_a.drug_name, type: 'drug' },
+      data: { id: 'drug-a', label: centerA.name, type: 'drug', isCenter: 1, entity: centerA },
       position: { x: 20, y: centerY },
     },
     {
-      data: { id: 'drug-b', label: context.drug_b.drug_name, type: 'drug' },
+      data: { id: 'drug-b', label: centerB.name, type: 'drug', isCenter: 1, entity: centerB },
       position: { x: 980, y: centerY },
     },
   ]
 
   entities.forEach((entity, entityIndex) => {
     const nodeId = `context-${entity.context_node_id}`
+    const normalizedEntity = {
+      node_id: entity.context_node_id,
+      entity_id: entity.context_id,
+      name: entity.context_name,
+      entity_type: entity.context_group,
+      source: entity.context_source,
+      relationships: [...new Set([...entity.drug_a_relations, ...entity.drug_b_relations])].map(relationship),
+    }
+    const relationshipPaths = [
+      { center: centerA, relationships: entity.drug_a_relations.map(relationship) },
+      { center: centerB, relationships: entity.drug_b_relations.map(relationship) },
+    ].filter((path) => path.relationships.length)
     elements.push({
       data: {
         id: nodeId,
         label: entity.context_name,
         type: entity.context_group === 'gene/protein' ? 'gene' : 'disease',
+        isCenter: 0,
+        entity: normalizedEntity,
+        relationshipPaths,
       },
       position: {
         x: firstX + (entityIndex % columns) * horizontalGap,
@@ -132,6 +175,9 @@ export default function GraphExplorer() {
   const initialScore = searchParams.get('score') || ''
   const containerRef = useRef(null)
   const cyRef = useRef(null)
+  const detailRequestId = useRef(0)
+  const metadataCache = useRef(new Map())
+  const metadataRequests = useRef(new Map())
   const [drugA, setDrugA] = useState(null)
   const [drugB, setDrugB] = useState(null)
   const [context, setContext] = useState(null)
@@ -140,10 +186,58 @@ export default function GraphExplorer() {
   const [resolving, setResolving] = useState(Boolean(initialAId || initialBId))
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [selected, setSelected] = useState(null)
   const displayedEntities = useMemo(
     () => selectDisplayedEntities(context?.shared?.entities || [], displayLimit),
     [context, displayLimit],
   )
+
+  const selectNode = useCallback(async (nodeData) => {
+    const requestId = ++detailRequestId.current
+    setSelected({ kind: 'node', data: nodeData })
+    const entity = nodeData.entity
+    const cacheKey = `${entity.entity_type}:${entity.entity_id}`
+    let enriched = metadataCache.current.get(cacheKey)
+    try {
+      if (!enriched) {
+        let pendingRequest = metadataRequests.current.get(cacheKey)
+        if (!pendingRequest) {
+          pendingRequest = (async () => {
+            if (nodeData.isCenter) {
+              const payload = await getJson(drugContextEndpoint({ drugId: entity.entity_id, limit: 1 }))
+              return payload.center
+            }
+            const firstPath = nodeData.relationshipPaths[0]
+            const relations = firstPath.relationships.map((edge) => edge.relation)
+            let offset = 0
+            do {
+              const payload = await getJson(drugContextEndpoint({
+                drugId: firstPath.center.entity_id,
+                limit: 200,
+                offset,
+                relations,
+                entityTypes: [entity.entity_type],
+              }))
+              const match = payload.neighbors.find((neighbor) => neighbor.node_id === entity.node_id)
+              if (match || !payload.pagination.has_more) return match
+              offset = payload.pagination.next_offset
+            } while (offset !== null)
+            return null
+          })().finally(() => metadataRequests.current.delete(cacheKey))
+          metadataRequests.current.set(cacheKey, pendingRequest)
+        }
+        enriched = await pendingRequest
+      }
+      if (!enriched) return
+      metadataCache.current.set(cacheKey, enriched)
+      if (detailRequestId.current !== requestId) return
+      setSelected((current) => current?.data.id === nodeData.id
+        ? { ...current, data: { ...current.data, entity: { ...current.data.entity, ...enriched } } }
+        : current)
+    } catch {
+      // The pair response still provides identity and relationship details if enrichment is unavailable.
+    }
+  }, [])
 
   useEffect(() => {
     if (!initialAId && !initialBId) return undefined
@@ -172,7 +266,7 @@ export default function GraphExplorer() {
     if (!context || !containerRef.current) return undefined
     const cy = cytoscape({
       container: containerRef.current,
-      elements: makeElements(context, displayedEntities),
+      elements: makeElements(context, displayedEntities, drugA, drugB),
       wheelSensitivity: 0.2,
       minZoom: 0.35,
       maxZoom: 2.5,
@@ -197,15 +291,20 @@ export default function GraphExplorer() {
     cy.on('mouseout', 'edge', (event) => {
       if (!event.target.selected()) event.target.removeClass('show-label')
     })
-    cy.on('tap', 'node[type != "drug"]', (event) => {
+    cy.on('tap', 'node', (event) => {
       resetGraphFocus(cy)
       const node = event.target
-      const connectedDrugs = cy.$id('drug-a').union(cy.$id('drug-b'))
-      const connectedEdges = connectedDrugs.edgesTo(node)
+      const connectedDrugs = node.data('type') === 'drug'
+        ? node
+        : cy.$id('drug-a').union(cy.$id('drug-b'))
+      const connectedEdges = node.data('type') === 'drug'
+        ? node.connectedEdges()
+        : connectedDrugs.edgesTo(node)
       cy.elements().addClass('faded')
-      node.add(connectedEdges).add(connectedDrugs).removeClass('faded').addClass('focused')
+      node.add(connectedEdges).add(connectedEdges.connectedNodes()).add(connectedDrugs).removeClass('faded').addClass('focused')
       connectedEdges.addClass('show-label')
       node.select()
+      selectNode(node.data())
     })
     cy.on('tap', 'edge', (event) => {
       resetGraphFocus(cy)
@@ -216,14 +315,18 @@ export default function GraphExplorer() {
       edge.addClass('show-label').select()
     })
     cy.on('tap', (event) => {
-      if (event.target === cy) resetGraphFocus(cy)
+      if (event.target === cy) {
+        resetGraphFocus(cy)
+        detailRequestId.current += 1
+        setSelected(null)
+      }
     })
     cyRef.current = cy
     return () => {
       cy.destroy()
       cyRef.current = null
     }
-  }, [context, displayedEntities])
+  }, [context, displayedEntities, drugA, drugB, selectNode])
 
   const drugAHasContext = hasVerifiedG3Context(drugA)
   const drugBHasContext = hasVerifiedG3Context(drugB)
@@ -256,6 +359,7 @@ export default function GraphExplorer() {
     setContext(null)
     setNavigationScore('')
     setError('')
+    setSelected(null)
   }
 
   function selectDrugB(value) {
@@ -263,6 +367,7 @@ export default function GraphExplorer() {
     setContext(null)
     setNavigationScore('')
     setError('')
+    setSelected(null)
   }
 
   async function loadContext(event) {
@@ -275,6 +380,7 @@ export default function GraphExplorer() {
     setLoading(true)
     setError('')
     setContext(null)
+    setSelected(null)
     setDisplayLimit(DEFAULT_SHARED_NODES)
     try {
       setContext(await getJson(pairEndpoint('/api/context/pair', drugA.entity_id, drugB.entity_id)))
@@ -356,7 +462,8 @@ export default function GraphExplorer() {
             <article><span>Displayed</span><strong>{displayedCount}</strong><small>{displayLimit === DEFAULT_SHARED_NODES ? 'focused view' : 'expanded view'}</small></article>
           </div>
 
-          <article className="graph-card graph-pair-card">
+          <div className="subgraph-workspace">
+          <article className="graph-card graph-pair-card subgraph-graph-card">
             <div className="graph-toolbar">
               <div><span className="eyebrow">G3 pair subgraph</span><h2>{context.drug_a.drug_name} + {context.drug_b.drug_name}</h2></div>
               <div className="graph-controls" aria-label="Graph controls">
@@ -369,7 +476,7 @@ export default function GraphExplorer() {
             <div className="graph-inspection-bar">
               <p>Select a node or edge to inspect its relationships.</p>
               {context.shared.total > DEFAULT_SHARED_NODES && (
-                <button type="button" className="secondary-button graph-display-toggle" onClick={() => setDisplayLimit((current) => current === DEFAULT_SHARED_NODES ? MAX_SHARED_NODES : DEFAULT_SHARED_NODES)}>
+                <button type="button" className="secondary-button graph-display-toggle" onClick={() => { setDisplayLimit((current) => current === DEFAULT_SHARED_NODES ? MAX_SHARED_NODES : DEFAULT_SHARED_NODES); setSelected(null) }}>
                   {displayLimit === DEFAULT_SHARED_NODES ? `Show more (up to ${MAX_SHARED_NODES})` : 'Show fewer'}
                 </button>
               )}
@@ -382,6 +489,14 @@ export default function GraphExplorer() {
             {context.shared.total > displayedCount && <p className="graph-limit-note">Showing {displayedCount} of {context.shared.total.toLocaleString()} shared entities returned by the context endpoint to reduce visual clutter. Omitted entities are not considered less important.</p>}
             {!context.shared.total && <div className="graph-empty-overlay">No direct shared G3 context entities were found for this pair.</div>}
           </article>
+          <aside className="subgraph-details-card" aria-live="polite">
+            <EntityDetailsPanel
+              key={selected ? `${selected.kind}:${selected.data.id}` : 'none'}
+              selected={selected}
+              center={selected?.data.relationshipPaths?.[0]?.center || null}
+            />
+          </aside>
+          </div>
 
           <div className="individual-context-grid">
             {[[context.drug_a, countsA], [context.drug_b, countsB]].map(([drug, counts]) => (

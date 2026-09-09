@@ -1,7 +1,9 @@
 import cytoscape from 'cytoscape'
 import { AlertCircle, Focus, LoaderCircle, Minus, Plus, Share2 } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import DrugAutocomplete from '../components/DrugAutocomplete.jsx'
+import EntityDetailsPanel from '../components/EntityDetailsPanel.jsx'
 import MedicineLabelScanner from '../components/MedicineLabelScanner.jsx'
 import { drugContextEndpoint, getJson } from '../lib/api.js'
 
@@ -23,58 +25,6 @@ const ENTITY_TYPES = [
 ]
 const ALL_RELATIONS = RELATIONS.map(([value]) => value)
 const ALL_ENTITY_TYPES = ENTITY_TYPES.map(([value]) => value)
-const ENTITY_TYPE_DETAILS = {
-  drug: {
-    label: 'Drug',
-    idLabel: 'DrugBank ID',
-    summary: "A DrugBank-linked drug node in the model's candidate set.",
-  },
-  'gene/protein': {
-    label: 'Gene / Protein',
-    idLabel: 'NCBI ID',
-    summary: 'A gene/protein context node identified by an NCBI ID in the G3 graph.',
-  },
-  disease: {
-    label: 'Disease',
-    idLabel: 'Context ID',
-    summary: 'A disease context node identified from MONDO or MONDO_grouped in the G3 graph.',
-  },
-}
-const RELATION_EXPLANATIONS = {
-  drug_drug: {
-    text: 'The training portion of the G3 graph records a PrimeKG drug–drug relationship between the selected drug and this drug.',
-    note: 'This is graph context, not an interaction severity or safety assessment.',
-  },
-  target: {
-    text: 'The G3 graph records this gene/protein through a target relationship with the selected drug.',
-  },
-  enzyme: {
-    text: 'The G3 graph records this gene/protein through an enzyme relationship with the selected drug.',
-  },
-  carrier: {
-    text: 'The G3 graph records this gene/protein through a carrier relationship with the selected drug.',
-  },
-  transporter: {
-    text: 'The G3 graph records this gene/protein through a transporter relationship with the selected drug.',
-  },
-  indication: {
-    text: 'The G3 graph records this disease through an indication relationship with the selected drug.',
-  },
-  contraindication: {
-    text: 'The G3 graph records this disease through a contraindication relationship with the selected drug.',
-  },
-  'off-label use': {
-    text: 'The G3 graph records this disease through an off-label-use relationship with the selected drug.',
-  },
-}
-
-function displaySubstance(value, entityName) {
-  // Reuse existing name casing only when the letters identify the same substance.
-  if (value === value.toUpperCase() && entityName !== entityName.toUpperCase()
-    && value.toLowerCase() === entityName.toLowerCase()) return entityName
-  return value
-}
-
 function edgeId(centerNodeId, relation, neighborNodeId) {
   const safeRelation = relation.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '')
   return `edge-${centerNodeId}-${safeRelation}-${neighborNodeId}`
@@ -147,206 +97,14 @@ function emptyFilteredData(previous, relations, entityTypes) {
   }
 }
 
-function ElementDetails({ selected, center }) {
-  const [showAllAliases, setShowAllAliases] = useState(false)
-  const [showFullSummary, setShowFullSummary] = useState(false)
-
-  if (!selected) {
-    return <div className="subgraph-detail-empty"><Focus size={24} /><p>Select a node or edge to inspect its graph metadata.</p></div>
-  }
-  if (selected.kind === 'node') {
-    const entity = selected.data.entity
-    const isCenter = Boolean(selected.data.isCenter)
-    const typeDetails = ENTITY_TYPE_DETAILS[entity.entity_type]
-    const metadata = entity.entity_type === 'gene/protein' && entity.metadata?.matched === true
-      ? entity.metadata
-      : null
-    const aliases = metadata?.aliases || []
-    const visibleAliases = showAllAliases ? aliases : aliases.slice(0, 5)
-    const summaryCanExpand = Boolean(metadata?.summary && metadata.summary.length > 360)
-    return (
-      <div className="subgraph-detail-content">
-        <span className="card-kicker">{isCenter ? 'Center node' : 'Neighbor node'}</span>
-        <h3>{entity.name}</h3>
-        <span className="entity-type-badge">{typeDetails.label}</span>
-        <section className="detail-section">
-          <h4>About this node</h4>
-          <p>{typeDetails.summary}</p>
-        </section>
-        {!isCenter && (
-          <>
-            <section className="detail-section">
-              <h4>Why is it shown here?</h4>
-              <div className="relationship-path">
-                <strong>{center.name}</strong>
-                <div className="relationship-path-relations">
-                  {entity.relationships.map((edge) => <span key={edge.relation}>{edge.display_relation}</span>)}
-                </div>
-                <strong>{entity.name}</strong>
-              </div>
-            </section>
-            <section className="detail-section">
-              <h4>Relationships</h4>
-              <div className="relationship-explanations">
-                {entity.relationships.map((edge) => {
-                  const explanation = RELATION_EXPLANATIONS[edge.relation]
-                  return (
-                    <article key={edge.relation}>
-                      <strong>{edge.display_relation}</strong>
-                      <p>{explanation.text}</p>
-                      {explanation.note && <small>{explanation.note}</small>}
-                    </article>
-                  )
-                })}
-              </div>
-            </section>
-          </>
-        )}
-        {!isCenter && metadata && (
-          <section className="detail-section gene-metadata-section">
-            <h4>Entity metadata</h4>
-            <dl className="gene-metadata-list">
-              {metadata.official_symbol && <div><dt>Current NCBI symbol</dt><dd>{metadata.official_symbol}</dd></div>}
-              {metadata.official_full_name && <div><dt>Official full name</dt><dd>{metadata.official_full_name}</dd></div>}
-              {metadata.organism && (
-                <div>
-                  <dt>Organism</dt>
-                  <dd>{metadata.organism}{metadata.taxonomy_id && <small>Taxonomy ID {metadata.taxonomy_id}</small>}</dd>
-                </div>
-              )}
-              {aliases.length > 0 && (
-                <div>
-                  <dt>Aliases</dt>
-                  <dd>
-                    <span className="gene-alias-list">
-                      {visibleAliases.map((alias) => <span key={alias}>{alias}</span>)}
-                    </span>
-                    {aliases.length > 5 && (
-                      <button className="detail-expand-button" type="button" onClick={() => setShowAllAliases((current) => !current)}>
-                        {showAllAliases ? 'Show fewer' : `Show all aliases (${aliases.length})`}
-                      </button>
-                    )}
-                  </dd>
-                </div>
-              )}
-              {metadata.summary && (
-                <div>
-                  <dt>NCBI summary</dt>
-                  <dd>
-                    <p className={`gene-summary ${showFullSummary ? 'expanded' : ''}`}>{metadata.summary}</p>
-                    {summaryCanExpand && (
-                      <button className="detail-expand-button" type="button" onClick={() => setShowFullSummary((current) => !current)}>
-                        {showFullSummary ? 'Show less' : 'Show full summary'}
-                      </button>
-                    )}
-                    {(metadata.summary_source || metadata.summary_date) && (
-                      <small>{[metadata.summary_source, metadata.summary_date].filter(Boolean).join(' · ')}</small>
-                    )}
-                  </dd>
-                </div>
-              )}
-              {metadata.replacement_gene_id && <div><dt>NCBI replacement GeneID</dt><dd>{metadata.replacement_gene_id}</dd></div>}
-              {metadata.source_modified_date && <div><dt>Source modified</dt><dd>{metadata.source_modified_date}</dd></div>}
-              <div><dt>Metadata source</dt><dd>NCBI Gene</dd></div>
-            </dl>
-            <p className="gene-metadata-disclaimer">Entity metadata is provided for identification and context. It was not used as textual input to the R-GCN model and does not explain the model&apos;s score.</p>
-          </section>
-        )}
-        {!isCenter && entity.entity_type === 'gene/protein' && !metadata && (
-          <section className="detail-section metadata-unavailable">
-            <h4>Entity metadata</h4>
-            <p>No additional NCBI metadata is included for this node.</p>
-          </section>
-        )}
-        {entity.entity_type === 'drug' && (
-          <section className="detail-section drug-information-card">
-            <h4>Entity information</h4>
-            <dl className="gene-metadata-list">
-              {[
-                ['what_is_this_drug', 'What is this drug?'],
-                ['general_use', 'General use'],
-                ['active_substance', 'Active substance'],
-                ['drug_class', 'Drug class'],
-              ].map(([field, label]) => (
-                <div key={field}>
-                  <dt>{label}</dt>
-                  <dd>{field === 'active_substance'
-                    ? displaySubstance(entity.metadata?.drug_information?.[field] || entity.name, entity.name)
-                    : entity.metadata?.drug_information?.[field] || 'Not available from the verified source.'}</dd>
-                </div>
-              ))}
-            </dl>
-            <div className="drug-information-sources">
-              <h5>Source</h5>
-              <ul>
-                {(entity.metadata?.drug_information?.sources?.length
-                  ? entity.metadata.drug_information.sources
-                  : ['CHEERS entity inventory (substance label only)']).map((source) => (
-                  <li key={source}>{source}</li>
-                ))}
-              </ul>
-            </div>
-            {(entity.metadata?.drug_information?.unii || entity.metadata?.drug_information?.provenance?.chembl_id) && (
-              <div className="drug-information-identifiers">
-                {entity.metadata?.drug_information?.unii && <div><strong>UNII:</strong> {entity.metadata.drug_information.unii}</div>}
-                {entity.metadata?.drug_information?.provenance?.chembl_id && (
-                  <div><strong>ChEMBL 37:</strong> {entity.metadata.drug_information.provenance.chembl_id}</div>
-                )}
-              </div>
-            )}
-            {entity.metadata?.drug_information?.general_use && (
-              <aside className="drug-information-notice" aria-label="Source indication notice">
-                Selected source-listed indications. These do not establish current approval for every formulation.
-              </aside>
-            )}
-            <p className="drug-information-disclaimer">General entity information only.<br />Not used by the R-GCN model.</p>
-          </section>
-        )}
-        {entity.entity_type === 'disease' && (
-          <section className="detail-section gene-metadata-section">
-            <h4>Entity description</h4>
-            <p>{entity.metadata?.description || 'No additional description is available for this entity.'}</p>
-            {entity.metadata?.description && (
-              <small>Source: {entity.metadata.source} · {entity.metadata.source_id} · {entity.metadata.license}</small>
-            )}
-          </section>
-        )}
-        <p className="gene-metadata-disclaimer">Entity descriptions are provided only for identification and general context. They were not used as textual input to the R-GCN model, do not explain the model&apos;s scores or predictions, and are not evidence of a drug–drug interaction or clinical guidance.</p>
-        <section className="detail-section entity-information">
-          <h4>{entity.entity_type === 'drug' ? 'Graph identity' : 'Entity information'}</h4>
-          <dl>
-            <div><dt>Entity type</dt><dd>{typeDetails.label}</dd></div>
-            <div><dt>{typeDetails.idLabel}</dt><dd>{entity.entity_id}</dd></div>
-            <div><dt>Graph node ID</dt><dd>{entity.node_id}</dd></div>
-            <div><dt>Source</dt><dd>{entity.source}</dd></div>
-            {isCenter && <div><dt>Role</dt><dd>Selected drug</dd></div>}
-          </dl>
-        </section>
-      </div>
-    )
-  }
-
-  const { center: source, neighbor, displayRelation, relation } = selected.data
-  return (
-    <div className="subgraph-detail-content">
-      <span className="card-kicker">Graph relationship</span>
-      <h3>{displayRelation}</h3>
-      <dl>
-        <div><dt>Source</dt><dd>{source.name}</dd></div>
-        <div><dt>Relation</dt><dd>{displayRelation} <small>{relation}</small></dd></div>
-        <div><dt>Target</dt><dd>{neighbor.name}</dd></div>
-        <div><dt>Status</dt><dd>Known G3 graph relationship</dd></div>
-        <div><dt>{relation === 'drug_drug' ? 'DDI scope' : 'Context scope'}</dt><dd>{relation === 'drug_drug' ? 'Training-only G3 relationship' : 'G3 forward support relationship'}</dd></div>
-        <div><dt>Predicted</dt><dd>No</dd></div>
-      </dl>
-    </div>
-  )
-}
-
 export default function SubgraphExplorer() {
+  const [searchParams] = useSearchParams()
+  const incomingDrugId = searchParams.get('drug_id')?.trim() || ''
+  const incomingDrugName = searchParams.get('drug_name')?.trim() || ''
   const containerRef = useRef(null)
   const cyRef = useRef(null)
   const requestId = useRef(0)
+  const automaticallyLoadedDrugId = useRef('')
   const [drug, setDrug] = useState(null)
   const [exploredDrug, setExploredDrug] = useState(null)
   const [data, setData] = useState(null)
@@ -434,13 +192,13 @@ export default function SubgraphExplorer() {
     }
   }, [data, elements])
 
-  async function requestNeighborhood({
+  const requestNeighborhood = useCallback(async ({
     targetDrug,
     relations = enabledRelations,
     entityTypes = enabledEntityTypes,
     offset = 0,
     pageChange = false,
-  }) {
+  }) => {
     if (!relations.length || !entityTypes.length) {
       requestId.current += 1
       setData((current) => current ? emptyFilteredData(current, relations, entityTypes) : current)
@@ -479,7 +237,23 @@ export default function SubgraphExplorer() {
         setPageLoading(false)
       }
     }
-  }
+  }, [enabledEntityTypes, enabledRelations])
+
+  useEffect(() => {
+    if (!incomingDrugId || automaticallyLoadedDrugId.current === incomingDrugId) return
+
+    automaticallyLoadedDrugId.current = incomingDrugId
+    const incomingDrug = {
+      entity_id: incomingDrugId,
+      name: incomingDrugName || incomingDrugId,
+    }
+    setDrug(incomingDrug)
+    setExploredDrug(incomingDrug)
+    setData(null)
+    setNeighbors([])
+    setSelected(null)
+    requestNeighborhood({ targetDrug: incomingDrug })
+  }, [incomingDrugId, incomingDrugName, requestNeighborhood])
 
   function explore(event) {
     event.preventDefault()
@@ -600,7 +374,7 @@ export default function SubgraphExplorer() {
                   </div>
                 </div>
               </article>
-              <aside className="subgraph-details-card" aria-live="polite"><ElementDetails key={selected ? `${selected.kind}:${selected.data.id}` : 'none'} selected={selected} center={data.center} /></aside>
+              <aside className="subgraph-details-card" aria-live="polite"><EntityDetailsPanel key={selected ? `${selected.kind}:${selected.data.id}` : 'none'} selected={selected} center={data.center} /></aside>
             </div>
           )}
 
