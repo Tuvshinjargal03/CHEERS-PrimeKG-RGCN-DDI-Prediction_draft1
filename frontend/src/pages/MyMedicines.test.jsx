@@ -452,7 +452,7 @@ describe('My Medicines', () => {
       'href',
       '/check?drug_a_id=DB00682&drug_b_id=DB00945',
     )
-    expect(within(actions).getByRole('link', { name: 'Review sources' })).toHaveAttribute(
+    expect(within(actions).getByRole('link', { name: 'Review evidence' })).toHaveAttribute(
       'href',
       '/evidence?drug_a_id=DB00682&drug_b_id=DB00945',
     )

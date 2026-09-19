@@ -257,7 +257,7 @@ export default function Evidence() {
             </article>
           </div>
 
-          <section className="evidence-panel" aria-labelledby="retrieved-evidence-summary-title">
+          <section className="evidence-panel evidence-retrieval-summary" aria-labelledby="retrieved-evidence-summary-title">
             <div className="panel-title"><FileSearch size={21} /><div><span>External source orientation</span><h2 id="retrieved-evidence-summary-title">Retrieved evidence summary</h2></div></div>
             <div>
               <p>{labelAvailabilitySummary(labelEvidence)}</p>

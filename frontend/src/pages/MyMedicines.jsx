@@ -148,7 +148,7 @@ function PairResultCard({ result, index }) {
       <nav className="my-medicines-pair-actions" aria-label={`Actions for ${pair.drugA.name} and ${pair.drugB.name}`}>
         <Link to={`/search?q=${encodeURIComponent(question)}`}>Review pair</Link>
         <Link to={`/check?${params}`}>Open Medicine Checker</Link>
-        <Link to={`/evidence?${params}`}>Review sources</Link>
+        <Link to={`/evidence?${params}`}>Review evidence</Link>
         {hasGraphContext(pair) && (
           <Link to={`/graph?${params}`}>Explore biomedical connections</Link>
         )}

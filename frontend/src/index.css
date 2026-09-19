@@ -3510,6 +3510,10 @@ textarea:focus-visible {
   margin-top: 18px;
 }
 
+.evidence-retrieval-summary {
+  margin-top: 18px;
+}
+
 .model-result-card,
 .external-source-card {
   min-width: 0;

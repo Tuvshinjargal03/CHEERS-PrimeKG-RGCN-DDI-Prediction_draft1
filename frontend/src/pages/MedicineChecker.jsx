@@ -247,7 +247,7 @@ export default function MedicineChecker() {
           <section className="product-result-section" aria-labelledby="checked-sources-heading">
             <div className="product-section-title">
               <div><span className="eyebrow">Source details</span><h2 id="checked-sources-heading">What the checked sources returned</h2></div>
-              {params && <Link className="text-action" to={`/evidence?${params}`}>Open full source view <ArrowRight size={15} /></Link>}
+              {params && <Link className="text-action" to={`/evidence?${params}`}>Review evidence <ArrowRight size={15} /></Link>}
             </div>
 
             <div className="checker-source-grid">
