@@ -1,10 +1,9 @@
 ﻿import {
   BarChart3,
   Beaker,
-  Bookmark,
+  BookOpen,
   ChevronDown,
   ChevronRight,
-  ClipboardList,
   FlaskConical,
   GitBranch,
   HeartPulse,
@@ -37,6 +36,14 @@ const SubgraphExplorer = lazy(() => import('./pages/SubgraphExplorer.jsx'))
 
 const navigationGroups = [
   {
+    label: 'Browse',
+    icon: BookOpen,
+    items: [
+      { path: '/medicines', label: 'Medicines', icon: Pill },
+      { path: '/diseases', label: 'Diseases', icon: HeartPulse },
+    ],
+  },
+  {
     label: 'Explore',
     icon: Network,
     items: [
@@ -58,12 +65,8 @@ const navigationGroups = [
 
 const publicNavigation = [
   { path: '/overview', label: 'Home', icon: Home },
-  { path: '/my-health', label: 'My Health', icon: LayoutDashboard },
   { path: '/check', label: 'Check Medicines', icon: Beaker },
-  { path: '/my-medicines', label: 'My Medicines', icon: ClipboardList },
-  { path: '/my-conditions', label: 'My Conditions', icon: Bookmark },
-  { path: '/medicines', label: 'Medicines', icon: Pill },
-  { path: '/diseases', label: 'Diseases', icon: HeartPulse },
+  { path: '/my-health', label: 'My Health', icon: LayoutDashboard },
 ]
 
 function ExpandableNavigation({ group, isActive, isOpen, onToggle, onClose }) {
@@ -205,7 +208,9 @@ function AppShell() {
             </NavLink>
           ))}
           {navigationGroups.map((group) => {
-            const isActive = group.items.some((item) => item.path === location.pathname)
+            const isActive = group.items.some((item) => (
+              item.path === location.pathname || location.pathname.startsWith(`${item.path}/`)
+            ))
             const isOpen = isActive || openGroup === group.label
 
             return (

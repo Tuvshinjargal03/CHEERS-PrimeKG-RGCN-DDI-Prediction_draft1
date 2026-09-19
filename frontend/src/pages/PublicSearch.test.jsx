@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -55,9 +55,16 @@ describe('public Home', () => {
     expect(screen.getByRole('heading', { name: /understand your medicines better/i })).toBeVisible()
     expect(screen.getByRole('searchbox', { name: /search CHEERS/i })).toBeVisible()
     expect(screen.getByRole('link', { name: /check medicines together/i })).toHaveAttribute('href', '/check')
-    expect(screen.getByRole('link', { name: /medicine guide/i })).toHaveAttribute('href', '/medicines')
-    expect(screen.getByRole('link', { name: /disease guide/i })).toHaveAttribute('href', '/diseases')
+    expect(screen.getByRole('link', { name: 'Medicines' })).toHaveAttribute('href', '/medicines')
+    expect(screen.getByRole('link', { name: 'Diseases' })).toHaveAttribute('href', '/diseases')
+    expect(screen.getByRole('link', { name: /My Health/ })).toHaveAttribute('href', '/my-health')
     expect(screen.getByRole('link', { name: /explore connections/i })).toHaveAttribute('href', '/graph')
+    const primary = screen.getByRole('region', { name: 'Start with a simple question' })
+    expect(within(primary).getAllByRole('heading', { level: 3 })).toHaveLength(4)
+    expect(within(primary).queryByRole('link', { name: /Predictor/ })).not.toBeInTheDocument()
+    const research = screen.getByRole('region', { name: 'Built on CHEERS knowledge-graph DDI research' })
+    expect(within(research).getByText('Behind the product')).toBeVisible()
+    expect(within(research).getByRole('link', { name: 'Research Predictor' })).toHaveAttribute('href', '/predictor')
   })
 
   it('submits the smart-search query without parsing it on Home', async () => {

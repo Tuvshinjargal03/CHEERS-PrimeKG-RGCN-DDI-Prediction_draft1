@@ -365,6 +365,11 @@ export default function MyConditions() {
         )}
       </section>
 
+      <div>
+        <p>Your saved conditions also appear alongside saved medicines in My Health.</p>
+        <Link className="secondary-button" to="/my-health">View in My Health <ArrowRight size={17} aria-hidden="true" /></Link>
+      </div>
+
       <p className="product-page-boundary my-conditions-boundary">
         <Info size={15} aria-hidden="true" />
         Saved conditions are browsing shortcuts, not a medical record, diagnosis, or treatment recommendation.

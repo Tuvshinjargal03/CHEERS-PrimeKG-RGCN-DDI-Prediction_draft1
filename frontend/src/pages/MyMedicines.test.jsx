@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -84,6 +84,7 @@ describe('My Medicines', () => {
 
     await addMedicine(user, 'Warfarin')
 
+    expect(screen.getByRole('link', { name: 'View in My Health' })).toHaveAttribute('href', '/my-health')
     const selected = screen.getByRole('list', { name: 'Selected medicines' })
     expect(within(selected).getByText('Warfarin')).toBeVisible()
     expect(within(selected).getByText('DB00682')).toBeVisible()
@@ -131,7 +132,7 @@ describe('My Medicines', () => {
     ])
   })
 
-  it('checks three medicines as three sequential pairs and renders all existing states', async () => {
+  it('checks three medicines as three unique pairs and renders all existing states', async () => {
     const user = userEvent.setup()
     getJson
       .mockResolvedValueOnce(IMPORTANT_EVIDENCE)
@@ -181,6 +182,99 @@ describe('My Medicines', () => {
     const summary = await screen.findByLabelText('Medicine review summary')
     expect(within(summary).getByText('combinations checked').closest('article')).toHaveTextContent('3')
     expect(getJson).toHaveBeenCalledTimes(3)
+  })
+
+  it('checks all 28 pairs with at most four in flight and displays settled results in original order', async () => {
+    const user = userEvent.setup()
+    const medicines = Array.from({ length: 8 }, (_, index) => ({
+      entity_id: `TEST${index}`, name: `Medicine ${index}`,
+    }))
+    window.localStorage.setItem('cheers.my-medicines.v1', JSON.stringify(medicines))
+    const pending = []
+    let active = 0
+    let peak = 0
+    getJson.mockImplementation((path) => {
+      active += 1
+      peak = Math.max(peak, active)
+      const request = { path, settled: false }
+      pending.push(request)
+      return new Promise((resolve, reject) => {
+        request.finish = (failed = false) => {
+          request.settled = true
+          if (failed) reject(new Error('unavailable'))
+          else resolve(INSUFFICIENT_EVIDENCE)
+        }
+      }).finally(() => { active -= 1 })
+    })
+    const { container } = renderPage()
+    await user.click(screen.getByRole('button', { name: 'Check combinations' }))
+
+    expect(pending).toHaveLength(4)
+    expect(screen.getByText('Checked 0 of 28 combinations')).toBeVisible()
+    expect(container.querySelectorAll('.my-medicines-pair-card')).toHaveLength(0)
+
+    await act(async () => { pending[3].finish(true) })
+    expect(pending).toHaveLength(5)
+    expect(screen.getByText('Checked 1 of 28 combinations')).toBeVisible()
+    expect(screen.getByText('Combination 4')).toBeVisible()
+    expect(screen.getByText(/Sources could not be retrieved for this combination/)).toBeVisible()
+    expect(screen.queryByLabelText('Medicine review summary')).not.toBeInTheDocument()
+
+    await act(async () => { pending[0].finish() })
+    expect(screen.getByText('Checked 2 of 28 combinations')).toBeVisible()
+    let cards = [...container.querySelectorAll('.my-medicines-pair-card')]
+    expect(cards).toHaveLength(2)
+    expect(cards[0]).toHaveTextContent('Combination 1')
+    expect(cards[1]).toHaveTextContent('Combination 4')
+
+    while (pending.some((request) => !request.settled)) {
+      const next = pending.findLast((request) => !request.settled)
+      await act(async () => { next.finish() })
+      expect(active).toBeLessThanOrEqual(4)
+    }
+
+    const pairs = generateUniqueMedicinePairs(medicines)
+    expect(pending.map(({ path }) => path)).toEqual(pairs.map(({ drugA, drugB }) => (
+      `/api/evidence/pair?drug_a_id=${drugA.entity_id}&drug_b_id=${drugB.entity_id}`
+    )))
+    expect(new Set(pending.map(({ path }) => path)).size).toBe(28)
+    expect(peak).toBe(4)
+    expect(active).toBe(0)
+    cards = [...container.querySelectorAll('.my-medicines-pair-card')]
+    expect(cards).toHaveLength(28)
+    cards.forEach((card, index) => {
+      expect(within(card).getByRole('heading', { level: 3 })).toHaveTextContent(
+        `${pairs[index].drugA.name} + ${pairs[index].drugB.name}`,
+      )
+      expect(card).toHaveTextContent(`Combination ${index + 1}`)
+    })
+    expect(screen.getByLabelText('Medicine review summary')).toHaveTextContent('28combinations checked')
+    expect(screen.queryByText(/^Checked \d+ of 28 combinations$/)).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Remove Medicine 0' }))
+    expect(container.querySelectorAll('.my-medicines-pair-card')).toHaveLength(0)
+    expect(screen.queryByLabelText('Medicine review summary')).not.toBeInTheDocument()
+  })
+
+  it('ignores stale completions and stops queued pairs after unmount', async () => {
+    const user = userEvent.setup()
+    const medicines = Array.from({ length: 4 }, (_, index) => ({
+      entity_id: `TEST${index}`, name: `Medicine ${index}`,
+    }))
+    window.localStorage.setItem('cheers.my-medicines.v1', JSON.stringify(medicines))
+    const settle = []
+    getJson.mockImplementation(() => new Promise((resolve) => settle.push(resolve)))
+    const { unmount } = renderPage()
+    await user.click(screen.getByRole('button', { name: 'Check combinations' }))
+    expect(getJson).toHaveBeenCalledTimes(4)
+    unmount()
+
+    window.localStorage.setItem('cheers.my-medicines.v1', JSON.stringify(medicines.slice(0, 2)))
+    renderPage()
+    await act(async () => { settle.forEach((resolve) => resolve(IMPORTANT_EVIDENCE)) })
+    expect(getJson).toHaveBeenCalledTimes(4)
+    expect(screen.queryByRole('heading', { name: 'Your medicine review' })).not.toBeInTheDocument()
+    expect(screen.queryByText('Interaction warning found')).not.toBeInTheDocument()
   })
 
   it('provides existing pair-review, checker, evidence, and graph routes', async () => {

@@ -515,6 +515,9 @@ export default function GraphExplorer() {
             <button type="button" className="primary-button" onClick={() => navigate(evidenceDestination(context, navigationScore))}>
               Review evidence<ArrowRight size={16} />
             </button>
+            <Link className="secondary-button" to={pairEndpoint('/check', context.drug_a.drug_id, context.drug_b.drug_id)}>
+              Check this medicine pair<ArrowRight size={16} />
+            </Link>
           </div>
 
           <aside className="safety-notice"><AlertCircle size={21} /><div><strong>Interpretation boundary</strong><p>{context.interpretation}</p></div></aside>

@@ -13,6 +13,7 @@ They are not clinical recommendations or validated interaction
 probabilities.
 """
 
+from concurrent.futures import ThreadPoolExecutor, wait
 from contextlib import asynccontextmanager
 from pathlib import Path
 import csv
@@ -142,7 +143,12 @@ async def lifespan(app: FastAPI):
         "[CHEERS API] Lightweight runtime and G3 context loaded successfully."
     )
 
-    yield
+    # Share a bounded pool across pair requests; join workers on shutdown.
+    with ThreadPoolExecutor(
+        max_workers=8, thread_name_prefix="cheers-evidence"
+    ) as executor:
+        app.state.evidence_executor = executor
+        yield
 
     app.state.predictor = None
     app.state.context_store = None
@@ -1086,20 +1092,26 @@ def pair_evidence(
             detail=f"Unknown drug ID: {drug_b_id}.",
         )
 
-    label_evidence = app.state.label_evidence_service.get_pair_evidence(
+    label_future = app.state.evidence_executor.submit(
+        app.state.label_evidence_service.get_pair_evidence,
         drug_a_name=drug_a["drug_name"],
         drug_b_name=drug_b["drug_name"],
     )
-    literature = app.state.literature_service.search_pair(
+    literature_future = app.state.evidence_executor.submit(
+        app.state.literature_service.search_pair,
         drug_a_name=drug_a["drug_name"],
         drug_b_name=drug_b["drug_name"],
     )
 
+    # Expected source errors are payloads. Even for an unexpected exception,
+    # let both tasks settle before propagating it; never cancel the other source.
+    wait((label_future, literature_future))
+
     return build_evidence_response(
         drug_a=drug_a,
         drug_b=drug_b,
-        label_evidence=label_evidence,
-        literature=literature,
+        label_evidence=label_future.result(),
+        literature=literature_future.result(),
     )
 
 

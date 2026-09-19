@@ -112,6 +112,7 @@ describe('My Conditions', () => {
 
     await searchAndAdd(user, 'type 2 diabetes mellitus')
 
+    expect(screen.getByRole('link', { name: 'View in My Health' })).toHaveAttribute('href', '/my-health')
     expect(within(conditionCard(DIABETES.name)).getByText('5148')).toBeVisible()
     await waitFor(() => {
       expect(JSON.parse(window.localStorage.getItem('cheers.my-conditions.v1'))).toEqual([

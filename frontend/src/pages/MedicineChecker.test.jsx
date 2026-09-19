@@ -103,6 +103,12 @@ describe('MedicineChecker', () => {
       '/graph?drug_a_id=DB00682&drug_b_id=DB00945',
     )
     expect(screen.getByRole('link', { name: /open research Predictor/i })).toHaveAttribute('href', '/predictor')
+    expect(screen.getByText('Optional research')).toBeVisible()
+    const evidenceLink = screen.getByRole('link', { name: /open full source view/i })
+    const graphLink = screen.getByRole('link', { name: /explore graph/i })
+    const researchLink = screen.getByRole('link', { name: /open research Predictor/i })
+    expect(evidenceLink.compareDocumentPosition(graphLink) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(graphLink.compareDocumentPosition(researchLink) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
   it('uses needs-review for literature without an explicit label mention', async () => {

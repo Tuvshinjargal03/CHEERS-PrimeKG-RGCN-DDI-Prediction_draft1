@@ -1,11 +1,11 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import GraphExplorer from './GraphExplorer.jsx'
 import { getJson } from '../lib/api.js'
 
-vi.mock('cytoscape', () => ({ default: vi.fn() }))
+vi.mock('cytoscape', () => ({ default: vi.fn(() => ({ on: vi.fn(), destroy: vi.fn() })) }))
 vi.mock('../components/MedicineLabelScanner.jsx', () => ({ default: () => null }))
 vi.mock('../lib/api.js', () => ({
   getJson: vi.fn(),
@@ -19,11 +19,20 @@ const WARFARIN = { name: 'Warfarin', entity_id: 'DB00682', node_id: 682 }
 const ASPIRIN = { name: 'Aspirin', entity_id: 'DB00945', node_id: 945 }
 const RESULTS = [TESTOSTERONE, UNSUPPORTED, WARFARIN, ASPIRIN]
 
+function Destination() {
+  const location = useLocation()
+  return <p>Destination: {location.pathname}{location.search}</p>
+}
+
 function renderExplorer() {
   getJson.mockResolvedValue({ results: RESULTS, has_more: false })
   render(
     <MemoryRouter initialEntries={['/graph']}>
-      <GraphExplorer />
+      <Routes>
+        <Route path="/graph" element={<GraphExplorer />} />
+        <Route path="/check" element={<Destination />} />
+        <Route path="/evidence" element={<Destination />} />
+      </Routes>
     </MemoryRouter>,
   )
 }
@@ -88,6 +97,33 @@ describe('GraphExplorer context availability', () => {
 
     expect(await screen.findByText('Context API unavailable.')).toHaveClass('inline-alert', 'error')
     expect(getJson).toHaveBeenLastCalledWith('/api/context/pair?drug_a_id=DB00682&drug_b_id=DB00945')
+  })
+
+  it.each([
+    ['link', 'Check this medicine pair', '/check'],
+    ['button', 'Review evidence', '/evidence'],
+  ])('links a loaded pair to %s %s with both drug IDs', async (role, name, path) => {
+    renderExplorer()
+    const [drugAInput, drugBInput] = screen.getAllByRole('combobox')
+    await selectDrug(drugAInput, 'Warfarin')
+    await selectDrug(drugBInput, 'Aspirin')
+    expect(screen.queryByRole('link', { name: 'Check this medicine pair' })).not.toBeInTheDocument()
+    const drugContext = (drug) => ({
+      drug_id: drug.entity_id, drug_name: drug.name, drug_node_id: drug.node_id,
+      total_context_edges: 0, context: {},
+    })
+    getJson.mockResolvedValueOnce({
+      drug_a: drugContext(WARFARIN), drug_b: drugContext(ASPIRIN),
+      shared: { total: 0, gene_protein_count: 0, disease_count: 0, entities: [] },
+      interpretation: 'Fixture interpretation boundary.',
+    })
+    await userEvent.click(screen.getByRole('button', { name: 'Explore pair' }))
+    const action = await screen.findByRole(role, { name })
+    expect(screen.getByRole('link', { name: 'Check this medicine pair' })).toHaveAttribute(
+      'href', '/check?drug_a_id=DB00682&drug_b_id=DB00945',
+    )
+    await userEvent.click(action)
+    expect(screen.getByText(`Destination: ${path}?drug_a_id=DB00682&drug_b_id=DB00945`)).toBeVisible()
   })
 
   it('labels autocomplete results with context availability only on this page', async () => {

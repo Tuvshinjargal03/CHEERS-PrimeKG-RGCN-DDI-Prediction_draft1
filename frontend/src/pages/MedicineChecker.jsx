@@ -326,7 +326,7 @@ export default function MedicineChecker() {
 
           <aside className="research-output-gateway">
             <span><Search size={20} /></span>
-            <div><small>Advanced research</small><strong>R-GCN Predictor</strong><p>The Predictor ranks candidate graph links. Its raw score is not a probability or clinical safety score.</p></div>
+            <div><small>Optional research</small><strong>R-GCN Predictor</strong><p>The Predictor ranks candidate graph links. Its raw score is not a probability or clinical safety score.</p></div>
             <Link to="/predictor">Open research Predictor <ArrowRight size={15} /></Link>
           </aside>
         </div>

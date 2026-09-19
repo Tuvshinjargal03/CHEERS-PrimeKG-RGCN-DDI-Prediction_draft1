@@ -13,6 +13,7 @@ import {
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getJson, pairEndpoint } from '../lib/api.js'
+import { mapWithConcurrency } from '../lib/mapWithConcurrency.js'
 import { generateUniqueMedicinePairs } from '../lib/myMedicines.js'
 import { derivePairReviewStatus } from '../lib/pairStatus.js'
 import './PublicProduct.css'
@@ -61,48 +62,49 @@ function readSavedSelections(storageKey, limit) {
 }
 
 function useSavedInformation(items, kind) {
-  const [requests, setRequests] = useState({})
+  const [requestState, setRequestState] = useState({ items, kind, results: {} })
 
   useEffect(() => {
     let active = true
-    setRequests(Object.fromEntries(items.map((item) => [
-      item.entity_id,
-      { status: 'loading', payload: null, error: '' },
-    ])))
 
-    async function load() {
-      for (const item of items) {
-        try {
-          const path = kind === 'medicine'
-            ? `/api/public/medicine?drug_id=${encodeURIComponent(item.entity_id)}`
-            : `/api/public/disease?disease_id=${encodeURIComponent(item.entity_id)}`
-          const payload = await getJson(path)
-          if (!active) return
-          setRequests((current) => ({
-            ...current,
-            [item.entity_id]: { status: 'ready', payload, error: '' },
-          }))
-        } catch (requestError) {
-          if (!active) return
-          setRequests((current) => ({
-            ...current,
-            [item.entity_id]: {
-              status: 'error',
-              payload: null,
-              error: requestError.message || `${kind} information could not be loaded.`,
-            },
-          }))
-        }
-      }
-    }
-
-    load()
+    mapWithConcurrency(
+      items,
+      4,
+      (item) => {
+        const path = kind === 'medicine'
+          ? `/api/public/medicine?drug_id=${encodeURIComponent(item.entity_id)}`
+          : `/api/public/disease?disease_id=${encodeURIComponent(item.entity_id)}`
+        return getJson(path)
+      },
+      (settled, index) => {
+        const result = settled.status === 'fulfilled'
+          ? { status: 'ready', payload: settled.value, error: '' }
+          : {
+            status: 'error',
+            payload: null,
+            error: settled.reason?.message || `${kind} information could not be loaded.`,
+          }
+        setRequestState((current) => !active ? current : ({
+          items,
+          kind,
+          results: {
+            ...(current.items === items && current.kind === kind ? current.results : {}),
+            [items[index].entity_id]: result,
+          },
+        }))
+      },
+      () => !active,
+    )
     return () => {
       active = false
     }
   }, [items, kind])
 
-  return requests
+  const results = requestState.items === items && requestState.kind === kind ? requestState.results : {}
+  return Object.fromEntries(items.map((item) => [
+    item.entity_id,
+    results[item.entity_id] || { status: 'loading', payload: null, error: '' },
+  ]))
 }
 
 function SelectionSummary({ title, items, emptyCopy, addPath, managePath, type }) {
@@ -114,7 +116,7 @@ function SelectionSummary({ title, items, emptyCopy, addPath, managePath, type }
           <span className="eyebrow">Saved on this browser</span>
           <h2 id={`my-health-${type}-title`}>{title}</h2>
         </div>
-        {items.length > 0 && <Link to={managePath}>Manage {isMedicine ? 'medicines' : 'conditions'}</Link>}
+        <Link to={managePath}>Manage {isMedicine ? 'medicines' : 'conditions'}</Link>
       </div>
       {items.length ? (
         <div className="my-health-selection-list">
@@ -201,7 +203,7 @@ export default function MyHealth() {
     [result.status.key]: summary[result.status.key] + 1,
   }), { important: 0, review: 0, insufficient: 0 })
   const orderedPairResults = pairReview.results
-    .map((result, index) => ({ ...result, originalIndex: index }))
+    .slice()
     .sort((left, right) => (
       PAIR_STATUS_PRIORITY[left.status.key] - PAIR_STATUS_PRIORITY[right.status.key]
       || left.originalIndex - right.originalIndex
@@ -212,36 +214,36 @@ export default function MyHealth() {
     if (!pairs.length || pairReview.checking) return
     const reviewId = reviewIdRef.current + 1
     reviewIdRef.current = reviewId
-    setPairReview({ checking: true, current: 1, total: pairs.length, results: [] })
+    setPairReview({ checking: true, current: 0, total: pairs.length, results: [] })
 
-    for (let index = 0; index < pairs.length; index += 1) {
-      if (reviewIdRef.current !== reviewId) return
-      const pair = pairs[index]
-      setPairReview((current) => ({ ...current, current: index + 1 }))
-      let evidence = null
-      let failed = false
-      try {
-        evidence = await getJson(pairEndpoint(
-          '/api/evidence/pair',
-          pair.drugA.entity_id,
-          pair.drugB.entity_id,
-        ))
-      } catch {
-        failed = true
-      }
-      if (reviewIdRef.current !== reviewId) return
-      setPairReview((current) => ({
-        ...current,
-        results: [...current.results, {
-          pair,
-          failed,
-          status: derivePairReviewStatus(evidence, failed),
-        }],
-      }))
-    }
+    const isCancelled = () => reviewIdRef.current !== reviewId
+    await mapWithConcurrency(
+      pairs,
+      4,
+      (pair) => getJson(pairEndpoint(
+        '/api/evidence/pair',
+        pair.drugA.entity_id,
+        pair.drugB.entity_id,
+      )),
+      (settled, originalIndex) => {
+        const failed = settled.status === 'rejected'
+        const evidence = failed ? null : settled.value
+        setPairReview((current) => isCancelled() ? current : ({
+          ...current,
+          current: current.current + 1,
+          results: [...current.results, {
+            pair: pairs[originalIndex],
+            originalIndex,
+            failed,
+            status: derivePairReviewStatus(evidence, failed),
+          }],
+        }))
+      },
+      isCancelled,
+    )
 
     if (reviewIdRef.current === reviewId) {
-      setPairReview((current) => ({ ...current, checking: false }))
+      setPairReview((current) => isCancelled() ? current : ({ ...current, checking: false }))
     }
   }
 
@@ -251,6 +253,8 @@ export default function MyHealth() {
         <span className="eyebrow">My Health</span>
         <h1>Your selected medicines and conditions, brought together in one place.</h1>
         <p>Use this overview to reach available CHEERS information without creating a clinical profile.</p>
+        <p><strong>Saved medicines:</strong> review combinations, open medicine details, and explore available source information.</p>
+        <p><strong>Saved conditions:</strong> open condition information, inspect typed medicine–condition relationships, and access available nutrition and lifestyle modules.</p>
       </header>
 
       <aside className="my-health-privacy">
@@ -316,7 +320,7 @@ export default function MyHealth() {
                   </div>
                 )}
                 {pairReview.checking && (
-                  <p className="my-health-module-note" role="status"><LoaderCircle className="spin" size={17} /> Reviewing {pairReview.current} of {pairReview.total} combinations…</p>
+                  <p className="my-health-module-note" role="status"><LoaderCircle className="spin" size={17} /> Checked {pairReview.current} of {pairReview.total} combinations</p>
                 )}
                 {pairReview.results.length > 0 && (
                   <>

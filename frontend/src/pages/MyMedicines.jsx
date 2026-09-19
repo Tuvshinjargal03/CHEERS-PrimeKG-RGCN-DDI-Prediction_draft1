@@ -17,6 +17,7 @@ import { Link } from 'react-router-dom'
 import DrugAutocomplete from '../components/DrugAutocomplete.jsx'
 import { G3_CONTEXT_CANDIDATE_IDS } from '../data/g3ContextCandidateIds.js'
 import { getJson, pairEndpoint } from '../lib/api.js'
+import { mapWithConcurrency } from '../lib/mapWithConcurrency.js'
 import { generateUniqueMedicinePairs } from '../lib/myMedicines.js'
 import { derivePairReviewStatus } from '../lib/pairStatus.js'
 import './PublicProduct.css'
@@ -202,34 +203,34 @@ export default function MyMedicines() {
     runIdRef.current = runId
     setResults([])
     setChecking(true)
-    setProgress({ current: 1, total: pairs.length })
+    setProgress({ current: 0, total: pairs.length })
 
-    for (let index = 0; index < pairs.length; index += 1) {
-      if (runIdRef.current !== runId) return
-      const pair = pairs[index]
-      setProgress({ current: index + 1, total: pairs.length })
-
-      let evidence = null
-      let failed = false
-      try {
-        evidence = await getJson(
-          pairEndpoint('/api/evidence/pair', pair.drugA.entity_id, pair.drugB.entity_id),
-        )
-      } catch {
-        failed = true
-      }
-
-      if (runIdRef.current !== runId) return
-      setResults((current) => [
-        ...current,
-        {
-          pair,
+    const isCancelled = () => runIdRef.current !== runId
+    await mapWithConcurrency(
+      pairs,
+      4,
+      (pair) => getJson(
+        pairEndpoint('/api/evidence/pair', pair.drugA.entity_id, pair.drugB.entity_id),
+      ),
+      (settled, originalIndex) => {
+        const failed = settled.status === 'rejected'
+        const evidence = failed ? null : settled.value
+        const result = {
+          pair: pairs[originalIndex],
+          originalIndex,
           evidence,
           failed,
           status: derivePairReviewStatus(evidence, failed),
-        },
-      ])
-    }
+        }
+        setResults((current) => isCancelled() ? current : (
+          [...current, result].sort((left, right) => left.originalIndex - right.originalIndex)
+        ))
+        setProgress((current) => isCancelled() ? current : (
+          { ...current, current: current.current + 1 }
+        ))
+      },
+      isCancelled,
+    )
 
     if (runIdRef.current === runId) setChecking(false)
   }
@@ -331,8 +332,8 @@ export default function MyMedicines() {
         <div className="my-medicines-progress" role="status" aria-live="polite">
           <LoaderCircle className="spin" size={22} aria-hidden="true" />
           <div>
-            <strong>Checking {progress.current} of {progress.total} combinations…</strong>
-            <p>Each pair is checked in order so external requests stay controlled.</p>
+            <strong>Checked {progress.current} of {progress.total} combinations</strong>
+            <p>Results appear as each combination finishes checking.</p>
           </div>
         </div>
       )}
@@ -357,16 +358,21 @@ export default function MyMedicines() {
           )}
 
           <div className="my-medicines-pair-list">
-            {results.map((result, index) => (
+            {results.map((result) => (
               <PairResultCard
                 key={`${result.pair.drugA.entity_id}-${result.pair.drugB.entity_id}`}
                 result={result}
-                index={index}
+                index={result.originalIndex}
               />
             ))}
           </div>
         </section>
       )}
+
+      <div>
+        <p>Your saved medicines also appear alongside saved conditions in My Health.</p>
+        <Link className="secondary-button" to="/my-health">View in My Health <ChevronRight size={17} aria-hidden="true" /></Link>
+      </div>
 
       <p className="product-page-boundary my-medicines-boundary">
         <Info size={15} aria-hidden="true" />

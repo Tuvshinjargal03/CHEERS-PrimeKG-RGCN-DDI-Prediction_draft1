@@ -3,7 +3,7 @@ import {
   Beaker,
   BookOpen,
   FlaskConical,
-  HeartPulse,
+  LayoutDashboard,
   Network,
   Pill,
   Search,
@@ -24,17 +24,20 @@ const QUICK_ACTIONS = [
     emphasis: 'featured',
   },
   {
-    title: 'Medicine guide',
-    description: 'Find medicine information, warnings, interactions, and side effects when available.',
-    path: '/medicines',
+    title: 'Browse medicines and diseases',
+    description: 'Open medicine details and condition information with available sources.',
+    links: [
+      { path: '/medicines', label: 'Medicines' },
+      { path: '/diseases', label: 'Diseases' },
+    ],
     icon: Pill,
     tone: 'blue',
   },
   {
-    title: 'Disease guide',
-    description: 'Read clear disease explanations and explore verified treatment relationships.',
-    path: '/diseases',
-    icon: HeartPulse,
+    title: 'My Health',
+    description: 'Bring saved medicines and conditions together to review available information.',
+    path: '/my-health',
+    icon: LayoutDashboard,
     tone: 'rose',
   },
   {
@@ -100,16 +103,24 @@ export default function Home() {
         </div>
 
         <div className="public-quick-grid">
-          {QUICK_ACTIONS.map(({ title, description, path, icon: Icon, tone, emphasis }) => (
-            <Link className={`public-quick-card is-${tone}${emphasis ? ` is-${emphasis}` : ''}`} to={path} key={title}>
-              <span className="public-quick-icon"><Icon size={21} /></span>
-              <div>
-                <h3>{title}</h3>
-                <p>{description}</p>
-              </div>
-              <ArrowRight className="public-quick-arrow" size={18} aria-hidden="true" />
-            </Link>
-          ))}
+          {QUICK_ACTIONS.map(({ title, description, path, links, icon: Icon, tone, emphasis }) => {
+            const Card = links ? 'article' : Link
+            return (
+              <Card className={`public-quick-card is-${tone}${emphasis ? ` is-${emphasis}` : ''}${links ? ' public-browse-card' : ''}`} to={path} key={title}>
+                <span className="public-quick-icon"><Icon size={21} /></span>
+                <div>
+                  <h3>{title}</h3>
+                  <p>{description}</p>
+                  {links && (
+                    <div className="public-gateway-links">
+                      {links.map((link) => <Link key={link.path} to={link.path}>{link.label} <ArrowRight size={15} aria-hidden="true" /></Link>)}
+                    </div>
+                  )}
+                </div>
+                {!links && <ArrowRight className="public-quick-arrow" size={18} aria-hidden="true" />}
+              </Card>
+            )
+          })}
         </div>
       </section>
 

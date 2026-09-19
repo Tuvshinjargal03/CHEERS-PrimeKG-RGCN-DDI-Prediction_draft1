@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import csv
 import sys
 from pathlib import Path
@@ -207,6 +208,9 @@ def verify_live_services(drug_a, drug_b):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--offline", action="store_true", help="Skip optional live source checks.")
+    args = parser.parse_args()
     print("PASS: external-evidence modules imported successfully.")
     drug_a, drug_b = resolve_known_pair()
     print(
@@ -223,7 +227,8 @@ def main():
         raise AssertionError("The /api/evidence/pair route is not registered.")
     print("PASS: /api/evidence/pair is registered.")
 
-    verify_live_services(drug_a, drug_b)
+    if not args.offline:
+        verify_live_services(drug_a, drug_b)
     print("PASS: external-evidence verification completed.")
 
 
