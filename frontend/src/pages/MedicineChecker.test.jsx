@@ -97,7 +97,7 @@ describe('MedicineChecker', () => {
 
     await choosePairAndSubmit(user)
 
-    expect(await screen.findByRole('link', { name: /open full source view/i })).toHaveAttribute(
+    expect(await screen.findByRole('link', { name: /review evidence/i })).toHaveAttribute(
       'href',
       '/evidence?drug_a_id=DB00682&drug_b_id=DB00945',
     )
@@ -107,7 +107,7 @@ describe('MedicineChecker', () => {
     )
     expect(screen.getByRole('link', { name: /open research Predictor/i })).toHaveAttribute('href', '/predictor')
     expect(screen.getByText('Optional research')).toBeVisible()
-    const evidenceLink = screen.getByRole('link', { name: /open full source view/i })
+    const evidenceLink = screen.getByRole('link', { name: /review evidence/i })
     const graphLink = screen.getByRole('link', { name: /explore graph/i })
     const researchLink = screen.getByRole('link', { name: /open research Predictor/i })
     expect(evidenceLink.compareDocumentPosition(graphLink) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
