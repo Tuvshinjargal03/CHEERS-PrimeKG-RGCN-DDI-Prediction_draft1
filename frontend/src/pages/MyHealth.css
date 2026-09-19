@@ -319,6 +319,17 @@
   font-size: 0.65rem;
 }
 
+.my-health-pair-list-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.my-health-pair-list-control .secondary-button {
+  flex: 0 0 auto;
+}
+
 .my-health-priority-note {
   color: #7d7185;
   font-size: 0.7rem;
@@ -474,12 +485,14 @@
   }
 
   .my-health-review-prompt,
+  .my-health-pair-list-control,
   .my-health-availability-list article {
     align-items: flex-start;
     flex-direction: column;
   }
 
   .my-health-review-prompt .primary-button,
+  .my-health-pair-list-control .secondary-button,
   .my-health-availability-list a {
     width: 100%;
   }

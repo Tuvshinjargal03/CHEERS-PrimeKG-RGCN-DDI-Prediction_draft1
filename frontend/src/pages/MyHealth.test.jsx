@@ -379,8 +379,11 @@ describe('My Health', () => {
       '/api/evidence/pair?drug_a_id=DB00331&drug_b_id=DB01050',
     ])
     const orderedPairs = screen.getByLabelText('Medicine combinations by information priority')
+    expect(orderedPairs.children).toHaveLength(3)
     expect(orderedPairs.firstElementChild).toHaveTextContent('Interaction warning found')
     expect(orderedPairs.firstElementChild).toHaveTextContent('Warfarin + Ibuprofen')
+    expect(screen.queryByRole('button', { name: /Show all .* combinations|Show fewer/i })).not.toBeInTheDocument()
+    expect(screen.queryByText(/Showing .* reviewed combinations/)).not.toBeInTheDocument()
     expect(screen.getByText(/These categories summarize retrieved source information/)).toHaveTextContent(
       'not clinical severity, interaction probability, or personal-safety assessments',
     )
@@ -458,8 +461,56 @@ describe('My Health', () => {
     expect(cards[0]).toHaveTextContent('Medicine 0 + Medicine 2')
     expect(cards[1]).toHaveTextContent('Medicine 0 + Medicine 1')
     expect(cards[2]).toHaveTextContent('Medicine 0 + Medicine 3')
+    const compactOrder = cards.map((card) => card.textContent)
+    expect(screen.getByText('Showing 3 of 28 reviewed combinations')).toBeVisible()
+    const pairRequestCount = getJson.mock.calls.filter(([path]) => path.startsWith('/api/evidence/pair')).length
+    const showAllButton = screen.getByRole('button', { name: 'Show all 28 combinations' })
+    expect(showAllButton).toHaveAttribute('aria-expanded', 'false')
+    expect(showAllButton).toHaveAttribute('aria-controls', 'my-health-pair-results')
+
+    await user.click(showAllButton)
+
+    cards = [...screen.getByLabelText('Medicine combinations by information priority').children]
+    expect(cards).toHaveLength(28)
+    expect(cards.slice(0, 3).map((card) => card.textContent)).toEqual(compactOrder)
+    expect(screen.getByText('Showing all 28 reviewed combinations')).toBeVisible()
+    const showFewerButton = screen.getByRole('button', { name: 'Show fewer' })
+    expect(showFewerButton).toHaveAttribute('aria-expanded', 'true')
+    expect(getJson.mock.calls.filter(([path]) => path.startsWith('/api/evidence/pair'))).toHaveLength(pairRequestCount)
+
+    await user.click(showFewerButton)
+
+    cards = [...screen.getByLabelText('Medicine combinations by information priority').children]
+    expect(cards).toHaveLength(3)
+    expect(cards.map((card) => card.textContent)).toEqual(compactOrder)
+    expect(screen.getByRole('button', { name: 'Show all 28 combinations' })).toHaveAttribute('aria-expanded', 'false')
+    expect(getJson.mock.calls.filter(([path]) => path.startsWith('/api/evidence/pair'))).toHaveLength(pairRequestCount)
     expect(screen.getByLabelText('Medicine combination summary')).toHaveTextContent('27not enough information')
     expect(screen.queryByText(/^Checked \d+ of 28 combinations$/)).not.toBeInTheDocument()
+  })
+
+  it('resets an expanded combination list for a new review', async () => {
+    const user = userEvent.setup()
+    const medicines = [WARFARIN, METFORMIN, IBUPROFEN, { entity_id: 'DB00945', name: 'Aspirin' }]
+    save(SAVED_MEDICINES_STORAGE_KEY, medicines)
+    save(REVIEW_MEDICINES_STORAGE_KEY, medicines.map((medicine) => medicine.entity_id))
+    installDefaultApi()
+    const view = renderPage()
+
+    await user.click(screen.getByRole('button', { name: 'Review medicine combinations' }))
+    const firstToggle = await screen.findByRole('button', { name: 'Show all 6 combinations' })
+    await user.click(firstToggle)
+    expect(screen.getByLabelText('Medicine combinations by information priority').children).toHaveLength(6)
+    expect(screen.getByRole('button', { name: 'Show fewer' })).toHaveAttribute('aria-expanded', 'true')
+
+    view.unmount()
+    renderPage()
+    await user.click(screen.getByRole('button', { name: 'Review medicine combinations' }))
+
+    const newReviewToggle = await screen.findByRole('button', { name: 'Show all 6 combinations' })
+    expect(newReviewToggle).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.getByText('Showing 3 of 6 reviewed combinations')).toBeVisible()
+    expect(screen.getByLabelText('Medicine combinations by information priority').children).toHaveLength(3)
   })
 
   it('ignores stale completions and stops queued pairs after unmount', async () => {

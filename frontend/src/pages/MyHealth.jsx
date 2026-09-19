@@ -27,6 +27,7 @@ import './MyHealth.css'
 
 const CONDITION_STORAGE_KEY = 'cheers.my-conditions.v1'
 const PAIR_STATUS_PRIORITY = { important: 0, review: 1, insufficient: 2 }
+const COMPACT_PAIR_RESULT_COUNT = 3
 const FOOD_TOPIC_LABELS = {
   alcohol: 'Alcohol information',
   grapefruit: 'Grapefruit information',
@@ -179,6 +180,7 @@ export default function MyHealth() {
   const medicineInformation = useSavedInformation(medicines, 'medicine')
   const conditionInformation = useSavedInformation(conditions, 'condition')
   const [pairReview, setPairReview] = useState({ checking: false, current: 0, total: 0, results: [] })
+  const [showAllPairResults, setShowAllPairResults] = useState(false)
   const reviewIdRef = useRef(0)
   const empty = medicines.length === 0 && conditions.length === 0
 
@@ -232,12 +234,17 @@ export default function MyHealth() {
       PAIR_STATUS_PRIORITY[left.status.key] - PAIR_STATUS_PRIORITY[right.status.key]
       || left.originalIndex - right.originalIndex
     ))
+  const hasAdditionalPairResults = orderedPairResults.length > COMPACT_PAIR_RESULT_COUNT
+  const visiblePairResults = showAllPairResults
+    ? orderedPairResults
+    : orderedPairResults.slice(0, COMPACT_PAIR_RESULT_COUNT)
 
   async function reviewMedicineCombinations() {
     const pairs = generateUniqueMedicinePairs(reviewMedicines)
     if (!pairs.length || pairReview.checking) return
     const reviewId = reviewIdRef.current + 1
     reviewIdRef.current = reviewId
+    setShowAllPairResults(false)
     setPairReview({ checking: true, current: 0, total: pairs.length, results: [] })
 
     const isCancelled = () => reviewIdRef.current !== reviewId
@@ -356,8 +363,8 @@ export default function MyHealth() {
                       <article className="is-review"><strong>{pairSummary.review}</strong><span>needs review</span></article>
                       <article className="is-insufficient"><strong>{pairSummary.insufficient}</strong><span>not enough information</span></article>
                     </div>
-                    <div className="my-health-pair-list" aria-label="Medicine combinations by information priority">
-                      {orderedPairResults.slice(0, 3).map((result) => (
+                    <div id="my-health-pair-results" className="my-health-pair-list" aria-label="Medicine combinations by information priority">
+                      {visiblePairResults.map((result) => (
                         <article className={`my-health-pair-item is-${result.status.key}`} key={`${result.pair.drugA.entity_id}-${result.pair.drugB.entity_id}`}>
                           <span>{result.status.title}</span>
                           <strong>{result.pair.drugA.name} + {result.pair.drugB.name}</strong>
@@ -365,6 +372,24 @@ export default function MyHealth() {
                         </article>
                       ))}
                     </div>
+                    {hasAdditionalPairResults && (
+                      <div className="my-health-pair-list-control">
+                        <p className="my-health-priority-note">
+                          {showAllPairResults
+                            ? `Showing all ${orderedPairResults.length} reviewed combinations`
+                            : `Showing ${COMPACT_PAIR_RESULT_COUNT} of ${orderedPairResults.length} reviewed combinations`}
+                        </p>
+                        <button
+                          type="button"
+                          className="secondary-button"
+                          aria-expanded={showAllPairResults}
+                          aria-controls="my-health-pair-results"
+                          onClick={() => setShowAllPairResults((current) => !current)}
+                        >
+                          {showAllPairResults ? 'Show fewer' : `Show all ${orderedPairResults.length} combinations`}
+                        </button>
+                      </div>
+                    )}
                     <p className="my-health-priority-note">Pairs are ordered only to surface available information: warning, review, then insufficient information. These categories summarize retrieved source information; they are not clinical severity, interaction probability, or personal-safety assessments.</p>
                   </>
                 )}
