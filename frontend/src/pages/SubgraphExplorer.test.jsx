@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { getJson } from '../lib/api.js'
@@ -18,7 +18,7 @@ vi.mock('../lib/api.js', () => ({
   getJson: vi.fn(),
 }))
 vi.mock('../components/DrugAutocomplete.jsx', () => ({
-  default: ({ selection }) => <output data-testid="selected-drug">{selection?.name || ''}</output>,
+  default: ({ selection }) => <output data-testid="selected-drug" data-entity-id={selection?.entity_id || ''}>{selection?.name || ''}</output>,
 }))
 vi.mock('../components/MedicineLabelScanner.jsx', () => ({ default: () => null }))
 
@@ -45,6 +45,26 @@ describe('SubgraphExplorer navigation', () => {
     getJson.mockResolvedValue(METFORMIN_CONTEXT)
   })
 
+  it('uses the returned canonical name for an ID-only URL while retaining the entity ID', async () => {
+    let resolveRequest
+    getJson.mockReturnValue(new Promise((resolve) => { resolveRequest = resolve }))
+    render(
+      <MemoryRouter initialEntries={['/subgraph?drug_id=DB00331']}>
+        <SubgraphExplorer />
+      </MemoryRouter>,
+    )
+
+    const selection = screen.getByTestId('selected-drug')
+    expect(selection).not.toHaveTextContent('DB00331')
+    expect(selection).toHaveAttribute('data-entity-id', 'DB00331')
+    expect(screen.getByRole('button', { name: /Fetching graph context/ })).toBeVisible()
+    expect(getJson).toHaveBeenCalledWith('/api/context/drug?drug_id=DB00331')
+
+    await act(async () => { resolveRequest(METFORMIN_CONTEXT) })
+    expect(selection).toHaveTextContent('Metformin')
+    expect(selection).toHaveAttribute('data-entity-id', 'DB00331')
+  })
+
   it('loads a medicine passed through search parameters exactly once', async () => {
     render(
       <MemoryRouter initialEntries={['/subgraph?drug_id=DB00331&drug_name=Metformin']}>
@@ -56,6 +76,20 @@ describe('SubgraphExplorer navigation', () => {
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Visible relationships' })).toBeVisible())
     expect(getJson).toHaveBeenCalledTimes(1)
     expect(getJson).toHaveBeenCalledWith('/api/context/drug?drug_id=DB00331')
+  })
+
+  it('does not present the raw ID as a medicine name when canonical-name loading fails', async () => {
+    getJson.mockRejectedValue(new Error('context unavailable'))
+    render(
+      <MemoryRouter initialEntries={['/subgraph?drug_id=DB00331']}>
+        <SubgraphExplorer />
+      </MemoryRouter>,
+    )
+
+    expect(await screen.findByText('context unavailable')).toBeVisible()
+    const selection = screen.getByTestId('selected-drug')
+    expect(selection).not.toHaveTextContent('DB00331')
+    expect(selection).toHaveAttribute('data-entity-id', 'DB00331')
   })
 
   it('keeps a normal direct visit empty and makes no request', () => {

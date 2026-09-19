@@ -226,6 +226,12 @@ export default function SubgraphExplorer() {
       if (payload.neighbors.length > PAGE_SIZE) {
         throw new Error(`Neighborhood page exceeded the ${PAGE_SIZE}-node display limit.`)
       }
+      const canonicalDrug = {
+        ...targetDrug,
+        name: payload.center.name,
+      }
+      setDrug(canonicalDrug)
+      setExploredDrug(canonicalDrug)
       setData(payload)
       setNeighbors(payload.neighbors)
       setSelected(null)
@@ -245,7 +251,7 @@ export default function SubgraphExplorer() {
     automaticallyLoadedDrugId.current = incomingDrugId
     const incomingDrug = {
       entity_id: incomingDrugId,
-      name: incomingDrugName || incomingDrugId,
+      name: incomingDrugName,
     }
     setDrug(incomingDrug)
     setExploredDrug(incomingDrug)
