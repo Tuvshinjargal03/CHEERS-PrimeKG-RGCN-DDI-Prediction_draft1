@@ -15,6 +15,80 @@ const SECTION_NAMES = {
 }
 
 const INITIAL_LABEL_EXCERPTS = 8
+const SECTION_ORDER = Object.keys(SECTION_NAMES)
+
+function readableSectionNames(evidenceItems) {
+  return [...new Set(evidenceItems.map((item) => item.section).filter(Boolean))]
+    .sort((left, right) => {
+      const leftIndex = SECTION_ORDER.indexOf(left)
+      const rightIndex = SECTION_ORDER.indexOf(right)
+      if (leftIndex === -1 && rightIndex === -1) return left.localeCompare(right)
+      if (leftIndex === -1) return 1
+      if (rightIndex === -1) return -1
+      return leftIndex - rightIndex
+    })
+    .map((section) => SECTION_NAMES[section] || section)
+}
+
+function labelAvailabilitySummary(labelEvidence) {
+  const statuses = [labelEvidence?.drug_a?.status, labelEvidence?.drug_b?.status]
+  const availableCount = statuses.filter((status) => status === 'ok').length
+  const noMatchCount = statuses.filter((status) => status === 'no_matches').length
+  const errorCount = statuses.filter((status) => status === 'error').length
+
+  if (availableCount === 2) return 'openFDA returned label records for both medicines.'
+  if (availableCount === 1 && noMatchCount === 1) {
+    return 'Label information was retrieved for one medicine; the other source returned no matching label records.'
+  }
+  if (availableCount === 1 && errorCount === 1) {
+    return 'Label information was retrieved for one medicine; retrieval for the other medicine was unavailable.'
+  }
+  if (noMatchCount === 2) return 'openFDA returned no matching label records for either medicine.'
+  if (errorCount === 2) return 'openFDA label retrieval was unavailable for both medicines.'
+  if (noMatchCount === 1 && errorCount === 1) {
+    return 'One medicine returned no matching label records; retrieval for the other medicine was unavailable.'
+  }
+  return 'openFDA label retrieval status was unavailable for one or both medicines.'
+}
+
+function labelStatusSummary(label, fallbackName) {
+  const name = label?.drug_name || fallbackName
+  if (label?.status === 'ok') {
+    const examined = Number.isFinite(Number(label.records_examined))
+      ? ` ${Number(label.records_examined).toLocaleString()} label record(s) examined.`
+      : ''
+    return `${name}: label records retrieved.${examined}`
+  }
+  if (label?.status === 'no_matches') return `${name}: no matching label records.`
+  if (label?.status === 'error') return `${name}: label retrieval unavailable.`
+  return `${name}: label retrieval status unavailable.`
+}
+
+function pairMentionSummary(evidenceItems) {
+  if (!evidenceItems.length) {
+    return 'No explicit cross-medicine name mention was retrieved from the checked label sections.'
+  }
+
+  const sections = readableSectionNames(evidenceItems)
+  const noun = evidenceItems.length === 1 ? 'excerpt was' : 'excerpts were'
+  const sectionSummary = sections.length ? ` Sections: ${sections.join(', ')}.` : ''
+  return `${evidenceItems.length.toLocaleString()} explicit cross-medicine name-mention ${noun} retrieved.${sectionSummary}`
+}
+
+function pubMedSummary(literature) {
+  if (literature?.status === 'ok') {
+    const returned = Number.isFinite(Number(literature.returned_results))
+      ? Number(literature.returned_results).toLocaleString()
+      : 'an unspecified number'
+    const total = Number.isFinite(Number(literature.total_results))
+      ? Number(literature.total_results).toLocaleString()
+      : 'an unspecified total'
+    return `PubMed returned ${returned} of ${total} name-matched records.`
+  }
+  if (literature?.status === 'no_results') return 'PubMed returned no name-matched records for this pair.'
+  if (literature?.status === 'error') return 'PubMed retrieval was unavailable.'
+  return 'PubMed retrieval status was unavailable.'
+}
 
 function validPubMedUrl(value) {
   try {
@@ -177,6 +251,20 @@ export default function Evidence() {
               <p>openFDA and PubMed information is retrieved independently of the R-GCN model. It was not used as model input, does not explain the model score, and does not validate or prove a predicted drug–drug interaction.</p>
             </article>
           </div>
+
+          <section className="evidence-panel" aria-labelledby="retrieved-evidence-summary-title">
+            <div className="panel-title"><FileSearch size={21} /><div><span>External source orientation</span><h2 id="retrieved-evidence-summary-title">Retrieved evidence summary</h2></div></div>
+            <div>
+              <p>{labelAvailabilitySummary(labelEvidence)}</p>
+              <ul aria-label="openFDA retrieval status by medicine">
+                <li>{labelStatusSummary(labelEvidence?.drug_a, drugA?.name || 'Drug A')}</li>
+                <li>{labelStatusSummary(labelEvidence?.drug_b, drugB?.name || 'Drug B')}</li>
+              </ul>
+              <p>{pairMentionSummary(evidenceItems)}</p>
+              <p>{pubMedSummary(literature)}</p>
+            </div>
+            <p>These retrieval results summarize source availability and name mentions only. They do not determine interaction severity, probability, or personal safety, and missing evidence is not proof of safety.</p>
+          </section>
 
           <div className="evidence-record-heading">
             <span className="eyebrow">Retrieved sources</span>
