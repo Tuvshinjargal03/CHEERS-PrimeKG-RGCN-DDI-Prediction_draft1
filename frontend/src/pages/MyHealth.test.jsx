@@ -4,7 +4,11 @@ import { StrictMode } from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { getJson } from '../lib/api.js'
-import { generateUniqueMedicinePairs } from '../lib/myMedicines.js'
+import {
+  generateUniqueMedicinePairs,
+  REVIEW_MEDICINES_STORAGE_KEY,
+  SAVED_MEDICINES_STORAGE_KEY,
+} from '../lib/myMedicines.js'
 import MyHealth from './MyHealth.jsx'
 
 vi.mock('../lib/api.js', () => ({
@@ -18,6 +22,10 @@ const IBUPROFEN = { entity_id: 'DB01050', name: 'Ibuprofen' }
 const DIABETES = { entity_id: '5148', name: 'type 2 diabetes mellitus' }
 const GOUT = { entity_id: '5393', name: 'gout' }
 const INFLUENZA = { entity_id: '5812', name: 'influenza' }
+const TWENTY_MEDICINES = Array.from({ length: 20 }, (_, index) => ({
+  entity_id: `TEST${index}`,
+  name: `Medicine ${index}`,
+}))
 
 function medicinePayload(medicine, topics = []) {
   return {
@@ -177,6 +185,36 @@ describe('My Health', () => {
     expect(screen.getByText(/Saved conditions:/)).toBeVisible()
   })
 
+  it('uses all twenty saved medicines for normal information and the first eight for legacy review selection', async () => {
+    save(SAVED_MEDICINES_STORAGE_KEY, TWENTY_MEDICINES)
+    installDefaultApi()
+    renderPage()
+
+    expect(screen.getByRole('link', { name: /Medicine 19TEST19/ })).toHaveAttribute('href', '/medicines/TEST19')
+    expect(screen.getByText('8 of 20 saved medicines selected for combination review. Manage this review set in My Medicines; unselected medicines remain saved and available elsewhere in My Health.')).toBeVisible()
+    expect(screen.getByText('Review 28 combinations using the same source-based statuses as My Medicines.')).toBeVisible()
+    expect(getJson.mock.calls.some(([path]) => path.startsWith('/api/evidence/pair'))).toBe(false)
+    await waitFor(() => {
+      expect(getJson.mock.calls.filter(([path]) => path.startsWith('/api/public/medicine'))).toHaveLength(20)
+      expect(screen.getAllByRole('link', { name: 'View Food & lifestyle' })).toHaveLength(20)
+    })
+  })
+
+  it('preserves an explicit empty review selection and prevents combination review', async () => {
+    save(SAVED_MEDICINES_STORAGE_KEY, [WARFARIN, METFORMIN, IBUPROFEN])
+    save(REVIEW_MEDICINES_STORAGE_KEY, [])
+    installDefaultApi()
+    renderPage()
+
+    expect(screen.getByText(/0 of 3 saved medicines selected for combination review/)).toBeVisible()
+    expect(screen.getByText(/Select at least two medicines in My Medicines/)).toBeVisible()
+    expect(screen.queryByRole('button', { name: 'Review medicine combinations' })).not.toBeInTheDocument()
+    await waitFor(() => {
+      expect(getJson.mock.calls.filter(([path]) => path.startsWith('/api/public/medicine'))).toHaveLength(3)
+    })
+    expect(getJson.mock.calls.some(([path]) => path.startsWith('/api/evidence/pair'))).toBe(false)
+  })
+
   it('reads the existing condition store and surfaces reviewed nutrition only', async () => {
     save('cheers.my-conditions.v1', [DIABETES])
     installDefaultApi()
@@ -195,6 +233,7 @@ describe('My Health', () => {
 
   it('shows only existing medicine-condition relationships in separate groups', async () => {
     save('cheers.my-medicines.v1', [WARFARIN, METFORMIN, IBUPROFEN])
+    save(REVIEW_MEDICINES_STORAGE_KEY, [WARFARIN.entity_id])
     save('cheers.my-conditions.v1', [DIABETES])
     installDefaultApi()
     renderPage()
@@ -314,11 +353,15 @@ describe('My Health', () => {
 
   it('reviews combinations only on request and orders the existing statuses deterministically', async () => {
     const user = userEvent.setup()
-    save('cheers.my-medicines.v1', [WARFARIN, METFORMIN, IBUPROFEN])
+    const savedMedicines = [WARFARIN, METFORMIN, IBUPROFEN, { entity_id: 'DB00945', name: 'Aspirin' }]
+    save(SAVED_MEDICINES_STORAGE_KEY, savedMedicines)
+    save(REVIEW_MEDICINES_STORAGE_KEY, [WARFARIN.entity_id, METFORMIN.entity_id, IBUPROFEN.entity_id])
     installDefaultApi()
     renderPage()
 
-    await waitFor(() => expect(getJson.mock.calls.filter(([path]) => path.startsWith('/api/public/medicine'))).toHaveLength(3))
+    await waitFor(() => expect(getJson.mock.calls.filter(([path]) => path.startsWith('/api/public/medicine'))).toHaveLength(4))
+    expect(screen.getByText(/3 of 4 saved medicines selected for combination review/)).toBeVisible()
+    expect(screen.getByText('Review 3 combinations using the same source-based statuses as My Medicines.')).toBeVisible()
     expect(getJson.mock.calls.some(([path]) => path.startsWith('/api/evidence/pair'))).toBe(false)
     await user.click(screen.getByRole('button', { name: 'Review medicine combinations' }))
 
@@ -340,12 +383,12 @@ describe('My Health', () => {
     expect(screen.queryByText(/health score|risk score|safe profile|unsafe profile/i)).not.toBeInTheDocument()
   })
 
-  it('reviews all 28 pairs with four workers, progressive counts and stable priority ties', async () => {
+  it('reviews 28 selected pairs from twenty saved medicines with four workers and stable priority ties', async () => {
     const user = userEvent.setup()
-    const medicines = Array.from({ length: 8 }, (_, index) => ({
-      entity_id: `TEST${index}`, name: `Medicine ${index}`,
-    }))
-    save('cheers.my-medicines.v1', medicines)
+    const medicines = TWENTY_MEDICINES
+    const reviewMedicines = medicines.slice(0, 8)
+    save(SAVED_MEDICINES_STORAGE_KEY, medicines)
+    save(REVIEW_MEDICINES_STORAGE_KEY, reviewMedicines.map((medicine) => medicine.entity_id))
     installDefaultApi()
     const defaultApi = getJson.getMockImplementation()
     const pending = []
@@ -369,7 +412,8 @@ describe('My Health', () => {
       }).finally(() => { active -= 1 })
     })
     renderPage()
-    await waitFor(() => expect(getJson.mock.calls.filter(([path]) => path.startsWith('/api/public/medicine'))).toHaveLength(8))
+    await waitFor(() => expect(getJson.mock.calls.filter(([path]) => path.startsWith('/api/public/medicine'))).toHaveLength(20))
+    expect(screen.getByText(/8 of 20 saved medicines selected for combination review/)).toBeVisible()
     expect(pending).toHaveLength(0)
     await user.click(screen.getByRole('button', { name: 'Review medicine combinations' }))
     expect(pending).toHaveLength(4)
@@ -398,7 +442,7 @@ describe('My Health', () => {
       await act(async () => { next.finish() })
       expect(active).toBeLessThanOrEqual(4)
     }
-    const pairs = generateUniqueMedicinePairs(medicines)
+    const pairs = generateUniqueMedicinePairs(reviewMedicines)
     expect(pending.map(({ path }) => path)).toEqual(pairs.map(({ drugA, drugB }) => (
       `/api/evidence/pair?drug_a_id=${drugA.entity_id}&drug_b_id=${drugB.entity_id}`
     )))
@@ -417,7 +461,7 @@ describe('My Health', () => {
   it('ignores stale completions and stops queued pairs after unmount', async () => {
     const user = userEvent.setup()
     const medicines = [WARFARIN, METFORMIN, IBUPROFEN, { entity_id: 'DB00945', name: 'Aspirin' }]
-    save('cheers.my-medicines.v1', medicines)
+    save(SAVED_MEDICINES_STORAGE_KEY, medicines)
     installDefaultApi()
     const defaultApi = getJson.getMockImplementation()
     const settle = []
@@ -430,11 +474,13 @@ describe('My Health', () => {
     await user.click(screen.getByRole('button', { name: 'Review medicine combinations' }))
     expect(settle).toHaveLength(4)
     unmount()
-    save('cheers.my-medicines.v1', medicines.slice(0, 2))
+    save(REVIEW_MEDICINES_STORAGE_KEY, [WARFARIN.entity_id, METFORMIN.entity_id])
     renderPage()
     await act(async () => { settle.forEach((resolve) => resolve({ literature: { papers: [{}] } })) })
     expect(settle).toHaveLength(4)
     expect(screen.queryByLabelText('Medicine combination summary')).not.toBeInTheDocument()
+    expect(screen.getByText(/2 of 4 saved medicines selected for combination review/)).toBeVisible()
+    expect(screen.getByText('Review 1 combination using the same source-based statuses as My Medicines.')).toBeVisible()
     expect(screen.getByRole('button', { name: 'Review medicine combinations' })).toBeVisible()
   })
 

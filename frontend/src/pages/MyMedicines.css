@@ -23,6 +23,13 @@
   letter-spacing: -0.025em;
 }
 
+.my-medicines-list-counts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .my-medicines-add {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -99,6 +106,26 @@
 .my-medicines-selected-list span {
   display: grid;
   min-width: 0;
+}
+
+.my-medicines-review-choice {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.my-medicines-review-choice input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: #6545af;
+}
+
+.my-medicines-review-choice:has(input:disabled) {
+  cursor: not-allowed;
 }
 
 .my-medicines-selected-list strong {
@@ -437,6 +464,10 @@
   .my-medicines-builder-actions .primary-button,
   .my-medicines-add .secondary-button {
     width: 100%;
+  }
+
+  .my-medicines-list-counts {
+    justify-content: flex-start;
   }
 
   .my-medicines-summary {

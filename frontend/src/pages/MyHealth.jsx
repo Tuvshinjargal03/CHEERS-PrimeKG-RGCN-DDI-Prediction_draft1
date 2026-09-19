@@ -14,12 +14,17 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getJson, pairEndpoint } from '../lib/api.js'
 import { mapWithConcurrency } from '../lib/mapWithConcurrency.js'
-import { generateUniqueMedicinePairs } from '../lib/myMedicines.js'
+import {
+  generateUniqueMedicinePairs,
+  MAX_SAVED_MEDICINES,
+  reconcileReviewMedicineIds,
+  REVIEW_MEDICINES_STORAGE_KEY,
+  SAVED_MEDICINES_STORAGE_KEY,
+} from '../lib/myMedicines.js'
 import { derivePairReviewStatus } from '../lib/pairStatus.js'
 import './PublicProduct.css'
 import './MyHealth.css'
 
-const MEDICINE_STORAGE_KEY = 'cheers.my-medicines.v1'
 const CONDITION_STORAGE_KEY = 'cheers.my-conditions.v1'
 const PAIR_STATUS_PRIORITY = { important: 0, review: 1, insufficient: 2 }
 const FOOD_TOPIC_LABELS = {
@@ -58,6 +63,23 @@ function readSavedSelections(storageKey, limit) {
     }, [])
   } catch {
     return []
+  }
+}
+
+function readMedicineState() {
+  const medicines = readSavedSelections(SAVED_MEDICINES_STORAGE_KEY, MAX_SAVED_MEDICINES)
+  let storedReviewMedicineIds
+
+  try {
+    const stored = window.localStorage.getItem(REVIEW_MEDICINES_STORAGE_KEY)
+    storedReviewMedicineIds = stored === null ? undefined : JSON.parse(stored)
+  } catch {
+    storedReviewMedicineIds = undefined
+  }
+
+  return {
+    medicines,
+    reviewMedicineIds: reconcileReviewMedicineIds(medicines, storedReviewMedicineIds),
   }
 }
 
@@ -152,7 +174,7 @@ function ModuleNotice({ loading, errors }) {
 }
 
 export default function MyHealth() {
-  const [medicines] = useState(() => readSavedSelections(MEDICINE_STORAGE_KEY, 8))
+  const [{ medicines, reviewMedicineIds }] = useState(readMedicineState)
   const [conditions] = useState(() => readSavedSelections(CONDITION_STORAGE_KEY, 10))
   const medicineInformation = useSavedInformation(medicines, 'medicine')
   const conditionInformation = useSavedInformation(conditions, 'condition')
@@ -164,6 +186,8 @@ export default function MyHealth() {
     reviewIdRef.current += 1
   }, [])
 
+  const reviewMedicineIdSet = new Set(reviewMedicineIds)
+  const reviewMedicines = medicines.filter((medicine) => reviewMedicineIdSet.has(medicine.entity_id))
   const medicineById = new Map(medicines.map((medicine) => [medicine.entity_id, medicine]))
   const connections = { indications: [], other: [] }
   for (const condition of conditions) {
@@ -197,7 +221,7 @@ export default function MyHealth() {
   const conditionLoading = conditions.some((item) => conditionInformation[item.entity_id]?.status === 'loading')
   const medicineErrors = medicines.filter((item) => medicineInformation[item.entity_id]?.status === 'error').length
   const conditionErrors = conditions.filter((item) => conditionInformation[item.entity_id]?.status === 'error').length
-  const pairCount = (medicines.length * (medicines.length - 1)) / 2
+  const pairCount = (reviewMedicines.length * (reviewMedicines.length - 1)) / 2
   const pairSummary = pairReview.results.reduce((summary, result) => ({
     ...summary,
     [result.status.key]: summary[result.status.key] + 1,
@@ -210,7 +234,7 @@ export default function MyHealth() {
     ))
 
   async function reviewMedicineCombinations() {
-    const pairs = generateUniqueMedicinePairs(medicines)
+    const pairs = generateUniqueMedicinePairs(reviewMedicines)
     if (!pairs.length || pairReview.checking) return
     const reviewId = reviewIdRef.current + 1
     reviewIdRef.current = reviewId
@@ -280,7 +304,7 @@ export default function MyHealth() {
           <section className="my-health-counts" aria-label="Saved information summary">
             <article><Pill size={18} /><strong>{medicines.length}</strong><span>medicines</span></article>
             <article><HeartPulse size={18} /><strong>{conditions.length}</strong><span>conditions</span></article>
-            <article><Beaker size={18} /><strong>{pairCount}</strong><span>medicine combinations</span></article>
+            <article><Beaker size={18} /><strong>{pairCount}</strong><span>selected medicine combinations</span></article>
             <article><GitBranch size={18} /><strong>{connections.indications.length + connections.other.length}</strong><span>medicine–condition relationships</span></article>
             <article><Utensils size={18} /><strong>{nutritionItems.length}</strong><span>nutrition modules available</span></article>
           </section>
@@ -309,13 +333,16 @@ export default function MyHealth() {
               <div><span className="eyebrow">On demand</span><h2 id="my-health-pairs-title">Medicine combination review</h2></div>
               <Link to="/my-medicines">Open My Medicines</Link>
             </div>
-            {medicines.length < 2 ? (
-              <div className="my-health-soft-empty"><p>Add at least two medicines to review combinations.</p><Link to="/my-medicines">Manage medicines <ArrowRight size={15} /></Link></div>
+            <p className="my-health-priority-note">
+              {reviewMedicines.length} of {medicines.length} saved medicines selected for combination review. Manage this review set in My Medicines; unselected medicines remain saved and available elsewhere in My Health.
+            </p>
+            {reviewMedicines.length < 2 ? (
+              <div className="my-health-soft-empty"><p>Select at least two medicines in My Medicines to review combinations.</p><Link to="/my-medicines">Manage medicines <ArrowRight size={15} /></Link></div>
             ) : (
               <>
                 {!pairReview.results.length && !pairReview.checking && (
                   <div className="my-health-review-prompt">
-                    <p>Review {pairCount} combinations using the same source-based statuses as My Medicines.</p>
+                    <p>Review {pairCount} {pairCount === 1 ? 'combination' : 'combinations'} using the same source-based statuses as My Medicines.</p>
                     <button className="primary-button" type="button" onClick={reviewMedicineCombinations}><Beaker size={17} /> Review medicine combinations</button>
                   </div>
                 )}
