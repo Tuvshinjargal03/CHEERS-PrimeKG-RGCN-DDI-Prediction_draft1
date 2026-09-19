@@ -176,6 +176,7 @@ export default function GraphExplorer() {
   const containerRef = useRef(null)
   const cyRef = useRef(null)
   const detailRequestId = useRef(0)
+  const contextRequestId = useRef(0)
   const metadataCache = useRef(new Map())
   const metadataRequests = useRef(new Map())
   const [drugA, setDrugA] = useState(null)
@@ -187,6 +188,9 @@ export default function GraphExplorer() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [selected, setSelected] = useState(null)
+  const [pairSuggestions, setPairSuggestions] = useState(null)
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false)
+  const [suggestionsError, setSuggestionsError] = useState('')
   const displayedEntities = useMemo(
     () => selectDisplayedEntities(context?.shared?.entities || [], displayLimit),
     [context, displayLimit],
@@ -241,10 +245,11 @@ export default function GraphExplorer() {
 
   useEffect(() => {
     if (!initialAId && !initialBId) return undefined
+    const requestId = ++contextRequestId.current
     let active = true
     Promise.all([resolveDrug(initialAId), resolveDrug(initialBId)])
       .then(([resolvedA, resolvedB]) => {
-        if (!active) return
+        if (!active || contextRequestId.current !== requestId) return
         setDrugA(resolvedA)
         setDrugB(resolvedB)
         if ((initialAId && !resolvedA) || (initialBId && !resolvedB)) {
@@ -252,15 +257,21 @@ export default function GraphExplorer() {
         }
       })
       .catch((requestError) => {
-        if (active) setError(requestError.message || 'The requested pair could not be resolved.')
+        if (active && contextRequestId.current === requestId) {
+          setError(requestError.message || 'The requested pair could not be resolved.')
+        }
       })
       .finally(() => {
-        if (active) setResolving(false)
+        if (active && contextRequestId.current === requestId) setResolving(false)
       })
     return () => {
       active = false
     }
   }, [initialAId, initialBId])
+
+  useEffect(() => () => {
+    contextRequestId.current += 1
+  }, [])
 
   useEffect(() => {
     if (!context || !containerRef.current) return undefined
@@ -355,16 +366,41 @@ export default function GraphExplorer() {
   }
 
   function selectDrugA(value) {
+    contextRequestId.current += 1
     setDrugA(value)
     setContext(null)
+    setPairSuggestions(null)
+    setSuggestionsLoading(false)
+    setSuggestionsError('')
+    setLoading(false)
     setNavigationScore('')
     setError('')
     setSelected(null)
   }
 
   function selectDrugB(value) {
+    contextRequestId.current += 1
     setDrugB(value)
     setContext(null)
+    setPairSuggestions(null)
+    setSuggestionsLoading(false)
+    setSuggestionsError('')
+    setLoading(false)
+    setNavigationScore('')
+    setError('')
+    setSelected(null)
+  }
+
+  function prepareSuggestedPairNavigation() {
+    contextRequestId.current += 1
+    setDrugA(null)
+    setDrugB(null)
+    setContext(null)
+    setPairSuggestions(null)
+    setSuggestionsLoading(false)
+    setSuggestionsError('')
+    setLoading(false)
+    setResolving(true)
     setNavigationScore('')
     setError('')
     setSelected(null)
@@ -377,17 +413,47 @@ export default function GraphExplorer() {
       setError('Choose two different drugs from the search results.')
       return
     }
+    const requestId = ++contextRequestId.current
+    const drugAId = drugA.entity_id
+    const drugBId = drugB.entity_id
     setLoading(true)
     setError('')
     setContext(null)
+    setPairSuggestions(null)
+    setSuggestionsLoading(false)
+    setSuggestionsError('')
     setSelected(null)
     setDisplayLimit(DEFAULT_SHARED_NODES)
     try {
-      setContext(await getJson(pairEndpoint('/api/context/pair', drugA.entity_id, drugB.entity_id)))
+      const loadedContext = await getJson(
+        pairEndpoint('/api/context/pair', drugAId, drugBId),
+      )
+      if (contextRequestId.current !== requestId) return
+      setContext(loadedContext)
+
+      if (loadedContext.shared.total === 0) {
+        setSuggestionsLoading(true)
+        getJson(
+          `${pairEndpoint('/api/context/pair-suggestions', drugAId, drugBId)}&limit=6`,
+        )
+          .then((payload) => {
+            if (contextRequestId.current !== requestId) return
+            setPairSuggestions(payload.suggestions || [])
+          })
+          .catch(() => {
+            if (contextRequestId.current !== requestId) return
+            setSuggestionsError('Alternative pair suggestions could not be loaded.')
+          })
+          .finally(() => {
+            if (contextRequestId.current === requestId) setSuggestionsLoading(false)
+          })
+      }
     } catch (requestError) {
-      setError(requestError.message || 'Graph context could not be loaded.')
+      if (contextRequestId.current === requestId) {
+        setError(requestError.message || 'Graph context could not be loaded.')
+      }
     } finally {
-      setLoading(false)
+      if (contextRequestId.current === requestId) setLoading(false)
     }
   }
 
@@ -498,6 +564,50 @@ export default function GraphExplorer() {
           </aside>
           </div>
 
+          {context.shared.total === 0 && (
+            <section className="graph-card" aria-labelledby="pair-suggestions-heading">
+              <span className="eyebrow">Optional next step</span>
+              <h2 id="pair-suggestions-heading">Try another pair with shared graph context</h2>
+              <p>
+                These pairs have shared entities in the available G3 graph. This does not indicate
+                interaction strength, safety, or clinical relevance.
+              </p>
+              {suggestionsLoading && <p role="status">Loading alternative pairs...</p>}
+              {suggestionsError && <p role="status">{suggestionsError}</p>}
+              {!suggestionsLoading && !suggestionsError && pairSuggestions?.length === 0 && (
+                <p>No alternative pairs with shared context were found for these medicines.</p>
+              )}
+              {pairSuggestions?.length > 0 && (
+                <div className="individual-context-grid">
+                  {pairSuggestions.map((suggestion) => (
+                    <article
+                      key={`${suggestion.anchor_drug_id}:${suggestion.candidate_drug_id}`}
+                      className="context-detail-card"
+                    >
+                      <h3>{suggestion.anchor_drug_name} + {suggestion.candidate_drug_name}</h3>
+                      <div className="relation-chip-list">
+                        <span>Shared entities <b>{suggestion.shared.total.toLocaleString()}</b></span>
+                        <span>Gene / protein <b>{suggestion.shared.gene_protein_count.toLocaleString()}</b></span>
+                        <span>Disease <b>{suggestion.shared.disease_count.toLocaleString()}</b></span>
+                      </div>
+                      <Link
+                        className="secondary-button"
+                        onClick={prepareSuggestedPairNavigation}
+                        to={pairEndpoint(
+                          '/graph',
+                          suggestion.anchor_drug_id,
+                          suggestion.candidate_drug_id,
+                        )}
+                      >
+                        Explore this pair<ArrowRight size={16} />
+                      </Link>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
+
           <div className="individual-context-grid">
             {[[context.drug_a, countsA], [context.drug_b, countsB]].map(([drug, counts]) => (
               <article key={drug.drug_id} className="context-detail-card">
@@ -515,6 +625,9 @@ export default function GraphExplorer() {
             <button type="button" className="primary-button" onClick={() => navigate(evidenceDestination(context, navigationScore))}>
               Review evidence<ArrowRight size={16} />
             </button>
+            <Link className="secondary-button" to={pairEndpoint('/check', context.drug_a.drug_id, context.drug_b.drug_id)}>
+              Check this medicine pair<ArrowRight size={16} />
+            </Link>
           </div>
 
           <aside className="safety-notice"><AlertCircle size={21} /><div><strong>Interpretation boundary</strong><p>{context.interpretation}</p></div></aside>

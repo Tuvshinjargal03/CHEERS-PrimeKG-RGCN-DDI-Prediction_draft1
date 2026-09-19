@@ -1,10 +1,9 @@
 ﻿import {
   BarChart3,
   Beaker,
-  Bookmark,
+  BookOpen,
   ChevronDown,
   ChevronRight,
-  ClipboardList,
   FlaskConical,
   GitBranch,
   HeartPulse,
@@ -37,6 +36,14 @@ const SubgraphExplorer = lazy(() => import('./pages/SubgraphExplorer.jsx'))
 
 const navigationGroups = [
   {
+    label: 'Browse',
+    icon: BookOpen,
+    items: [
+      { path: '/medicines', label: 'Medicines', icon: Pill },
+      { path: '/diseases', label: 'Diseases', icon: HeartPulse },
+    ],
+  },
+  {
     label: 'Explore',
     icon: Network,
     items: [
@@ -58,12 +65,8 @@ const navigationGroups = [
 
 const publicNavigation = [
   { path: '/overview', label: 'Home', icon: Home },
-  { path: '/my-health', label: 'My Health', icon: LayoutDashboard },
   { path: '/check', label: 'Check Medicines', icon: Beaker },
-  { path: '/my-medicines', label: 'My Medicines', icon: ClipboardList },
-  { path: '/my-conditions', label: 'My Conditions', icon: Bookmark },
-  { path: '/medicines', label: 'Medicines', icon: Pill },
-  { path: '/diseases', label: 'Diseases', icon: HeartPulse },
+  { path: '/my-health', label: 'My Health', icon: LayoutDashboard },
 ]
 
 function ExpandableNavigation({ group, isActive, isOpen, onToggle, onClose }) {
@@ -159,6 +162,8 @@ function NotFound() {
 function AppShell() {
   const location = useLocation()
   const navigationRef = useRef(null)
+  const mainContentRef = useRef(null)
+  const previousPathnameRef = useRef(location.pathname)
   const [openGroup, setOpenGroup] = useState(null)
 
   useEffect(() => {
@@ -169,6 +174,13 @@ function AppShell() {
     document.addEventListener('pointerdown', closeManualGroup)
     return () => document.removeEventListener('pointerdown', closeManualGroup)
   }, [])
+
+  useEffect(() => {
+    if (previousPathnameRef.current === location.pathname) return
+    previousPathnameRef.current = location.pathname
+    window.scrollTo(0, 0)
+    mainContentRef.current?.focus({ preventScroll: true })
+  }, [location.pathname])
 
   return (
     <div className="app-shell">
@@ -205,7 +217,9 @@ function AppShell() {
             </NavLink>
           ))}
           {navigationGroups.map((group) => {
-            const isActive = group.items.some((item) => item.path === location.pathname)
+            const isActive = group.items.some((item) => (
+              item.path === location.pathname || location.pathname.startsWith(`${item.path}/`)
+            ))
             const isOpen = isActive || openGroup === group.label
 
             return (
@@ -233,7 +247,7 @@ function AppShell() {
         </div>
       </aside>
 
-      <main className="main-content">
+      <main id="main-content" ref={mainContentRef} className="main-content" tabIndex={-1}>
         <Suspense fallback={<RouteLoadingFallback />}>
           <Routes>
             <Route path="/" element={<Navigate to="/overview" replace />} />

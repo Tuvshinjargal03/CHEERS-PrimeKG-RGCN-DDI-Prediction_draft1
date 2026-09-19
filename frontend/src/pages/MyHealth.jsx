@@ -2,6 +2,7 @@ import {
   AlertCircle,
   ArrowRight,
   Beaker,
+  FlaskConical,
   GitBranch,
   HeartPulse,
   Info,
@@ -13,14 +14,21 @@ import {
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getJson, pairEndpoint } from '../lib/api.js'
-import { generateUniqueMedicinePairs } from '../lib/myMedicines.js'
+import { mapWithConcurrency } from '../lib/mapWithConcurrency.js'
+import {
+  generateUniqueMedicinePairs,
+  MAX_SAVED_MEDICINES,
+  reconcileReviewMedicineIds,
+  REVIEW_MEDICINES_STORAGE_KEY,
+  SAVED_MEDICINES_STORAGE_KEY,
+} from '../lib/myMedicines.js'
 import { derivePairReviewStatus } from '../lib/pairStatus.js'
 import './PublicProduct.css'
 import './MyHealth.css'
 
-const MEDICINE_STORAGE_KEY = 'cheers.my-medicines.v1'
 const CONDITION_STORAGE_KEY = 'cheers.my-conditions.v1'
 const PAIR_STATUS_PRIORITY = { important: 0, review: 1, insufficient: 2 }
+const COMPACT_PAIR_RESULT_COUNT = 3
 const FOOD_TOPIC_LABELS = {
   alcohol: 'Alcohol information',
   grapefruit: 'Grapefruit information',
@@ -60,49 +68,67 @@ function readSavedSelections(storageKey, limit) {
   }
 }
 
+function readMedicineState() {
+  const medicines = readSavedSelections(SAVED_MEDICINES_STORAGE_KEY, MAX_SAVED_MEDICINES)
+  let storedReviewMedicineIds
+
+  try {
+    const stored = window.localStorage.getItem(REVIEW_MEDICINES_STORAGE_KEY)
+    storedReviewMedicineIds = stored === null ? undefined : JSON.parse(stored)
+  } catch {
+    storedReviewMedicineIds = undefined
+  }
+
+  return {
+    medicines,
+    reviewMedicineIds: reconcileReviewMedicineIds(medicines, storedReviewMedicineIds),
+  }
+}
+
 function useSavedInformation(items, kind) {
-  const [requests, setRequests] = useState({})
+  const [requestState, setRequestState] = useState({ items, kind, results: {} })
 
   useEffect(() => {
     let active = true
-    setRequests(Object.fromEntries(items.map((item) => [
-      item.entity_id,
-      { status: 'loading', payload: null, error: '' },
-    ])))
 
-    async function load() {
-      for (const item of items) {
-        try {
-          const path = kind === 'medicine'
-            ? `/api/public/medicine?drug_id=${encodeURIComponent(item.entity_id)}`
-            : `/api/public/disease?disease_id=${encodeURIComponent(item.entity_id)}`
-          const payload = await getJson(path)
-          if (!active) return
-          setRequests((current) => ({
-            ...current,
-            [item.entity_id]: { status: 'ready', payload, error: '' },
-          }))
-        } catch (requestError) {
-          if (!active) return
-          setRequests((current) => ({
-            ...current,
-            [item.entity_id]: {
-              status: 'error',
-              payload: null,
-              error: requestError.message || `${kind} information could not be loaded.`,
-            },
-          }))
-        }
-      }
-    }
-
-    load()
+    mapWithConcurrency(
+      items,
+      4,
+      (item) => {
+        const path = kind === 'medicine'
+          ? `/api/public/medicine?drug_id=${encodeURIComponent(item.entity_id)}`
+          : `/api/public/disease?disease_id=${encodeURIComponent(item.entity_id)}`
+        return getJson(path)
+      },
+      (settled, index) => {
+        const result = settled.status === 'fulfilled'
+          ? { status: 'ready', payload: settled.value, error: '' }
+          : {
+            status: 'error',
+            payload: null,
+            error: settled.reason?.message || `${kind} information could not be loaded.`,
+          }
+        setRequestState((current) => !active ? current : ({
+          items,
+          kind,
+          results: {
+            ...(current.items === items && current.kind === kind ? current.results : {}),
+            [items[index].entity_id]: result,
+          },
+        }))
+      },
+      () => !active,
+    )
     return () => {
       active = false
     }
   }, [items, kind])
 
-  return requests
+  const results = requestState.items === items && requestState.kind === kind ? requestState.results : {}
+  return Object.fromEntries(items.map((item) => [
+    item.entity_id,
+    results[item.entity_id] || { status: 'loading', payload: null, error: '' },
+  ]))
 }
 
 function SelectionSummary({ title, items, emptyCopy, addPath, managePath, type }) {
@@ -114,7 +140,7 @@ function SelectionSummary({ title, items, emptyCopy, addPath, managePath, type }
           <span className="eyebrow">Saved on this browser</span>
           <h2 id={`my-health-${type}-title`}>{title}</h2>
         </div>
-        {items.length > 0 && <Link to={managePath}>Manage {isMedicine ? 'medicines' : 'conditions'}</Link>}
+        <Link to={managePath}>Manage {isMedicine ? 'medicines' : 'conditions'}</Link>
       </div>
       {items.length ? (
         <div className="my-health-selection-list">
@@ -150,11 +176,12 @@ function ModuleNotice({ loading, errors }) {
 }
 
 export default function MyHealth() {
-  const [medicines] = useState(() => readSavedSelections(MEDICINE_STORAGE_KEY, 8))
+  const [{ medicines, reviewMedicineIds }] = useState(readMedicineState)
   const [conditions] = useState(() => readSavedSelections(CONDITION_STORAGE_KEY, 10))
   const medicineInformation = useSavedInformation(medicines, 'medicine')
   const conditionInformation = useSavedInformation(conditions, 'condition')
   const [pairReview, setPairReview] = useState({ checking: false, current: 0, total: 0, results: [] })
+  const [showAllPairResults, setShowAllPairResults] = useState(false)
   const reviewIdRef = useRef(0)
   const empty = medicines.length === 0 && conditions.length === 0
 
@@ -162,6 +189,8 @@ export default function MyHealth() {
     reviewIdRef.current += 1
   }, [])
 
+  const reviewMedicineIdSet = new Set(reviewMedicineIds)
+  const reviewMedicines = medicines.filter((medicine) => reviewMedicineIdSet.has(medicine.entity_id))
   const medicineById = new Map(medicines.map((medicine) => [medicine.entity_id, medicine]))
   const connections = { indications: [], other: [] }
   for (const condition of conditions) {
@@ -195,53 +224,58 @@ export default function MyHealth() {
   const conditionLoading = conditions.some((item) => conditionInformation[item.entity_id]?.status === 'loading')
   const medicineErrors = medicines.filter((item) => medicineInformation[item.entity_id]?.status === 'error').length
   const conditionErrors = conditions.filter((item) => conditionInformation[item.entity_id]?.status === 'error').length
-  const pairCount = (medicines.length * (medicines.length - 1)) / 2
+  const pairCount = (reviewMedicines.length * (reviewMedicines.length - 1)) / 2
   const pairSummary = pairReview.results.reduce((summary, result) => ({
     ...summary,
     [result.status.key]: summary[result.status.key] + 1,
   }), { important: 0, review: 0, insufficient: 0 })
   const orderedPairResults = pairReview.results
-    .map((result, index) => ({ ...result, originalIndex: index }))
+    .slice()
     .sort((left, right) => (
       PAIR_STATUS_PRIORITY[left.status.key] - PAIR_STATUS_PRIORITY[right.status.key]
       || left.originalIndex - right.originalIndex
     ))
+  const hasAdditionalPairResults = orderedPairResults.length > COMPACT_PAIR_RESULT_COUNT
+  const visiblePairResults = showAllPairResults
+    ? orderedPairResults
+    : orderedPairResults.slice(0, COMPACT_PAIR_RESULT_COUNT)
 
   async function reviewMedicineCombinations() {
-    const pairs = generateUniqueMedicinePairs(medicines)
+    const pairs = generateUniqueMedicinePairs(reviewMedicines)
     if (!pairs.length || pairReview.checking) return
     const reviewId = reviewIdRef.current + 1
     reviewIdRef.current = reviewId
-    setPairReview({ checking: true, current: 1, total: pairs.length, results: [] })
+    setShowAllPairResults(false)
+    setPairReview({ checking: true, current: 0, total: pairs.length, results: [] })
 
-    for (let index = 0; index < pairs.length; index += 1) {
-      if (reviewIdRef.current !== reviewId) return
-      const pair = pairs[index]
-      setPairReview((current) => ({ ...current, current: index + 1 }))
-      let evidence = null
-      let failed = false
-      try {
-        evidence = await getJson(pairEndpoint(
-          '/api/evidence/pair',
-          pair.drugA.entity_id,
-          pair.drugB.entity_id,
-        ))
-      } catch {
-        failed = true
-      }
-      if (reviewIdRef.current !== reviewId) return
-      setPairReview((current) => ({
-        ...current,
-        results: [...current.results, {
-          pair,
-          failed,
-          status: derivePairReviewStatus(evidence, failed),
-        }],
-      }))
-    }
+    const isCancelled = () => reviewIdRef.current !== reviewId
+    await mapWithConcurrency(
+      pairs,
+      4,
+      (pair) => getJson(pairEndpoint(
+        '/api/evidence/pair',
+        pair.drugA.entity_id,
+        pair.drugB.entity_id,
+      )),
+      (settled, originalIndex) => {
+        const failed = settled.status === 'rejected'
+        const evidence = failed ? null : settled.value
+        setPairReview((current) => isCancelled() ? current : ({
+          ...current,
+          current: current.current + 1,
+          results: [...current.results, {
+            pair: pairs[originalIndex],
+            originalIndex,
+            failed,
+            status: derivePairReviewStatus(evidence, failed),
+          }],
+        }))
+      },
+      isCancelled,
+    )
 
     if (reviewIdRef.current === reviewId) {
-      setPairReview((current) => ({ ...current, checking: false }))
+      setPairReview((current) => isCancelled() ? current : ({ ...current, checking: false }))
     }
   }
 
@@ -251,6 +285,8 @@ export default function MyHealth() {
         <span className="eyebrow">My Health</span>
         <h1>Your selected medicines and conditions, brought together in one place.</h1>
         <p>Use this overview to reach available CHEERS information without creating a clinical profile.</p>
+        <p><strong>Saved medicines:</strong> review combinations, open medicine details, and explore available source information.</p>
+        <p><strong>Saved conditions:</strong> open condition information, inspect typed medicine–condition relationships, and access available nutrition and lifestyle modules.</p>
       </header>
 
       <aside className="my-health-privacy">
@@ -276,7 +312,7 @@ export default function MyHealth() {
           <section className="my-health-counts" aria-label="Saved information summary">
             <article><Pill size={18} /><strong>{medicines.length}</strong><span>medicines</span></article>
             <article><HeartPulse size={18} /><strong>{conditions.length}</strong><span>conditions</span></article>
-            <article><Beaker size={18} /><strong>{pairCount}</strong><span>medicine combinations</span></article>
+            <article><Beaker size={18} /><strong>{pairCount}</strong><span>selected medicine combinations</span></article>
             <article><GitBranch size={18} /><strong>{connections.indications.length + connections.other.length}</strong><span>medicine–condition relationships</span></article>
             <article><Utensils size={18} /><strong>{nutritionItems.length}</strong><span>nutrition modules available</span></article>
           </section>
@@ -305,18 +341,21 @@ export default function MyHealth() {
               <div><span className="eyebrow">On demand</span><h2 id="my-health-pairs-title">Medicine combination review</h2></div>
               <Link to="/my-medicines">Open My Medicines</Link>
             </div>
-            {medicines.length < 2 ? (
-              <div className="my-health-soft-empty"><p>Add at least two medicines to review combinations.</p><Link to="/my-medicines">Manage medicines <ArrowRight size={15} /></Link></div>
+            <p className="my-health-priority-note">
+              {reviewMedicines.length} of {medicines.length} saved medicines selected for combination review. Manage this review set in My Medicines; unselected medicines remain saved and available elsewhere in My Health.
+            </p>
+            {reviewMedicines.length < 2 ? (
+              <div className="my-health-soft-empty"><p>Select at least two medicines in My Medicines to review combinations.</p><Link to="/my-medicines">Manage medicines <ArrowRight size={15} /></Link></div>
             ) : (
               <>
                 {!pairReview.results.length && !pairReview.checking && (
                   <div className="my-health-review-prompt">
-                    <p>Review {pairCount} combinations using the same source-based statuses as My Medicines.</p>
+                    <p>Review {pairCount} {pairCount === 1 ? 'combination' : 'combinations'} using the same source-based statuses as My Medicines.</p>
                     <button className="primary-button" type="button" onClick={reviewMedicineCombinations}><Beaker size={17} /> Review medicine combinations</button>
                   </div>
                 )}
                 {pairReview.checking && (
-                  <p className="my-health-module-note" role="status"><LoaderCircle className="spin" size={17} /> Reviewing {pairReview.current} of {pairReview.total} combinations…</p>
+                  <p className="my-health-module-note" role="status"><LoaderCircle className="spin" size={17} /> Checked {pairReview.current} of {pairReview.total} combinations</p>
                 )}
                 {pairReview.results.length > 0 && (
                   <>
@@ -325,8 +364,8 @@ export default function MyHealth() {
                       <article className="is-review"><strong>{pairSummary.review}</strong><span>needs review</span></article>
                       <article className="is-insufficient"><strong>{pairSummary.insufficient}</strong><span>not enough information</span></article>
                     </div>
-                    <div className="my-health-pair-list" aria-label="Medicine combinations by information priority">
-                      {orderedPairResults.slice(0, 3).map((result) => (
+                    <div id="my-health-pair-results" className="my-health-pair-list" aria-label="Medicine combinations by information priority">
+                      {visiblePairResults.map((result) => (
                         <article className={`my-health-pair-item is-${result.status.key}`} key={`${result.pair.drugA.entity_id}-${result.pair.drugB.entity_id}`}>
                           <span>{result.status.title}</span>
                           <strong>{result.pair.drugA.name} + {result.pair.drugB.name}</strong>
@@ -334,7 +373,25 @@ export default function MyHealth() {
                         </article>
                       ))}
                     </div>
-                    <p className="my-health-priority-note">Pairs are ordered only to surface available information: warning, review, then insufficient information. This is not clinical severity ranking.</p>
+                    {hasAdditionalPairResults && (
+                      <div className="my-health-pair-list-control">
+                        <p className="my-health-priority-note">
+                          {showAllPairResults
+                            ? `Showing all ${orderedPairResults.length} reviewed combinations`
+                            : `Showing ${COMPACT_PAIR_RESULT_COUNT} of ${orderedPairResults.length} reviewed combinations`}
+                        </p>
+                        <button
+                          type="button"
+                          className="secondary-button"
+                          aria-expanded={showAllPairResults}
+                          aria-controls="my-health-pair-results"
+                          onClick={() => setShowAllPairResults((current) => !current)}
+                        >
+                          {showAllPairResults ? 'Show fewer' : `Show all ${orderedPairResults.length} combinations`}
+                        </button>
+                      </div>
+                    )}
+                    <p className="my-health-priority-note">Pairs are ordered only to surface available information: warning, review, then insufficient information. These categories summarize retrieved source information; they are not clinical severity, interaction probability, or personal-safety assessments.</p>
                   </>
                 )}
               </>
@@ -346,6 +403,9 @@ export default function MyHealth() {
               <div><span className="eyebrow">Checked typed relationships</span><h2 id="my-health-connections-title">Medicine + condition connections</h2></div>
             </div>
             <ModuleNotice loading={conditionLoading} errors={conditionErrors} />
+            {connections.indications.length + connections.other.length > 0 && (
+              <p className="my-health-neutral-copy">These are typed relationships in the checked data, not recommendations to use or change treatment.</p>
+            )}
             {!conditionLoading && medicines.length > 0 && conditions.length > 0 && connections.indications.length === 0 && connections.other.length === 0 && (
               <p className="my-health-neutral-copy">No typed relationships among the saved medicines and conditions were found in the checked Disease Guide data.</p>
             )}
@@ -417,6 +477,7 @@ export default function MyHealth() {
               <Link to="/medicines"><Pill size={17} /> Medicine Guide</Link>
               <Link to="/diseases"><HeartPulse size={17} /> Disease Guide</Link>
               <Link to="/graph"><Search size={17} /> Explore graph context</Link>
+              <Link to="/predictor"><FlaskConical size={17} /> Open Research Predictor</Link>
             </nav>
           </section>
         </>

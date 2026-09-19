@@ -1,10 +1,19 @@
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { getJson } from '../lib/api.js'
-import { generateUniqueMedicinePairs } from '../lib/myMedicines.js'
+import {
+  generateUniqueMedicinePairs,
+  REVIEW_MEDICINES_STORAGE_KEY,
+  SAVED_MEDICINES_STORAGE_KEY,
+} from '../lib/myMedicines.js'
 import MyMedicines from './MyMedicines.jsx'
+
+const GENERATED_MEDICINES = Array.from({ length: 21 }, (_, index) => ({
+  entity_id: `TEST${index}`,
+  name: `Medicine ${index}`,
+}))
 
 vi.mock('../components/DrugAutocomplete.jsx', () => ({
   default: ({ label, selection, onSelect, disabled }) => {
@@ -13,6 +22,10 @@ vi.mock('../components/DrugAutocomplete.jsx', () => ({
       { entity_id: 'DB01050', name: 'Ibuprofen' },
       { entity_id: 'DB00331', name: 'Metformin' },
       { entity_id: 'DB00945', name: 'Acetylsalicylic acid' },
+      ...Array.from({ length: 21 }, (_, index) => ({
+        entity_id: `TEST${index}`,
+        name: `Medicine ${index}`,
+      })),
     ]
 
     return (
@@ -78,19 +91,117 @@ describe('My Medicines', () => {
     getJson.mockReset()
   })
 
+  it('explains the separate saved and combination-review limits', () => {
+    renderPage()
+
+    expect(screen.getByText(/review combinations using retrieved evidence/i)).toBeVisible()
+    expect(screen.getByText(/open medicine information/i)).toBeVisible()
+    expect(screen.getByText(/continue in My Health/i)).toBeVisible()
+    expect(screen.getByText(/Evidence, Medicine Checker, and Graph views when available/i)).toBeVisible()
+    expect(screen.getByText(/Save up to 20 medicines on this browser/i)).toBeVisible()
+    expect(screen.getByText(/Select up to 8 at a time for combination review/i)).toBeVisible()
+    expect(screen.getByText(/These are product limits, not medical limits/i)).toBeVisible()
+    expect(screen.getByText('0 saved medicines')).toBeVisible()
+    expect(screen.getByText('0 of 8 selected for combination review')).toBeVisible()
+    expect(screen.getByRole('link', { name: 'View in My Health' })).toHaveAttribute('href', '/my-health')
+  })
+
   it('adds a medicine and stores only its canonical name and ID locally', async () => {
     const user = userEvent.setup()
     renderPage()
 
     await addMedicine(user, 'Warfarin')
 
-    const selected = screen.getByRole('list', { name: 'Selected medicines' })
-    expect(within(selected).getByText('Warfarin')).toBeVisible()
-    expect(within(selected).getByText('DB00682')).toBeVisible()
+    expect(screen.getByRole('link', { name: 'View in My Health' })).toHaveAttribute('href', '/my-health')
+    const selected = screen.getByRole('list', { name: 'Saved medicines' })
+    expect(within(selected).getByText('Warfarin').tagName).toBe('STRONG')
+    expect(within(selected).getByText('DB00682').tagName).toBe('SMALL')
+    expect(screen.getByRole('checkbox', { name: 'Include Warfarin in combination review' })).toBeChecked()
     await waitFor(() => {
-      expect(JSON.parse(window.localStorage.getItem('cheers.my-medicines.v1'))).toEqual([
+      expect(JSON.parse(window.localStorage.getItem(SAVED_MEDICINES_STORAGE_KEY))).toEqual([
         { entity_id: 'DB00682', name: 'Warfarin' },
       ])
+      expect(JSON.parse(window.localStorage.getItem(REVIEW_MEDICINES_STORAGE_KEY))).toEqual(['DB00682'])
+    })
+  })
+
+  it('defaults legacy saved medicines to selected and preserves an explicit empty selection', async () => {
+    const legacyMedicines = GENERATED_MEDICINES.slice(0, 3)
+    window.localStorage.setItem(SAVED_MEDICINES_STORAGE_KEY, JSON.stringify(legacyMedicines))
+    const { unmount } = renderPage()
+
+    legacyMedicines.forEach((medicine) => {
+      expect(screen.getByRole('checkbox', {
+        name: `Include ${medicine.name} in combination review`,
+      })).toBeChecked()
+    })
+    await waitFor(() => {
+      expect(JSON.parse(window.localStorage.getItem(REVIEW_MEDICINES_STORAGE_KEY))).toEqual(
+        legacyMedicines.map((medicine) => medicine.entity_id),
+      )
+    })
+
+    unmount()
+    window.localStorage.setItem(REVIEW_MEDICINES_STORAGE_KEY, JSON.stringify([]))
+    renderPage()
+
+    legacyMedicines.forEach((medicine) => {
+      expect(screen.getByRole('checkbox', {
+        name: `Include ${medicine.name} in combination review`,
+      })).not.toBeChecked()
+    })
+    expect(screen.getByRole('button', { name: 'Check combinations' })).toBeDisabled()
+    expect(screen.getByText(/Select at least two saved medicines/)).toBeVisible()
+  })
+
+  it('keeps more than eight medicines saved while limiting review selection to eight', async () => {
+    const user = userEvent.setup()
+    const firstEight = GENERATED_MEDICINES.slice(0, 8)
+    window.localStorage.setItem(SAVED_MEDICINES_STORAGE_KEY, JSON.stringify(firstEight))
+    window.localStorage.setItem(
+      REVIEW_MEDICINES_STORAGE_KEY,
+      JSON.stringify(firstEight.map((medicine) => medicine.entity_id)),
+    )
+    renderPage()
+
+    await addMedicine(user, 'Medicine 8')
+
+    expect(screen.getByRole('list', { name: 'Saved medicines' }).children).toHaveLength(9)
+    expect(screen.getByText('9 saved medicines')).toBeVisible()
+    expect(screen.getByText('8 of 8 selected for combination review')).toBeVisible()
+    const ninth = screen.getByRole('checkbox', {
+      name: 'Include Medicine 8 in combination review',
+    })
+    expect(ninth).not.toBeChecked()
+    expect(ninth).toBeDisabled()
+    expect(screen.getByText(/Deselect one to include another/)).toBeVisible()
+
+    await user.click(screen.getByRole('checkbox', {
+      name: 'Include Medicine 0 in combination review',
+    }))
+    expect(ninth).toBeEnabled()
+    await user.click(ninth)
+    expect(ninth).toBeChecked()
+    expect(screen.getByRole('checkbox', {
+      name: 'Include Medicine 0 in combination review',
+    })).not.toBeChecked()
+    await waitFor(() => {
+      expect(JSON.parse(window.localStorage.getItem(REVIEW_MEDICINES_STORAGE_KEY))).toEqual(
+        GENERATED_MEDICINES.slice(1, 9).map((medicine) => medicine.entity_id),
+      )
+    })
+  })
+
+  it('caps the saved list at twenty medicines', async () => {
+    window.localStorage.setItem(SAVED_MEDICINES_STORAGE_KEY, JSON.stringify(GENERATED_MEDICINES))
+    renderPage()
+
+    expect(screen.getByRole('list', { name: 'Saved medicines' }).children).toHaveLength(20)
+    expect(screen.getByText('20 saved medicines')).toBeVisible()
+    expect(screen.getByRole('combobox', { name: 'Search medicine' })).toBeDisabled()
+    expect(screen.getByText(/reached the 20-medicine product limit/i)).toBeVisible()
+    await waitFor(() => {
+      expect(JSON.parse(window.localStorage.getItem(SAVED_MEDICINES_STORAGE_KEY))).toHaveLength(20)
     })
   })
 
@@ -102,18 +213,22 @@ describe('My Medicines', () => {
     await user.selectOptions(screen.getByRole('combobox', { name: 'Search medicine' }), 'Warfarin')
     expect(screen.getByText('This medicine is already in your list.')).toBeVisible()
     expect(screen.getByRole('button', { name: 'Add medicine' })).toBeDisabled()
-    expect(screen.getByRole('list', { name: 'Selected medicines' }).children).toHaveLength(1)
+    expect(screen.getByRole('list', { name: 'Saved medicines' }).children).toHaveLength(1)
 
     await user.click(screen.getByRole('button', { name: 'Remove Warfarin' }))
     expect(screen.getByText('No medicines added yet.')).toBeVisible()
+    await waitFor(() => {
+      expect(JSON.parse(window.localStorage.getItem(REVIEW_MEDICINES_STORAGE_KEY))).toEqual([])
+    })
 
     await addMedicine(user, 'Warfarin')
     await addMedicine(user, 'Ibuprofen')
-    expect(screen.getByRole('list', { name: 'Selected medicines' }).children).toHaveLength(2)
+    expect(screen.getByRole('list', { name: 'Saved medicines' }).children).toHaveLength(2)
     await user.click(screen.getByRole('button', { name: 'Clear my medicines' }))
     expect(screen.getByText('No medicines added yet.')).toBeVisible()
     await waitFor(() => {
-      expect(JSON.parse(window.localStorage.getItem('cheers.my-medicines.v1'))).toEqual([])
+      expect(JSON.parse(window.localStorage.getItem(SAVED_MEDICINES_STORAGE_KEY))).toEqual([])
+      expect(JSON.parse(window.localStorage.getItem(REVIEW_MEDICINES_STORAGE_KEY))).toEqual([])
     })
   })
 
@@ -131,7 +246,27 @@ describe('My Medicines', () => {
     ])
   })
 
-  it('checks three medicines as three sequential pairs and renders all existing states', async () => {
+  it('generates combinations from only the medicines selected for review', async () => {
+    const user = userEvent.setup()
+    const saved = GENERATED_MEDICINES.slice(0, 4)
+    const selected = [saved[0].entity_id, saved[2].entity_id, saved[3].entity_id]
+    window.localStorage.setItem(SAVED_MEDICINES_STORAGE_KEY, JSON.stringify(saved))
+    window.localStorage.setItem(REVIEW_MEDICINES_STORAGE_KEY, JSON.stringify(selected))
+    getJson.mockResolvedValue(INSUFFICIENT_EVIDENCE)
+    renderPage()
+
+    await user.click(screen.getByRole('button', { name: 'Check combinations' }))
+
+    const summary = await screen.findByLabelText('Medicine review summary')
+    expect(within(summary).getByText('selected medicines').closest('article')).toHaveTextContent('3')
+    expect(getJson.mock.calls.map(([path]) => path)).toEqual([
+      '/api/evidence/pair?drug_a_id=TEST0&drug_b_id=TEST2',
+      '/api/evidence/pair?drug_a_id=TEST0&drug_b_id=TEST3',
+      '/api/evidence/pair?drug_a_id=TEST2&drug_b_id=TEST3',
+    ])
+  })
+
+  it('checks three medicines as three unique pairs and renders all existing states', async () => {
     const user = userEvent.setup()
     getJson
       .mockResolvedValueOnce(IMPORTANT_EVIDENCE)
@@ -145,7 +280,7 @@ describe('My Medicines', () => {
     await user.click(screen.getByRole('button', { name: 'Check combinations' }))
 
     const summary = await screen.findByLabelText('Medicine review summary')
-    expect(within(summary).getByText('medicines').closest('article')).toHaveTextContent('3')
+    expect(within(summary).getByText('selected medicines').closest('article')).toHaveTextContent('3')
     expect(within(summary).getByText('combinations checked').closest('article')).toHaveTextContent('3')
     expect(within(summary).getByText('interaction warning').closest('article')).toHaveTextContent('1')
     expect(within(summary).getByText('needs review').closest('article')).toHaveTextContent('1')
@@ -181,6 +316,120 @@ describe('My Medicines', () => {
     const summary = await screen.findByLabelText('Medicine review summary')
     expect(within(summary).getByText('combinations checked').closest('article')).toHaveTextContent('3')
     expect(getJson).toHaveBeenCalledTimes(3)
+  })
+
+  it('checks all 28 pairs with at most four in flight and displays settled results in original order', async () => {
+    const user = userEvent.setup()
+    const medicines = Array.from({ length: 8 }, (_, index) => ({
+      entity_id: `TEST${index}`, name: `Medicine ${index}`,
+    }))
+    window.localStorage.setItem('cheers.my-medicines.v1', JSON.stringify(medicines))
+    const pending = []
+    let active = 0
+    let peak = 0
+    getJson.mockImplementation((path) => {
+      active += 1
+      peak = Math.max(peak, active)
+      const request = { path, settled: false }
+      pending.push(request)
+      return new Promise((resolve, reject) => {
+        request.finish = (failed = false) => {
+          request.settled = true
+          if (failed) reject(new Error('unavailable'))
+          else resolve(INSUFFICIENT_EVIDENCE)
+        }
+      }).finally(() => { active -= 1 })
+    })
+    const { container } = renderPage()
+    await user.click(screen.getByRole('button', { name: 'Check combinations' }))
+
+    expect(pending).toHaveLength(4)
+    expect(screen.getByText('Checked 0 of 28 combinations')).toBeVisible()
+    expect(container.querySelectorAll('.my-medicines-pair-card')).toHaveLength(0)
+
+    await act(async () => { pending[3].finish(true) })
+    expect(pending).toHaveLength(5)
+    expect(screen.getByText('Checked 1 of 28 combinations')).toBeVisible()
+    expect(screen.getByText('Combination 4')).toBeVisible()
+    expect(screen.getByText(/Sources could not be retrieved for this combination/)).toBeVisible()
+    expect(screen.queryByLabelText('Medicine review summary')).not.toBeInTheDocument()
+
+    await act(async () => { pending[0].finish() })
+    expect(screen.getByText('Checked 2 of 28 combinations')).toBeVisible()
+    let cards = [...container.querySelectorAll('.my-medicines-pair-card')]
+    expect(cards).toHaveLength(2)
+    expect(cards[0]).toHaveTextContent('Combination 1')
+    expect(cards[1]).toHaveTextContent('Combination 4')
+
+    while (pending.some((request) => !request.settled)) {
+      const next = pending.findLast((request) => !request.settled)
+      await act(async () => { next.finish() })
+      expect(active).toBeLessThanOrEqual(4)
+    }
+
+    const pairs = generateUniqueMedicinePairs(medicines)
+    expect(pending.map(({ path }) => path)).toEqual(pairs.map(({ drugA, drugB }) => (
+      `/api/evidence/pair?drug_a_id=${drugA.entity_id}&drug_b_id=${drugB.entity_id}`
+    )))
+    expect(new Set(pending.map(({ path }) => path)).size).toBe(28)
+    expect(peak).toBe(4)
+    expect(active).toBe(0)
+    cards = [...container.querySelectorAll('.my-medicines-pair-card')]
+    expect(cards).toHaveLength(28)
+    cards.forEach((card, index) => {
+      expect(within(card).getByRole('heading', { level: 3 })).toHaveTextContent(
+        `${pairs[index].drugA.name} + ${pairs[index].drugB.name}`,
+      )
+      expect(card).toHaveTextContent(`Combination ${index + 1}`)
+    })
+    expect(screen.getByLabelText('Medicine review summary')).toHaveTextContent('28combinations checked')
+    expect(screen.queryByText(/^Checked \d+ of 28 combinations$/)).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Remove Medicine 0' }))
+    expect(container.querySelectorAll('.my-medicines-pair-card')).toHaveLength(0)
+    expect(screen.queryByLabelText('Medicine review summary')).not.toBeInTheDocument()
+  })
+
+  it('ignores stale completions and stops queued pairs after unmount', async () => {
+    const user = userEvent.setup()
+    const medicines = Array.from({ length: 4 }, (_, index) => ({
+      entity_id: `TEST${index}`, name: `Medicine ${index}`,
+    }))
+    window.localStorage.setItem('cheers.my-medicines.v1', JSON.stringify(medicines))
+    const settle = []
+    getJson.mockImplementation(() => new Promise((resolve) => settle.push(resolve)))
+    const { unmount } = renderPage()
+    await user.click(screen.getByRole('button', { name: 'Check combinations' }))
+    expect(getJson).toHaveBeenCalledTimes(4)
+    unmount()
+
+    window.localStorage.setItem('cheers.my-medicines.v1', JSON.stringify(medicines.slice(0, 2)))
+    renderPage()
+    await act(async () => { settle.forEach((resolve) => resolve(IMPORTANT_EVIDENCE)) })
+    expect(getJson).toHaveBeenCalledTimes(4)
+    expect(screen.queryByRole('heading', { name: 'Your medicine review' })).not.toBeInTheDocument()
+    expect(screen.queryByText('Interaction warning found')).not.toBeInTheDocument()
+  })
+
+  it('invalidates an in-flight review when the review selection changes', async () => {
+    const user = userEvent.setup()
+    const medicines = GENERATED_MEDICINES.slice(0, 3)
+    window.localStorage.setItem(SAVED_MEDICINES_STORAGE_KEY, JSON.stringify(medicines))
+    const settle = []
+    getJson.mockImplementation(() => new Promise((resolve) => settle.push(resolve)))
+    renderPage()
+
+    await user.click(screen.getByRole('button', { name: 'Check combinations' }))
+    expect(settle).toHaveLength(3)
+    await user.click(screen.getByRole('checkbox', {
+      name: 'Include Medicine 2 in combination review',
+    }))
+    expect(screen.queryByText(/^Checked \d+ of 3 combinations$/)).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Your medicine review' })).not.toBeInTheDocument()
+
+    await act(async () => { settle.forEach((resolve) => resolve(IMPORTANT_EVIDENCE)) })
+    expect(screen.queryByRole('heading', { name: 'Your medicine review' })).not.toBeInTheDocument()
+    expect(screen.queryByText('Interaction warning found')).not.toBeInTheDocument()
   })
 
   it('provides existing pair-review, checker, evidence, and graph routes', async () => {

@@ -3,7 +3,7 @@ import {
   Beaker,
   BookOpen,
   FlaskConical,
-  HeartPulse,
+  LayoutDashboard,
   Network,
   Pill,
   Search,
@@ -17,29 +17,32 @@ import './PublicSearch.css'
 const QUICK_ACTIONS = [
   {
     title: 'Check medicines together',
-    description: 'Compare two medicines and review available interaction-related sources.',
+    description: 'Compare two medicines and review available openFDA and PubMed sources.',
     path: '/check',
     icon: Beaker,
     tone: 'violet',
     emphasis: 'featured',
   },
   {
-    title: 'Medicine guide',
-    description: 'Find medicine information, warnings, interactions, and side effects when available.',
-    path: '/medicines',
+    title: 'Browse medicines and diseases',
+    description: 'Open medicine details and condition information with available sources.',
+    links: [
+      { path: '/medicines', label: 'Medicines' },
+      { path: '/diseases', label: 'Diseases' },
+    ],
     icon: Pill,
     tone: 'blue',
   },
   {
-    title: 'Disease guide',
-    description: 'Read clear disease explanations and explore verified treatment relationships.',
-    path: '/diseases',
-    icon: HeartPulse,
+    title: 'My Health',
+    description: 'Bring saved medicines and conditions together to review available information.',
+    path: '/my-health',
+    icon: LayoutDashboard,
     tone: 'rose',
   },
   {
     title: 'Explore connections',
-    description: 'See deeper gene, disease, and medicine connections in the biomedical graph.',
+    description: 'See shared G3 gene/protein and disease relationships for two medicines.',
     path: '/graph',
     icon: Network,
     tone: 'green',
@@ -69,7 +72,7 @@ export default function Home() {
           <span className="public-brand-word">CHEERS</span>
           <h1 id="public-home-title">Understand your medicines better.</h1>
           <p>
-            Search medicines, diseases, side effects, and interaction information
+            Search medicines, diseases, side effects, and available evidence and context
             — with sources you can explore.
           </p>
         </div>
@@ -96,38 +99,77 @@ export default function Home() {
             <span className="eyebrow">What would you like to do?</span>
             <h2 id="quick-actions-title">Start with a simple question</h2>
           </div>
-          <p>Move from a quick answer to its sources and deeper context whenever you need it.</p>
+          <p>Move from available information to its sources and deeper context whenever you need it.</p>
         </div>
 
         <div className="public-quick-grid">
-          {QUICK_ACTIONS.map(({ title, description, path, icon: Icon, tone, emphasis }) => (
-            <Link className={`public-quick-card is-${tone}${emphasis ? ` is-${emphasis}` : ''}`} to={path} key={title}>
-              <span className="public-quick-icon"><Icon size={21} /></span>
-              <div>
-                <h3>{title}</h3>
-                <p>{description}</p>
-              </div>
-              <ArrowRight className="public-quick-arrow" size={18} aria-hidden="true" />
-            </Link>
-          ))}
+          {QUICK_ACTIONS.map(({ title, description, path, links, icon: Icon, tone, emphasis }) => {
+            const Card = links ? 'article' : Link
+            return (
+              <Card className={`public-quick-card is-${tone}${emphasis ? ` is-${emphasis}` : ''}${links ? ' public-browse-card' : ''}`} to={path} key={title}>
+                <span className="public-quick-icon"><Icon size={21} /></span>
+                <div>
+                  <h3>{title}</h3>
+                  <p>{description}</p>
+                  {links && (
+                    <div className="public-gateway-links">
+                      {links.map((link) => <Link key={link.path} to={link.path}>{link.label} <ArrowRight size={15} aria-hidden="true" /></Link>)}
+                    </div>
+                  )}
+                </div>
+                {!links && <ArrowRight className="public-quick-arrow" size={18} aria-hidden="true" />}
+              </Card>
+            )
+          })}
         </div>
       </section>
 
-      <section className="public-section public-home-flow" aria-label="How CHEERS helps">
-        <ol className="public-flow-list">
+      <section className="public-section public-home-flow" aria-labelledby="capabilities-title">
+        <div className="public-section-heading">
+          <span className="eyebrow">Available information</span>
+          <h2 id="capabilities-title">What can CHEERS help with?</h2>
+        </div>
+        <ul className="public-flow-list">
           <li>
-            <span><Search size={18} /></span>
-            <div><strong>Search</strong><p>Ask about a medicine, disease, or medicine pair.</p></div>
+            <span><Pill size={18} /></span>
+            <div>
+              <small>Source-backed medicine and disease information</small>
+              <strong>What information is available about this medicine or disease?</strong>
+              <p>CHEERS provides available medicine details and disease information, including supported label, nutrition, lifestyle, and relationship information.</p>
+              <div className="public-gateway-links">
+                <Link to="/medicines">Browse medicines</Link>
+                <Link to="/diseases">Browse diseases</Link>
+              </div>
+            </div>
           </li>
           <li>
-            <span><BookOpen size={18} /></span>
-            <div><strong>Read available information</strong><p>See clear, source-backed details.</p></div>
+            <span><Beaker size={18} /></span>
+            <div>
+              <small>External pair evidence</small>
+              <strong>What do checked sources say about these two medicines?</strong>
+              <p>CHEERS retrieves available openFDA label information and related PubMed records for the selected pair, separately from graph context and model predictions.</p>
+              <div className="public-gateway-links"><Link to="/check">Check medicines</Link></div>
+            </div>
           </li>
           <li>
             <span><Network size={18} /></span>
-            <div><strong>Explore sources or research</strong><p>Open deeper connections only when useful.</p></div>
+            <div>
+              <small>Graph context</small>
+              <strong>What graph context do these medicines share?</strong>
+              <p>CHEERS shows shared G3 gene/protein and disease relationships. Shared graph context is not an interaction or safety verdict.</p>
+              <div className="public-gateway-links"><Link to="/graph">Explore graph</Link></div>
+            </div>
           </li>
-        </ol>
+          <li>
+            <span><Search size={18} /></span>
+            <div>
+              <small>R-GCN research ranking</small>
+              <strong>What candidates does the research model rank for this medicine?</strong>
+              <p>CHEERS shows eligible unobserved PrimeKG candidate links ranked by the R-GCN using raw model scores. These are research ranking values, not clinical probability, severity, confidence, or risk.</p>
+              <div className="public-gateway-links"><Link to="/predictor">Open Research Predictor</Link></div>
+            </div>
+          </li>
+        </ul>
       </section>
 
       <aside className="public-scope-note public-home-scope" aria-labelledby="public-scope-title">
@@ -135,8 +177,10 @@ export default function Home() {
         <div>
           <h2 id="public-scope-title">Information, not a personal prescription</h2>
           <p>
-            CHEERS cannot decide whether a medicine or combination is right for you.
-            Missing information does not mean a combination is safe.
+            CHEERS organizes available sources, graph relationships, and research rankings.
+            It cannot diagnose a condition, determine whether a combination is safe for you,
+            or advise starting, stopping, or changing treatment. Missing evidence and high model
+            scores are not clinical conclusions.
           </p>
         </div>
       </aside>

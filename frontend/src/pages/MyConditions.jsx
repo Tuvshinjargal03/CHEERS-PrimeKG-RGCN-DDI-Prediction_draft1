@@ -13,7 +13,7 @@ import {
   Utensils,
   X,
 } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getJson } from '../lib/api.js'
 import './PublicProduct.css'
@@ -21,6 +21,7 @@ import './MyConditions.css'
 
 const STORAGE_KEY = 'cheers.my-conditions.v1'
 const MAX_CONDITIONS = 10
+const SEARCH_DELAY_MS = 180
 
 function compactCondition(condition) {
   if (
@@ -83,6 +84,197 @@ function boundedDescription(value, limit = 240) {
   return `${text.slice(0, boundary > 0 ? boundary : limit).trim()}…`
 }
 
+function relationTypeCounts(relationships) {
+  if (!Array.isArray(relationships)) return []
+  const counts = new Map()
+  for (const relationship of relationships) {
+    const relation = String(relationship?.relation || '').trim()
+    if (relation) counts.set(relation, (counts.get(relation) || 0) + 1)
+  }
+  return [...counts.entries()]
+}
+
+function ConditionAutocomplete({ selection, savedIds, onSelect, disabled }) {
+  const inputId = useId()
+  const listboxId = `${inputId}-listbox`
+  const rootRef = useRef(null)
+  const inputRef = useRef(null)
+  const requestIdRef = useRef(0)
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState([])
+  const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [activeIndex, setActiveIndex] = useState(-1)
+
+  const closeMenu = useCallback(() => {
+    requestIdRef.current += 1
+    setOpen(false)
+    setLoading(false)
+    setActiveIndex(-1)
+  }, [])
+
+  useEffect(() => {
+    if (!open || selection) return undefined
+    const normalizedQuery = query.trim()
+    if (!normalizedQuery) return undefined
+
+    let requestId = null
+    const timer = window.setTimeout(async () => {
+      requestId = requestIdRef.current + 1
+      requestIdRef.current = requestId
+      setLoading(true)
+      setError('')
+      try {
+        const payload = await getJson(`/api/public/search?q=${encodeURIComponent(normalizedQuery)}`)
+        if (requestIdRef.current !== requestId) return
+        setResults(diseaseCandidates(payload))
+      } catch (requestError) {
+        if (requestIdRef.current !== requestId) return
+        setResults([])
+        setError(requestError.message || 'Condition search could not be completed.')
+      } finally {
+        if (requestIdRef.current === requestId) setLoading(false)
+      }
+    }, SEARCH_DELAY_MS)
+
+    return () => {
+      window.clearTimeout(timer)
+      if (requestId !== null && requestIdRef.current === requestId) requestIdRef.current += 1
+    }
+  }, [open, query, selection])
+
+  useEffect(() => {
+    if (!open) return undefined
+    function closeIfOutside(event) {
+      if (!rootRef.current?.contains(event.target)) closeMenu()
+    }
+    document.addEventListener('pointerdown', closeIfOutside, true)
+    document.addEventListener('focusin', closeIfOutside, true)
+    return () => {
+      document.removeEventListener('pointerdown', closeIfOutside, true)
+      document.removeEventListener('focusin', closeIfOutside, true)
+    }
+  }, [closeMenu, open])
+
+  function choose(condition) {
+    if (savedIds.has(condition.entity_id)) return
+    requestIdRef.current += 1
+    onSelect(condition)
+    setQuery('')
+    setResults([])
+    setOpen(false)
+    setLoading(false)
+    setError('')
+    setActiveIndex(-1)
+  }
+
+  function clear() {
+    requestIdRef.current += 1
+    onSelect(null)
+    setQuery('')
+    setResults([])
+    setOpen(true)
+    setLoading(false)
+    setError('')
+    setActiveIndex(-1)
+    window.setTimeout(() => inputRef.current?.focus(), 0)
+  }
+
+  return (
+    <div className="my-conditions-autocomplete" ref={rootRef}>
+      <label htmlFor={inputId}>Search condition</label>
+      <div className={`my-conditions-autocomplete-control ${selection ? 'is-selected' : ''}`}>
+        <Search size={20} aria-hidden="true" />
+        <input
+          ref={inputRef}
+          id={inputId}
+          type="search"
+          role="combobox"
+          aria-autocomplete="list"
+          aria-expanded={open}
+          aria-controls={listboxId}
+          aria-activedescendant={activeIndex >= 0 ? `${inputId}-option-${activeIndex}` : undefined}
+          value={selection?.name || query}
+          onFocus={() => !disabled && setOpen(true)}
+          onClick={() => !disabled && setOpen(true)}
+          onChange={(event) => {
+            if (selection) onSelect(null)
+            requestIdRef.current += 1
+            setQuery(event.target.value)
+            setResults([])
+            setError('')
+            setActiveIndex(-1)
+            setLoading(Boolean(event.target.value.trim()))
+            setOpen(true)
+          }}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') {
+              closeMenu()
+            } else if (event.key === 'ArrowDown') {
+              event.preventDefault()
+              setOpen(true)
+              if (results.length) setActiveIndex((current) => Math.min(current + 1, results.length - 1))
+            } else if (event.key === 'ArrowUp') {
+              event.preventDefault()
+              if (results.length) setActiveIndex((current) => current <= 0 ? results.length - 1 : current - 1)
+            } else if (event.key === 'Enter' && open && activeIndex >= 0) {
+              event.preventDefault()
+              choose(results[activeIndex])
+            }
+          }}
+          placeholder="Type part of a condition name, such as diab"
+          autoComplete="off"
+          disabled={disabled}
+        />
+        {loading && <span className="my-conditions-autocomplete-loading">Searching…</span>}
+        {(query || selection) && !disabled && (
+          <button type="button" className="icon-button" onClick={clear} aria-label="Clear condition search">
+            <X size={16} aria-hidden="true" />
+          </button>
+        )}
+      </div>
+
+      {selection && <small className="my-conditions-selection-meta">Selected CHEERS condition · {selection.entity_id}</small>}
+
+      {open && !selection && (
+        <div id={listboxId} className="my-conditions-suggestions" role="listbox" aria-label="Condition suggestions">
+          {!query.trim() ? (
+            <div className="my-conditions-suggestion-message">
+              <strong>Browse conditions</strong>
+              <span>Type part of a condition name to search existing CHEERS disease entities.</span>
+            </div>
+          ) : error ? (
+            <div className="my-conditions-suggestion-message is-error" role="alert">{error}</div>
+          ) : results.length ? results.map((condition, index) => {
+            const saved = savedIds.has(condition.entity_id)
+            return (
+              <button
+                id={`${inputId}-option-${index}`}
+                key={condition.entity_id}
+                type="button"
+                role="option"
+                aria-selected={index === activeIndex}
+                disabled={saved}
+                className={index === activeIndex ? 'is-active' : ''}
+                onMouseEnter={() => setActiveIndex(index)}
+                onClick={() => choose(condition)}
+              >
+                <span><strong>{condition.name}</strong><small>{condition.entity_id}</small></span>
+                {saved && <em>Saved</em>}
+              </button>
+            )
+          }) : (
+            <div className="my-conditions-suggestion-message">
+              {loading ? 'Searching CHEERS conditions…' : 'No matching CHEERS condition found. Try another part of the name.'}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function ConditionCard({ condition, onRemove }) {
   const [request, setRequest] = useState({ conditionId: '', payload: null, error: '' })
   const requestIsCurrent = request.conditionId === condition.entity_id
@@ -116,6 +308,7 @@ function ConditionCard({ condition, onRemove }) {
   const otherRelationships = payload?.medicine_relationships?.other
   const indicationCount = Array.isArray(indications) ? indications.length : null
   const otherCount = Array.isArray(otherRelationships) ? otherRelationships.length : null
+  const otherRelationTypes = relationTypeCounts(otherRelationships)
   const nutritionAvailable = payload?.nutrition_lifestyle?.status === 'available'
   const description = disease?.verified_description_available
     ? boundedDescription(disease.description)
@@ -169,7 +362,7 @@ function ConditionCard({ condition, onRemove }) {
             <div>
               <GitBranch size={17} aria-hidden="true" />
               <strong>{otherCount ?? '—'}</strong>
-              <span>other biomedical relationships</span>
+              <span>other typed biomedical relationships</span>
             </div>
             {nutritionAvailable && (
               <div>
@@ -179,19 +372,21 @@ function ConditionCard({ condition, onRemove }) {
               </div>
             )}
           </div>
+          {otherRelationTypes.length > 0 && (
+            <div className="my-conditions-relation-types" aria-label={`Other relationship types for ${condition.name}`}>
+              {otherRelationTypes.map(([relation, count]) => <span key={relation}>{relation} <b>{count}</b></span>)}
+            </div>
+          )}
         </>
       )}
 
       <nav className="my-conditions-actions" aria-label={`Actions for ${condition.name}`}>
-        <Link to={profilePath}>View condition</Link>
-        {!loading && !error && indicationCount !== null && (
-          <Link to={medicineQuery}>Medicines linked through indication</Link>
+        <Link className="is-primary" to={profilePath}>View condition</Link>
+        {!loading && !error && indicationCount > 0 && (
+          <Link to={medicineQuery}>View linked medicines</Link>
         )}
         {nutritionAvailable && (
           <Link to={`${profilePath}?section=nutrition-lifestyle`}>Nutrition &amp; lifestyle</Link>
-        )}
-        {!loading && !error && payload && (
-          <Link to={profilePath}>Explore biomedical relationships</Link>
         )}
       </nav>
     </article>
@@ -200,14 +395,9 @@ function ConditionCard({ condition, onRemove }) {
 
 export default function MyConditions() {
   const [conditions, setConditions] = useState(loadConditions)
-  const [query, setQuery] = useState('')
-  const [searchRequest, setSearchRequest] = useState({
-    status: 'idle',
-    candidates: [],
-    message: '',
-  })
-  const searchIdRef = useRef(0)
+  const [pendingCondition, setPendingCondition] = useState(null)
   const atLimit = conditions.length >= MAX_CONDITIONS
+  const savedIds = new Set(conditions.map((condition) => condition.entity_id))
 
   useEffect(() => {
     try {
@@ -217,43 +407,16 @@ export default function MyConditions() {
     }
   }, [conditions])
 
-  async function searchConditions(event) {
+  function saveCondition(event) {
     event.preventDefault()
-    const normalizedQuery = query.trim()
-    if (!normalizedQuery) return
-
-    const searchId = searchIdRef.current + 1
-    searchIdRef.current = searchId
-    setSearchRequest({ status: 'loading', candidates: [], message: '' })
-    try {
-      const payload = await getJson(`/api/public/search?q=${encodeURIComponent(normalizedQuery)}`)
-      if (searchIdRef.current !== searchId) return
-      const candidates = diseaseCandidates(payload)
-      setSearchRequest({
-        status: candidates.length ? 'ready' : 'empty',
-        candidates,
-        message: candidates.length
-          ? ''
-          : 'No existing CHEERS disease entity matched that search. Try an exact condition name.',
-      })
-    } catch (requestError) {
-      if (searchIdRef.current !== searchId) return
-      setSearchRequest({
-        status: 'error',
-        candidates: [],
-        message: requestError.message || 'Condition search could not be completed.',
-      })
-    }
-  }
-
-  function addCondition(candidate) {
-    const condition = compactCondition(candidate)
+    const condition = compactCondition(pendingCondition)
     if (
       !condition
       || atLimit
       || conditions.some((item) => item.entity_id === condition.entity_id)
     ) return
     setConditions((current) => [...current, condition])
+    setPendingCondition(null)
   }
 
   function removeCondition(entityId) {
@@ -262,7 +425,6 @@ export default function MyConditions() {
 
   function clearConditions() {
     setConditions([])
-    setSearchRequest({ status: 'idle', candidates: [], message: '' })
   }
 
   return (
@@ -270,7 +432,7 @@ export default function MyConditions() {
       <header className="product-page-header">
         <span className="eyebrow">My Conditions</span>
         <h1>Save conditions you want to explore in CHEERS.</h1>
-        <p>Keep quick links to available condition information, medicine relationships, and reviewed nutrition resources.</p>
+        <p>Saving a condition connects it with available condition information, typed medicine–condition relationships, reviewed nutrition and lifestyle modules, and the combined My Health view.</p>
       </header>
 
       <section className="product-input-panel my-conditions-builder" aria-labelledby="my-conditions-search-title">
@@ -282,50 +444,17 @@ export default function MyConditions() {
           <span className="product-step-badge">{conditions.length} / {MAX_CONDITIONS} conditions</span>
         </div>
 
-        <form className="my-conditions-search" role="search" onSubmit={searchConditions}>
-          <label htmlFor="my-conditions-query">Search condition</label>
-          <div>
-            <Search size={20} aria-hidden="true" />
-            <input
-              id="my-conditions-query"
-              type="search"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search by exact disease name"
-              autoComplete="off"
-            />
-            <button className="secondary-button" type="submit" disabled={!query.trim() || searchRequest.status === 'loading'}>
-              {searchRequest.status === 'loading'
-                ? <LoaderCircle className="spin" size={17} aria-hidden="true" />
-                : <Search size={17} aria-hidden="true" />}
-              {searchRequest.status === 'loading' ? 'Searching…' : 'Search'}
-            </button>
-          </div>
+        <form className="my-conditions-search" role="search" onSubmit={saveCondition}>
+          <ConditionAutocomplete
+            selection={pendingCondition}
+            savedIds={savedIds}
+            onSelect={setPendingCondition}
+            disabled={atLimit}
+          />
+          <button className="secondary-button" type="submit" disabled={!pendingCondition || atLimit}>
+            <Plus size={17} aria-hidden="true" /> Save condition
+          </button>
         </form>
-
-        {searchRequest.message && (
-          <p className={`my-conditions-search-message ${searchRequest.status === 'error' ? 'is-error' : ''}`} role={searchRequest.status === 'error' ? 'alert' : 'status'}>
-            {searchRequest.status === 'error' ? <AlertCircle size={16} /> : <Info size={16} />}
-            {searchRequest.message}
-          </p>
-        )}
-
-        {searchRequest.candidates.length > 0 && (
-          <div className="my-conditions-search-results" aria-label="Condition search results">
-            {searchRequest.candidates.map((candidate) => {
-              const saved = conditions.some((condition) => condition.entity_id === candidate.entity_id)
-              return (
-                <article key={candidate.entity_id}>
-                  <span><strong>{candidate.name}</strong><small>{candidate.entity_id}</small></span>
-                  <button type="button" onClick={() => addCondition(candidate)} disabled={saved || atLimit}>
-                    {saved ? <CheckCircle2 size={16} aria-hidden="true" /> : <Plus size={16} aria-hidden="true" />}
-                    {saved ? 'Saved' : 'Add condition'}
-                  </button>
-                </article>
-              )
-            })}
-          </div>
-        )}
 
         {atLimit && (
           <p className="my-conditions-search-message" role="status">
@@ -360,10 +489,15 @@ export default function MyConditions() {
         ) : (
           <div className="my-conditions-empty">
             <HeartPulse size={25} aria-hidden="true" />
-            <div><strong>No conditions saved yet.</strong><p>Search for an existing CHEERS disease entity to add it here.</p></div>
+            <div><strong>Save a condition to organize its available CHEERS information.</strong><p>Use Browse conditions above to find a canonical disease entity, then open its details, typed medicine relationships, nutrition information when available, and My Health connections.</p></div>
           </div>
         )}
       </section>
+
+      <div>
+        <p>Your saved conditions also appear alongside saved medicines in My Health.</p>
+        <Link className="secondary-button" to="/my-health">View in My Health <ArrowRight size={17} aria-hidden="true" /></Link>
+      </div>
 
       <p className="product-page-boundary my-conditions-boundary">
         <Info size={15} aria-hidden="true" />

@@ -291,6 +291,16 @@
   color: #6744c0;
 }
 
+.public-browse-card {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.public-browse-card .public-gateway-links {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
 .public-quick-card.is-blue .public-quick-icon { background: #eaf3fb; color: #39719b; }
 .public-quick-card.is-rose .public-quick-icon { background: #fbecef; color: #ac5368; }
 .public-quick-card.is-green .public-quick-icon { background: #eaf6f2; color: #397b69; }

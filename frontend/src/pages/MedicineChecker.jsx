@@ -219,7 +219,7 @@ export default function MedicineChecker() {
               </div>
               <h2>{status.title}</h2>
               <p>{status.description}</p>
-              <small>This does not guarantee that the combination is safe for a specific person.</small>
+              <small>This status summarizes retrieved sources; it is not an interaction-severity or personal-safety assessment and does not guarantee that the combination is safe for a specific person.</small>
             </div>
           </article>
 
@@ -326,7 +326,7 @@ export default function MedicineChecker() {
 
           <aside className="research-output-gateway">
             <span><Search size={20} /></span>
-            <div><small>Advanced research</small><strong>R-GCN Predictor</strong><p>The Predictor ranks candidate graph links. Its raw score is not a probability or clinical safety score.</p></div>
+            <div><small>Optional research</small><strong>R-GCN Predictor</strong><p>The Predictor ranks candidate graph links. Its raw score is not a probability or clinical safety score.</p></div>
             <Link to="/predictor">Open research Predictor <ArrowRight size={15} /></Link>
           </aside>
         </div>

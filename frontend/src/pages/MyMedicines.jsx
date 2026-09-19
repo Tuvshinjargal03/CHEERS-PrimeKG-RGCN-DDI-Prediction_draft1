@@ -17,13 +17,19 @@ import { Link } from 'react-router-dom'
 import DrugAutocomplete from '../components/DrugAutocomplete.jsx'
 import { G3_CONTEXT_CANDIDATE_IDS } from '../data/g3ContextCandidateIds.js'
 import { getJson, pairEndpoint } from '../lib/api.js'
-import { generateUniqueMedicinePairs } from '../lib/myMedicines.js'
+import { mapWithConcurrency } from '../lib/mapWithConcurrency.js'
+import {
+  generateUniqueMedicinePairs,
+  MAX_REVIEW_MEDICINES,
+  MAX_SAVED_MEDICINES,
+  reconcileReviewMedicineIds,
+  REVIEW_MEDICINES_STORAGE_KEY,
+  SAVED_MEDICINES_STORAGE_KEY,
+} from '../lib/myMedicines.js'
 import { derivePairReviewStatus } from '../lib/pairStatus.js'
 import './PublicProduct.css'
 import './MyMedicines.css'
 
-const STORAGE_KEY = 'cheers.my-medicines.v1'
-const MAX_MEDICINES = 8
 const CONTEXT_IDS = new Set(G3_CONTEXT_CANDIDATE_IDS)
 
 function compactMedicine(medicine) {
@@ -47,13 +53,13 @@ function loadMedicines() {
   if (typeof window === 'undefined') return []
 
   try {
-    const stored = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || '[]')
+    const stored = JSON.parse(window.localStorage.getItem(SAVED_MEDICINES_STORAGE_KEY) || '[]')
     if (!Array.isArray(stored)) return []
 
     const seen = new Set()
     return stored.reduce((medicines, item) => {
       const medicine = compactMedicine(item)
-      if (!medicine || seen.has(medicine.entity_id) || medicines.length >= MAX_MEDICINES) {
+      if (!medicine || seen.has(medicine.entity_id) || medicines.length >= MAX_SAVED_MEDICINES) {
         return medicines
       }
       seen.add(medicine.entity_id)
@@ -62,6 +68,23 @@ function loadMedicines() {
     }, [])
   } catch {
     return []
+  }
+}
+
+function loadMedicineState() {
+  const medicines = loadMedicines()
+  let storedReviewMedicineIds
+
+  try {
+    const stored = window.localStorage.getItem(REVIEW_MEDICINES_STORAGE_KEY)
+    storedReviewMedicineIds = stored === null ? undefined : JSON.parse(stored)
+  } catch {
+    storedReviewMedicineIds = undefined
+  }
+
+  return {
+    medicines,
+    reviewMedicineIds: reconcileReviewMedicineIds(medicines, storedReviewMedicineIds),
   }
 }
 
@@ -135,7 +158,7 @@ function PairResultCard({ result, index }) {
 }
 
 export default function MyMedicines() {
-  const [medicines, setMedicines] = useState(loadMedicines)
+  const [{ medicines, reviewMedicineIds }, setMedicineState] = useState(loadMedicineState)
   const [pendingMedicine, setPendingMedicine] = useState(null)
   const [results, setResults] = useState([])
   const [checking, setChecking] = useState(false)
@@ -146,8 +169,11 @@ export default function MyMedicines() {
     pendingMedicine
     && medicines.some((medicine) => medicine.entity_id === pendingMedicine.entity_id?.toUpperCase()),
   )
-  const atLimit = medicines.length >= MAX_MEDICINES
-  const expectedPairCount = (medicines.length * (medicines.length - 1)) / 2
+  const atLimit = medicines.length >= MAX_SAVED_MEDICINES
+  const reviewAtLimit = reviewMedicineIds.length >= MAX_REVIEW_MEDICINES
+  const reviewMedicineIdSet = new Set(reviewMedicineIds)
+  const reviewMedicines = medicines.filter((medicine) => reviewMedicineIdSet.has(medicine.entity_id))
+  const expectedPairCount = (reviewMedicines.length * (reviewMedicines.length - 1)) / 2
   const reviewComplete = !checking && results.length > 0 && results.length === expectedPairCount
   const summary = useMemo(() => results.reduce((counts, result) => ({
     ...counts,
@@ -156,11 +182,19 @@ export default function MyMedicines() {
 
   useEffect(() => {
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(medicines))
+      window.localStorage.setItem(SAVED_MEDICINES_STORAGE_KEY, JSON.stringify(medicines))
     } catch {
       // The feature remains usable for this session when browser storage is unavailable.
     }
   }, [medicines])
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(REVIEW_MEDICINES_STORAGE_KEY, JSON.stringify(reviewMedicineIds))
+    } catch {
+      // The feature remains usable for this session when browser storage is unavailable.
+    }
+  }, [reviewMedicineIds])
 
   useEffect(() => () => {
     runIdRef.current += 1
@@ -178,58 +212,87 @@ export default function MyMedicines() {
     const medicine = compactMedicine(pendingMedicine)
     if (!medicine || duplicatePending || atLimit) return
 
-    setMedicines((current) => [...current, medicine])
+    setMedicineState((current) => {
+      const nextMedicines = [...current.medicines, medicine]
+      const storedReviewIds = current.reviewMedicineIds.length < MAX_REVIEW_MEDICINES
+        ? [...current.reviewMedicineIds, medicine.entity_id]
+        : current.reviewMedicineIds
+      return {
+        medicines: nextMedicines,
+        reviewMedicineIds: reconcileReviewMedicineIds(nextMedicines, storedReviewIds),
+      }
+    })
     setPendingMedicine(null)
     resetReview()
   }
 
   function removeMedicine(entityId) {
-    setMedicines((current) => current.filter((medicine) => medicine.entity_id !== entityId))
+    setMedicineState((current) => {
+      const nextMedicines = current.medicines.filter((medicine) => medicine.entity_id !== entityId)
+      return {
+        medicines: nextMedicines,
+        reviewMedicineIds: reconcileReviewMedicineIds(nextMedicines, current.reviewMedicineIds),
+      }
+    })
     resetReview()
   }
 
   function clearMedicines() {
-    setMedicines([])
+    setMedicineState({ medicines: [], reviewMedicineIds: [] })
     setPendingMedicine(null)
     resetReview()
   }
 
+  function toggleReviewMedicine(entityId) {
+    const isSelected = reviewMedicineIdSet.has(entityId)
+    if (!isSelected && reviewAtLimit) return
+
+    const storedReviewIds = isSelected
+      ? reviewMedicineIds.filter((id) => id !== entityId)
+      : [...reviewMedicineIds, entityId]
+    setMedicineState((current) => ({
+      ...current,
+      reviewMedicineIds: reconcileReviewMedicineIds(current.medicines, storedReviewIds),
+    }))
+    resetReview()
+  }
+
   async function checkCombinations() {
-    const pairs = generateUniqueMedicinePairs(medicines)
+    const pairs = generateUniqueMedicinePairs(reviewMedicines)
     if (!pairs.length || checking) return
 
     const runId = runIdRef.current + 1
     runIdRef.current = runId
     setResults([])
     setChecking(true)
-    setProgress({ current: 1, total: pairs.length })
+    setProgress({ current: 0, total: pairs.length })
 
-    for (let index = 0; index < pairs.length; index += 1) {
-      if (runIdRef.current !== runId) return
-      const pair = pairs[index]
-      setProgress({ current: index + 1, total: pairs.length })
-
-      let evidence = null
-      let failed = false
-      try {
-        evidence = await getJson(
-          pairEndpoint('/api/evidence/pair', pair.drugA.entity_id, pair.drugB.entity_id),
-        )
-      } catch {
-        failed = true
-      }
-
-      if (runIdRef.current !== runId) return
-      setResults((current) => [
-        ...current,
-        {
-          pair,
+    const isCancelled = () => runIdRef.current !== runId
+    await mapWithConcurrency(
+      pairs,
+      4,
+      (pair) => getJson(
+        pairEndpoint('/api/evidence/pair', pair.drugA.entity_id, pair.drugB.entity_id),
+      ),
+      (settled, originalIndex) => {
+        const failed = settled.status === 'rejected'
+        const evidence = failed ? null : settled.value
+        const result = {
+          pair: pairs[originalIndex],
+          originalIndex,
           evidence,
           failed,
           status: derivePairReviewStatus(evidence, failed),
-        },
-      ])
-    }
+        }
+        setResults((current) => isCancelled() ? current : (
+          [...current, result].sort((left, right) => left.originalIndex - right.originalIndex)
+        ))
+        setProgress((current) => isCancelled() ? current : (
+          { ...current, current: current.current + 1 }
+        ))
+      },
+      isCancelled,
+    )
 
     if (runIdRef.current === runId) setChecking(false)
   }
@@ -239,7 +302,10 @@ export default function MyMedicines() {
       <header className="product-page-header">
         <span className="eyebrow">My Medicines</span>
         <h1>Review your medicines together.</h1>
-        <p>Add medicines you want to review together.</p>
+        <p>
+          Save medicines to review combinations using retrieved evidence, open medicine information,
+          continue in My Health, and access Evidence, Medicine Checker, and Graph views when available.
+        </p>
       </header>
 
       <section className="product-input-panel my-medicines-builder" aria-labelledby="my-medicines-builder-title">
@@ -248,8 +314,16 @@ export default function MyMedicines() {
             <span className="eyebrow">Medicine list</span>
             <h2 id="my-medicines-builder-title">Build your list</h2>
           </div>
-          <span className="product-step-badge">{medicines.length} / {MAX_MEDICINES} medicines</span>
+          <div className="my-medicines-list-counts">
+            <span className="product-step-badge">{medicines.length} saved medicines</span>
+            <span className="product-step-badge">{reviewMedicineIds.length} of {MAX_REVIEW_MEDICINES} selected for combination review</span>
+          </div>
         </div>
+
+        <p className="my-medicines-form-note">
+          <Info size={15} aria-hidden="true" />
+          Save up to {MAX_SAVED_MEDICINES} medicines on this browser. Select up to {MAX_REVIEW_MEDICINES} at a time for combination review because pair counts grow with each selection. These are product limits, not medical limits.
+        </p>
 
         <form className="my-medicines-add" onSubmit={addMedicine}>
           <DrugAutocomplete
@@ -275,12 +349,18 @@ export default function MyMedicines() {
         )}
         {atLimit && (
           <p className="my-medicines-form-note" role="status">
-            <Info size={15} aria-hidden="true" /> You can review up to {MAX_MEDICINES} medicines at a time.
+            <Info size={15} aria-hidden="true" /> Your saved list has reached the {MAX_SAVED_MEDICINES}-medicine product limit. Remove a medicine to add another.
+          </p>
+        )}
+
+        {reviewAtLimit && medicines.length > reviewMedicineIds.length && (
+          <p className="my-medicines-form-note" role="status">
+            <Info size={15} aria-hidden="true" /> Up to {MAX_REVIEW_MEDICINES} saved medicines can be selected for one combination review. Deselect one to include another.
           </p>
         )}
 
         <div className="my-medicines-selected-heading">
-          <strong>Selected</strong>
+          <strong>Saved medicines</strong>
           {medicines.length > 0 && (
             <button type="button" onClick={clearMedicines} disabled={checking}>
               <Trash2 size={14} aria-hidden="true" /> Clear my medicines
@@ -289,21 +369,33 @@ export default function MyMedicines() {
         </div>
 
         {medicines.length ? (
-          <ul className="my-medicines-selected-list" aria-label="Selected medicines">
-            {medicines.map((medicine) => (
-              <li key={medicine.entity_id}>
-                <Pill size={15} aria-hidden="true" />
-                <span><strong>{medicine.name}</strong><small>{medicine.entity_id}</small></span>
-                <button
-                  type="button"
-                  onClick={() => removeMedicine(medicine.entity_id)}
-                  disabled={checking}
-                  aria-label={`Remove ${medicine.name}`}
-                >
-                  <X size={15} aria-hidden="true" />
-                </button>
-              </li>
-            ))}
+          <ul className="my-medicines-selected-list" aria-label="Saved medicines">
+            {medicines.map((medicine) => {
+              const includedInReview = reviewMedicineIdSet.has(medicine.entity_id)
+              return (
+                <li key={medicine.entity_id}>
+                  <Pill size={15} aria-hidden="true" />
+                  <label className="my-medicines-review-choice">
+                    <input
+                      type="checkbox"
+                      checked={includedInReview}
+                      disabled={!includedInReview && reviewAtLimit}
+                      onChange={() => toggleReviewMedicine(medicine.entity_id)}
+                      aria-label={`Include ${medicine.name} in combination review`}
+                    />
+                    <span><strong>{medicine.name}</strong><small>{medicine.entity_id}</small></span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => removeMedicine(medicine.entity_id)}
+                    disabled={checking}
+                    aria-label={`Remove ${medicine.name}`}
+                  >
+                    <X size={15} aria-hidden="true" />
+                  </button>
+                </li>
+              )
+            })}
           </ul>
         ) : (
           <p className="my-medicines-empty-list">No medicines added yet.</p>
@@ -314,12 +406,12 @@ export default function MyMedicines() {
             className="primary-button"
             type="button"
             onClick={checkCombinations}
-            disabled={medicines.length < 2 || checking}
+            disabled={reviewMedicines.length < 2 || checking}
           >
             {checking ? <LoaderCircle className="spin" size={18} aria-hidden="true" /> : <ClipboardList size={18} aria-hidden="true" />}
             {checking ? 'Checking combinations…' : 'Check combinations'}
           </button>
-          {medicines.length < 2 && <span>Add at least two medicines to check combinations.</span>}
+          {reviewMedicines.length < 2 && <span>Select at least two saved medicines to check combinations.</span>}
         </div>
 
         <p className="my-medicines-privacy">
@@ -331,8 +423,8 @@ export default function MyMedicines() {
         <div className="my-medicines-progress" role="status" aria-live="polite">
           <LoaderCircle className="spin" size={22} aria-hidden="true" />
           <div>
-            <strong>Checking {progress.current} of {progress.total} combinations…</strong>
-            <p>Each pair is checked in order so external requests stay controlled.</p>
+            <strong>Checked {progress.current} of {progress.total} combinations</strong>
+            <p>Results appear as each combination finishes checking.</p>
           </div>
         </div>
       )}
@@ -348,7 +440,7 @@ export default function MyMedicines() {
 
           {reviewComplete && (
             <div className="my-medicines-summary" aria-label="Medicine review summary">
-              <article><strong>{medicines.length}</strong><span>{medicines.length === 1 ? 'medicine' : 'medicines'}</span></article>
+              <article><strong>{reviewMedicines.length}</strong><span>selected {reviewMedicines.length === 1 ? 'medicine' : 'medicines'}</span></article>
               <article><strong>{results.length}</strong><span>{results.length === 1 ? 'combination' : 'combinations'} checked</span></article>
               <article className="is-important"><strong>{summary.important}</strong><span>{summary.important === 1 ? 'interaction warning' : 'interaction warnings'}</span></article>
               <article className="is-review"><strong>{summary.review}</strong><span>needs review</span></article>
@@ -357,16 +449,21 @@ export default function MyMedicines() {
           )}
 
           <div className="my-medicines-pair-list">
-            {results.map((result, index) => (
+            {results.map((result) => (
               <PairResultCard
                 key={`${result.pair.drugA.entity_id}-${result.pair.drugB.entity_id}`}
                 result={result}
-                index={index}
+                index={result.originalIndex}
               />
             ))}
           </div>
         </section>
       )}
+
+      <div>
+        <p>Your saved medicines also appear alongside saved conditions in My Health.</p>
+        <Link className="secondary-button" to="/my-health">View in My Health <ChevronRight size={17} aria-hidden="true" /></Link>
+      </div>
 
       <p className="product-page-boundary my-medicines-boundary">
         <Info size={15} aria-hidden="true" />

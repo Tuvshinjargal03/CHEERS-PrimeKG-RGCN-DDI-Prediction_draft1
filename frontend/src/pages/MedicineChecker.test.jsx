@@ -80,6 +80,9 @@ describe('MedicineChecker', () => {
     expect(screen.getByText('An explicit label interaction mention.')).toBeVisible()
     expect(screen.getByText('A source-backed paper')).toBeVisible()
     expect(screen.getByText(/4 shared connections found/)).toBeVisible()
+    const statusBoundary = screen.getByText(/This status summarizes retrieved sources/)
+    expect(statusBoundary).toHaveTextContent('not an interaction-severity or personal-safety assessment')
+    expect(statusBoundary).toHaveTextContent('does not guarantee that the combination is safe for a specific person')
 
     const detailsButton = screen.getByRole('button', { name: 'View label details' })
     expect(detailsButton).toHaveAttribute('aria-expanded', 'false')
@@ -103,6 +106,12 @@ describe('MedicineChecker', () => {
       '/graph?drug_a_id=DB00682&drug_b_id=DB00945',
     )
     expect(screen.getByRole('link', { name: /open research Predictor/i })).toHaveAttribute('href', '/predictor')
+    expect(screen.getByText('Optional research')).toBeVisible()
+    const evidenceLink = screen.getByRole('link', { name: /open full source view/i })
+    const graphLink = screen.getByRole('link', { name: /explore graph/i })
+    const researchLink = screen.getByRole('link', { name: /open research Predictor/i })
+    expect(evidenceLink.compareDocumentPosition(graphLink) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(graphLink.compareDocumentPosition(researchLink) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
   it('uses needs-review for literature without an explicit label mention', async () => {
