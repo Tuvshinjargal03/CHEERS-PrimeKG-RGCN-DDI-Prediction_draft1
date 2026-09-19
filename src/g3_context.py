@@ -24,6 +24,7 @@ GROUP_ORDER = {
     "gene/protein": 0,
     "disease": 1,
 }
+MAX_PAIR_SUGGESTIONS = 50
 
 
 class G3ContextStore:
@@ -160,6 +161,33 @@ class G3ContextStore:
             raise KeyError(f"Unknown G3 context drug ID: {drug_id!s}.")
         return self._drugs[key]
 
+    @staticmethod
+    def _shared_counts(drug, shared_node_ids):
+        gene_protein_count = sum(
+            drug["entities"][node_id]["context_group"] == "gene/protein"
+            for node_id in shared_node_ids
+        )
+        disease_count = sum(
+            drug["entities"][node_id]["context_group"] == "disease"
+            for node_id in shared_node_ids
+        )
+        return {
+            "total": len(shared_node_ids),
+            "gene_protein_count": gene_protein_count,
+            "disease_count": disease_count,
+        }
+
+    @staticmethod
+    def _suggestion_sort_key(suggestion):
+        shared = suggestion["shared"]
+        return (
+            -shared["total"],
+            -shared["gene_protein_count"],
+            -shared["disease_count"],
+            suggestion["anchor_drug_id"],
+            suggestion["candidate_drug_id"],
+        )
+
     def _serialize_drug(self, drug):
         grouped = {
             "gene_protein": {
@@ -239,26 +267,74 @@ class G3ContextStore:
             )
 
         shared_entities.sort(key=self._entity_sort_key)
-        gene_protein_count = sum(
-            entity["context_group"] == "gene/protein"
-            for entity in shared_entities
-        )
-        disease_count = sum(
-            entity["context_group"] == "disease"
-            for entity in shared_entities
-        )
+        shared_counts = self._shared_counts(drug_a, shared_node_ids)
 
         return {
             "drug_a": self._serialize_drug(drug_a),
             "drug_b": self._serialize_drug(drug_b),
             "shared": {
-                "total": len(shared_entities),
-                "gene_protein_count": gene_protein_count,
-                "disease_count": disease_count,
+                **shared_counts,
                 "entities": shared_entities,
             },
             "interpretation": self.INTERPRETATION,
         }
+
+    def get_pair_suggestions(self, drug_a_id, drug_b_id, limit=6):
+        """Return bounded alternative pairs with shared G3 graph context."""
+        drug_a = self._resolve(drug_a_id)
+        drug_b = self._resolve(drug_b_id)
+
+        if isinstance(limit, bool) or not isinstance(limit, int) or limit < 1:
+            raise ValueError("Suggestion limit must be a positive integer.")
+        limit = min(limit, MAX_PAIR_SUGGESTIONS)
+
+        anchors = {
+            drug_a["drug_id"].casefold(): drug_a,
+            drug_b["drug_id"].casefold(): drug_b,
+        }
+        excluded_ids = set(anchors)
+        seen_pairs = set()
+        suggestions = []
+
+        for anchor in anchors.values():
+            anchor_node_ids = set(anchor["entities"])
+            for candidate_key, candidate in self._drugs.items():
+                if candidate_key in excluded_ids:
+                    continue
+
+                pair_key = tuple(
+                    sorted(
+                        (
+                            anchor["drug_id"].casefold(),
+                            candidate["drug_id"].casefold(),
+                        )
+                    )
+                )
+                if pair_key in seen_pairs:
+                    continue
+
+                shared_node_ids = anchor_node_ids.intersection(
+                    candidate["entities"]
+                )
+                if not shared_node_ids:
+                    continue
+
+                seen_pairs.add(pair_key)
+                suggestions.append(
+                    {
+                        "anchor_drug_id": anchor["drug_id"],
+                        "anchor_drug_name": anchor["drug_name"],
+                        "candidate_drug_id": candidate["drug_id"],
+                        "candidate_drug_name": candidate["drug_name"],
+                        "shared": self._shared_counts(
+                            anchor,
+                            shared_node_ids,
+                        ),
+                    }
+                )
+
+        suggestions.sort(key=self._suggestion_sort_key)
+        return suggestions[:limit]
 
 
 __all__ = [
