@@ -1016,6 +1016,49 @@ def pair_context(
 
 
 # ============================================================
+# G3 pair context suggestions
+# ============================================================
+
+@app.get("/api/context/pair-suggestions")
+def pair_context_suggestions(
+    drug_a_id: str = Query(
+        ...,
+        min_length=1,
+        max_length=100,
+        description="Exact DrugBank ID for the first anchor drug.",
+    ),
+    drug_b_id: str = Query(
+        ...,
+        min_length=1,
+        max_length=100,
+        description="Exact DrugBank ID for the second anchor drug.",
+    ),
+    limit: int = Query(default=6, ge=1, le=50),
+):
+    try:
+        suggestions = app.state.context_store.get_pair_suggestions(
+            drug_a_id=drug_a_id,
+            drug_b_id=drug_b_id,
+            limit=limit,
+        )
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=exc.args[0])
+
+    return {
+        "pair": {
+            "drug_a_id": drug_a_id,
+            "drug_b_id": drug_b_id,
+        },
+        "suggestions": suggestions,
+        "count": len(suggestions),
+        "interpretation": (
+            "These alternative pairs have shared entities in the available "
+            "G3 graph context."
+        ),
+    }
+
+
+# ============================================================
 # Single-drug G3 neighborhood
 # ============================================================
 
