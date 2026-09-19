@@ -52,7 +52,7 @@ function diseasePayload(
       other: Array.from({ length: other }, (_, index) => ({
         drug_id: `OTHER${index}`,
         drug_name: `Other medicine ${index}`,
-        relation: 'contraindication',
+        relation: index % 2 === 0 ? 'contraindication' : 'off-label use',
       })),
     },
     nutrition_lifestyle: nutrition
@@ -88,11 +88,11 @@ function renderPage() {
 }
 
 async function searchAndAdd(user, query) {
-  const input = screen.getByRole('searchbox', { name: 'Search condition' })
+  const input = screen.getByRole('combobox', { name: 'Search condition' })
   await user.clear(input)
   await user.type(input, query)
-  await user.click(screen.getByRole('button', { name: 'Search' }))
-  await user.click(await screen.findByRole('button', { name: 'Add condition' }))
+  await user.click(await screen.findByRole('option'))
+  await user.click(screen.getByRole('button', { name: 'Save condition' }))
 }
 
 function conditionCard(name) {
@@ -110,10 +110,14 @@ describe('My Conditions', () => {
     installApiFixtures()
     renderPage()
 
-    await searchAndAdd(user, 'type 2 diabetes mellitus')
+    await searchAndAdd(user, 'diab')
 
     expect(screen.getByRole('link', { name: 'View in My Health' })).toHaveAttribute('href', '/my-health')
-    expect(within(conditionCard(DIABETES.name)).getByText('5148')).toBeVisible()
+    const card = conditionCard(DIABETES.name)
+    expect(within(card).getByRole('heading', { level: 3, name: DIABETES.name })).toBeVisible()
+    expect(within(card).getByText('5148').tagName).toBe('SMALL')
+    expect(within(card).getByRole('link', { name: 'View condition' })).toHaveAttribute('href', '/diseases/5148')
+    expect(getJson).toHaveBeenCalledWith('/api/public/search?q=diab')
     await waitFor(() => {
       expect(JSON.parse(window.localStorage.getItem('cheers.my-conditions.v1'))).toEqual([
         { entity_id: '5148', name: 'type 2 diabetes mellitus' },
@@ -127,17 +131,20 @@ describe('My Conditions', () => {
     renderPage()
 
     await searchAndAdd(user, 'type 2 diabetes mellitus')
-    expect(screen.getByRole('button', { name: 'Saved' })).toBeDisabled()
+    const input = screen.getByRole('combobox', { name: 'Search condition' })
+    await user.type(input, 'diab')
+    expect(await screen.findByRole('option', { name: /Saved/ })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Save condition' })).toBeDisabled()
     expect(document.querySelectorAll('.my-conditions-card')).toHaveLength(1)
 
     await user.click(screen.getByRole('button', { name: `Remove ${DIABETES.name}` }))
-    expect(screen.getByText('No conditions saved yet.')).toBeVisible()
+    expect(screen.getByText('Save a condition to organize its available CHEERS information.')).toBeVisible()
 
     await searchAndAdd(user, 'type 2 diabetes mellitus')
     await searchAndAdd(user, 'gout')
     expect(document.querySelectorAll('.my-conditions-card')).toHaveLength(2)
     await user.click(screen.getByRole('button', { name: 'Clear my conditions' }))
-    expect(screen.getByText('No conditions saved yet.')).toBeVisible()
+    expect(screen.getByText('Save a condition to organize its available CHEERS information.')).toBeVisible()
     await waitFor(() => {
       expect(JSON.parse(window.localStorage.getItem('cheers.my-conditions.v1'))).toEqual([])
     })
@@ -183,13 +190,19 @@ describe('My Conditions', () => {
       `Available information for ${DIABETES.name}`,
     )
     expect(facts).toHaveTextContent('47medicines linked through indication')
-    expect(facts).toHaveTextContent('19other biomedical relationships')
+    expect(facts).toHaveTextContent('19other typed biomedical relationships')
     expect(within(conditionCard(DIABETES.name)).getByRole('link', {
-      name: 'Medicines linked through indication',
+      name: 'View linked medicines',
     })).toHaveAttribute('href', '/search?q=medicines%20for%20type%202%20diabetes%20mellitus')
-    expect(within(conditionCard(DIABETES.name)).getByRole('link', {
+    expect(within(conditionCard(DIABETES.name)).getByLabelText(
+      `Other relationship types for ${DIABETES.name}`,
+    )).toHaveTextContent(/contraindication.*10/i)
+    expect(within(conditionCard(DIABETES.name)).getByLabelText(
+      `Other relationship types for ${DIABETES.name}`,
+    )).toHaveTextContent(/off-label use.*9/i)
+    expect(within(conditionCard(DIABETES.name)).queryByRole('link', {
       name: 'Explore biomedical relationships',
-    })).toHaveAttribute('href', '/diseases/5148')
+    })).not.toBeInTheDocument()
   })
 
   it('isolates one failed condition request from the remaining cards', async () => {
@@ -214,5 +227,37 @@ describe('My Conditions', () => {
     )).toBeVisible()
     expect(screen.getByText(/not a medical record, diagnosis, or treatment recommendation/i)).toBeVisible()
     expect(screen.queryByText(/recommended medicines|best treatment|you should take/i)).not.toBeInTheDocument()
+  })
+
+  it('shows neutral browse guidance on empty focus without requesting an unsupported empty query', async () => {
+    const user = userEvent.setup()
+    installApiFixtures()
+    renderPage()
+
+    await user.click(screen.getByRole('combobox', { name: 'Search condition' }))
+    expect(screen.getByRole('listbox', { name: 'Condition suggestions' })).toHaveTextContent('Browse conditions')
+    expect(getJson).not.toHaveBeenCalled()
+  })
+
+  it('supports keyboard suggestion selection and Escape closing', async () => {
+    const user = userEvent.setup()
+    installApiFixtures()
+    renderPage()
+    const input = screen.getByRole('combobox', { name: 'Search condition' })
+
+    await user.type(input, 'diab')
+    const option = await screen.findByRole('option', { name: /type 2 diabetes mellitus/ })
+    await user.keyboard('{ArrowDown}')
+    expect(option).toHaveAttribute('aria-selected', 'true')
+    await user.keyboard('{Enter}')
+    expect(input).toHaveValue(DIABETES.name)
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Clear condition search' }))
+    await user.type(input, 'diab')
+    await screen.findByRole('option', { name: /type 2 diabetes mellitus/ })
+    await user.keyboard('{Escape}')
+    expect(input).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
   })
 })

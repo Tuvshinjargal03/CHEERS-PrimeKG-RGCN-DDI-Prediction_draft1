@@ -25,16 +25,25 @@
 
 .my-conditions-search {
   display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
   gap: 8px;
 }
 
-.my-conditions-search > label {
+.my-conditions-autocomplete {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  gap: 8px;
+}
+
+.my-conditions-autocomplete > label {
   color: #4f5264;
   font-size: 0.78rem;
   font-weight: 740;
 }
 
-.my-conditions-search > div {
+.my-conditions-autocomplete-control {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
@@ -57,52 +66,99 @@
   font-size: 0.88rem;
 }
 
-.my-conditions-search > div:focus-within {
+.my-conditions-autocomplete-control:focus-within {
   border-color: #9d85d5;
   box-shadow: 0 0 0 3px rgba(105, 65, 198, 0.1);
 }
 
 .my-conditions-search .secondary-button {
-  min-height: 37px;
+  min-height: 48px;
 }
 
-.my-conditions-search-results {
+.my-conditions-autocomplete-loading,
+.my-conditions-selection-meta {
+  color: #777c8d;
+  font-size: 0.7rem;
+}
+
+.my-conditions-suggestions {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 6px);
+  right: 0;
+  left: 0;
   display: grid;
-  gap: 8px;
-  padding: 10px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 7px;
   border: 1px solid #e3dfea;
   border-radius: 14px;
-  background: #faf9fb;
+  background: #fff;
+  box-shadow: 0 14px 32px rgba(35, 28, 58, 0.12);
 }
 
-.my-conditions-search-results article {
+.my-conditions-suggestions > button {
   display: flex;
+  width: 100%;
   align-items: center;
   justify-content: space-between;
   gap: 14px;
   padding: 10px 12px;
+  border: 0;
   border-radius: 10px;
-  background: #fff;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
-.my-conditions-search-results span {
+.my-conditions-suggestions > button:hover,
+.my-conditions-suggestions > button:focus-visible,
+.my-conditions-suggestions > button.is-active {
+  background: #f4f0fb;
+  outline: none;
+}
+
+.my-conditions-suggestions > button:disabled {
+  cursor: default;
+  opacity: 0.65;
+}
+
+.my-conditions-suggestions span,
+.my-conditions-suggestion-message {
   display: grid;
   min-width: 0;
   gap: 3px;
 }
 
-.my-conditions-search-results strong {
+.my-conditions-suggestions strong {
   overflow-wrap: anywhere;
   color: #3a3d4f;
   font-size: 0.82rem;
 }
 
-.my-conditions-search-results small {
+.my-conditions-suggestions small,
+.my-conditions-suggestions em,
+.my-conditions-suggestion-message {
   color: #818696;
   font-size: 0.67rem;
 }
 
-.my-conditions-search-results button,
+.my-conditions-suggestions em {
+  font-style: normal;
+  font-weight: 740;
+}
+
+.my-conditions-suggestion-message {
+  padding: 11px 12px;
+  line-height: 1.45;
+}
+
+.my-conditions-suggestion-message.is-error {
+  color: #a04740;
+}
+
 .my-conditions-clear {
   display: inline-flex;
   flex: 0 0 auto;
@@ -115,11 +171,6 @@
   font-size: 0.74rem;
   font-weight: 730;
   cursor: pointer;
-}
-
-.my-conditions-search-results button:disabled {
-  color: #8a8e9a;
-  cursor: default;
 }
 
 .my-conditions-search-message,
@@ -147,9 +198,7 @@
 }
 
 .my-conditions-clear:hover,
-.my-conditions-clear:focus-visible,
-.my-conditions-search-results button:not(:disabled):hover,
-.my-conditions-search-results button:not(:disabled):focus-visible {
+.my-conditions-clear:focus-visible {
   color: #4f318e;
   text-decoration: underline;
   outline: none;
@@ -293,6 +342,24 @@
   line-height: 1.4;
 }
 
+.my-conditions-relation-types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.my-conditions-relation-types span {
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: #f1eef7;
+  color: #615775;
+  font-size: 0.68rem;
+}
+
+.my-conditions-relation-types b {
+  margin-left: 3px;
+}
+
 .my-conditions-actions {
   display: flex;
   flex-wrap: wrap;
@@ -322,6 +389,18 @@
   border-color: #ae9ad8;
   background: #faf7ff;
   outline: none;
+}
+
+.my-conditions-actions a.is-primary {
+  border-color: #7653c0;
+  background: #7653c0;
+  color: #fff;
+}
+
+.my-conditions-actions a.is-primary:hover,
+.my-conditions-actions a.is-primary:focus-visible {
+  border-color: #5e3da8;
+  background: #5e3da8;
 }
 
 .my-conditions-empty {
@@ -362,19 +441,17 @@
 }
 
 @media (max-width: 560px) {
-  .my-conditions-builder-heading,
-  .my-conditions-search-results article {
+  .my-conditions-builder-heading {
     align-items: flex-start;
     flex-direction: column;
   }
 
-  .my-conditions-builder-heading,
-  .my-conditions-search-results article {
+  .my-conditions-builder-heading {
     display: flex;
   }
 
-  .my-conditions-search > div {
-    grid-template-columns: auto minmax(0, 1fr);
+  .my-conditions-search {
+    grid-template-columns: 1fr;
   }
 
   .my-conditions-search .secondary-button {
@@ -382,7 +459,6 @@
     width: 100%;
   }
 
-  .my-conditions-search-results button,
   .my-conditions-actions a {
     width: 100%;
   }
