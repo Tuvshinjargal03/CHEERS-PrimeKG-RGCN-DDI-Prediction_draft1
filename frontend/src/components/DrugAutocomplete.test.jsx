@@ -8,6 +8,11 @@ vi.mock('../lib/api.js', () => ({ getJson: vi.fn() }))
 
 const ASPIRIN = { name: 'Aspirin', entity_id: 'DB00945', node_id: 101 }
 const AMPICILLIN = { name: 'Ampicillin', entity_id: 'DB00415', node_id: 102 }
+const LONG_CANONICAL_NAME = {
+  name: '(R)-warfarin sodium 2-(13C)-isotope reference compound',
+  entity_id: 'DB08496',
+  node_id: 103,
+}
 
 function searchResponse(results, hasMore = false) {
   return { results, has_more: hasMore }
@@ -137,5 +142,27 @@ describe('DrugAutocomplete', () => {
 
     expect(await screen.findByRole('option', { name: /Aspirin/ })).toBeVisible()
     expect(screen.queryByText('G3 context')).not.toBeInTheDocument()
+  })
+
+  it('keeps the full canonical identity accessible while presenting secondary metadata', async () => {
+    getJson.mockResolvedValue(searchResponse([LONG_CANONICAL_NAME]))
+    render(
+      <DrugAutocomplete
+        label="Query drug"
+        selection={null}
+        onSelect={vi.fn()}
+        getOptionAnnotation={() => ({ available: true, label: 'G3 context available' })}
+      />,
+    )
+
+    fireEvent.change(screen.getByRole('combobox', { name: 'Query drug' }), {
+      target: { value: 'warfarin' },
+    })
+
+    const option = await screen.findByRole('option', { name: new RegExp(LONG_CANONICAL_NAME.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')) })
+    expect(option).toHaveAccessibleName(expect.stringContaining(LONG_CANONICAL_NAME.name))
+    expect(within(option).getByText(LONG_CANONICAL_NAME.name)).toHaveAttribute('title', LONG_CANONICAL_NAME.name)
+    expect(within(option).getByText('DrugBank · DB08496')).toBeVisible()
+    expect(within(option).getByText('G3 context available')).toBeVisible()
   })
 })
