@@ -240,7 +240,10 @@ export default function MyMedicines() {
       <header className="product-page-header">
         <span className="eyebrow">My Medicines</span>
         <h1>Review your medicines together.</h1>
-        <p>Add medicines you want to review together.</p>
+        <p>
+          Save medicines to review combinations using retrieved evidence, open medicine information,
+          continue in My Health, and access Evidence, Medicine Checker, and Graph views when available.
+        </p>
       </header>
 
       <section className="product-input-panel my-medicines-builder" aria-labelledby="my-medicines-builder-title">
@@ -251,6 +254,11 @@ export default function MyMedicines() {
           </div>
           <span className="product-step-badge">{medicines.length} / {MAX_MEDICINES} medicines</span>
         </div>
+
+        <p className="my-medicines-form-note">
+          <Info size={15} aria-hidden="true" />
+          Combination review grows with each medicine added, so this review currently supports up to {MAX_MEDICINES} saved medicines. This is a review limit, not a medical limit.
+        </p>
 
         <form className="my-medicines-add" onSubmit={addMedicine}>
           <DrugAutocomplete
@@ -276,7 +284,7 @@ export default function MyMedicines() {
         )}
         {atLimit && (
           <p className="my-medicines-form-note" role="status">
-            <Info size={15} aria-hidden="true" /> You can review up to {MAX_MEDICINES} medicines at a time.
+            <Info size={15} aria-hidden="true" /> This saved-medicine review is full. Remove a medicine to add another.
           </p>
         )}
 

@@ -78,6 +78,20 @@ describe('My Medicines', () => {
     getJson.mockReset()
   })
 
+  it('explains how saved medicines can be used and why the review supports up to eight', () => {
+    renderPage()
+
+    expect(screen.getByText(/review combinations using retrieved evidence/i)).toBeVisible()
+    expect(screen.getByText(/open medicine information/i)).toBeVisible()
+    expect(screen.getByText(/continue in My Health/i)).toBeVisible()
+    expect(screen.getByText(/Evidence, Medicine Checker, and Graph views when available/i)).toBeVisible()
+    expect(screen.getByText(/Combination review grows with each medicine added/i)).toHaveTextContent(
+      'supports up to 8 saved medicines',
+    )
+    expect(screen.getByText(/This is a review limit, not a medical limit/i)).toBeVisible()
+    expect(screen.getByRole('link', { name: 'View in My Health' })).toHaveAttribute('href', '/my-health')
+  })
+
   it('adds a medicine and stores only its canonical name and ID locally', async () => {
     const user = userEvent.setup()
     renderPage()
@@ -86,8 +100,8 @@ describe('My Medicines', () => {
 
     expect(screen.getByRole('link', { name: 'View in My Health' })).toHaveAttribute('href', '/my-health')
     const selected = screen.getByRole('list', { name: 'Selected medicines' })
-    expect(within(selected).getByText('Warfarin')).toBeVisible()
-    expect(within(selected).getByText('DB00682')).toBeVisible()
+    expect(within(selected).getByText('Warfarin').tagName).toBe('STRONG')
+    expect(within(selected).getByText('DB00682').tagName).toBe('SMALL')
     await waitFor(() => {
       expect(JSON.parse(window.localStorage.getItem('cheers.my-medicines.v1'))).toEqual([
         { entity_id: 'DB00682', name: 'Warfarin' },
