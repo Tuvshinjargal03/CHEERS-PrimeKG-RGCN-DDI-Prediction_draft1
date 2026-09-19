@@ -162,6 +162,8 @@ function NotFound() {
 function AppShell() {
   const location = useLocation()
   const navigationRef = useRef(null)
+  const mainContentRef = useRef(null)
+  const previousPathnameRef = useRef(location.pathname)
   const [openGroup, setOpenGroup] = useState(null)
 
   useEffect(() => {
@@ -172,6 +174,13 @@ function AppShell() {
     document.addEventListener('pointerdown', closeManualGroup)
     return () => document.removeEventListener('pointerdown', closeManualGroup)
   }, [])
+
+  useEffect(() => {
+    if (previousPathnameRef.current === location.pathname) return
+    previousPathnameRef.current = location.pathname
+    window.scrollTo(0, 0)
+    mainContentRef.current?.focus({ preventScroll: true })
+  }, [location.pathname])
 
   return (
     <div className="app-shell">
@@ -238,7 +247,7 @@ function AppShell() {
         </div>
       </aside>
 
-      <main className="main-content">
+      <main id="main-content" ref={mainContentRef} className="main-content" tabIndex={-1}>
         <Suspense fallback={<RouteLoadingFallback />}>
           <Routes>
             <Route path="/" element={<Navigate to="/overview" replace />} />

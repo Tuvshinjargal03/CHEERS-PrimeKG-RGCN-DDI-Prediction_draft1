@@ -2,6 +2,7 @@ import {
   AlertCircle,
   ArrowRight,
   Beaker,
+  FlaskConical,
   GitBranch,
   HeartPulse,
   Info,
@@ -476,6 +477,7 @@ export default function MyHealth() {
               <Link to="/medicines"><Pill size={17} /> Medicine Guide</Link>
               <Link to="/diseases"><HeartPulse size={17} /> Disease Guide</Link>
               <Link to="/graph"><Search size={17} /> Explore graph context</Link>
+              <Link to="/predictor"><FlaskConical size={17} /> Open Research Predictor</Link>
             </nav>
           </section>
         </>

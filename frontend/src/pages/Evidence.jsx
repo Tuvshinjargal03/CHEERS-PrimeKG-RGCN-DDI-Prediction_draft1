@@ -1,6 +1,6 @@
-import { AlertCircle, BookOpen, ExternalLink, FileSearch, LoaderCircle } from 'lucide-react'
+import { AlertCircle, BookOpen, ExternalLink, FileSearch, LoaderCircle, Network } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import DrugAutocomplete from '../components/DrugAutocomplete.jsx'
 import MedicineLabelScanner from '../components/MedicineLabelScanner.jsx'
 import { getJson, pairEndpoint, resolveDrug } from '../lib/api.js'
@@ -232,6 +232,11 @@ export default function Evidence() {
                 <strong>{drugB?.name}</strong>
                 <small>{drugB?.entity_id}</small>
               </article>
+            </div>
+            <div className="evidence-query-actions">
+              <Link className="secondary-button" to={pairEndpoint('/graph', drugA.entity_id, drugB.entity_id)}>
+                <Network size={16} aria-hidden="true" /> Explore graph context
+              </Link>
             </div>
           </div>
           <div className="evidence-separation-grid">

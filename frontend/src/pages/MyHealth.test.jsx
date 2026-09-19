@@ -183,6 +183,9 @@ describe('My Health', () => {
     expect(within(screen.getByRole('region', { name: 'My conditions' })).getByRole('link', { name: 'Manage conditions' })).toHaveAttribute('href', '/my-conditions')
     expect(screen.getByText(/Saved medicines:/)).toBeVisible()
     expect(screen.getByText(/Saved conditions:/)).toBeVisible()
+    const deeperInformation = screen.getByRole('region', { name: 'Explore deeper' })
+    expect(deeperInformation).toHaveTextContent('Optional deeper information')
+    expect(within(deeperInformation).getByRole('link', { name: 'Open Research Predictor' })).toHaveAttribute('href', '/predictor')
   })
 
   it('uses all twenty saved medicines for normal information and the first eight for legacy review selection', async () => {

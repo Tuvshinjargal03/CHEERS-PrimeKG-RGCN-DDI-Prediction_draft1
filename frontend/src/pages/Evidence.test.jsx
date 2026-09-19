@@ -116,6 +116,10 @@ describe('Evidence retrieved-evidence summary', () => {
       'Sections: Drug interactions, Warnings.',
     )
     expect(within(summary).getByText('PubMed returned 1 of 12 name-matched records.')).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Explore graph context' })).toHaveAttribute(
+      'href',
+      '/graph?drug_a_id=DB00682&drug_b_id=DB00945',
+    )
     expect(screen.getByText('First retrieved label excerpt.')).toBeVisible()
     expect(screen.getByText('A retrieved PubMed paper')).toBeVisible()
     expect(screen.getByRole('link', { name: /View on PubMed/i })).toHaveAttribute(

@@ -12,6 +12,11 @@ describe('CHEERS application shell', () => {
   beforeEach(() => {
     window.location.hash = '#/overview'
     window.localStorage.clear()
+    Object.defineProperty(window, 'scrollTo', {
+      configurable: true,
+      writable: true,
+      value: vi.fn(),
+    })
   })
 
   it('keeps public and research navigation destinations mounted', async () => {
@@ -96,5 +101,27 @@ describe('CHEERS application shell', () => {
     render(<App />)
 
     expect(await screen.findByRole('heading', { name: 'Your selected medicines and conditions, brought together in one place.' })).toBeVisible()
+  })
+
+  it('restores scroll and main-content focus only when the pathname changes', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await screen.findByRole('heading', { name: 'Understand your medicines better.' })
+    expect(window.scrollTo).not.toHaveBeenCalled()
+
+    await user.click(within(screen.getByRole('navigation')).getByRole('link', { name: 'My Health' }))
+    await screen.findByRole('heading', { name: 'Your selected medicines and conditions, brought together in one place.' })
+
+    const mainContent = document.getElementById('main-content')
+    expect(window.scrollTo).toHaveBeenCalledTimes(1)
+    expect(window.scrollTo).toHaveBeenCalledWith(0, 0)
+    expect(mainContent).toHaveFocus()
+    expect(mainContent).toHaveAttribute('tabindex', '-1')
+
+    const researchTrigger = within(screen.getByRole('navigation')).getByRole('button', { name: 'Research' })
+    await user.click(researchTrigger)
+    expect(researchTrigger).toHaveFocus()
+    expect(mainContent).not.toHaveFocus()
+    expect(window.scrollTo).toHaveBeenCalledTimes(1)
   })
 })
