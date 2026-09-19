@@ -219,7 +219,7 @@ export default function MedicineChecker() {
               </div>
               <h2>{status.title}</h2>
               <p>{status.description}</p>
-              <small>This does not guarantee that the combination is safe for a specific person.</small>
+              <small>This status summarizes retrieved sources; it is not an interaction-severity or personal-safety assessment and does not guarantee that the combination is safe for a specific person.</small>
             </div>
           </article>
 

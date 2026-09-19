@@ -80,6 +80,9 @@ describe('MedicineChecker', () => {
     expect(screen.getByText('An explicit label interaction mention.')).toBeVisible()
     expect(screen.getByText('A source-backed paper')).toBeVisible()
     expect(screen.getByText(/4 shared connections found/)).toBeVisible()
+    const statusBoundary = screen.getByText(/This status summarizes retrieved sources/)
+    expect(statusBoundary).toHaveTextContent('not an interaction-severity or personal-safety assessment')
+    expect(statusBoundary).toHaveTextContent('does not guarantee that the combination is safe for a specific person')
 
     const detailsButton = screen.getByRole('button', { name: 'View label details' })
     expect(detailsButton).toHaveAttribute('aria-expanded', 'false')

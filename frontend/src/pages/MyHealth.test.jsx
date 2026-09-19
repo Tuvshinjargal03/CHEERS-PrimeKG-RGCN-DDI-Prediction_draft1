@@ -249,6 +249,7 @@ describe('My Health', () => {
     expect(otherGroup).toHaveTextContent('contraindication')
     expect(otherGroup).toHaveTextContent('Ibuprofen')
     expect(otherGroup).toHaveTextContent('off-label use')
+    expect(screen.getByText('These are typed relationships in the checked data, not recommendations to use or change treatment.')).toBeVisible()
     expect(screen.queryByText(/no relationship with/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/recommended for you|should take|suitable|best medicine/i)).not.toBeInTheDocument()
   })
@@ -380,6 +381,9 @@ describe('My Health', () => {
     const orderedPairs = screen.getByLabelText('Medicine combinations by information priority')
     expect(orderedPairs.firstElementChild).toHaveTextContent('Interaction warning found')
     expect(orderedPairs.firstElementChild).toHaveTextContent('Warfarin + Ibuprofen')
+    expect(screen.getByText(/These categories summarize retrieved source information/)).toHaveTextContent(
+      'not clinical severity, interaction probability, or personal-safety assessments',
+    )
     expect(screen.queryByText(/health score|risk score|safe profile|unsafe profile/i)).not.toBeInTheDocument()
   })
 

@@ -365,7 +365,7 @@ export default function MyHealth() {
                         </article>
                       ))}
                     </div>
-                    <p className="my-health-priority-note">Pairs are ordered only to surface available information: warning, review, then insufficient information. This is not clinical severity ranking.</p>
+                    <p className="my-health-priority-note">Pairs are ordered only to surface available information: warning, review, then insufficient information. These categories summarize retrieved source information; they are not clinical severity, interaction probability, or personal-safety assessments.</p>
                   </>
                 )}
               </>
@@ -377,6 +377,9 @@ export default function MyHealth() {
               <div><span className="eyebrow">Checked typed relationships</span><h2 id="my-health-connections-title">Medicine + condition connections</h2></div>
             </div>
             <ModuleNotice loading={conditionLoading} errors={conditionErrors} />
+            {connections.indications.length + connections.other.length > 0 && (
+              <p className="my-health-neutral-copy">These are typed relationships in the checked data, not recommendations to use or change treatment.</p>
+            )}
             {!conditionLoading && medicines.length > 0 && conditions.length > 0 && connections.indications.length === 0 && connections.other.length === 0 && (
               <p className="my-health-neutral-copy">No typed relationships among the saved medicines and conditions were found in the checked Disease Guide data.</p>
             )}
