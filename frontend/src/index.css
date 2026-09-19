@@ -1492,6 +1492,7 @@ select:focus-visible {
   right: 0;
   left: 0;
   max-height: min(320px, 45vh);
+  overflow-x: hidden;
   overflow-y: auto;
   padding: 6px;
   border: 1px solid #e4e7ec;
@@ -1502,10 +1503,11 @@ select:focus-visible {
 
 .autocomplete-menu button {
   width: 100%;
+  min-width: 0;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 4px;
   padding: 10px;
   border: 0;
   border-radius: 8px;
@@ -1520,13 +1522,33 @@ select:focus-visible {
   background: #f9fafb;
 }
 
-.autocomplete-menu button span {
+.autocomplete-option-name {
+  display: -webkit-box;
+  width: 100%;
+  min-width: 0;
+  max-height: 2.7em;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   font-size: 13px;
   font-weight: 700;
+  line-height: 1.35;
 }
 
-.autocomplete-menu button small {
+.autocomplete-option-details {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 3px 10px;
   color: #667085;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.autocomplete-option-id {
+  overflow-wrap: anywhere;
 }
 
 .autocomplete-empty {

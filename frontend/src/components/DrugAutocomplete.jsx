@@ -244,9 +244,9 @@ export default function DrugAutocomplete({
                     onMouseEnter={() => setActiveIndex(index)}
                     onClick={() => choose(item)}
                   >
-                    <span>{item.name}</span>
-                    <small className={annotation ? 'autocomplete-option-details' : undefined}>
-                      {item.entity_id}
+                    <span className="autocomplete-option-name" title={item.name}>{item.name}</span>
+                    <small className="autocomplete-option-details">
+                      <span className="autocomplete-option-id">DrugBank · {item.entity_id}</span>
                       {annotation && (
                         <em className={annotation.available ? 'available' : 'unavailable'}>
                           {annotation.label}

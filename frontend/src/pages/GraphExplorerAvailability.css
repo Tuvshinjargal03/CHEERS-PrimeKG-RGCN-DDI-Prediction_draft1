@@ -55,14 +55,6 @@
   color: #667085;
 }
 
-.graph-page .autocomplete-option-details {
-  display: flex;
-  flex: 0 0 auto;
-  align-items: flex-end;
-  flex-direction: column;
-  gap: 2px;
-}
-
 .graph-page .autocomplete-option-details em {
   color: #667085;
   font-size: 11px;
@@ -201,16 +193,6 @@
   .graph-page .displayed-relations {
     align-items: flex-start;
     flex-direction: column;
-  }
-
-  .graph-page .autocomplete-option-details {
-    align-items: flex-start;
-  }
-
-  .graph-page .autocomplete-menu button {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 4px;
   }
 
   .graph-page .graph-context-unavailable .secondary-button {
