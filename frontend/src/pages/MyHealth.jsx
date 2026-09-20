@@ -1,487 +1,675 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   AlertCircle,
   ArrowRight,
-  Beaker,
-  FlaskConical,
-  GitBranch,
+  BookOpen,
+  CircleAlert,
+  FileQuestion,
+  Files,
   HeartPulse,
   Info,
   LoaderCircle,
   Pill,
-  Search,
-  Utensils,
-} from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { getJson, pairEndpoint } from '../lib/api.js'
-import { mapWithConcurrency } from '../lib/mapWithConcurrency.js'
+  SearchCheck,
+} from 'lucide-react';
+import DrugAutocomplete from '../components/DrugAutocomplete';
+import { getJson, pairEndpoint } from '../lib/api';
+import { mapWithConcurrency } from '../lib/mapWithConcurrency';
 import {
-  generateUniqueMedicinePairs,
   MAX_SAVED_MEDICINES,
-  reconcileReviewMedicineIds,
-  REVIEW_MEDICINES_STORAGE_KEY,
   SAVED_MEDICINES_STORAGE_KEY,
-} from '../lib/myMedicines.js'
-import { derivePairReviewStatus } from '../lib/pairStatus.js'
-import './PublicProduct.css'
-import './MyHealth.css'
+} from '../lib/myMedicines';
+import { derivePairReviewStatus } from '../lib/pairStatus.js';
+import './MyHealth.css';
 
-const CONDITION_STORAGE_KEY = 'cheers.my-conditions.v1'
-const PAIR_STATUS_PRIORITY = { important: 0, review: 1, insufficient: 2 }
-const COMPACT_PAIR_RESULT_COUNT = 3
-const FOOD_TOPIC_LABELS = {
-  alcohol: 'Alcohol information',
-  grapefruit: 'Grapefruit information',
-  vitamin_k: 'Vitamin K information',
-  food_or_meals: 'Food / meal information',
-  milk_or_dairy: 'Milk / dairy information',
-  high_fat_meal: 'High-fat meal information',
-  fasting_or_empty_stomach: 'Fasting / empty stomach information',
-  smoking_or_tobacco: 'Smoking / tobacco information',
-}
+const SAVED_CONDITIONS_STORAGE_KEY = 'cheers.my-conditions.v1';
+const MAX_CONDITIONS = 8;
+const MAX_CONCURRENT_REQUESTS = 4;
+const COMPACT_RESULT_COUNT = 3;
+
+const PAIR_STATUS_PRESENTATION = {
+  important: {
+    label: 'Interaction information found',
+    description: 'An explicit cross-medicine name mention was retrieved from the checked FDA label sections.',
+    Icon: CircleAlert,
+  },
+  review: {
+    label: 'Literature found',
+    description: 'PubMed returned name-matched literature records for this medicine pair.',
+    Icon: BookOpen,
+  },
+  insufficient: {
+    label: 'No matching information retrieved',
+    description: 'The checked sources returned no structured pair information for these medicine names.',
+    Icon: FileQuestion,
+  },
+};
 
 function readSavedSelections(storageKey, limit) {
-  if (typeof window === 'undefined') return []
   try {
-    const stored = JSON.parse(window.localStorage.getItem(storageKey) || '[]')
-    if (!Array.isArray(stored)) return []
-    const seen = new Set()
-    return stored.reduce((items, item) => {
-      if (
-        typeof item?.entity_id !== 'string'
-        || typeof item?.name !== 'string'
-        || !item.entity_id.trim()
-        || !item.name.trim()
-        || seen.has(item.entity_id.trim())
-        || items.length >= limit
-      ) return items
-      const selection = {
-        entity_id: item.entity_id.trim(),
-        name: item.name.trim(),
-      }
-      seen.add(selection.entity_id)
-      items.push(selection)
-      return items
-    }, [])
+    const parsed = JSON.parse(window.localStorage.getItem(storageKey) || '[]');
+    if (!Array.isArray(parsed)) return [];
+
+    const seen = new Set();
+    return parsed
+      .filter((item) => {
+        if (!item || typeof item.entity_id !== 'string' || typeof item.name !== 'string') return false;
+        const entityId = item.entity_id.trim();
+        const name = item.name.trim();
+        if (!entityId || !name || seen.has(entityId)) return false;
+        seen.add(entityId);
+        return true;
+      })
+      .slice(0, limit);
   } catch {
-    return []
-  }
-}
-
-function readMedicineState() {
-  const medicines = readSavedSelections(SAVED_MEDICINES_STORAGE_KEY, MAX_SAVED_MEDICINES)
-  let storedReviewMedicineIds
-
-  try {
-    const stored = window.localStorage.getItem(REVIEW_MEDICINES_STORAGE_KEY)
-    storedReviewMedicineIds = stored === null ? undefined : JSON.parse(stored)
-  } catch {
-    storedReviewMedicineIds = undefined
-  }
-
-  return {
-    medicines,
-    reviewMedicineIds: reconcileReviewMedicineIds(medicines, storedReviewMedicineIds),
+    return [];
   }
 }
 
 function useSavedInformation(items, kind) {
-  const [requestState, setRequestState] = useState({ items, kind, results: {} })
+  const [information, setInformation] = useState({});
+  const [loading, setLoading] = useState(false);
+  const runIdRef = useRef(0);
+  const itemKey = items.map((item) => item.entity_id).join('|');
 
   useEffect(() => {
-    let active = true
+    const runId = runIdRef.current + 1;
+    runIdRef.current = runId;
 
-    mapWithConcurrency(
-      items,
-      4,
-      (item) => {
-        const path = kind === 'medicine'
-          ? `/api/public/medicine?drug_id=${encodeURIComponent(item.entity_id)}`
-          : `/api/public/disease?disease_id=${encodeURIComponent(item.entity_id)}`
-        return getJson(path)
-      },
-      (settled, index) => {
-        const result = settled.status === 'fulfilled'
-          ? { status: 'ready', payload: settled.value, error: '' }
-          : {
-            status: 'error',
-            payload: null,
-            error: settled.reason?.message || `${kind} information could not be loaded.`,
-          }
-        setRequestState((current) => !active ? current : ({
-          items,
-          kind,
-          results: {
-            ...(current.items === items && current.kind === kind ? current.results : {}),
-            [items[index].entity_id]: result,
-          },
-        }))
-      },
-      () => !active,
-    )
-    return () => {
-      active = false
+    if (!items.length) {
+      void Promise.resolve().then(() => {
+        if (runIdRef.current !== runId) return;
+        setInformation({});
+        setLoading(false);
+      });
+      return undefined;
     }
-  }, [items, kind])
 
-  const results = requestState.items === items && requestState.kind === kind ? requestState.results : {}
-  return Object.fromEntries(items.map((item) => [
-    item.entity_id,
-    results[item.entity_id] || { status: 'loading', payload: null, error: '' },
-  ]))
+    void Promise.resolve().then(() => {
+      if (runIdRef.current !== runId) return;
+      setInformation({});
+      setLoading(true);
+    });
+    let completed = 0;
+
+    void mapWithConcurrency(
+      items,
+      MAX_CONCURRENT_REQUESTS,
+      (item) => {
+        const parameter = kind === 'medicine' ? 'drug_id' : 'disease_id';
+        return getJson(`/api/public/${kind}?${parameter}=${encodeURIComponent(item.entity_id)}`);
+      },
+      (settled, itemIndex) => {
+        if (runIdRef.current !== runId) return;
+        completed += 1;
+        const result = settled.status === 'fulfilled'
+          ? { status: 'ready', payload: settled.value }
+          : { status: 'error', payload: null };
+        setInformation((current) => ({
+          ...current,
+          [items[itemIndex].entity_id]: result,
+        }));
+        if (completed === items.length) setLoading(false);
+      },
+      () => runIdRef.current !== runId,
+    );
+
+    return () => {
+      if (runIdRef.current === runId) runIdRef.current += 1;
+    };
+  }, [itemKey, items, kind]);
+
+  return { information, loading };
 }
 
-function SelectionSummary({ title, items, emptyCopy, addPath, managePath, type }) {
-  const isMedicine = type === 'medicine'
+function ContextGroup({ title, items, emptyLabel, actionLabel, actionTo }) {
+  const visibleItems = items.slice(0, 5);
+  const remainingCount = items.length - visibleItems.length;
+
   return (
-    <section className="my-health-selection-panel" aria-labelledby={`my-health-${type}-title`}>
-      <div className="my-health-section-heading">
-        <div>
-          <span className="eyebrow">Saved on this browser</span>
-          <h2 id={`my-health-${type}-title`}>{title}</h2>
-        </div>
-        <Link to={managePath}>Manage {isMedicine ? 'medicines' : 'conditions'}</Link>
+    <div className="health-context-group">
+      <div className="health-context-group__heading">
+        <h3>{title}</h3>
+        <span>{items.length}</span>
       </div>
       {items.length ? (
-        <div className="my-health-selection-list">
-          {items.map((item) => (
-            <Link
-              key={item.entity_id}
-              to={`/${isMedicine ? 'medicines' : 'diseases'}/${encodeURIComponent(item.entity_id)}`}
-            >
-              {isMedicine ? <Pill size={17} aria-hidden="true" /> : <HeartPulse size={17} aria-hidden="true" />}
-              <span><strong>{item.name}</strong><small>{item.entity_id}</small></span>
-              <ArrowRight size={16} aria-hidden="true" />
-            </Link>
+        <div className="health-context-items" aria-label={`Saved ${title.toLowerCase()}`}>
+          {visibleItems.map((item) => (
+            <span className="health-context-chip" key={item.entity_id} title={item.name}>
+              {item.name}
+            </span>
           ))}
+          {remainingCount > 0 ? (
+            <span className="health-context-more">+{remainingCount} more</span>
+          ) : null}
         </div>
       ) : (
-        <div className="my-health-soft-empty">
-          <p>{emptyCopy}</p>
-          <Link to={addPath}>Add {isMedicine ? 'medicines' : 'conditions'} <ArrowRight size={15} /></Link>
-        </div>
+        <p className="health-context-empty">{emptyLabel}</p>
       )}
-    </section>
-  )
+      <Link className="health-context-action" to={actionTo}>
+        {actionLabel}
+        <ArrowRight size={14} aria-hidden="true" />
+      </Link>
+    </div>
+  );
 }
 
-function ModuleNotice({ loading, errors }) {
-  if (loading) {
-    return <p className="my-health-module-note" role="status"><LoaderCircle className="spin" size={16} /> Loading available information…</p>
-  }
-  if (errors > 0) {
-    return <p className="my-health-module-note is-unavailable"><AlertCircle size={16} /> Some saved-item information could not be loaded. Other available items are shown.</p>
-  }
-  return null
+function CapabilityTile({ Icon, title, description }) {
+  return (
+    <article className="health-capability-tile">
+      <span className="health-capability-icon" aria-hidden="true">
+        <Icon size={19} />
+      </span>
+      <div>
+        <h3>{title}</h3>
+        <p>{description}</p>
+      </div>
+    </article>
+  );
 }
 
-export default function MyHealth() {
-  const [{ medicines, reviewMedicineIds }] = useState(readMedicineState)
-  const [conditions] = useState(() => readSavedSelections(CONDITION_STORAGE_KEY, 10))
-  const medicineInformation = useSavedInformation(medicines, 'medicine')
-  const conditionInformation = useSavedInformation(conditions, 'condition')
-  const [pairReview, setPairReview] = useState({ checking: false, current: 0, total: 0, results: [] })
-  const [showAllPairResults, setShowAllPairResults] = useState(false)
-  const reviewIdRef = useRef(0)
-  const empty = medicines.length === 0 && conditions.length === 0
+function readableTopicName(value) {
+  if (typeof value !== 'string' || !value.trim()) return 'Official label topic';
+  const words = value.trim().replaceAll('_', ' ');
+  return `${words.charAt(0).toUpperCase()}${words.slice(1)}`;
+}
+
+function PairResult({ result }) {
+  const presentation = result.failed
+    ? {
+        label: 'Source information unavailable',
+        description: 'This pair could not be retrieved. Other medicine pairs were still checked.',
+        Icon: AlertCircle,
+      }
+    : PAIR_STATUS_PRESENTATION[result.status] || PAIR_STATUS_PRESENTATION.insufficient;
+  const StatusIcon = presentation.Icon;
+
+  return (
+    <article className={`health-pair-result health-pair-result--${result.failed ? 'unavailable' : result.status}`}>
+      <div className="health-pair-result__icon" aria-hidden="true">
+        <StatusIcon size={18} />
+      </div>
+      <div className="health-pair-result__content">
+        <div className="health-pair-result__heading">
+          <div>
+            <h4>{result.savedMedicine.name}</h4>
+            <p className="health-pair-result__pair">
+              With {result.candidate.name}
+            </p>
+          </div>
+          <span className="health-pair-status">{presentation.label}</span>
+        </div>
+        <p>{presentation.description}</p>
+        {!result.failed ? (
+          <Link
+            className="health-result-link"
+            to={`/evidence?drug_a_id=${encodeURIComponent(result.savedMedicine.entity_id)}&drug_b_id=${encodeURIComponent(result.candidate.entity_id)}`}
+          >
+            Review evidence
+            <ArrowRight size={14} aria-hidden="true" />
+          </Link>
+        ) : null}
+      </div>
+    </article>
+  );
+}
+
+function MyHealth() {
+  const [savedMedicines] = useState(() =>
+    readSavedSelections(SAVED_MEDICINES_STORAGE_KEY, MAX_SAVED_MEDICINES),
+  );
+  const [savedConditions] = useState(() =>
+    readSavedSelections(SAVED_CONDITIONS_STORAGE_KEY, MAX_CONDITIONS),
+  );
+  const [candidate, setCandidate] = useState(null);
+  const [candidateReview, setCandidateReview] = useState({
+    checking: false,
+    completed: false,
+    current: 0,
+    total: 0,
+    results: [],
+    medicineInformationStatus: 'idle',
+    medicineInformation: null,
+  });
+  const [showAllPairs, setShowAllPairs] = useState(false);
+  const reviewIdRef = useRef(0);
+
+  const { information: savedMedicineInformation } = useSavedInformation(savedMedicines, 'medicine');
+  const {
+    information: savedConditionInformation,
+    loading: savedConditionsLoading,
+  } = useSavedInformation(savedConditions, 'disease');
 
   useEffect(() => () => {
-    reviewIdRef.current += 1
-  }, [])
+    reviewIdRef.current += 1;
+  }, []);
 
-  const reviewMedicineIdSet = new Set(reviewMedicineIds)
-  const reviewMedicines = medicines.filter((medicine) => reviewMedicineIdSet.has(medicine.entity_id))
-  const medicineById = new Map(medicines.map((medicine) => [medicine.entity_id, medicine]))
-  const connections = { indications: [], other: [] }
-  for (const condition of conditions) {
-    const payload = conditionInformation[condition.entity_id]?.payload
-    for (const [group, destination] of [['indications', connections.indications], ['other', connections.other]]) {
-      const relationships = payload?.medicine_relationships?.[group]
-      if (!Array.isArray(relationships)) continue
-      for (const relationship of relationships) {
-        const medicine = medicineById.get(relationship.drug_id)
-        if (!medicine) continue
-        destination.push({ medicine, condition, relation: relationship.relation })
-      }
-    }
+  const eligibleSavedMedicines = useMemo(
+    () => savedMedicines.filter((medicine) => medicine.entity_id !== candidate?.entity_id),
+    [candidate?.entity_id, savedMedicines],
+  );
+
+  const sortedPairResults = useMemo(() => {
+    const priority = { important: 0, review: 1, insufficient: 2 };
+    return [...candidateReview.results].sort((left, right) => {
+      const leftPriority = left.failed ? 3 : (priority[left.status] ?? 2);
+      const rightPriority = right.failed ? 3 : (priority[right.status] ?? 2);
+      return leftPriority - rightPriority || left.originalIndex - right.originalIndex;
+    });
+  }, [candidateReview.results]);
+
+  const conditionConnections = useMemo(() => {
+    if (!candidate) return [];
+
+    const connections = [];
+    savedConditions.forEach((condition) => {
+      const payload = savedConditionInformation[condition.entity_id]?.payload;
+      if (!payload) return;
+      const relationships = [
+        ...(payload.medicine_relationships?.indications || []),
+        ...(payload.medicine_relationships?.other || []),
+      ];
+      relationships.forEach((relationship) => {
+        if (relationship.drug_id === candidate.entity_id) {
+          connections.push({
+            condition,
+            relation: relationship.relation,
+          });
+        }
+      });
+    });
+    return connections;
+  }, [candidate, savedConditionInformation, savedConditions]);
+
+  const conditionLoadFailed = savedConditions.some(
+    (condition) => savedConditionInformation[condition.entity_id]?.status === 'error',
+  );
+
+  const candidateTopics = useMemo(() => {
+    const payload = candidateReview.medicineInformation;
+    if (!payload) return [];
+    const topics = payload.label_information?.food_lifestyle_information?.topics;
+    if (!Array.isArray(topics) || !topics.length) return [];
+    const groupedTopics = new Map();
+    topics.filter(Boolean).forEach((topic) => {
+      const label = readableTopicName(typeof topic === 'string' ? topic : topic.topic);
+      groupedTopics.set(label, (groupedTopics.get(label) || 0) + 1);
+    });
+    return [{
+      label: 'Food and lifestyle',
+      topics: [...groupedTopics].map(([label, count]) => ({ label, count })),
+    }];
+  }, [candidateReview.medicineInformation]);
+
+  const reviewStarted = candidateReview.checking
+    || candidateReview.completed
+    || candidateReview.results.length > 0;
+  const visiblePairResults = showAllPairs
+    ? sortedPairResults
+    : sortedPairResults.slice(0, COMPACT_RESULT_COUNT);
+
+  function handleCandidateSelect(nextCandidate) {
+    reviewIdRef.current += 1;
+    setCandidate(nextCandidate);
+    setShowAllPairs(false);
+    setCandidateReview({
+      checking: false,
+      completed: false,
+      current: 0,
+      total: 0,
+      results: [],
+      medicineInformationStatus: 'idle',
+      medicineInformation: null,
+    });
   }
 
-  const foodLifestyleItems = medicines.flatMap((medicine) => {
-    const information = medicineInformation[medicine.entity_id]?.payload
-      ?.label_information?.food_lifestyle_information
-    if (information?.status !== 'available' || !Array.isArray(information.topics)) return []
-    const topics = [...new Set(information.topics
-      .map((item) => FOOD_TOPIC_LABELS[item.topic])
-      .filter(Boolean))]
-    return topics.length ? [{ medicine, topics: topics.slice(0, 3) }] : []
-  })
-  const nutritionItems = conditions.flatMap((condition) => {
-    const nutrition = conditionInformation[condition.entity_id]?.payload?.nutrition_lifestyle
-    if (nutrition?.status !== 'available') return []
-    return [{ condition, organization: nutrition.source?.organization || '' }]
-  })
-  const medicineLoading = medicines.some((item) => medicineInformation[item.entity_id]?.status === 'loading')
-  const conditionLoading = conditions.some((item) => conditionInformation[item.entity_id]?.status === 'loading')
-  const medicineErrors = medicines.filter((item) => medicineInformation[item.entity_id]?.status === 'error').length
-  const conditionErrors = conditions.filter((item) => conditionInformation[item.entity_id]?.status === 'error').length
-  const pairCount = (reviewMedicines.length * (reviewMedicines.length - 1)) / 2
-  const pairSummary = pairReview.results.reduce((summary, result) => ({
-    ...summary,
-    [result.status.key]: summary[result.status.key] + 1,
-  }), { important: 0, review: 0, insufficient: 0 })
-  const orderedPairResults = pairReview.results
-    .slice()
-    .sort((left, right) => (
-      PAIR_STATUS_PRIORITY[left.status.key] - PAIR_STATUS_PRIORITY[right.status.key]
-      || left.originalIndex - right.originalIndex
-    ))
-  const hasAdditionalPairResults = orderedPairResults.length > COMPACT_PAIR_RESULT_COUNT
-  const visiblePairResults = showAllPairResults
-    ? orderedPairResults
-    : orderedPairResults.slice(0, COMPACT_PAIR_RESULT_COUNT)
+  async function checkCandidate() {
+    if (!candidate || candidateReview.checking) return;
 
-  async function reviewMedicineCombinations() {
-    const pairs = generateUniqueMedicinePairs(reviewMedicines)
-    if (!pairs.length || pairReview.checking) return
-    const reviewId = reviewIdRef.current + 1
-    reviewIdRef.current = reviewId
-    setShowAllPairResults(false)
-    setPairReview({ checking: true, current: 0, total: pairs.length, results: [] })
+    const reviewId = reviewIdRef.current + 1;
+    reviewIdRef.current = reviewId;
+    setShowAllPairs(false);
 
-    const isCancelled = () => reviewIdRef.current !== reviewId
-    await mapWithConcurrency(
+    const pairs = eligibleSavedMedicines.map((savedMedicine, originalIndex) => ({
+      savedMedicine,
+      candidate,
+      originalIndex,
+    }));
+
+    setCandidateReview({
+      checking: true,
+      completed: false,
+      current: 0,
+      total: pairs.length,
+      results: [],
+      medicineInformationStatus: 'loading',
+      medicineInformation: null,
+    });
+
+    const knownMedicinePayload = savedMedicineInformation[candidate.entity_id]?.payload;
+    const medicineInformationPromise = (knownMedicinePayload
+      ? Promise.resolve(knownMedicinePayload)
+      : getJson(`/api/public/medicine?drug_id=${encodeURIComponent(candidate.entity_id)}`))
+      .then((payload) => {
+        if (reviewIdRef.current !== reviewId) return;
+        setCandidateReview((current) => ({
+          ...current,
+          medicineInformationStatus: 'ready',
+          medicineInformation: payload,
+        }));
+      })
+      .catch(() => {
+        if (reviewIdRef.current !== reviewId) return;
+        setCandidateReview((current) => ({
+          ...current,
+          medicineInformationStatus: 'error',
+          medicineInformation: null,
+        }));
+      });
+
+    const pairReviewPromise = mapWithConcurrency(
       pairs,
-      4,
-      (pair) => getJson(pairEndpoint(
-        '/api/evidence/pair',
-        pair.drugA.entity_id,
-        pair.drugB.entity_id,
-      )),
+      MAX_CONCURRENT_REQUESTS,
+      (pair) => getJson(
+        pairEndpoint(
+          '/api/evidence/pair',
+          pair.savedMedicine.entity_id,
+          pair.candidate.entity_id,
+        ),
+      ),
       (settled, originalIndex) => {
-        const failed = settled.status === 'rejected'
-        const evidence = failed ? null : settled.value
-        setPairReview((current) => isCancelled() ? current : ({
+        if (reviewIdRef.current !== reviewId) return;
+        const pair = pairs[originalIndex];
+        const failed = settled.status === 'rejected';
+        const evidence = failed ? null : settled.value;
+        const result = {
+          ...pair,
+          failed,
+          status: derivePairReviewStatus(evidence, failed).key,
+        };
+        setCandidateReview((current) => ({
           ...current,
           current: current.current + 1,
-          results: [...current.results, {
-            pair: pairs[originalIndex],
-            originalIndex,
-            failed,
-            status: derivePairReviewStatus(evidence, failed),
-          }],
-        }))
+          results: [...current.results, result],
+        }));
       },
-      isCancelled,
-    )
+      () => reviewIdRef.current !== reviewId,
+    );
+
+    await Promise.all([pairReviewPromise, medicineInformationPromise]);
 
     if (reviewIdRef.current === reviewId) {
-      setPairReview((current) => isCancelled() ? current : ({ ...current, checking: false }))
+      setCandidateReview((current) => ({
+        ...current,
+        checking: false,
+        completed: true,
+      }));
     }
   }
 
   return (
-    <section className="page product-page my-health-page">
-      <header className="product-page-header">
-        <span className="eyebrow">My Health</span>
-        <h1>Your selected medicines and conditions, brought together in one place.</h1>
-        <p>Use this overview to reach available CHEERS information without creating a clinical profile.</p>
-        <p><strong>Saved medicines:</strong> review combinations, open medicine details, and explore available source information.</p>
-        <p><strong>Saved conditions:</strong> open condition information, inspect typed medicine–condition relationships, and access available nutrition and lifestyle modules.</p>
+    <div className="page my-health-page">
+      <header className="my-health-header">
+        <p className="eyebrow">MY HEALTH</p>
+        <h1>Check a medicine with your saved health information</h1>
+        <p className="my-health-header__summary">
+          Review available information for a medicine against the medicines and conditions you&apos;ve saved.
+        </p>
+        <p className="my-health-privacy-note">
+          <Info size={15} aria-hidden="true" />
+          Saved only in this browser. CHEERS organizes available information and does not provide diagnosis or treatment advice.
+        </p>
       </header>
 
-      <aside className="my-health-privacy">
-        <Info size={18} aria-hidden="true" />
-        <p><strong>Your selections stay on this browser.</strong> CHEERS uses them only to organize available information. CHEERS does not diagnose conditions, prescribe medicines, or determine personal treatment suitability.</p>
-      </aside>
-
-      {empty ? (
-        <section className="my-health-onboarding" aria-labelledby="my-health-onboarding-title">
-          <span className="my-health-onboarding-icon"><HeartPulse size={27} aria-hidden="true" /></span>
+      <section className="health-context-surface" aria-labelledby="health-context-title">
+        <div className="health-section-heading health-section-heading--compact">
           <div>
-            <span className="eyebrow">Local, optional personalization</span>
-            <h2 id="my-health-onboarding-title">Build your CHEERS health view</h2>
-            <p>Add medicines and conditions to organize interaction information, food/lifestyle label information, disease nutrition information, and typed medicine–condition relationships.</p>
+            <p className="health-section-kicker">SAVED CONTEXT</p>
+            <h2 id="health-context-title">Your health context</h2>
           </div>
-          <div className="my-health-onboarding-actions">
-            <Link className="primary-button" to="/my-medicines">Add medicines</Link>
-            <Link className="secondary-button" to="/my-conditions">Add conditions</Link>
-          </div>
-        </section>
-      ) : (
-        <>
-          <section className="my-health-counts" aria-label="Saved information summary">
-            <article><Pill size={18} /><strong>{medicines.length}</strong><span>medicines</span></article>
-            <article><HeartPulse size={18} /><strong>{conditions.length}</strong><span>conditions</span></article>
-            <article><Beaker size={18} /><strong>{pairCount}</strong><span>selected medicine combinations</span></article>
-            <article><GitBranch size={18} /><strong>{connections.indications.length + connections.other.length}</strong><span>medicine–condition relationships</span></article>
-            <article><Utensils size={18} /><strong>{nutritionItems.length}</strong><span>nutrition modules available</span></article>
-          </section>
+        </div>
+        <div className="health-context-grid">
+          <ContextGroup
+            title="Medicines"
+            items={savedMedicines}
+            emptyLabel="No medicines saved yet."
+            actionLabel={savedMedicines.length ? 'Manage medicines' : 'Add medicines'}
+            actionTo="/my-medicines"
+          />
+          <ContextGroup
+            title="Conditions"
+            items={savedConditions}
+            emptyLabel="No conditions saved yet."
+            actionLabel={savedConditions.length ? 'Manage conditions' : 'Add conditions'}
+            actionTo="/my-conditions"
+          />
+        </div>
+      </section>
 
-          <div className="my-health-selection-grid">
-            <SelectionSummary
-              title="My medicines"
-              items={medicines}
-              emptyCopy="Add medicines to see interaction and food/lifestyle information."
-              addPath="/my-medicines"
-              managePath="/my-medicines"
-              type="medicine"
-            />
-            <SelectionSummary
-              title="My conditions"
-              items={conditions}
-              emptyCopy="Add conditions to see related medicine and nutrition information."
-              addPath="/my-conditions"
-              managePath="/my-conditions"
-              type="condition"
-            />
+      <section className="health-checker" aria-labelledby="health-checker-title">
+        <div className="health-checker__intro">
+          <span className="health-checker__icon" aria-hidden="true">
+            <SearchCheck size={24} />
+          </span>
+          <div>
+            <p className="health-section-kicker">MEDICINE CHECK</p>
+            <h2 id="health-checker-title">Check a medicine</h2>
+            <p>Considering another medicine? Review available information against your saved health context.</p>
           </div>
+        </div>
 
-          <section className="my-health-module" aria-labelledby="my-health-pairs-title">
-            <div className="my-health-section-heading">
-              <div><span className="eyebrow">On demand</span><h2 id="my-health-pairs-title">Medicine combination review</h2></div>
-              <Link to="/my-medicines">Open My Medicines</Link>
+        <div className="health-checker__form">
+          <DrugAutocomplete
+            label="Medicine to check"
+            selection={candidate}
+            onSelect={handleCandidateSelect}
+            placeholder="Search by medicine name or DrugBank ID"
+          />
+
+          {candidate ? (
+            <div className="health-candidate-summary" aria-label="Selected medicine">
+              <div>
+                <strong>{candidate.name}</strong>
+                <span>DrugBank · {candidate.entity_id}</span>
+              </div>
+              <p>
+                Review against {eligibleSavedMedicines.length} saved medicine{eligibleSavedMedicines.length === 1 ? '' : 's'} · {savedConditions.length} saved condition{savedConditions.length === 1 ? '' : 's'}
+              </p>
             </div>
-            <p className="my-health-priority-note">
-              {reviewMedicines.length} of {medicines.length} saved medicines selected for combination review. Manage this review set in My Medicines; unselected medicines remain saved and available elsewhere in My Health.
-            </p>
-            {reviewMedicines.length < 2 ? (
-              <div className="my-health-soft-empty"><p>Select at least two medicines in My Medicines to review combinations.</p><Link to="/my-medicines">Manage medicines <ArrowRight size={15} /></Link></div>
+          ) : null}
+
+          <button
+            className="primary-button health-checker__submit"
+            type="button"
+            disabled={!candidate || candidateReview.checking}
+            onClick={checkCandidate}
+          >
+            {candidateReview.checking ? (
+              <>
+                <LoaderCircle className="spin" size={17} aria-hidden="true" />
+                Checking information
+              </>
             ) : (
               <>
-                {!pairReview.results.length && !pairReview.checking && (
-                  <div className="my-health-review-prompt">
-                    <p>Review {pairCount} {pairCount === 1 ? 'combination' : 'combinations'} using the same source-based statuses as My Medicines.</p>
-                    <button className="primary-button" type="button" onClick={reviewMedicineCombinations}><Beaker size={17} /> Review medicine combinations</button>
+                Check medicine
+                <ArrowRight size={17} aria-hidden="true" />
+              </>
+            )}
+          </button>
+        </div>
+      </section>
+
+      {!reviewStarted ? (
+        <section className="health-capabilities" aria-label="Information available in this review">
+          <CapabilityTile
+            Icon={Files}
+            title="Medicine pairs"
+            description="FDA label and PubMed source retrieval"
+          />
+          <CapabilityTile
+            Icon={HeartPulse}
+            title="Saved conditions"
+            description="Existing medicine-condition relationships"
+          />
+          <CapabilityTile
+            Icon={Pill}
+            title="Medicine information"
+            description="Available official label topics"
+          />
+        </section>
+      ) : null}
+
+      {reviewStarted && candidate ? (
+        <section className="health-review-results" aria-labelledby="health-review-title">
+          <header className="health-review-header">
+            <div>
+              <p className="health-section-kicker">REVIEW RESULTS</p>
+              <h2 id="health-review-title">{candidate.name}</h2>
+              <p>
+                {candidateReview.completed ? 'Reviewed' : 'Reviewing'} with {eligibleSavedMedicines.length} medicine{eligibleSavedMedicines.length === 1 ? '' : 's'} · {savedConditions.length} condition{savedConditions.length === 1 ? '' : 's'}
+              </p>
+            </div>
+            <span className="health-review-id">DrugBank · {candidate.entity_id}</span>
+          </header>
+
+          {candidateReview.checking ? (
+            <p className="health-review-progress" role="status" aria-live="polite">
+              <LoaderCircle className="spin" size={16} aria-hidden="true" />
+              {candidateReview.total > 0
+                ? `Checked ${candidateReview.current} of ${candidateReview.total} medicine pairs`
+                : 'Checking available medicine information'}
+            </p>
+          ) : null}
+
+          <div className="health-review-layout">
+            {eligibleSavedMedicines.length > 0 ? (
+              <section className="health-results-primary" aria-labelledby="medicine-results-title">
+                <div className="health-results-heading">
+                  <div>
+                    <h3 id="medicine-results-title">With your medicines</h3>
+                    <p>Retrieved source information for each saved medicine pair.</p>
                   </div>
-                )}
-                {pairReview.checking && (
-                  <p className="my-health-module-note" role="status"><LoaderCircle className="spin" size={17} /> Checked {pairReview.current} of {pairReview.total} combinations</p>
-                )}
-                {pairReview.results.length > 0 && (
-                  <>
-                    <div className="my-health-pair-summary" aria-label="Medicine combination summary">
-                      <article className="is-important"><strong>{pairSummary.important}</strong><span>interaction warnings</span></article>
-                      <article className="is-review"><strong>{pairSummary.review}</strong><span>needs review</span></article>
-                      <article className="is-insufficient"><strong>{pairSummary.insufficient}</strong><span>not enough information</span></article>
+                  {candidateReview.completed ? (
+                    <span>{sortedPairResults.length} checked</span>
+                  ) : null}
+                </div>
+
+                <div id="health-pair-results" className="health-pair-results">
+                  {visiblePairResults.map((result) => (
+                    <PairResult
+                      key={`${result.savedMedicine.entity_id}:${result.candidate.entity_id}`}
+                      result={result}
+                    />
+                  ))}
+                </div>
+
+                {sortedPairResults.length > COMPACT_RESULT_COUNT ? (
+                  <div className="health-result-toggle-row">
+                    <span>
+                      Showing {visiblePairResults.length} of {sortedPairResults.length} reviewed medicine pairs
+                    </span>
+                    <button
+                      className="button button--ghost health-result-toggle"
+                      type="button"
+                      aria-expanded={showAllPairs}
+                      aria-controls="health-pair-results"
+                      onClick={() => setShowAllPairs((current) => !current)}
+                    >
+                      {showAllPairs ? 'Show fewer' : `Show all ${sortedPairResults.length} medicine pairs`}
+                    </button>
+                  </div>
+                ) : null}
+
+                {candidateReview.results.length > 0 ? (
+                  <p className="health-pair-limitation">
+                    These statuses summarize retrieved sources. They do not determine interaction severity, probability, or personal safety. Missing information is not proof of safety.
+                  </p>
+                ) : null}
+              </section>
+            ) : null}
+
+            <div className="health-results-supporting">
+              {savedConditions.length > 0 ? (
+                <section className="health-support-section" aria-labelledby="condition-results-title">
+                  <div className="health-results-heading">
+                    <div>
+                      <h3 id="condition-results-title">With your conditions</h3>
+                      <p>Relationships recorded in the checked CHEERS data.</p>
                     </div>
-                    <div id="my-health-pair-results" className="my-health-pair-list" aria-label="Medicine combinations by information priority">
-                      {visiblePairResults.map((result) => (
-                        <article className={`my-health-pair-item is-${result.status.key}`} key={`${result.pair.drugA.entity_id}-${result.pair.drugB.entity_id}`}>
-                          <span>{result.status.title}</span>
-                          <strong>{result.pair.drugA.name} + {result.pair.drugB.name}</strong>
-                          {result.failed && <small>Source request unavailable</small>}
+                  </div>
+
+                  {savedConditionsLoading ? (
+                    <p className="health-inline-state" role="status">
+                      <LoaderCircle className="spin" size={15} aria-hidden="true" />
+                      Checking saved condition information
+                    </p>
+                  ) : conditionConnections.length > 0 ? (
+                    <div className="health-condition-results">
+                      {conditionConnections.map((connection) => (
+                        <article
+                          className="health-condition-result"
+                          key={`${connection.condition.entity_id}:${connection.relation}`}
+                        >
+                          <h4>{connection.condition.name}</h4>
+                          <p>{connection.relation}</p>
+                          <Link className="health-result-link" to={`/diseases/${encodeURIComponent(connection.condition.entity_id)}`}>
+                            View condition information
+                            <ArrowRight size={14} aria-hidden="true" />
+                          </Link>
                         </article>
                       ))}
                     </div>
-                    {hasAdditionalPairResults && (
-                      <div className="my-health-pair-list-control">
-                        <p className="my-health-priority-note">
-                          {showAllPairResults
-                            ? `Showing all ${orderedPairResults.length} reviewed combinations`
-                            : `Showing ${COMPACT_PAIR_RESULT_COUNT} of ${orderedPairResults.length} reviewed combinations`}
-                        </p>
-                        <button
-                          type="button"
-                          className="secondary-button"
-                          aria-expanded={showAllPairResults}
-                          aria-controls="my-health-pair-results"
-                          onClick={() => setShowAllPairResults((current) => !current)}
-                        >
-                          {showAllPairResults ? 'Show fewer' : `Show all ${orderedPairResults.length} combinations`}
-                        </button>
+                  ) : candidateReview.completed && conditionLoadFailed ? (
+                    <p className="health-inline-state health-inline-state--error">
+                      Some saved condition information could not be loaded.
+                    </p>
+                  ) : candidateReview.completed ? (
+                    <div className="health-bounded-empty">
+                      <p>No recorded medicine–condition relationship was found in the checked CHEERS data.</p>
+                      <p>This does not establish that the medicine is safe or appropriate for the condition.</p>
+                    </div>
+                  ) : null}
+                </section>
+              ) : null}
+
+              {candidateReview.medicineInformationStatus === 'ready' && candidateTopics.length > 0 ? (
+                <section className="health-support-section" aria-labelledby="medicine-information-title">
+                  <div className="health-results-heading">
+                    <div>
+                      <h3 id="medicine-information-title">Other available information</h3>
+                      <p>Topics retrieved for {candidate.name}.</p>
+                    </div>
+                  </div>
+                  <div className="health-topic-groups">
+                    {candidateTopics.map((group) => (
+                      <div className="health-topic-group" key={group.label}>
+                        <h4>{group.label}</h4>
+                        <ul>
+                          {group.topics.map((topic) => (
+                            <li key={topic.label}>
+                              <strong>{topic.label}</strong>
+                              <span>
+                                {topic.count} official label {topic.count === 1 ? 'excerpt' : 'excerpts'} available
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-                    )}
-                    <p className="my-health-priority-note">Pairs are ordered only to surface available information: warning, review, then insufficient information. These categories summarize retrieved source information; they are not clinical severity, interaction probability, or personal-safety assessments.</p>
-                  </>
-                )}
-              </>
-            )}
-          </section>
-
-          <section className="my-health-module" aria-labelledby="my-health-connections-title">
-            <div className="my-health-section-heading">
-              <div><span className="eyebrow">Checked typed relationships</span><h2 id="my-health-connections-title">Medicine + condition connections</h2></div>
+                    ))}
+                  </div>
+                  <Link className="health-result-link" to={`/medicines/${encodeURIComponent(candidate.entity_id)}`}>
+                    View medicine information
+                    <ArrowRight size={14} aria-hidden="true" />
+                  </Link>
+                </section>
+              ) : null}
             </div>
-            <ModuleNotice loading={conditionLoading} errors={conditionErrors} />
-            {connections.indications.length + connections.other.length > 0 && (
-              <p className="my-health-neutral-copy">These are typed relationships in the checked data, not recommendations to use or change treatment.</p>
-            )}
-            {!conditionLoading && medicines.length > 0 && conditions.length > 0 && connections.indications.length === 0 && connections.other.length === 0 && (
-              <p className="my-health-neutral-copy">No typed relationships among the saved medicines and conditions were found in the checked Disease Guide data.</p>
-            )}
-            {connections.indications.length > 0 && (
-              <div className="my-health-connection-group">
-                <h3>Treatment indication</h3>
-                {connections.indications.map((connection) => (
-                  <article key={`${connection.medicine.entity_id}-${connection.condition.entity_id}-${connection.relation}`}>
-                    <strong>{connection.medicine.name}</strong><ArrowRight size={15} /><span>{connection.condition.name}</span><b>Indication</b>
-                  </article>
-                ))}
-              </div>
-            )}
-            {connections.other.length > 0 && (
-              <div className="my-health-connection-group is-other">
-                <h3>Other biomedical relationships</h3>
-                {connections.other.map((connection) => (
-                  <article key={`${connection.medicine.entity_id}-${connection.condition.entity_id}-${connection.relation}`}>
-                    <strong>{connection.medicine.name}</strong><ArrowRight size={15} /><span>{connection.condition.name}</span><b>{connection.relation}</b>
-                  </article>
-                ))}
-              </div>
-            )}
-            {(medicines.length === 0 || conditions.length === 0) && (
-              <p className="my-health-neutral-copy">Save at least one medicine and one condition to see existing typed relationships.</p>
-            )}
-          </section>
-
-          <div className="my-health-module-grid">
-            <section className="my-health-module" aria-labelledby="my-health-food-title">
-              <div className="my-health-section-heading"><div><span className="eyebrow">Official label topics</span><h2 id="my-health-food-title">Food &amp; lifestyle information</h2></div></div>
-              <ModuleNotice loading={medicineLoading} errors={medicineErrors} />
-              <div className="my-health-availability-list">
-                {foodLifestyleItems.map(({ medicine, topics }) => (
-                  <article key={medicine.entity_id}>
-                    <div><strong>{medicine.name}</strong>{topics.map((topic) => <span key={topic}>{topic} available</span>)}</div>
-                    <Link to={`/medicines/${encodeURIComponent(medicine.entity_id)}?section=food-lifestyle`}>View Food &amp; lifestyle</Link>
-                  </article>
-                ))}
-              </div>
-              {!medicineLoading && medicines.length > 0 && foodLifestyleItems.length === 0 && (
-                <p className="my-health-neutral-copy">No explicit food or lifestyle topic is currently available from the checked label modules. This does not establish safety.</p>
-              )}
-              {medicines.length === 0 && <p className="my-health-neutral-copy">Add medicines to surface available label topics.</p>}
-            </section>
-
-            <section className="my-health-module" aria-labelledby="my-health-nutrition-title">
-              <div className="my-health-section-heading"><div><span className="eyebrow">Reviewed disease education</span><h2 id="my-health-nutrition-title">Nutrition &amp; lifestyle information</h2></div></div>
-              <ModuleNotice loading={conditionLoading} errors={conditionErrors} />
-              <div className="my-health-availability-list">
-                {nutritionItems.map(({ condition, organization }) => (
-                  <article key={condition.entity_id}>
-                    <div><strong>{condition.name}</strong><span>Nutrition &amp; lifestyle information available</span>{organization && <small>Source: {organization}</small>}</div>
-                    <Link to={`/diseases/${encodeURIComponent(condition.entity_id)}?section=nutrition-lifestyle`}>View Nutrition &amp; lifestyle</Link>
-                  </article>
-                ))}
-              </div>
-              {!conditionLoading && conditions.length > 0 && nutritionItems.length === 0 && (
-                <p className="my-health-neutral-copy">No reviewed nutrition module is currently available for the saved conditions.</p>
-              )}
-              {conditions.length === 0 && <p className="my-health-neutral-copy">Add conditions to surface reviewed nutrition information.</p>}
-            </section>
           </div>
-
-          <section className="my-health-explore" aria-labelledby="my-health-explore-title">
-            <div><span className="eyebrow">Optional deeper information</span><h2 id="my-health-explore-title">Explore deeper</h2></div>
-            <nav aria-label="My Health next steps">
-              <Link to="/check"><Beaker size={17} /> Check two medicines</Link>
-              <Link to="/medicines"><Pill size={17} /> Medicine Guide</Link>
-              <Link to="/diseases"><HeartPulse size={17} /> Disease Guide</Link>
-              <Link to="/graph"><Search size={17} /> Explore graph context</Link>
-              <Link to="/predictor"><FlaskConical size={17} /> Open Research Predictor</Link>
-            </nav>
-          </section>
-        </>
-      )}
-    </section>
-  )
+        </section>
+      ) : null}
+    </div>
+  );
 }
+
+export default MyHealth;
