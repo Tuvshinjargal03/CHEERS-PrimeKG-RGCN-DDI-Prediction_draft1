@@ -56,20 +56,19 @@ describe('public Home', () => {
     getJson.mockReset()
   })
 
-  it('presents the public hero, search, and four quick actions', () => {
+  it('presents the public hero and three primary actions', () => {
     render(<MemoryRouter><Home /></MemoryRouter>)
     expect(screen.getByRole('heading', { name: /understand your medicines better/i })).toBeVisible()
     expect(screen.getByRole('searchbox', { name: /search CHEERS/i })).toBeVisible()
-    expect(screen.getByRole('link', { name: /Check Medicines/ })).toHaveAttribute('href', '/check')
+    expect(screen.getByRole('link', { name: /Check two medicines/ })).toHaveAttribute('href', '/check')
     expect(screen.getByRole('link', { name: 'Medicines' })).toHaveAttribute('href', '/medicines')
     expect(screen.getByRole('link', { name: 'Diseases' })).toHaveAttribute('href', '/diseases')
     expect(screen.getByRole('link', { name: /My Health/ })).toHaveAttribute('href', '/my-health')
-    expect(screen.getByRole('link', { name: /Explore graph context/ })).toHaveAttribute('href', '/graph')
-    const primary = screen.getByRole('region', { name: 'Choose where to start' })
-    expect(within(primary).getAllByRole('heading', { level: 3 })).toHaveLength(4)
+    expect(screen.getByRole('link', { name: 'Explore relationships' })).toHaveAttribute('href', '/graph')
+    const primary = screen.getByRole('region', { name: 'Choose what you want to do' })
+    expect(within(primary).getAllByRole('heading', { level: 3 })).toHaveLength(3)
     expect(within(primary).queryByRole('link', { name: /Predictor/ })).not.toBeInTheDocument()
-    const research = screen.getByRole('region', { name: 'Built on CHEERS knowledge-graph DDI research' })
-    expect(within(research).getByText('Behind the product')).toBeVisible()
+    const research = screen.getByRole('region', { name: 'Explore the research behind CHEERS' })
     expect(within(research).getByRole('link', { name: 'DDI Predictor' })).toHaveAttribute('href', '/predictor')
   })
 
@@ -357,13 +356,15 @@ describe('deterministic public-search routing', () => {
     })
     renderSearch('/search?q=can%20i%20take%20warfarin%20with%20ibuprofen')
 
-    const pairHeading = await screen.findByRole('heading', { name: 'Warfarin + Ibuprofen' })
+    expect(await screen.findByRole('heading', { name: 'Warfarin + Ibuprofen' })).toBeVisible()
+    const evidenceHeading = screen.getByRole('heading', { name: 'Evidence checked' })
     expect(screen.getByText('The retrieved FDA label information includes an interaction warning for this pair.')).toBeVisible()
-    expect(screen.getByRole('heading', { name: 'What CHEERS found' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Key things to know' })).toBeVisible()
     expect(screen.getByText('This does not establish whether the combination is safe for you.')).toBeVisible()
-    expect(screen.getByText('Sources used: FDA label, PubMed')).toBeVisible()
+    expect(screen.getByLabelText('Sources used')).toHaveTextContent('FDA label')
+    expect(screen.getByLabelText('Sources used')).toHaveTextContent('PubMed')
     expect(screen.getByText('Interaction warning found')).toBeVisible()
-    expect(pairHeading.closest('section')).toHaveClass('is-warning')
+    expect(evidenceHeading.closest('section')).toHaveClass('is-warning')
     expect(screen.getByLabelText('Retrieved source counts')).toHaveTextContent('FDA label mentions16')
     expect(screen.getByLabelText('Retrieved source counts')).toHaveTextContent('PubMed records5')
     expect(screen.getByRole('link', { name: /Open Medicine Checker/i })).toHaveAttribute(
@@ -388,7 +389,9 @@ describe('deterministic public-search routing', () => {
       },
     })
     renderSearch('/search?q=what%20does%20metformin%20do')
+    expect(await screen.findByRole('heading', { name: 'About Metformin' })).toBeVisible()
     expect(await screen.findByText('CHEERS found official label information for Metformin.')).toBeVisible()
+    expect(screen.queryByText(/short answer/i)).not.toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'View medicine' })).toHaveAttribute('href', '/medicines/DB00331')
     expect(screen.getByRole('link', { name: 'Side effects' })).toHaveAttribute('href', '/medicines/DB00331?section=side-effects')
     expect(screen.getByRole('link', { name: 'Check medicines' })).toHaveAttribute('href', '/check?drug_a_id=DB00331')
@@ -400,7 +403,7 @@ describe('deterministic public-search routing', () => {
     getJson.mockResolvedValue({
       ...BASE,
       intent: 'drug_side_effects',
-      recognized_entities: [METFORMIN],
+      recognized_entities: [{ ...METFORMIN, match_type: 'close_fuzzy_name' }],
       explanation: {
         status: 'answered',
         short_answer: 'CHEERS found official label information for Metformin.',
@@ -413,7 +416,11 @@ describe('deterministic public-search routing', () => {
     })
     renderSearch('/search?q=metphormin%20side%20efects')
 
+    expect(await screen.findByRole('heading', { name: 'Metformin side effects' })).toBeVisible()
+    expect(screen.getByText('Matched “metphormin” to Metformin')).toBeVisible()
     expect(await screen.findByText('CHEERS found official label information for Metformin.')).toBeVisible()
+    expect(screen.queryByText('We understood this as')).not.toBeInTheDocument()
+    expect(screen.getByLabelText('Sources used')).toHaveTextContent('FDA label')
     expect(screen.getAllByRole('listitem')).toHaveLength(1)
     expect(screen.getByText('Official label information is general information, not personalized medical advice.')).toBeVisible()
     expect(document.body).not.toHaveTextContent('(5.1)')
@@ -444,7 +451,7 @@ describe('deterministic public-search routing', () => {
     getJson.mockResolvedValue({
       ...BASE,
       intent: 'general_symptom_or_treatment_question',
-      recognized_entities: [IBUPROFEN],
+      recognized_entities: [{ ...IBUPROFEN, match_type: 'close_fuzzy_name' }],
       explanation: {
         status: 'limited',
         short_answer: 'CHEERS can show available label information about Ibuprofen, but it cannot decide whether it is appropriate for your pain.',
@@ -454,6 +461,8 @@ describe('deterministic public-search routing', () => {
       },
     })
     renderSearch('/search?q=can%20i%20use%20ibuprofin%20for%20pain')
+    expect(await screen.findByRole('heading', { name: 'Ibuprofen and pain' })).toBeVisible()
+    expect(screen.getByText('Matched “ibuprofin” to Ibuprofen')).toBeVisible()
     expect(await screen.findByRole('link', { name: 'View Ibuprofen' })).toHaveAttribute('href', '/medicines/DB01050')
     expect(screen.getByRole('link', { name: 'Review uses' })).toHaveAttribute('href', '/medicines/DB01050?section=uses')
     expect(screen.getByRole('link', { name: 'Review side effects' })).toHaveAttribute('href', '/medicines/DB01050?section=side-effects')
@@ -506,11 +515,11 @@ describe('deterministic public-search routing', () => {
     renderSearch('/search?q=warfarin%20aspirin%20together')
 
     expect(await screen.findByRole('heading', { name: 'Warfarin + Aspirin' })).toBeVisible()
-    expect(screen.getByRole('heading', { name: 'Aspirin' })).toBeVisible()
-    expect(screen.getByText('Acetylsalicylic acid')).toBeVisible()
-    expect(screen.getByText('DB00945')).toBeVisible()
-    expect(screen.getByText('Sources checked: FDA label, PubMed')).toBeVisible()
-    expect(screen.queryByText('Sources used: FDA label, PubMed')).not.toBeInTheDocument()
+    expect(screen.getAllByText('Aspirin').length).toBeGreaterThan(0)
+    expect(screen.getByLabelText('Medicines in this pair')).toHaveTextContent('Acetylsalicylic acid')
+    expect(screen.getByLabelText('Medicines in this pair')).toHaveTextContent('DB00945')
+    expect(screen.getByLabelText('Sources checked')).toHaveTextContent('FDA label')
+    expect(screen.getByLabelText('Sources checked')).toHaveTextContent('PubMed')
   })
 
   it('shows a neutral insufficient state without a safe verdict', async () => {
@@ -639,7 +648,7 @@ describe('deterministic public-search routing', () => {
       unavailable_modules: [{ module: 'query_resolution', reason: 'Choose one.' }],
     })
     renderSearch('/search?q=what%20is%20diabetes')
-    expect(await screen.findByText('Which entity did you mean?')).toBeVisible()
+    expect(await screen.findByText('Which diabetes condition do you mean?')).toBeVisible()
     await user.click(screen.getByRole('button', { name: /type 2 diabetes mellitus/i }))
     expect(screen.getByTestId('location')).toHaveTextContent('/search?q=what%20is%20type%202%20diabetes%20mellitus')
   })
@@ -651,7 +660,8 @@ describe('deterministic public-search routing', () => {
       unavailable_modules: [{ module: 'query_resolution', reason: 'No match.' }],
     })
     renderSearch('/search?q=quantum%20umbrella')
-    expect(await screen.findByText('We could not confidently recognize that search')).toBeVisible()
+    expect(await screen.findByText('I couldn’t answer that directly.')).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Browse medicines' })).toHaveAttribute('href', '/medicines')
     expect(screen.getByTestId('location')).toHaveTextContent('/search?q=quantum%20umbrella')
   })
 

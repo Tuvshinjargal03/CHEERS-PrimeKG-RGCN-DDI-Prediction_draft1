@@ -1408,3 +1408,262 @@
     transform: none;
   }
 }
+
+/* Home and Ask CHEERS product hierarchy */
+.public-home,
+.public-search-page {
+  --public-purple: #6843c2;
+  --public-ink: #202236;
+}
+
+.public-primary-action-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.public-primary-action {
+  display: flex;
+  min-width: 0;
+  min-height: 230px;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 25px;
+  border: 1px solid #ded8ed;
+  border-radius: 22px;
+  background: linear-gradient(150deg, #fff 38%, #f7f3ff 100%);
+  box-shadow: 0 12px 32px rgba(47, 35, 78, 0.07);
+  color: inherit;
+  text-decoration: none;
+  transition: transform 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.public-primary-action:hover,
+.public-primary-action:focus-visible {
+  border-color: #aa96dc;
+  box-shadow: 0 17px 38px rgba(47, 35, 78, 0.11);
+  outline: 3px solid rgba(104, 67, 194, 0.13);
+  outline-offset: 2px;
+  transform: translateY(-2px);
+}
+
+.public-primary-action h3 {
+  margin: 19px 0 7px;
+  color: var(--public-ink);
+  font-size: 1.15rem;
+}
+
+.public-primary-action p {
+  margin: 0;
+  color: #686f82;
+  line-height: 1.62;
+}
+
+.public-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: auto;
+  padding-top: 22px;
+  color: var(--public-purple);
+  font-size: 0.86rem;
+  font-weight: 780;
+}
+
+.public-secondary-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 24px;
+  border: 1px solid #e6e2ec;
+  border-radius: 19px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.public-secondary-section h2,
+.public-advanced-section h2 {
+  margin: 0 0 5px;
+  color: var(--public-ink);
+  font-size: 1.25rem;
+}
+
+.public-secondary-section p {
+  margin: 0;
+  color: #72788a;
+  font-size: 0.87rem;
+}
+
+.public-inline-links,
+.public-advanced-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.public-inline-links a,
+.public-advanced-links a {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 13px;
+  border: 1px solid #ddd8e8;
+  border-radius: 12px;
+  background: #fff;
+  color: #51456d;
+  font-size: 0.84rem;
+  font-weight: 730;
+  text-decoration: none;
+}
+
+.public-inline-links a:hover,
+.public-inline-links a:focus-visible,
+.public-advanced-links a:hover,
+.public-advanced-links a:focus-visible {
+  border-color: #9a84d2;
+  outline: 3px solid rgba(104, 67, 194, 0.12);
+  outline-offset: 2px;
+}
+
+.public-information-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.public-information-tiles li {
+  display: grid;
+  gap: 13px;
+  padding: 18px;
+  border-radius: 17px;
+  background: #faf9fc;
+}
+
+.public-information-tiles li > span {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 11px;
+  background: #eee9fa;
+  color: var(--public-purple);
+}
+
+.public-information-tiles strong { color: #303347; font-size: 0.9rem; }
+.public-information-tiles p { margin: 5px 0 0; color: #73798b; font-size: 0.79rem; line-height: 1.5; }
+
+.public-home-scope { width: 100%; padding: 18px 21px; }
+.public-home-scope .text-action { display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; }
+
+.public-advanced-section {
+  padding: 23px 25px;
+  border-radius: 20px;
+  background: #f7f6f9;
+}
+
+.public-answer-card {
+  border-radius: 24px;
+  background: linear-gradient(150deg, #fff 30%, #fbf9ff 100%);
+  box-shadow: 0 16px 42px rgba(42, 32, 69, 0.08);
+}
+
+.public-answer-card h2 { margin-top: 0; }
+
+.public-match-note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 13px;
+  color: #69558e;
+  font-size: 0.8rem;
+}
+
+.public-key-points { margin-top: 22px; }
+.public-key-points h3 { margin: 0 0 9px; color: #373a4e; font-size: 0.94rem; }
+.public-key-points ul { display: grid; gap: 7px; margin: 0; padding-left: 21px; color: #555b6e; line-height: 1.55; }
+
+.public-source-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  margin-top: 17px;
+  color: #777d8e;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.public-source-chip {
+  padding: 5px 9px;
+  border: 1px solid #ddd7ea;
+  border-radius: 999px;
+  background: #f7f4fc;
+  color: #5d4a82;
+  font-weight: 750;
+}
+
+.public-answer-primary-actions { margin-top: 18px; }
+.public-answer-primary-actions a:first-child { border-color: #6843c2; background: #6843c2; color: #fff; }
+
+.public-pair-medicines {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.public-pair-medicines > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--answer-border);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--answer-accent);
+}
+
+.public-pair-medicines span { display: grid; gap: 2px; }
+.public-pair-medicines strong { color: #303346; }
+.public-pair-medicines small { color: #7b8090; font-size: 0.72rem; }
+
+.public-answer-details {
+  padding: 14px 17px;
+  border: 1px solid #e4e0e9;
+  border-radius: 14px;
+  background: #faf9fb;
+  color: #666c7d;
+  font-size: 0.8rem;
+}
+
+.public-answer-details summary { color: #55456f; font-weight: 750; cursor: pointer; }
+.public-answer-details summary:focus-visible { outline: 3px solid rgba(104, 67, 194, 0.17); outline-offset: 3px; }
+.public-answer-details div { margin-top: 11px; }
+.public-answer-details p { margin: 5px 0; line-height: 1.5; }
+
+.public-empty-state { justify-items: start; max-width: 700px; text-align: left; }
+.public-empty-state .public-answer-actions { margin-top: 15px; }
+
+@media (max-width: 900px) {
+  .public-primary-action-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .public-primary-action:last-child { grid-column: 1 / -1; min-height: 190px; }
+  .public-information-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 640px) {
+  .public-primary-action-grid,
+  .public-information-tiles,
+  .public-pair-medicines { grid-template-columns: 1fr; }
+  .public-primary-action:last-child { grid-column: auto; }
+  .public-primary-action { min-height: 0; }
+  .public-secondary-section { align-items: flex-start; flex-direction: column; }
+  .public-inline-links,
+  .public-advanced-links { width: 100%; }
+  .public-inline-links a,
+  .public-advanced-links a { flex: 1 1 150px; }
+  .public-answer-card { padding: 23px 19px; }
+  .public-answer-actions a { min-height: 42px; display: inline-flex; align-items: center; }
+}

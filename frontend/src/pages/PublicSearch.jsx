@@ -5,12 +5,12 @@ import {
   BookOpen,
   CheckCircle2,
   ExternalLink,
-  GitBranch,
   Info,
   LoaderCircle,
   Network,
   Pill,
   Search,
+  Sparkles,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
@@ -18,22 +18,6 @@ import PublicSearchBox from '../components/PublicSearchBox.jsx'
 import { getJson } from '../lib/api.js'
 import { publicSearchDestination } from '../lib/publicSearchRouting.js'
 import './PublicSearch.css'
-
-const INTENT_LABELS = {
-  disease_information: 'Disease information',
-  drug_information: 'Medicine information',
-  drug_side_effects: 'Medicine side effects',
-  drug_interactions: 'Medicine interactions',
-  drug_food_lifestyle: 'Medicine food & lifestyle information',
-  drug_pair: 'Medicine pair',
-  drug_pair_question: 'Medicine-pair question',
-  drug_for_disease: 'Medicine and condition question',
-  medicines_for_disease: 'Medicines linked to a condition',
-  disease_nutrition: 'Disease nutrition information',
-  general_symptom_or_treatment_question: 'Treatment question',
-  unsupported: 'Recognized request',
-  unknown: 'Search not recognized',
-}
 
 const MODULE_LABELS = {
   disease_explanation: 'Disease explanation',
@@ -86,6 +70,56 @@ function entityLabel(entity) {
   return entity.entity_type === 'disease' ? 'Disease' : 'Medicine'
 }
 
+function displayEntityName(entity) {
+  return entity?.display_name || entity?.name || ''
+}
+
+function answerTitle(data, entities, query = '') {
+  const first = entities[0]
+  const firstName = displayEntityName(first)
+  if (data.intent === 'drug_side_effects') return `${firstName} side effects`
+  if (data.intent === 'drug_information') return `About ${firstName}`
+  if (data.intent === 'drug_pair_question' || data.intent === 'drug_pair') {
+    return entities.map(displayEntityName).join(' + ')
+  }
+  if (data.intent === 'general_symptom_or_treatment_question' && first) {
+    const wording = data.normalized_query || data.original_query || query
+    return `${firstName} and ${wording.toLocaleLowerCase().includes('pain') ? 'pain' : 'your question'}`
+  }
+  if (data.intent === 'disease_information' && first) return sentenceCase(firstName)
+  return firstName || 'Your CHEERS answer'
+}
+
+const CORRECTION_WORDS = new Set([
+  'about', 'and', 'can', 'does', 'effects', 'efects', 'for', 'information', 'side',
+  'take', 'tell', 'the', 'together', 'use', 'used', 'what', 'with', 'your', 'pain',
+])
+
+function correctionFragment(query, entity) {
+  if (entity?.match_type === 'exact_common_name') return displayEntityName(entity).toLocaleLowerCase()
+  if (entity?.match_type !== 'close_fuzzy_name') return ''
+  return String(query || '').toLocaleLowerCase().match(/[a-z0-9-]+/g)
+    ?.filter((word) => word.length > 2 && !CORRECTION_WORDS.has(word))
+    .sort((left, right) => right.length - left.length)[0] || ''
+}
+
+function MatchIndicator({ query, entities }) {
+  const matches = entities
+    .map((entity) => ({ entity, fragment: correctionFragment(query, entity) }))
+    .filter(({ fragment }) => fragment)
+  if (!matches.length) return null
+  const alias = matches.find(({ entity }) => entity.display_name && entity.display_name !== entity.name)
+  return (
+    <div className="public-match-note">
+      <Sparkles size={15} aria-hidden="true" />
+      <span>
+        {matches.map(({ entity, fragment }) => `Matched “${fragment}” to ${displayEntityName(entity)}`).join(' · ')}
+        {alias ? ` · Canonical name: ${alias.entity.name}` : ''}
+      </span>
+    </div>
+  )
+}
+
 function sentenceCase(value) {
   const text = String(value || '')
   return text ? `${text.charAt(0).toLocaleUpperCase()}${text.slice(1)}` : text
@@ -98,27 +132,6 @@ function escapeRegExp(value) {
 function replaceAmbiguousFragment(query, fragment, replacement) {
   const pattern = new RegExp(`\\b${escapeRegExp(fragment)}\\b`, 'i')
   return pattern.test(query) ? query.replace(pattern, replacement) : replacement
-}
-
-function EntityCard({ entity }) {
-  const isDisease = entity.entity_type === 'disease'
-  const Icon = isDisease ? GitBranch : Pill
-  const displayName = entity.display_name || entity.name
-
-  return (
-    <article className="public-entity-card">
-      <span className="public-entity-icon"><Icon size={20} /></span>
-      <div>
-        <span className="public-entity-type">{entityLabel(entity)}</span>
-        <h3>{displayName}</h3>
-        {entity.display_name && entity.display_name !== entity.name && <p>{entity.name}</p>}
-        <p>{entity.entity_id}</p>
-      </div>
-      <span className="public-recognized-badge">
-        <CheckCircle2 size={14} /> Recognized
-      </span>
-    </article>
-  )
 }
 
 function DiseaseExplanation({ entity }) {
@@ -338,7 +351,7 @@ function DrugDiseaseAnswer({ answer }) {
   )
 }
 
-function PairQuestionAnswer({ answer, entities = [] }) {
+function PairQuestionAnswer({ answer, entities = [], hasMainAnswer = false }) {
   if (!answer?.drug_1 || !answer?.drug_2) return null
   const states = {
     interaction_warning_found: { tone: 'warning', Icon: AlertCircle },
@@ -355,12 +368,28 @@ function PairQuestionAnswer({ answer, entities = [] }) {
 
   return (
     <section className={`public-direct-answer is-${state.tone}`} aria-labelledby="pair-question-answer-title">
-      <div className="public-direct-answer-heading">
+      <div className="public-direct-answer-heading public-pair-heading">
         <span className="public-direct-answer-icon"><Icon size={22} aria-hidden="true" /></span>
         <div>
           <span className="public-answer-status-label">{answer.direct_answer}</span>
-          <h2 id="pair-question-answer-title">{displayName(answer.drug_1)} + {displayName(answer.drug_2)}</h2>
+          <h2 id="pair-question-answer-title">
+            {hasMainAnswer ? 'Evidence checked' : `${displayName(answer.drug_1)} + ${displayName(answer.drug_2)}`}
+          </h2>
         </div>
+      </div>
+      <div className="public-pair-medicines" aria-label="Medicines in this pair">
+        {[answer.drug_1, answer.drug_2].map((drug) => {
+          const matched = entities.find((entity) => entity.entity_id === drug.entity_id)
+          return (
+            <div key={drug.entity_id}>
+              <Pill size={18} aria-hidden="true" />
+              <span>
+                <strong>{displayName(drug)}</strong>
+                {matched?.display_name && <small>{drug.name} · {drug.entity_id}</small>}
+              </span>
+            </div>
+          )
+        })}
       </div>
       {answer.supporting_text && <p className="public-direct-answer-copy">{answer.supporting_text}</p>}
       <div className="public-answer-facts public-evidence-counts" aria-label="Retrieved source counts">
@@ -381,34 +410,73 @@ function PairQuestionAnswer({ answer, entities = [] }) {
   )
 }
 
-function PlainLanguageExplanation({ explanation, evidenceSummary }) {
+function SourceChips({ sources, checked }) {
+  if (!sources?.length) return null
+  return (
+    <div className="public-source-row" aria-label={checked ? 'Sources checked' : 'Sources used'}>
+      <span>{checked ? 'Sources checked' : 'Sources'}</span>
+      {sources.map((source) => <span className="public-source-chip" key={source}>{source}</span>)}
+    </div>
+  )
+}
+
+function PlainLanguageExplanation({ explanation, evidenceSummary, title, matchNote, actions }) {
   if (!explanation?.short_answer) return null
+  const checked = evidenceSummary && Object.values(evidenceSummary).some((count) => count === 0)
   return (
     <section className="public-answer-card" aria-labelledby="plain-answer-title">
-      <span className="eyebrow">Short answer</span>
-      <h2 id="plain-answer-title">What CHEERS can say</h2>
+      {matchNote}
+      <h2 id="plain-answer-title">{title}</h2>
       <p className="public-answer-text">{explanation.short_answer}</p>
       {explanation.key_points?.length > 0 && (
-        <div>
-          <h3>What CHEERS found</h3>
+        <div className="public-key-points">
+          <h3>Key things to know</h3>
           <ul>{explanation.key_points.map((point) => <li key={point}>{point}</li>)}</ul>
         </div>
       )}
       {explanation.what_we_cannot_conclude && (
         <div className="public-answer-boundary">
-          <strong>What this doesn&apos;t tell us</strong>
+          <strong>Keep in mind</strong>
           <p>{explanation.what_we_cannot_conclude}</p>
         </div>
       )}
-      {explanation.sources_used?.length > 0 && (
-        <p className="public-provenance">
-          {evidenceSummary && Object.values(evidenceSummary).some((count) => count === 0)
-            ? 'Sources checked: '
-            : 'Sources used: '}
-          {explanation.sources_used.join(', ')}
-        </p>
-      )}
+      <SourceChips sources={explanation.sources_used} checked={checked} />
+      {actions}
     </section>
+  )
+}
+
+function ResultActions({ intent, entity }) {
+  if (!entity || !['drug_information', 'drug_side_effects'].includes(intent)) return null
+  const medicinePath = `/medicines/${encodeURIComponent(entity.entity_id)}`
+  return (
+    <div className="public-answer-actions public-answer-primary-actions" aria-label="Explore more">
+      <Link to={medicinePath}>View medicine</Link>
+      <Link to={`${medicinePath}?section=uses`}>Uses</Link>
+      <Link to={`${medicinePath}?section=side-effects`}>Side effects</Link>
+      <Link to={`/check?drug_a_id=${encodeURIComponent(entity.entity_id)}`}>Check medicines</Link>
+      <Link to={`${medicinePath}?section=${intent === 'drug_side_effects' ? 'side-effects' : 'uses'}`}>Original label information</Link>
+    </div>
+  )
+}
+
+function WhyThisAnswer({ data, entities }) {
+  if (!entities.length) return null
+  const counts = data.answer?.evidence_summary
+  return (
+    <details className="public-answer-details">
+      <summary>Why this answer?</summary>
+      <div>
+        {entities.map((entity) => (
+          <p key={`${entity.entity_type}-${entity.entity_id}`}>
+            <strong>{displayEntityName(entity)}</strong> · {entity.entity_id} · {entityLabel(entity)}
+          </p>
+        ))}
+        {counts && <p>FDA label mentions: {counts.label_mentions} · PubMed records: {counts.pubmed_records}</p>}
+        {data.available_modules?.includes('pair_graph_context') && <p>Knowledge-graph context is available separately.</p>}
+        <p>Research-model rankings are separate from FDA, PubMed, and knowledge-graph information.</p>
+      </div>
+    </details>
   )
 }
 
@@ -516,8 +584,7 @@ function PairDestinations({ data, includeChecker = false }) {
   return (
     <section className="public-next-steps" aria-labelledby="pair-next-steps-title">
       <div className="public-section-heading">
-        <span className="eyebrow">Available next steps</span>
-        <h2 id="pair-next-steps-title">Choose how deeply you want to explore</h2>
+        <h2 id="pair-next-steps-title">Explore more</h2>
       </div>
       <div className="public-destination-grid">
         {includeChecker && checkerParams && (
@@ -597,11 +664,11 @@ function UnavailableModules({ modules, intent }) {
 }
 
 function AmbiguousState({ data, onChoose }) {
+  const topic = data.normalized_query?.includes('diabetes') ? 'diabetes condition' : 'match'
   return (
     <section className="public-ambiguous" aria-labelledby="ambiguous-title">
-      <span className="eyebrow">More than one match</span>
-      <h2 id="ambiguous-title">Which entity did you mean?</h2>
-      <p>CHEERS did not choose silently. Select the intended repository entity to search again.</p>
+      <h2 id="ambiguous-title">Which {topic} do you mean?</h2>
+      <p>Choose the closest match to continue.</p>
       {data.ambiguous_matches.map((ambiguity) => (
         <div className="public-alternative-list" key={ambiguity.query_fragment}>
           {ambiguity.candidates.map((candidate) => (
@@ -632,14 +699,19 @@ function EmptyOrUnknownState({ hasQuery }) {
   return (
     <section className="public-empty-state" aria-labelledby="public-empty-title">
       <Search size={28} aria-hidden="true" />
-      <h2 id="public-empty-title">
-        {hasQuery ? 'We could not confidently recognize that search' : 'Start with a simple search'}
-      </h2>
+      <h2 id="public-empty-title">{hasQuery ? 'I couldn’t answer that directly.' : 'Start with a simple search'}</h2>
       <p>
         {hasQuery
-          ? 'Try an exact medicine name, DrugBank ID, disease name, or two exact medicine names.'
+          ? 'Try a medicine name, a disease, or two medicines you want to compare.'
           : 'Use a few words about a medicine, disease, interaction, or medicine pair.'}
       </p>
+      {hasQuery && (
+        <div className="public-answer-actions">
+          <Link to="/medicines">Browse medicines</Link>
+          <Link to="/diseases">Browse diseases</Link>
+          <Link to="/check">Check two medicines</Link>
+        </div>
+      )}
     </section>
   )
 }
@@ -798,6 +870,9 @@ export default function PublicSearch() {
           <PlainLanguageExplanation
             explanation={data.explanation}
             evidenceSummary={data.intent === 'drug_pair_question' ? data.answer?.evidence_summary : undefined}
+            title={answerTitle(data, recognized, query)}
+            matchNote={<MatchIndicator query={query} entities={recognized} />}
+            actions={<ResultActions intent={data.intent} entity={recognized[0]} />}
           />
           {data.intent === 'general_symptom_or_treatment_question' && (
             <TreatmentQuestionNextSteps medicine={recognized[0]} />
@@ -806,7 +881,7 @@ export default function PublicSearch() {
             <DrugDiseaseAnswer answer={data.answer} />
           )}
           {data.intent === 'drug_pair_question' && (
-            <PairQuestionAnswer answer={data.answer} entities={recognized} />
+            <PairQuestionAnswer answer={data.answer} entities={recognized} hasMainAnswer={Boolean(data.explanation)} />
           )}
           {data.intent === 'medicines_for_disease' && recognized[0]?.entity_type === 'disease' && (
             <MedicinesForDiseaseState answer={data.answer} disease={recognized[0]} />
@@ -822,28 +897,20 @@ export default function PublicSearch() {
             />
           )}
 
-          <section className="public-recognized" aria-labelledby="recognized-title">
-            <span className="eyebrow">{INTENT_LABELS[data.intent] || 'Search result'}</span>
-            <h2 id="recognized-title">We understood this as</h2>
-            <div className="public-entity-grid">
-              {recognized.map((entity) => (
-                <EntityCard key={`${entity.entity_type}-${entity.entity_id}`} entity={entity} />
-              ))}
-            </div>
-          </section>
-
           {data.intent === 'disease_information' && recognized[0] && (
             <DiseaseExplanation entity={recognized[0]} />
           )}
-          {data.intent === 'drug_information' && recognized[0] && (
+          {data.intent === 'drug_information' && recognized[0] && !data.explanation && (
             <DrugInformationState entity={recognized[0]} />
           )}
-          {(data.intent === 'drug_side_effects' || data.intent === 'drug_interactions') && recognized[0] && (
+          {(data.intent === 'drug_side_effects' || data.intent === 'drug_interactions') && recognized[0] && !data.explanation && (
             <SingleDrugTopicState intent={data.intent} entity={recognized[0]} />
           )}
           {(data.intent === 'drug_pair' || data.intent === 'drug_pair_question') && recognized.length === 2 && (
             <PairDestinations data={data} includeChecker={data.intent === 'drug_pair_question'} />
           )}
+
+          <WhyThisAnswer data={data} entities={recognized} />
 
           <UnavailableModules modules={data.unavailable_modules} intent={data.intent} />
         </div>
@@ -861,7 +928,7 @@ export default function PublicSearch() {
       )}
 
       <aside className="public-result-safety">
-        <strong>Information boundary</strong>
+        <strong>Important</strong>
         <p>
           {data?.safety_note || (
             'CHEERS does not provide medical advice or decide whether a medicine '
