@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import json
 import os
+import time
+from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 
@@ -26,6 +28,19 @@ INTERPRETER_INTENTS = (
     "unsupported",
     "unknown",
 )
+RETRYABLE_GEMINI_STATUS = frozenset({429, 500, 502, 503, 504})
+
+
+def open_with_retry(request, timeout_seconds, backoff_seconds=0.4):
+    """Open once, with one bounded retry for transient Gemini HTTP failures."""
+    try:
+        return urlopen(request, timeout=timeout_seconds)
+    except HTTPError as exc:
+        if exc.code not in RETRYABLE_GEMINI_STATUS:
+            raise
+        exc.close()
+        time.sleep(backoff_seconds)
+        return urlopen(request, timeout=timeout_seconds)
 
 
 class GeminiQueryInterpreter:
@@ -124,7 +139,7 @@ class GeminiQueryInterpreter:
             method="POST",
         )
         try:
-            with urlopen(request, timeout=self.timeout_seconds) as response:
+            with open_with_retry(request, self.timeout_seconds) as response:
                 payload = json.loads(response.read().decode("utf-8"))
             text = payload["candidates"][0]["content"]["parts"][0]["text"]
             return self._validate(json.loads(text))
@@ -132,4 +147,7 @@ class GeminiQueryInterpreter:
             return None
 
 
-__all__ = ["GeminiQueryInterpreter", "GEMINI_MODEL", "INTERPRETER_INTENTS"]
+__all__ = [
+    "GeminiQueryInterpreter", "GEMINI_MODEL", "INTERPRETER_INTENTS",
+    "open_with_retry",
+]

@@ -387,6 +387,27 @@ describe('deterministic public-search routing', () => {
     expect(screen.queryByText(/take ibuprofen|take aspirin|recommended medicine/i)).not.toBeInTheDocument()
   })
 
+  it('shows medicine-specific information actions for a generic symptom question', async () => {
+    getJson.mockResolvedValue({
+      ...BASE,
+      intent: 'general_symptom_or_treatment_question',
+      recognized_entities: [IBUPROFEN],
+      explanation: {
+        status: 'limited',
+        short_answer: 'CHEERS can show available label information about Ibuprofen, but it cannot decide whether it is appropriate for your pain.',
+        key_points: [],
+        what_we_cannot_conclude: 'CHEERS cannot recommend what you should take or provide a dose.',
+        sources_used: [],
+      },
+    })
+    renderSearch('/search?q=can%20i%20use%20ibuprofin%20for%20pain')
+    expect(await screen.findByRole('link', { name: 'View Ibuprofen' })).toHaveAttribute('href', '/medicines/DB01050')
+    expect(screen.getByRole('link', { name: 'Review uses' })).toHaveAttribute('href', '/medicines/DB01050?section=uses')
+    expect(screen.getByRole('link', { name: 'Review side effects' })).toHaveAttribute('href', '/medicines/DB01050?section=side-effects')
+    expect(screen.getByRole('link', { name: 'Check two medicines' })).toHaveAttribute('href', '/check?drug_a_id=DB01050')
+    expect(screen.queryByText(/myofascial pain syndrome/i)).not.toBeInTheDocument()
+  })
+
   it('shows an amber review state for literature-only pair information', async () => {
     getJson.mockResolvedValue({
       ...BASE,

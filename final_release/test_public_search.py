@@ -6,12 +6,13 @@ import importlib.util
 import sys
 import unittest
 from unittest.mock import patch
+from urllib.error import HTTPError
 
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from src.gemini_query_interpreter import GeminiQueryInterpreter
+from src.gemini_query_interpreter import GeminiQueryInterpreter, open_with_retry
 from src.gemini_evidence_summarizer import GeminiEvidenceSummarizer, MAX_EVIDENCE_CHARS
 from src.public_search import PublicSearchService
 
@@ -39,6 +40,14 @@ class InvalidGeminiResponse:
     @staticmethod
     def read():
         return b'{"candidates":[{"content":{"parts":[{"text":"not json"}]}}]}'
+
+
+class EmptyResponse:
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_args):
+        return False
 
 
 class FixtureEvidenceSummarizer:
@@ -258,7 +267,8 @@ class PublicSearchTests(unittest.TestCase):
         self.assertEqual(payload["intent"], "general_symptom_or_treatment_question")
         self.assertNotIn("answer", payload)
         self.assertNotIn("recommendation", payload)
-        self.assertEqual(payload["ai_interpretation"]["topic"], "pain")
+        self.assertEqual(payload["topic"], "pain")
+        self.assertEqual(interpreter.calls, [])
 
     def test_invalid_interpreter_output_fails_safely(self):
         interpreter = GeminiQueryInterpreter(api_key="test-key")
@@ -330,6 +340,50 @@ class PublicSearchTests(unittest.TestCase):
         self.assertIsNone(ambiguity)
         self.assertEqual(match[0]["name"], "Aspirin")
         self.assertEqual(match[1], "exact_canonical_name")
+
+    def test_common_aspirin_name_resolves_to_canonical_drug(self):
+        payload = self.search.search("aspirin")
+        self.assertEqual(payload["recognized_entities"][0]["entity_id"], "DB00945")
+        self.assertEqual(
+            payload["recognized_entities"][0]["match_type"], "exact_common_name"
+        )
+
+    def test_two_drug_wording_prefers_pair_question(self):
+        cases = (
+            "warfarin aspirin together?",
+            "warfarin and aspirin?",
+            "aspirin with warfarin",
+            "can I take warfarin aspirin together?",
+            "ibuprofin aspirin together?",
+        )
+        for query in cases:
+            with self.subTest(query=query):
+                payload = self.search.search(query)
+                self.assertEqual(payload["intent"], "drug_pair_question")
+                self.assertEqual(
+                    {item["entity_id"] for item in payload["recognized_entities"]},
+                    {"DB00682", "DB00945"}
+                    if "warfarin" in query.casefold()
+                    else {"DB01050", "DB00945"},
+                )
+
+    def test_generic_pain_is_not_resolved_as_specific_disease(self):
+        payload = self.search.search("can i use ibuprofin for pain?")
+        self.assertEqual(payload["intent"], "general_symptom_or_treatment_question")
+        self.assertEqual(payload["recognized_entities"][0]["entity_id"], "DB01050")
+        self.assertNotIn("myofascial pain syndrome", str(payload).casefold())
+        self.assertIn("cannot decide", payload["explanation"]["short_answer"])
+        self.assertNotIn("dose", payload["explanation"]["short_answer"].casefold())
+
+    def test_gemini_http_retries_one_retryable_failure(self):
+        retryable = HTTPError("https://example.invalid", 503, "unavailable", {}, None)
+        with patch(
+            "src.gemini_query_interpreter.urlopen",
+            side_effect=[retryable, EmptyResponse()],
+        ) as mocked_open:
+            response = open_with_retry(object(), 5, backoff_seconds=0)
+        self.assertIsInstance(response, EmptyResponse)
+        self.assertEqual(mocked_open.call_count, 2)
 
     def test_approved_disease_description(self):
         payload = self.search.search("what is type 2 diabetes mellitus")

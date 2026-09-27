@@ -99,6 +99,10 @@ UNSUPPORTED_DIET_PATTERNS = (
     re.compile(r"^weight loss plan(?: for me)?$"),
 )
 MAX_AMBIGUOUS_MATCHES = 20
+DRUG_NAME_ALIASES = {"aspirin": "acetylsalicylic acid"}
+GENERIC_SYMPTOM_TERMS = frozenset(
+    {"pain", "headache", "fever", "nausea", "cough", "dizziness", "fatigue"}
+)
 MAX_FUZZY_SUGGESTIONS = 5
 FUZZY_MIN_SCORE = 0.84
 FUZZY_AUTO_ACCEPT_SCORE = 0.86
@@ -303,11 +307,22 @@ class PublicSearchService:
         candidates.sort(key=lambda item: (item[0], item[1], item[2]["entity_id"]))
         exact_names = [item for item in candidates if item[0] == 1]
         exact_ids = [item for item in candidates if item[0] == 2]
+        aliases = []
+        alias_name = DRUG_NAME_ALIASES.get(fragment) if "drug" in allowed else None
+        if alias_name:
+            aliases = [
+                (2.5, entity["name"].casefold(), entity, "exact_common_name")
+                for entity in self.entities
+                if entity["entity_type"] == "drug"
+                and entity["normalized_name"] == alias_name
+            ]
         prefixes = [item for item in candidates if item[0] == 3]
         if exact_names:
             considered = exact_names
         elif exact_ids:
             considered = exact_ids
+        elif aliases:
+            considered = aliases
         elif prefixes:
             # Preserve ambiguity when a short prefix also occurs in other names.
             considered = candidates
@@ -371,6 +386,16 @@ class PublicSearchService:
                     mentions.append(
                         (match.start(), match.end(), -(match.end() - match.start()), drug, match_type)
                     )
+        for alias, canonical_name in DRUG_NAME_ALIASES.items():
+            drug = next(
+                (item for item in self.drugs if item["normalized_name"] == canonical_name),
+                None,
+            )
+            match = re.search(rf"(?<!\w){re.escape(alias)}(?!\w)", content)
+            if drug is not None and match:
+                mentions.append(
+                    (match.start(), match.end(), -(match.end() - match.start()), drug, "exact_common_name")
+                )
 
         mentions.sort(key=lambda item: (item[2], item[0], item[3]["entity_id"]))
         selected = []
@@ -420,10 +445,79 @@ class PublicSearchService:
                     return resolved, None
                 return None, None
 
+        words = content.split()
+        for index in range(1, len(words)):
+            left = " ".join(words[:index])
+            right = " ".join(words[index:])
+            left_match, left_ambiguity = self._resolve_fragment(left, ("drug",))
+            right_match, right_ambiguity = self._resolve_fragment(right, ("drug",))
+            if left_ambiguity or right_ambiguity:
+                continue
+            if (
+                left_match and right_match
+                and left_match[0]["entity_id"] != right_match[0]["entity_id"]
+            ):
+                return [left_match, right_match], None
+
         mentions = self._exact_drug_mentions(content)
         if len(mentions) == 2:
             return mentions, None
         return None, None
+
+    def _resolve_generic_treatment_question(self, normalized):
+        selection_match = re.fullmatch(
+            r"^what should i (?:take|use) for (?P<topic>.+)$", normalized
+        )
+        if selection_match and selection_match.group("topic") in GENERIC_SYMPTOM_TERMS:
+            return True, None, None, selection_match.group("topic")
+        for pattern in DRUG_FOR_DISEASE_PATTERNS:
+            query_match = pattern.fullmatch(normalized)
+            if query_match is None:
+                continue
+            topic = query_match.group("disease")
+            if topic not in GENERIC_SYMPTOM_TERMS:
+                continue
+            match, ambiguity = self._resolve_fragment(query_match.group("drug"), ("drug",))
+            return True, match, ambiguity, topic
+        return False, None, None, None
+
+    def _generic_treatment_response(self, original_query, normalized, match, topic):
+        response = self._base_response(
+            original_query, normalized, "general_symptom_or_treatment_question"
+        )
+        drug = match[0] if match else None
+        if match:
+            response["recognized_entities"] = [self._serialize_entity(*match)]
+            response["available_modules"].append("entity_identity")
+        response["topic"] = topic
+        response["explanation"] = {
+            "status": "limited",
+            "short_answer": (
+                (
+                    f"CHEERS can show available label information about {drug['name']}, "
+                    f"but it cannot decide whether it is appropriate for your {topic}."
+                )
+                if drug else "CHEERS cannot choose a medicine or treatment for you."
+            ),
+            "key_points": [
+                (
+                    "Review the medicine profile for available uses and side-effect information."
+                    if drug else "Search for a medicine you are already considering to review its available information."
+                ),
+                "Use Check Medicines if you want to review it with another medicine.",
+                "Ask a pharmacist or qualified health professional about a personal treatment choice.",
+            ],
+            "what_we_cannot_conclude": "CHEERS cannot recommend what you should take or provide a dose.",
+            "sources_used": [],
+        }
+        if drug:
+            response["destinations"] = [
+                {"module": "medicine_profile", "frontend_path": f"/medicines/{drug['entity_id']}"},
+                {"module": "medicine_uses", "frontend_path": f"/medicines/{drug['entity_id']}?section=uses"},
+                {"module": "medicine_side_effects", "frontend_path": f"/medicines/{drug['entity_id']}?section=side-effects"},
+                {"module": "medicine_checker", "frontend_path": f"/check?drug_a_id={drug['entity_id']}"},
+            ]
+        return response
 
     @staticmethod
     def _pair_question_content(normalized):
@@ -1038,6 +1132,26 @@ class PublicSearchService:
                 original_query,
                 normalized,
                 "No repository-backed disease identity matched conservatively.",
+            )
+
+        generic_attempted, generic_match, generic_ambiguity, generic_topic = (
+            self._resolve_generic_treatment_question(normalized)
+        )
+        if generic_attempted:
+            if generic_match or (generic_topic and generic_ambiguity is None):
+                return self._generic_treatment_response(
+                    original_query, normalized, generic_match, generic_topic
+                )
+            if generic_ambiguity:
+                response = self._base_response(
+                    original_query, normalized, "general_symptom_or_treatment_question"
+                )
+                response["ambiguous_matches"] = [generic_ambiguity]
+                return response
+            return self._unknown_response(
+                original_query,
+                normalized,
+                "The medicine could not be resolved conservatively.",
             )
 
         drug_disease_attempted, drug_disease_matches, drug_disease_ambiguities = (

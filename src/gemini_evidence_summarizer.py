@@ -5,9 +5,9 @@ from __future__ import annotations
 import json
 import os
 import re
-from urllib.request import Request, urlopen
+from urllib.request import Request
 
-from src.gemini_query_interpreter import GEMINI_MODEL
+from src.gemini_query_interpreter import GEMINI_MODEL, open_with_retry
 
 
 MAX_EVIDENCE_CHARS = 6_000
@@ -127,7 +127,7 @@ class GeminiEvidenceSummarizer:
             method="POST",
         )
         try:
-            with urlopen(request, timeout=self.timeout_seconds) as response:
+            with open_with_retry(request, self.timeout_seconds) as response:
                 payload = json.loads(response.read().decode("utf-8"))
             text = payload["candidates"][0]["content"]["parts"][0]["text"]
             return self._validate(json.loads(text))

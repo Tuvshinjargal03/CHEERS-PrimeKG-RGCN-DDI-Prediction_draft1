@@ -396,7 +396,13 @@ function PlainLanguageExplanation({ explanation }) {
   )
 }
 
-function TreatmentQuestionNextSteps() {
+function TreatmentQuestionNextSteps({ medicine }) {
+  const medicinePath = medicine
+    ? `/medicines/${encodeURIComponent(medicine.entity_id)}`
+    : '/medicines'
+  const checkerPath = medicine
+    ? `/check?drug_a_id=${encodeURIComponent(medicine.entity_id)}`
+    : '/check'
   return (
     <section className="public-next-steps" aria-labelledby="treatment-next-steps">
       <div className="public-section-heading">
@@ -404,8 +410,10 @@ function TreatmentQuestionNextSteps() {
         <h2 id="treatment-next-steps">Review information without choosing a treatment</h2>
       </div>
       <div className="public-answer-actions">
-        <Link to="/medicines">Find a medicine profile</Link>
-        <Link to="/check">Check two medicines</Link>
+        <Link to={medicinePath}>{medicine ? `View ${medicine.name}` : 'Find a medicine profile'}</Link>
+        {medicine && <Link to={`${medicinePath}?section=uses`}>Review uses</Link>}
+        {medicine && <Link to={`${medicinePath}?section=side-effects`}>Review side effects</Link>}
+        <Link to={checkerPath}>Check two medicines</Link>
       </div>
     </section>
   )
@@ -773,7 +781,7 @@ export default function PublicSearch() {
         <div className="public-results" aria-live="polite">
           <PlainLanguageExplanation explanation={data.explanation} />
           {data.intent === 'general_symptom_or_treatment_question' && (
-            <TreatmentQuestionNextSteps />
+            <TreatmentQuestionNextSteps medicine={recognized[0]} />
           )}
           {data.intent === 'drug_for_disease' && (
             <DrugDiseaseAnswer answer={data.answer} />
