@@ -34,6 +34,20 @@
   overflow-wrap: anywhere;
 }
 
+.graph-page .graph-scanner-helper {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #eaecf0;
+}
+
+.graph-page .graph-scanner-helper > span {
+  display: block;
+  margin-bottom: 7px;
+  color: #667085;
+  font-size: 11px;
+  font-weight: 700;
+}
+
 .graph-page .graph-explore-button {
   min-width: 150px;
 }
@@ -113,6 +127,42 @@
   margin-top: 18px;
 }
 
+.graph-page .graph-pair-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 18px;
+  padding: 16px 18px;
+  border: 1px solid #d6bbfb;
+  border-radius: 14px;
+  background: linear-gradient(140deg, #f9f5ff, white);
+}
+
+.graph-page .graph-pair-summary span,
+.graph-page .graph-pair-summary strong {
+  display: block;
+}
+
+.graph-page .graph-pair-summary span {
+  color: #667085;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.graph-page .graph-pair-summary strong {
+  margin-top: 5px;
+  color: #101828;
+  overflow-wrap: anywhere;
+}
+
+.graph-page .graph-pair-summary p {
+  margin: 0;
+  color: #475467;
+  font-size: 12px;
+  text-align: right;
+}
+
 .graph-page .graph-pair-card {
   padding: 24px;
 }
@@ -175,6 +225,15 @@
 
   .graph-page .graph-result-heading {
     margin-top: 36px;
+  }
+
+  .graph-page .graph-pair-summary {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .graph-page .graph-pair-summary p {
+    text-align: left;
   }
 
   .graph-page .graph-pair-card {

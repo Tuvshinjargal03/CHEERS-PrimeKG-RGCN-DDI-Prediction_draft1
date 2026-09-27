@@ -41,6 +41,15 @@ function drugContext(drug) {
 }
 
 function pairContext(drugA = WARFARIN, drugB = ASPIRIN, sharedTotal = 0) {
+  const entities = Array.from({ length: sharedTotal }, (_, index) => ({
+    context_node_id: 2000 + index,
+    context_id: String(2000 + index),
+    context_name: `Shared gene ${index + 1}`,
+    context_group: 'gene/protein',
+    context_source: 'NCBI',
+    drug_a_relations: ['target'],
+    drug_b_relations: ['enzyme'],
+  }))
   return {
     drug_a: drugContext(drugA),
     drug_b: drugContext(drugB),
@@ -48,7 +57,7 @@ function pairContext(drugA = WARFARIN, drugB = ASPIRIN, sharedTotal = 0) {
       total: sharedTotal,
       gene_protein_count: sharedTotal,
       disease_count: 0,
-      entities: [],
+      entities,
     },
     interpretation: 'Fixture interpretation boundary.',
   }
@@ -123,6 +132,7 @@ describe('GraphExplorer context availability', () => {
     await selectDrug(drugBInput, 'Aspirin')
 
     expect(screen.getAllByText('G3 context available')).toHaveLength(2)
+    expect(screen.getAllByText('Optional label-text helper')).toHaveLength(2)
     expect(screen.getByRole('button', { name: 'Explore pair' })).toBeEnabled()
     expect(screen.queryByText(/remains available in the DDI Predictor/)).not.toBeInTheDocument()
     expect(screen.getByText('Choose a drug pair.')).toBeVisible()
@@ -193,6 +203,26 @@ describe('GraphExplorer context availability', () => {
     expect(await screen.findByRole('img', { name: /Interactive G3 graph context for Warfarin and Aspirin/ })).toBeVisible()
     expect(suggestionRequests()).toHaveLength(0)
     expect(screen.queryByText('Try another pair with shared graph context')).not.toBeInTheDocument()
+  })
+
+  it('summarizes the pair, makes display limits explicit, and explains graph interaction', async () => {
+    renderExplorer()
+    const [drugAInput, drugBInput] = screen.getAllByRole('combobox')
+    await selectDrug(drugAInput, 'Warfarin')
+    await selectDrug(drugBInput, 'Aspirin')
+    getJson.mockResolvedValueOnce(pairContext(WARFARIN, ASPIRIN, 16))
+
+    await userEvent.click(screen.getByRole('button', { name: 'Explore pair' }))
+
+    const summary = await screen.findByLabelText('Selected pair summary')
+    expect(summary).toHaveTextContent('Warfarin + Aspirin')
+    expect(summary).toHaveTextContent('Showing 15 of 16 shared context entities')
+    expect(screen.getByText('Select a node to highlight its connections and view details. Select an edge to inspect its relation.')).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Zoom in' })).toHaveAttribute('title', 'Zoom in')
+    expect(screen.getByRole('button', { name: 'Zoom out' })).toHaveAttribute('title', 'Zoom out')
+    expect(screen.getByRole('button', { name: 'Fit graph to view' })).toHaveAttribute('title', 'Fit graph to view')
+    expect(screen.getByText(/does not validate graph context or an R-GCN prediction/i)).toBeVisible()
+    expect(screen.getByText(/does not prove a DDI, causation, safety, or harm/i)).toBeVisible()
   })
 
   it('keeps the zero result when no alternative pair is returned', async () => {
