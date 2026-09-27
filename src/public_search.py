@@ -2,7 +2,8 @@
 
 This module resolves only repository-backed drug and disease identities and may
 query the existing evidence services for a resolved medicine pair. It does not
-generate personalized medical conclusions, infer aliases, or use R-GCN scores.
+generate personalized medical conclusions, invent unverified aliases, or use
+R-GCN scores.
 """
 
 from __future__ import annotations
