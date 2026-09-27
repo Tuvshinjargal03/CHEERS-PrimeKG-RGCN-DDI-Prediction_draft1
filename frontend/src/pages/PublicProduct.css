@@ -62,6 +62,14 @@
   letter-spacing: -0.025em;
 }
 
+.checker-form-heading p {
+  max-width: 650px;
+  margin: 7px 0 0;
+  color: #73788a;
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
 .product-step-badge {
   flex: 0 0 auto;
   padding: 6px 10px;
@@ -84,6 +92,66 @@
   display: grid;
   min-width: 0;
   gap: 9px;
+}
+
+.checker-field-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #3c4052;
+  font-size: 0.8rem;
+}
+
+.checker-field-step span,
+.checker-selection-status b {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 50%;
+  background: #eee9f8;
+  color: #6549ad;
+  font-size: 0.7rem;
+}
+
+.checker-scanner-helper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #eeebf2;
+}
+
+.checker-scanner-helper small {
+  color: #858a99;
+  font-size: 0.7rem;
+}
+
+.checker-selection-status {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.checker-selection-status > span {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px dashed #ded9e8;
+  border-radius: 12px;
+  color: #858a99;
+  font-size: 0.78rem;
+}
+
+.checker-selection-status > span.is-selected {
+  border-style: solid;
+  border-color: #cfc4e5;
+  background: #faf8ff;
+  color: #393d50;
+  font-weight: 750;
 }
 
 .checker-plus {
@@ -1294,6 +1362,12 @@
   line-height: 1.35;
 }
 
+.checker-summary-grid small {
+  margin-top: 2px;
+  color: #9195a3;
+  font-size: 0.65rem;
+}
+
 .product-section-title .text-action {
   flex: 0 0 auto;
 }
@@ -1427,6 +1501,15 @@
   font-size: 0.74rem;
 }
 
+.checker-source-boundary {
+  margin: 14px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid #ece9f0;
+  color: #777c8c;
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
 .product-card-empty {
   flex: 1;
   padding: 19px 2px;
@@ -1524,6 +1607,10 @@
 
   .checker-plus {
     margin: -5px auto;
+  }
+
+  .checker-selection-status {
+    grid-template-columns: 1fr;
   }
 
   .checker-form-heading,
