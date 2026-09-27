@@ -186,10 +186,13 @@ function Experiments() {
         <div className="experiment-highlight">
           <div>
             <span className="card-kicker">Primary finding</span>
-            <h2>G3 provides the strongest overall performance</h2>
+            <h2>G3 had the highest five-seed mean MRR</h2>
             <p>
               The full heterogeneous graph combines DDI, Drug–Gene/Protein, and
               Drug–Disease information while keeping the model and DDI split fixed.
+              The observed mean MRR difference from G0 was small, and statistical
+              superiority was not established. More biomedical information is not
+              automatically better; graph composition and relation type matter.
             </p>
           </div>
           <div className="highlight-badge">
@@ -197,10 +200,10 @@ function Experiments() {
             <strong>5 / 5</strong>
             <span>paired seeds</span>
             <small>
-              positive G3−G0 deltas on all ranking metrics{' '}
+              higher paired G3 MRR in each seed; descriptive only{' '}
               <InfoTooltip
                 label="Explain the five-of-five result"
-                text="G3’s MRR is higher than the paired G0 result for each of the five reported training seeds. This describes seed consistency and is not a general proof of statistical significance."
+                text="G3’s MRR is higher than the paired G0 result for each of the five reported training seeds. This is a descriptive seed-consistency observation and does not establish statistical superiority."
               />
             </small>
           </div>
@@ -212,15 +215,15 @@ function Experiments() {
         </div>
         <div className="metric-grid">
           <MetricCard
-            label="G3 MRR"
+            label="G3 five-seed mean MRR"
             value={formatMetric(primary.mean_MRR)}
-            detail={`± ${formatMetric(primary.MRR_std)}`}
+            detail={`± ${formatMetric(primary.MRR_std)} SD`}
             tipText="Mean Reciprocal Rank summarizes how highly the correct held-out interaction partner is ranked. Higher values are better."
           />
           <MetricCard
-            label="MRR gain vs G0"
+            label="Mean MRR difference vs G0"
             value={`+${formatMetric(primary.absolute_MRR_improvement_vs_G0)}`}
-            detail={`${primary.relative_MRR_improvement_percent}% relative`}
+            detail={`${primary.relative_MRR_improvement_percent}% relative difference`}
             tipText="Difference between the five-seed mean MRR of G3 and G0 under the controlled graph-composition experiment."
           />
           {g3Class && (

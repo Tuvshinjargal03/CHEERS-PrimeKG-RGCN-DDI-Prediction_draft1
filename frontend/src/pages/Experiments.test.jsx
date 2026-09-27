@@ -62,7 +62,15 @@ describe('Experiments networking', () => {
       </MemoryRouter>,
     )
 
-    expect(await screen.findByText('G3 provides the strongest overall performance')).toBeVisible()
+    expect(await screen.findByText('G3 had the highest five-seed mean MRR')).toBeVisible()
+    expect(screen.getByText(/observed mean MRR difference from G0 was small/i)).toBeVisible()
+    expect(screen.getByText(/statistical superiority was not established/i)).toBeVisible()
+    expect(screen.getByText(/higher paired G3 MRR in each seed; descriptive only/i)).toBeVisible()
+    expect(screen.getByText('Mean MRR difference vs G0')).toBeVisible()
+    expect(screen.getByText('G3 five-seed mean MRR')).toBeVisible()
+    expect(screen.queryByText(/strongest overall performance/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/statistically superior/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/significant improvement/i)).not.toBeInTheDocument()
     expect(screen.getByText(/Classification metrics are unavailable/)).toBeVisible()
     expect(screen.getByText(/Primary ranking results remain available/)).toBeVisible()
 
