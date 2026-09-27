@@ -29,7 +29,7 @@ INTERPRETER_INTENTS = (
 RETRYABLE_GEMINI_STATUS = frozenset({429, 500, 502, 503, 504})
 
 
-def open_with_retry(request, timeout_seconds, backoff_seconds=0.4):
+def open_with_retry(request, timeout_seconds, backoff_seconds=1.0):
     """Open once, with one bounded retry for transient Gemini HTTP failures."""
     try:
         return urlopen(request, timeout=timeout_seconds)
@@ -41,7 +41,7 @@ def open_with_retry(request, timeout_seconds, backoff_seconds=0.4):
         return urlopen(request, timeout=timeout_seconds)
 
 
-def open_with_model_fallback(request_factory, timeout_seconds, backoff_seconds=0.4):
+def open_with_model_fallback(request_factory, timeout_seconds, backoff_seconds=1.0):
     """Use the fallback model once only after exhausted retryable primary errors."""
     try:
         return (

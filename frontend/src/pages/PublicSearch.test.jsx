@@ -368,6 +368,28 @@ describe('deterministic public-search routing', () => {
     expect(screen.getByRole('link', { name: /Explore shared biomedical connections/i })).toBeVisible()
   })
 
+  it('keeps a grounded medicine answer on Ask CHEERS with useful actions', async () => {
+    getJson.mockResolvedValue({
+      ...BASE,
+      intent: 'drug_information',
+      recognized_entities: [METFORMIN],
+      explanation: {
+        status: 'answered',
+        short_answer: 'CHEERS found official label information for Metformin.',
+        key_points: ['Retrieved label use information.'],
+        what_we_cannot_conclude: 'This is not a personalized treatment recommendation.',
+        sources_used: ['FDA label'],
+      },
+    })
+    renderSearch('/search?q=what%20does%20metformin%20do')
+    expect(await screen.findByText('CHEERS found official label information for Metformin.')).toBeVisible()
+    expect(screen.getByRole('link', { name: 'View medicine' })).toHaveAttribute('href', '/medicines/DB00331')
+    expect(screen.getByRole('link', { name: 'Side effects' })).toHaveAttribute('href', '/medicines/DB00331?section=side-effects')
+    expect(screen.getByRole('link', { name: 'Check medicines' })).toHaveAttribute('href', '/check?drug_a_id=DB00331')
+    expect(screen.getByRole('link', { name: 'Original label information' })).toHaveAttribute('href', '/medicines/DB00331?section=uses')
+    expect(screen.getByTestId('location')).toHaveTextContent('/search?q=what%20does%20metformin%20do')
+  })
+
   it('offers useful non-prescribing next steps for a treatment-selection question', async () => {
     getJson.mockResolvedValue({
       ...BASE,

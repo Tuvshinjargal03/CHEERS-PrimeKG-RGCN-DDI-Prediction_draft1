@@ -153,6 +153,7 @@ function DiseaseExplanation({ entity }) {
 }
 
 function DrugInformationState({ entity }) {
+  const medicinePath = `/medicines/${encodeURIComponent(entity.entity_id)}`
   return (
     <section className="public-neutral-state" aria-labelledby="drug-information-status">
       <BookOpen size={21} aria-hidden="true" />
@@ -162,7 +163,12 @@ function DrugInformationState({ entity }) {
           CHEERS recognized {entity.name} ({entity.entity_id}). Open its medicine
           profile to review available official label information and related connections.
         </p>
-        <Link className="text-action" to={`/medicines/${encodeURIComponent(entity.entity_id)}`}>Open medicine profile <ArrowRight size={16} /></Link>
+        <div className="public-answer-actions">
+          <Link to={medicinePath}>View medicine</Link>
+          <Link to={`${medicinePath}?section=side-effects`}>Side effects</Link>
+          <Link to={`/check?drug_a_id=${encodeURIComponent(entity.entity_id)}`}>Check medicines</Link>
+          <Link to={`${medicinePath}?section=uses`}>Original label information</Link>
+        </div>
       </div>
     </section>
   )

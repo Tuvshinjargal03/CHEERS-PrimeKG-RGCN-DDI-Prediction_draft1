@@ -103,6 +103,17 @@ DRUG_NAME_ALIASES = {"aspirin": "acetylsalicylic acid"}
 GENERIC_SYMPTOM_TERMS = frozenset(
     {"pain", "headache", "fever", "nausea", "cough", "dizziness", "fatigue"}
 )
+NATURAL_SINGLE_ENTITY_PATTERNS = (
+    ("drug_side_effects", ("drug",), re.compile(r"^(?:tell me(?: about)? )?(?P<entity>.+?) side efects$")),
+    ("drug_side_effects", ("drug",), re.compile(r"^tell me (?P<entity>.+?) side effects$")),
+    ("drug_side_effects", ("drug",), re.compile(r"^what are the side effects of (?P<entity>.+)$")),
+    ("drug_information", ("drug",), re.compile(r"^what does (?P<entity>.+?) do$")),
+    ("drug_information", ("drug",), re.compile(r"^what is (?P<entity>.+?) used for$")),
+    ("drug_information", ("drug",), re.compile(r"^what is (?P<entity>.+?) for$")),
+    (None, ("drug", "disease"), re.compile(r"^what s (?P<entity>.+)$")),
+    (None, ("drug", "disease"), re.compile(r"^tell me about (?P<entity>.+)$")),
+    (None, ("drug", "disease"), re.compile(r"^(?P<entity>.+?) information$")),
+)
 MAX_FUZZY_SUGGESTIONS = 5
 FUZZY_MIN_SCORE = 0.84
 FUZZY_AUTO_ACCEPT_SCORE = 0.86
@@ -479,6 +490,17 @@ class PublicSearchService:
                 continue
             match, ambiguity = self._resolve_fragment(query_match.group("drug"), ("drug",))
             return True, match, ambiguity, topic
+        return False, None, None, None
+
+    def _resolve_natural_single_entity(self, normalized):
+        for intent, entity_types, pattern in NATURAL_SINGLE_ENTITY_PATTERNS:
+            query_match = pattern.fullmatch(normalized)
+            if query_match is None:
+                continue
+            match, ambiguity = self._resolve_fragment(
+                query_match.group("entity"), entity_types
+            )
+            return True, intent, match, ambiguity
         return False, None, None, None
 
     def _generic_treatment_response(self, original_query, normalized, match, topic):
@@ -1134,6 +1156,33 @@ class PublicSearchService:
                 "No repository-backed disease identity matched conservatively.",
             )
 
+        natural_attempted, natural_intent, natural_match, natural_ambiguity = (
+            self._resolve_natural_single_entity(normalized)
+        )
+        if natural_attempted:
+            if natural_ambiguity:
+                candidate_types = set(natural_ambiguity["entity_types"])
+                intent = natural_intent
+                if intent is None and candidate_types == {"disease"}:
+                    intent = "disease_information"
+                elif intent is None and candidate_types == {"drug"}:
+                    intent = "drug_information"
+                response = self._base_response(
+                    original_query, normalized, intent or "unknown"
+                )
+                response["ambiguous_matches"] = [natural_ambiguity]
+                return response
+            if natural_match:
+                entity = natural_match[0]
+                intent = natural_intent or (
+                    "disease_information"
+                    if entity["entity_type"] == "disease"
+                    else "drug_information"
+                )
+                return self._resolved_response(
+                    original_query, normalized, intent, [natural_match]
+                )
+
         generic_attempted, generic_match, generic_ambiguity, generic_topic = (
             self._resolve_generic_treatment_question(normalized)
         )
@@ -1426,10 +1475,15 @@ class PublicSearchService:
             fallback = {
                 "status": "limited" if not snippets else "answered",
                 "short_answer": (
-                    "CHEERS found relevant official label information for this medicine."
+                    f"CHEERS found official label information for {entity['name']}."
                     if snippets else "CHEERS could not retrieve relevant official label text for this medicine."
                 ),
-                "key_points": [],
+                "key_points": [
+                    (text[:237] + "...") if len(text) > 240 else text
+                    for text in (
+                        snippet.split(": ", 1)[-1] for snippet in snippets[:3]
+                    )
+                ],
                 "what_we_cannot_conclude": "Missing label text does not mean the medicine has no uses, side effects, or risks.",
                 "sources_used": ["FDA label"] if snippets else [],
             }

@@ -10,9 +10,11 @@ export function publicSearchDestination(payload) {
 
   if (first.entity_type === 'drug') {
     if (payload.intent === 'drug_information') {
+      if (payload.explanation?.short_answer) return null
       return `/medicines/${encodeURIComponent(first.entity_id)}`
     }
     if (payload.intent === 'drug_side_effects') {
+      if (payload.explanation?.short_answer) return null
       return `/medicines/${encodeURIComponent(first.entity_id)}?section=side-effects`
     }
     if (payload.intent === 'drug_interactions') {

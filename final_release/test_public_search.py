@@ -208,6 +208,19 @@ class PublicSearchTests(unittest.TestCase):
         self.assertIn("Retrieved use text.", str(summarizer.calls[0][1]))
         self.assertIn("Retrieved side-effect text.", str(summarizer.calls[1][1]))
 
+    def test_label_fallback_is_short_and_useful_when_gemini_is_unavailable(self):
+        self.use_summarizer(FixtureEvidenceSummarizer(error=TimeoutError()))
+        self.use_drug_information(FixtureDrugInformationService())
+        payload = self.search.search("what does metformin do?")
+        explanation = payload["explanation"]
+        self.assertEqual(
+            explanation["short_answer"],
+            "CHEERS found official label information for Metformin.",
+        )
+        self.assertEqual(explanation["key_points"], ["Retrieved use text."])
+        self.assertLessEqual(len(explanation["key_points"]), 3)
+        self.assertNotIn("recommend", explanation["short_answer"].casefold())
+
     def test_exact_drug_name(self):
         payload = self.search.search("Metformin")
         self.assertEqual(payload["intent"], "drug_information")
@@ -225,39 +238,49 @@ class PublicSearchTests(unittest.TestCase):
         self.assertEqual(interpreter.calls, [])
         self.assertNotIn("ai_interpretation", payload)
 
-    def test_interpreted_natural_language_routes_through_deterministic_search(self):
-        interpreter = FixtureQueryInterpreter(
-            result={
-                "intent": "drug_information",
-                "drug_names": ["metformin"],
-                "disease_names": [],
-                "topic": "",
-                "rewritten_query": "metformin",
-                "confidence": 0.95,
-            }
-        )
+    def test_natural_language_drug_information_works_without_interpreter(self):
+        interpreter = FixtureQueryInterpreter(error=TimeoutError())
         self.use_interpreter(interpreter)
         payload = self.search.search("what does metformin do?")
         self.assertEqual(payload["intent"], "drug_information")
         self.assertEqual(payload["recognized_entities"][0]["entity_id"], "DB00331")
         self.assertEqual(payload["original_query"], "what does metformin do?")
-        self.assertEqual(payload["ai_interpretation"]["status"], "used")
+        self.assertEqual(interpreter.calls, [])
 
-    def test_interpreted_typo_correction_still_uses_entity_matching(self):
-        interpreter = FixtureQueryInterpreter(
-            result={
-                "intent": "drug_side_effects",
-                "drug_names": ["metformin"],
-                "disease_names": [],
-                "topic": "side effects",
-                "rewritten_query": "metformin side effects",
-                "confidence": 0.94,
-            }
-        )
+    def test_typo_side_effects_work_without_interpreter(self):
+        interpreter = FixtureQueryInterpreter(error=TimeoutError())
         self.use_interpreter(interpreter)
         payload = self.search.search("tell me about metphormin side efects")
         self.assertEqual(payload["intent"], "drug_side_effects")
         self.assertEqual(payload["recognized_entities"][0]["entity_id"], "DB00331")
+        self.assertEqual(interpreter.calls, [])
+
+    def test_common_single_entity_phrasings_resolve_deterministically(self):
+        cases = (
+            ("what is metformin used for", "drug_information", "DB00331"),
+            ("tell me about metformin", "drug_information", "DB00331"),
+            ("metformin information", "drug_information", "DB00331"),
+            ("what is ibuprofen for", "drug_information", "DB01050"),
+            ("tell me metformin side effects", "drug_side_effects", "DB00331"),
+            ("what are the side effects of metformin", "drug_side_effects", "DB00331"),
+        )
+        interpreter = FixtureQueryInterpreter(error=AssertionError("unexpected call"))
+        self.use_interpreter(interpreter)
+        for query, intent, entity_id in cases:
+            with self.subTest(query=query):
+                payload = self.search.search(query)
+                self.assertEqual(payload["intent"], intent)
+                self.assertEqual(payload["recognized_entities"][0]["entity_id"], entity_id)
+        self.assertEqual(interpreter.calls, [])
+
+    def test_whats_diabetes_returns_choices_without_interpreter(self):
+        interpreter = FixtureQueryInterpreter(error=AssertionError("unexpected call"))
+        self.use_interpreter(interpreter)
+        payload = self.search.search("what's diabetes?")
+        self.assertEqual(payload["intent"], "disease_information")
+        self.assertEqual(payload["recognized_entities"], [])
+        self.assertTrue(payload["ambiguous_matches"][0]["candidates"])
+        self.assertEqual(interpreter.calls, [])
 
     def test_interpreter_failure_preserves_unknown_response(self):
         interpreter = FixtureQueryInterpreter(error=TimeoutError())
