@@ -47,10 +47,10 @@ const FOOD_LIFESTYLE_TOPIC_LABELS = {
 }
 
 const NATURAL_QUESTION_EXAMPLES = [
-  'Can I take warfarin with ibuprofen?',
-  'Is metformin used for type 2 diabetes mellitus?',
-  'What medicines are used for type 2 diabetes mellitus?',
+  'What does metformin do?',
   'Metformin side effects',
+  'Warfarin and aspirin together?',
+  'What is diabetes?',
 ]
 
 const PUBLIC_SEARCH_TIMEOUT_MS = 65_000
@@ -58,12 +58,12 @@ const SLOW_SEARCH_NOTICE_MS = 10_000
 
 const DESTINATION_DETAILS = {
   pair_external_evidence: {
-    title: 'Review medicine-pair sources',
+    title: 'Review sources',
     description: 'Open independent openFDA and PubMed information retrieved for this pair.',
     icon: Beaker,
   },
   pair_graph_context: {
-    title: 'Explore shared biomedical connections',
+    title: 'Explore relationships',
     description: 'View available gene/protein and disease relationships in the knowledge graph.',
     icon: Network,
   },
@@ -184,8 +184,8 @@ function DrugInformationState({ entity }) {
         <div className="public-answer-actions">
           <Link to={medicinePath}>View medicine</Link>
           <Link to={`${medicinePath}?section=side-effects`}>Side effects</Link>
-          <Link to={`/check?drug_a_id=${encodeURIComponent(entity.entity_id)}`}>Check medicines</Link>
-          <Link to={`${medicinePath}?section=uses`}>Original label information</Link>
+          <Link to={`/check?drug_a_id=${encodeURIComponent(entity.entity_id)}`}>Check Medicines</Link>
+          <Link to={`${medicinePath}?section=uses`}>Original source</Link>
         </div>
       </div>
     </section>
@@ -275,7 +275,7 @@ function DiseaseNutritionSearchState({ answer, disease }) {
         )}
       </div>
       <Link className="public-view-all-medicines" to={destination}>
-        {available ? 'View Nutrition & lifestyle' : 'View disease information'}
+        {available ? 'View Nutrition & lifestyle' : 'View disease'}
         <ArrowRight size={17} aria-hidden="true" />
       </Link>
     </section>
@@ -340,9 +340,9 @@ function DrugDiseaseAnswer({ answer }) {
         )}
       </div>
       <div className="public-answer-actions" aria-label="Medicine and condition actions">
-        <Link to={`/medicines/${encodeURIComponent(drug.entity_id)}`}>View {drug.name}</Link>
-        <Link to={`/diseases/${encodeURIComponent(disease.entity_id)}`}>View {sentenceCase(disease.name)}</Link>
-        <Link to={`/check?drug_a_id=${encodeURIComponent(drug.entity_id)}`}>Check {drug.name} with another medicine</Link>
+        <Link to={`/medicines/${encodeURIComponent(drug.entity_id)}`}>View medicine</Link>
+        <Link to={`/diseases/${encodeURIComponent(disease.entity_id)}`}>View disease</Link>
+        <Link to={`/check?drug_a_id=${encodeURIComponent(drug.entity_id)}`}>Check Medicines</Link>
       </div>
       {(answer.source_scope || answer.safety_note) && (
         <div className="public-answer-boundary">
@@ -457,8 +457,8 @@ function ResultActions({ intent, entity }) {
       <Link to={medicinePath}>View medicine</Link>
       <Link to={`${medicinePath}?section=uses`}>Uses</Link>
       <Link to={`${medicinePath}?section=side-effects`}>Side effects</Link>
-      <Link to={`/check?drug_a_id=${encodeURIComponent(entity.entity_id)}`}>Check medicines</Link>
-      <Link to={`${medicinePath}?section=${intent === 'drug_side_effects' ? 'side-effects' : 'uses'}`}>Original label information</Link>
+      <Link to={`/check?drug_a_id=${encodeURIComponent(entity.entity_id)}`}>Check Medicines</Link>
+      <Link to={`${medicinePath}?section=${intent === 'drug_side_effects' ? 'side-effects' : 'uses'}`}>Original source</Link>
     </div>
   )
 }
@@ -497,10 +497,10 @@ function TreatmentQuestionNextSteps({ medicine }) {
         <h2 id="treatment-next-steps">Review information without choosing a treatment</h2>
       </div>
       <div className="public-answer-actions">
-        <Link to={medicinePath}>{medicine ? `View ${medicine.name}` : 'Find a medicine profile'}</Link>
-        {medicine && <Link to={`${medicinePath}?section=uses`}>Review uses</Link>}
-        {medicine && <Link to={`${medicinePath}?section=side-effects`}>Review side effects</Link>}
-        <Link to={checkerPath}>Check two medicines</Link>
+        <Link to={medicinePath}>{medicine ? 'View medicine' : 'Find a medicine profile'}</Link>
+        {medicine && <Link to={`${medicinePath}?section=uses`}>Uses</Link>}
+        {medicine && <Link to={`${medicinePath}?section=side-effects`}>Side effects</Link>}
+        <Link to={checkerPath}>Check Medicines</Link>
       </div>
     </section>
   )
@@ -594,7 +594,7 @@ function PairDestinations({ data, includeChecker = false }) {
           <Link to={`/check?${checkerParams}`} className="public-destination-card">
             <span><Pill size={20} /></span>
             <div>
-              <h3>Open Medicine Checker</h3>
+              <h3>Check Medicines</h3>
               <p>Review the same pair with its source details and available context.</p>
             </div>
             <ArrowRight size={18} aria-hidden="true" />
@@ -712,7 +712,7 @@ function EmptyOrUnknownState({ hasQuery }) {
         <div className="public-answer-actions">
           <Link to="/medicines">Browse medicines</Link>
           <Link to="/diseases">Browse diseases</Link>
-          <Link to="/check">Check two medicines</Link>
+          <Link to="/check">Check Medicines</Link>
         </div>
       )}
     </section>

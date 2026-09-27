@@ -60,7 +60,7 @@ describe('public Home', () => {
     render(<MemoryRouter><Home /></MemoryRouter>)
     expect(screen.getByRole('heading', { name: /understand your medicines better/i })).toBeVisible()
     expect(screen.getByRole('searchbox', { name: /search CHEERS/i })).toBeVisible()
-    expect(screen.getByRole('link', { name: /Check two medicines/ })).toHaveAttribute('href', '/check')
+    expect(screen.getByRole('link', { name: /Check Medicines/ })).toHaveAttribute('href', '/check')
     expect(screen.getByRole('link', { name: 'Medicines' })).toHaveAttribute('href', '/medicines')
     expect(screen.getByRole('link', { name: 'Diseases' })).toHaveAttribute('href', '/diseases')
     expect(screen.getByRole('link', { name: /My Health/ })).toHaveAttribute('href', '/my-health')
@@ -91,8 +91,8 @@ describe('public Home', () => {
         <Routes><Route path="/overview" element={<Home />} /><Route path="/search" element={<LocationProbe />} /></Routes>
       </MemoryRouter>,
     )
-    await user.click(screen.getByRole('button', { name: 'warfarin interactions' }))
-    expect(screen.getByTestId('location')).toHaveTextContent('/search?q=warfarin%20interactions')
+    await user.click(screen.getByRole('button', { name: 'Warfarin and aspirin together?' }))
+    expect(screen.getByTestId('location')).toHaveTextContent('/search?q=Warfarin%20and%20aspirin%20together%3F')
   })
 })
 
@@ -112,8 +112,10 @@ describe('deterministic public-search routing', () => {
       'placeholder',
       'Ask a question about medicines or diseases…',
     )
-    expect(screen.getByRole('button', { name: 'Can I take warfarin with ibuprofen?' })).toBeVisible()
+    expect(screen.getByRole('button', { name: 'What does metformin do?' })).toBeVisible()
     expect(screen.getByRole('button', { name: 'Metformin side effects' })).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Warfarin and aspirin together?' })).toBeVisible()
+    expect(screen.getByRole('button', { name: 'What is diabetes?' })).toBeVisible()
   })
 
   it('routes a disease result to its guide profile', async () => {
@@ -250,7 +252,7 @@ describe('deterministic public-search routing', () => {
     renderSearch('/search?q=influenza%20nutrition')
 
     expect(await screen.findByText('Nutrition information is not currently available for this condition in CHEERS.')).toBeVisible()
-    expect(screen.getByRole('link', { name: 'View disease information' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'View disease' })).toHaveAttribute(
       'href',
       '/diseases/1200_1134_15512_5080_100078',
     )
@@ -284,7 +286,7 @@ describe('deterministic public-search routing', () => {
     expect(screen.getByRole('heading', { name: 'Treatment indication found' })).toBeVisible()
     expect(screen.getByText(/Metformin has an indication relationship with Type 2 diabetes mellitus/)).toBeVisible()
     expect(screen.queryByText(/you should take/i)).not.toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'View Metformin' })).toHaveAttribute('href', '/medicines/DB00331')
+    expect(screen.getByRole('link', { name: 'View medicine' })).toHaveAttribute('href', '/medicines/DB00331')
   })
 
   it('shows the exact non-indication relationship without a plain yes or no', async () => {
@@ -371,12 +373,12 @@ describe('deterministic public-search routing', () => {
     expect(evidenceHeading.closest('section')).toHaveClass('is-warning')
     expect(screen.getByLabelText('Retrieved source counts')).toHaveTextContent('FDA label mentions16')
     expect(screen.getByLabelText('Retrieved source counts')).toHaveTextContent('PubMed records5')
-    expect(screen.getByRole('link', { name: /Open Medicine Checker/i })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /Check Medicines/ })).toHaveAttribute(
       'href',
       '/check?drug_a_id=DB00682&drug_b_id=DB01050',
     )
-    expect(screen.getByRole('link', { name: /Review medicine-pair sources/i })).toBeVisible()
-    expect(screen.getByRole('link', { name: /Explore shared biomedical connections/i })).toBeVisible()
+    expect(screen.getByRole('link', { name: /Review sources/ })).toBeVisible()
+    expect(screen.getByRole('link', { name: /Explore relationships/ })).toBeVisible()
   })
 
   it('keeps a grounded medicine answer on Ask CHEERS with useful actions', async () => {
@@ -398,8 +400,8 @@ describe('deterministic public-search routing', () => {
     expect(screen.queryByText(/short answer/i)).not.toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'View medicine' })).toHaveAttribute('href', '/medicines/DB00331')
     expect(screen.getByRole('link', { name: 'Side effects' })).toHaveAttribute('href', '/medicines/DB00331?section=side-effects')
-    expect(screen.getByRole('link', { name: 'Check medicines' })).toHaveAttribute('href', '/check?drug_a_id=DB00331')
-    expect(screen.getByRole('link', { name: 'Original label information' })).toHaveAttribute('href', '/medicines/DB00331?section=uses')
+    expect(screen.getByRole('link', { name: 'Check Medicines' })).toHaveAttribute('href', '/check?drug_a_id=DB00331')
+    expect(screen.getByRole('link', { name: 'Original source' })).toHaveAttribute('href', '/medicines/DB00331?section=uses')
     expect(screen.getByTestId('location')).toHaveTextContent('/search?q=what%20does%20metformin%20do')
   })
 
@@ -447,7 +449,7 @@ describe('deterministic public-search routing', () => {
     renderSearch('/search?q=what%20should%20I%20take%20for%20pain')
     expect(await screen.findByText('CHEERS cannot choose a medicine or treatment for you.')).toBeVisible()
     expect(screen.getByRole('link', { name: 'Find a medicine profile' })).toHaveAttribute('href', '/medicines')
-    expect(screen.getByRole('link', { name: 'Check two medicines' })).toHaveAttribute('href', '/check')
+    expect(screen.getByRole('link', { name: 'Check Medicines' })).toHaveAttribute('href', '/check')
     expect(screen.queryByText(/take ibuprofen|take aspirin|recommended medicine/i)).not.toBeInTheDocument()
   })
 
@@ -467,10 +469,10 @@ describe('deterministic public-search routing', () => {
     renderSearch('/search?q=can%20i%20use%20ibuprofin%20for%20pain')
     expect(await screen.findByRole('heading', { name: 'Ibuprofen and pain' })).toBeVisible()
     expect(screen.getByText('Matched “ibuprofin” to Ibuprofen')).toBeVisible()
-    expect(await screen.findByRole('link', { name: 'View Ibuprofen' })).toHaveAttribute('href', '/medicines/DB01050')
-    expect(screen.getByRole('link', { name: 'Review uses' })).toHaveAttribute('href', '/medicines/DB01050?section=uses')
-    expect(screen.getByRole('link', { name: 'Review side effects' })).toHaveAttribute('href', '/medicines/DB01050?section=side-effects')
-    expect(screen.getByRole('link', { name: 'Check two medicines' })).toHaveAttribute('href', '/check?drug_a_id=DB01050')
+    expect(await screen.findByRole('link', { name: 'View medicine' })).toHaveAttribute('href', '/medicines/DB01050')
+    expect(screen.getByRole('link', { name: 'Uses' })).toHaveAttribute('href', '/medicines/DB01050?section=uses')
+    expect(screen.getByRole('link', { name: 'Side effects' })).toHaveAttribute('href', '/medicines/DB01050?section=side-effects')
+    expect(screen.getByRole('link', { name: 'Check Medicines' })).toHaveAttribute('href', '/check?drug_a_id=DB01050')
     expect(screen.queryByText(/myofascial pain syndrome/i)).not.toBeInTheDocument()
   })
 

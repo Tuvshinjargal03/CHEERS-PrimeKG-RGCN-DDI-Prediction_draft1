@@ -1,6 +1,6 @@
 export const PUBLIC_SEARCH_EXAMPLES = [
-  'what is type 2 diabetes mellitus',
-  'metformin',
-  'warfarin interactions',
-  'ibuprofen acetylsalicylic acid',
+  'What does metformin do?',
+  'Metformin side effects',
+  'Warfarin and aspirin together?',
+  'What is diabetes?',
 ]

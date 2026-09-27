@@ -26,7 +26,7 @@ describe('Home product hierarchy', () => {
     renderHome()
     const section = screen.getByRole('region', { name: 'Choose what you want to do' })
     expect(within(section).getByRole('link', { name: /Ask about a medicine/ })).toHaveAttribute('href', '/search')
-    expect(within(section).getByRole('link', { name: /Check two medicines/ })).toHaveAttribute('href', '/check')
+    expect(within(section).getByRole('link', { name: /Check Medicines/ })).toHaveAttribute('href', '/check')
     expect(within(section).getByRole('link', { name: /My Health/ })).toHaveAttribute('href', '/my-health')
     expect(section).toHaveTextContent('Find medicine information, compare medicines, or use your saved health information.')
     expect(screen.queryByText(/without reading a long guide first/i)).not.toBeInTheDocument()

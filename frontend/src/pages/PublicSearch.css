@@ -904,6 +904,8 @@
 }
 
 .public-answer-actions a {
+  min-width: 0;
+  max-width: 100%;
   padding: 9px 12px;
   border: 1px solid var(--answer-border);
   border-radius: 10px;
@@ -912,6 +914,7 @@
   font-size: 0.8rem;
   font-weight: 730;
   text-decoration: none;
+  overflow-wrap: anywhere;
 }
 
 .public-answer-actions a:hover,
@@ -1523,6 +1526,8 @@
 .public-inline-links a,
 .public-advanced-links a {
   display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
   min-height: 42px;
   align-items: center;
   gap: 8px;
@@ -1534,6 +1539,7 @@
   font-size: 0.84rem;
   font-weight: 730;
   text-decoration: none;
+  overflow-wrap: anywhere;
 }
 
 .public-inline-links a:hover,
@@ -1617,6 +1623,9 @@
 }
 
 .public-source-chip {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
   padding: 5px 9px;
   border: 1px solid #ddd7ea;
   border-radius: 999px;
@@ -1645,9 +1654,9 @@
   color: var(--answer-accent);
 }
 
-.public-pair-medicines span { display: grid; gap: 2px; }
-.public-pair-medicines strong { color: #303346; }
-.public-pair-medicines small { color: #7b8090; font-size: 0.72rem; }
+.public-pair-medicines span { display: grid; min-width: 0; gap: 2px; }
+.public-pair-medicines strong { color: #303346; overflow-wrap: anywhere; }
+.public-pair-medicines small { color: #7b8090; font-size: 0.72rem; overflow-wrap: anywhere; }
 
 .public-answer-details {
   padding: 14px 17px;

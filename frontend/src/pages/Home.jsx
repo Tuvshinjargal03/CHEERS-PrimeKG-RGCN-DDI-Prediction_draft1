@@ -9,7 +9,7 @@ import './PublicSearch.css'
 
 const PRIMARY_ACTIONS = [
   ['Ask about a medicine', 'Find uses, side effects, and source-backed medicine information.', 'Ask CHEERS', '/search', Search],
-  ['Check two medicines', 'Review two medicines together using available FDA and PubMed evidence.', 'Compare medicines', '/check', Beaker],
+  ['Check Medicines', 'Review two medicines together using available FDA and PubMed evidence.', 'Check Medicines', '/check', Beaker],
   ['My Health', 'Use your saved medicines and conditions for faster review.', 'Open My Health', '/my-health', LayoutDashboard],
 ]
 
