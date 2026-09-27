@@ -341,10 +341,21 @@ describe('deterministic public-search routing', () => {
         source_scope: 'Checked openFDA and PubMed sources.',
         safety_note: 'This is source review, not medical advice.',
       },
+      explanation: {
+        status: 'answered',
+        short_answer: 'The retrieved FDA label information includes an interaction warning for this pair.',
+        key_points: ['FDA label information and PubMed records were retrieved.'],
+        what_we_cannot_conclude: 'This does not establish whether the combination is safe for you.',
+        sources_used: ['FDA label', 'PubMed'],
+      },
     })
     renderSearch('/search?q=can%20i%20take%20warfarin%20with%20ibuprofen')
 
     const pairHeading = await screen.findByRole('heading', { name: 'Warfarin + Ibuprofen' })
+    expect(screen.getByText('The retrieved FDA label information includes an interaction warning for this pair.')).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'What CHEERS found' })).toBeVisible()
+    expect(screen.getByText('This does not establish whether the combination is safe for you.')).toBeVisible()
+    expect(screen.getByText('Sources used: FDA label, PubMed')).toBeVisible()
     expect(screen.getByText('Interaction warning found')).toBeVisible()
     expect(pairHeading.closest('section')).toHaveClass('is-warning')
     expect(screen.getByLabelText('Retrieved source counts')).toHaveTextContent('FDA label mentions16')
@@ -355,6 +366,25 @@ describe('deterministic public-search routing', () => {
     )
     expect(screen.getByRole('link', { name: /Review medicine-pair sources/i })).toBeVisible()
     expect(screen.getByRole('link', { name: /Explore shared biomedical connections/i })).toBeVisible()
+  })
+
+  it('offers useful non-prescribing next steps for a treatment-selection question', async () => {
+    getJson.mockResolvedValue({
+      ...BASE,
+      intent: 'general_symptom_or_treatment_question',
+      explanation: {
+        status: 'limited',
+        short_answer: 'CHEERS cannot choose a medicine or treatment for you.',
+        key_points: ['Search for a medicine you are already considering.'],
+        what_we_cannot_conclude: 'CHEERS cannot recommend what you should take.',
+        sources_used: [],
+      },
+    })
+    renderSearch('/search?q=what%20should%20I%20take%20for%20pain')
+    expect(await screen.findByText('CHEERS cannot choose a medicine or treatment for you.')).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Find a medicine profile' })).toHaveAttribute('href', '/medicines')
+    expect(screen.getByRole('link', { name: 'Check two medicines' })).toHaveAttribute('href', '/check')
+    expect(screen.queryByText(/take ibuprofen|take aspirin|recommended medicine/i)).not.toBeInTheDocument()
   })
 
   it('shows an amber review state for literature-only pair information', async () => {

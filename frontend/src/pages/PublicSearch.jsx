@@ -30,6 +30,7 @@ const INTENT_LABELS = {
   drug_for_disease: 'Medicine and condition question',
   medicines_for_disease: 'Medicines linked to a condition',
   disease_nutrition: 'Disease nutrition information',
+  general_symptom_or_treatment_question: 'Treatment question',
   unsupported: 'Recognized request',
   unknown: 'Search not recognized',
 }
@@ -365,6 +366,47 @@ function PairQuestionAnswer({ answer }) {
           {answer.safety_note && <p>{answer.safety_note}</p>}
         </div>
       )}
+    </section>
+  )
+}
+
+function PlainLanguageExplanation({ explanation }) {
+  if (!explanation?.short_answer) return null
+  return (
+    <section className="public-answer-card" aria-labelledby="plain-answer-title">
+      <span className="eyebrow">Short answer</span>
+      <h2 id="plain-answer-title">What CHEERS can say</h2>
+      <p className="public-answer-text">{explanation.short_answer}</p>
+      {explanation.key_points?.length > 0 && (
+        <div>
+          <h3>What CHEERS found</h3>
+          <ul>{explanation.key_points.map((point) => <li key={point}>{point}</li>)}</ul>
+        </div>
+      )}
+      {explanation.what_we_cannot_conclude && (
+        <div className="public-answer-boundary">
+          <strong>What this doesn&apos;t tell us</strong>
+          <p>{explanation.what_we_cannot_conclude}</p>
+        </div>
+      )}
+      {explanation.sources_used?.length > 0 && (
+        <p className="public-provenance">Sources used: {explanation.sources_used.join(', ')}</p>
+      )}
+    </section>
+  )
+}
+
+function TreatmentQuestionNextSteps() {
+  return (
+    <section className="public-next-steps" aria-labelledby="treatment-next-steps">
+      <div className="public-section-heading">
+        <span className="eyebrow">Next steps</span>
+        <h2 id="treatment-next-steps">Review information without choosing a treatment</h2>
+      </div>
+      <div className="public-answer-actions">
+        <Link to="/medicines">Find a medicine profile</Link>
+        <Link to="/check">Check two medicines</Link>
+      </div>
     </section>
   )
 }
@@ -729,6 +771,10 @@ export default function PublicSearch() {
 
       {!loading && !error && data && !isUnknown && !isAmbiguous && (
         <div className="public-results" aria-live="polite">
+          <PlainLanguageExplanation explanation={data.explanation} />
+          {data.intent === 'general_symptom_or_treatment_question' && (
+            <TreatmentQuestionNextSteps />
+          )}
           {data.intent === 'drug_for_disease' && (
             <DrugDiseaseAnswer answer={data.answer} />
           )}

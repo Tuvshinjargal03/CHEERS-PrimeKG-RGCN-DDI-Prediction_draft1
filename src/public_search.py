@@ -132,6 +132,8 @@ class PublicSearchService:
         label_evidence_service=None,
         literature_service=None,
         query_interpreter=None,
+        drug_information_service=None,
+        evidence_summarizer=None,
     ):
         if project_dir is None:
             project_dir = Path(__file__).resolve().parents[1]
@@ -163,6 +165,8 @@ class PublicSearchService:
         self.label_evidence_service = label_evidence_service
         self.literature_service = literature_service
         self.query_interpreter = query_interpreter
+        self.drug_information_service = drug_information_service
+        self.evidence_summarizer = evidence_summarizer
         self.entities = self.drugs + self.diseases
         self._validate()
 
@@ -1234,10 +1238,104 @@ class PublicSearchService:
             metadata.update(interpretation)
         return metadata
 
+    @staticmethod
+    def _fallback_explanation(response):
+        intent = response["intent"]
+        answer = response.get("answer", {})
+        if intent == "drug_pair_question":
+            return {
+                "status": "limited" if answer.get("answer_type") == "insufficient_information" else "answered",
+                "short_answer": answer.get("supporting_text", "CHEERS could not summarize this pair."),
+                "key_points": [
+                    f"FDA label mentions retrieved: {answer.get('evidence_summary', {}).get('label_mentions', 0)}.",
+                    f"PubMed records retrieved: {answer.get('evidence_summary', {}).get('pubmed_records', 0)}.",
+                ],
+                "what_we_cannot_conclude": "These retrieved sources do not establish that the combination is safe or appropriate for a person.",
+                "sources_used": ["FDA label", "PubMed"],
+            }
+        if intent == "drug_for_disease":
+            relations = [item.get("relation") for item in answer.get("relationships", []) if item.get("relation")]
+            return {
+                "status": "answered" if relations else "limited",
+                "short_answer": answer.get("direct_answer", "CHEERS could not determine a relationship from its checked data."),
+                "key_points": [f"CHEERS relationship found: {relation}." for relation in relations[:3]],
+                "what_we_cannot_conclude": "A graph relationship is not a personalized treatment recommendation.",
+                "sources_used": ["CHEERS knowledge graph"],
+            }
+        return None
+
+    @staticmethod
+    def _label_evidence(label_information, sections):
+        evidence = []
+        if not isinstance(label_information, dict) or label_information.get("status") != "ok":
+            return evidence
+        for record in label_information.get("records", [])[:3]:
+            record_sections = record.get("sections", {})
+            for section in sections:
+                for entry in record_sections.get(section, [])[:2]:
+                    if isinstance(entry, dict) and entry.get("text"):
+                        evidence.append(f"{section}: {entry['text']}")
+        return evidence
+
+    def _with_explanation(self, query, response):
+        intent = response["intent"]
+        if intent not in {
+            "drug_pair_question", "drug_information", "drug_side_effects", "drug_for_disease",
+        }:
+            return response
+        evidence = {}
+        fallback = self._fallback_explanation(response)
+        if intent == "drug_pair_question":
+            answer = response.get("answer", {})
+            evidence = {
+                "FDA label": [
+                    answer.get("supporting_text", ""),
+                    f"Retrieved label mentions: {answer.get('evidence_summary', {}).get('label_mentions', 0)}",
+                ],
+                "PubMed": [f"Retrieved records: {answer.get('evidence_summary', {}).get('pubmed_records', 0)}"],
+            }
+        elif intent == "drug_for_disease":
+            evidence = {"CHEERS knowledge graph": [json.dumps(response.get("answer", {}))]}
+        elif self.drug_information_service is not None and response.get("recognized_entities"):
+            entity = response["recognized_entities"][0]
+            try:
+                label = self.drug_information_service.get_drug_information(entity["name"])
+            except (KeyError, OSError, TypeError, ValueError):
+                label = None
+            sections = (
+                ("adverse_reactions", "warnings", "warnings_and_cautions")
+                if intent == "drug_side_effects"
+                else ("indications_and_usage", "description")
+            )
+            snippets = self._label_evidence(label, sections)
+            evidence = {"FDA label": snippets}
+            fallback = {
+                "status": "limited" if not snippets else "answered",
+                "short_answer": (
+                    "CHEERS found relevant official label information for this medicine."
+                    if snippets else "CHEERS could not retrieve relevant official label text for this medicine."
+                ),
+                "key_points": [],
+                "what_we_cannot_conclude": "Missing label text does not mean the medicine has no uses, side effects, or risks.",
+                "sources_used": ["FDA label"] if snippets else [],
+            }
+        explanation = None
+        can_summarize = not (
+            intent == "drug_pair_question"
+            and response.get("answer", {}).get("answer_type") == "insufficient_information"
+        )
+        if self.evidence_summarizer is not None and any(evidence.values()) and can_summarize:
+            try:
+                explanation = self.evidence_summarizer.summarize(query, evidence)
+            except Exception:
+                explanation = None
+        response["explanation"] = explanation or fallback
+        return response
+
     def search(self, query):
         deterministic = self._search_deterministic(query)
         if deterministic["intent"] != "unknown" or self.query_interpreter is None:
-            return deterministic
+            return self._with_explanation(query, deterministic)
 
         try:
             interpretation = self.query_interpreter.interpret(query)
@@ -1263,6 +1361,18 @@ class PublicSearchService:
                     ),
                 }
             )
+            if intent == "general_symptom_or_treatment_question":
+                response["explanation"] = {
+                    "status": "limited",
+                    "short_answer": "CHEERS cannot choose a medicine or treatment for you.",
+                    "key_points": [
+                        "You can search for a medicine you are already considering.",
+                        "You can compare two medicines in Check Medicines.",
+                        "A pharmacist or other qualified health professional can help with a personal treatment choice.",
+                    ],
+                    "what_we_cannot_conclude": "CHEERS cannot recommend what you should take.",
+                    "sources_used": [],
+                }
         elif intent == "unknown":
             response = deterministic
         else:
@@ -1272,7 +1382,7 @@ class PublicSearchService:
             response["original_query"] = str(query)
             response["normalized_query"] = normalize_query(query)
         response["ai_interpretation"] = self._ai_metadata("used", interpretation)
-        return response
+        return self._with_explanation(query, response)
 
 
 __all__ = ["PublicSearchService", "SUPPORTED_INTENTS", "normalize_query"]

@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from src.gemini_query_interpreter import GeminiQueryInterpreter
+from src.gemini_evidence_summarizer import GeminiEvidenceSummarizer, MAX_EVIDENCE_CHARS
 from src.public_search import PublicSearchService
 
 
@@ -38,6 +39,32 @@ class InvalidGeminiResponse:
     @staticmethod
     def read():
         return b'{"candidates":[{"content":{"parts":[{"text":"not json"}]}}]}'
+
+
+class FixtureEvidenceSummarizer:
+    def __init__(self, result=None, error=None):
+        self.result = result
+        self.error = error
+        self.calls = []
+
+    def summarize(self, question, evidence):
+        self.calls.append((question, evidence))
+        if self.error:
+            raise self.error
+        return self.result
+
+
+class FixtureDrugInformationService:
+    def get_drug_information(self, _drug_name):
+        return {
+            "status": "ok",
+            "records": [{
+                "sections": {
+                    "indications_and_usage": [{"text": "Retrieved use text."}],
+                    "adverse_reactions": [{"text": "Retrieved side-effect text."}],
+                },
+            }],
+        }
 
 
 class UnavailableDiseaseInformationService:
@@ -85,6 +112,76 @@ class PublicSearchTests(unittest.TestCase):
         previous = self.search.query_interpreter
         self.search.query_interpreter = interpreter
         self.addCleanup(setattr, self.search, "query_interpreter", previous)
+
+    def use_summarizer(self, summarizer):
+        previous = self.search.evidence_summarizer
+        self.search.evidence_summarizer = summarizer
+        self.addCleanup(setattr, self.search, "evidence_summarizer", previous)
+
+    def use_drug_information(self, service):
+        previous = self.search.drug_information_service
+        self.search.drug_information_service = service
+        self.addCleanup(setattr, self.search, "drug_information_service", previous)
+
+    def test_grounded_pair_explanation_uses_retrieved_source_summary(self):
+        explanation = {
+            "status": "answered",
+            "short_answer": "The retrieved FDA label information includes an interaction warning.",
+            "key_points": ["One label mention and one PubMed record were retrieved."],
+            "what_we_cannot_conclude": "This does not establish whether the pair is safe for you.",
+            "sources_used": ["FDA label", "PubMed"],
+        }
+        summarizer = FixtureEvidenceSummarizer(result=explanation)
+        self.use_summarizer(summarizer)
+        payload = self.search.search("can i take warfarin with ibuprofen")
+        self.assertEqual(payload["explanation"], explanation)
+        self.assertEqual(len(summarizer.calls), 1)
+        self.assertIn("FDA label", summarizer.calls[0][1])
+        self.assertIn("PubMed", summarizer.calls[0][1])
+
+    def test_summarizer_failure_keeps_safe_deterministic_pair_explanation(self):
+        self.use_summarizer(FixtureEvidenceSummarizer(error=TimeoutError()))
+        payload = self.search.search("can i take fluoxymesterone with icosapent")
+        self.assertEqual(payload["explanation"]["status"], "limited")
+        self.assertIn("not establish", payload["explanation"]["what_we_cannot_conclude"])
+        self.assertNotEqual(payload["explanation"]["short_answer"].casefold(), "safe")
+        self.assertNotIn("test-key", str(payload))
+
+    def test_evidence_sent_for_summarization_is_bounded(self):
+        bounded = GeminiEvidenceSummarizer.bound_evidence(
+            {"FDA label": ["x" * 20_000], "PubMed": ["y" * 20_000]}
+        )
+        self.assertLessEqual(
+            sum(len(item) for values in bounded.values() for item in values),
+            MAX_EVIDENCE_CHARS,
+        )
+        self.assertTrue(all(len(item) <= 700 for values in bounded.values() for item in values))
+        unsafe = {
+            "status": "answered",
+            "short_answer": "This combination is safe.",
+            "key_points": [],
+            "what_we_cannot_conclude": "",
+            "sources_used": [],
+        }
+        self.assertIsNone(GeminiEvidenceSummarizer._validate(unsafe))
+
+    def test_medicine_uses_and_side_effects_use_retrieved_label_sections(self):
+        explanation = {
+            "status": "answered",
+            "short_answer": "A short grounded label explanation.",
+            "key_points": [],
+            "what_we_cannot_conclude": "This is not personal medical advice.",
+            "sources_used": ["FDA label"],
+        }
+        summarizer = FixtureEvidenceSummarizer(result=explanation)
+        self.use_summarizer(summarizer)
+        self.use_drug_information(FixtureDrugInformationService())
+        information = self.search.search("metformin")
+        side_effects = self.search.search("metformin side effects")
+        self.assertEqual(information["explanation"], explanation)
+        self.assertEqual(side_effects["explanation"], explanation)
+        self.assertIn("Retrieved use text.", str(summarizer.calls[0][1]))
+        self.assertIn("Retrieved side-effect text.", str(summarizer.calls[1][1]))
 
     def test_exact_drug_name(self):
         payload = self.search.search("Metformin")

@@ -30,6 +30,7 @@ from src.drug_information import OpenFDADrugInformationService
 from src.entity_metadata import EntityMetadataStore
 from src.g3_context import G3ContextStore
 from src.gemini_query_interpreter import GeminiQueryInterpreter
+from src.gemini_evidence_summarizer import GeminiEvidenceSummarizer
 from src.graph_neighborhood import GraphNeighborhoodStore
 from src.lightweight_inference import DDIPredictor
 from src.pubmed_literature import PubMedLiteratureService
@@ -101,6 +102,7 @@ async def lifespan(app: FastAPI):
 
     app.state.label_evidence_service = OpenFDALabelEvidenceService()
     app.state.literature_service = PubMedLiteratureService()
+    app.state.drug_information_service = OpenFDADrugInformationService()
 
     app.state.public_search = PublicSearchService(
         project_dir=PROJECT_DIR,
@@ -108,6 +110,8 @@ async def lifespan(app: FastAPI):
         label_evidence_service=app.state.label_evidence_service,
         literature_service=app.state.literature_service,
         query_interpreter=GeminiQueryInterpreter(),
+        drug_information_service=app.state.drug_information_service,
+        evidence_summarizer=GeminiEvidenceSummarizer(),
     )
 
     app.state.entity_metadata_store = load_entity_metadata_store()
@@ -138,8 +142,6 @@ async def lifespan(app: FastAPI):
         }
         for row in app.state.predictor.drug_metadata
     }
-
-    app.state.drug_information_service = OpenFDADrugInformationService()
 
     print(
         "[CHEERS API] Lightweight runtime and G3 context loaded successfully."
