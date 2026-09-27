@@ -1,7 +1,8 @@
 import { act, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { getJson } from '../lib/api.js'
+import { drugContextEndpoint, getJson } from '../lib/api.js'
 import SubgraphExplorer from './SubgraphExplorer.jsx'
 
 vi.mock('cytoscape', () => ({
@@ -14,7 +15,7 @@ vi.mock('cytoscape', () => ({
   })),
 }))
 vi.mock('../lib/api.js', () => ({
-  drugContextEndpoint: ({ drugId }) => `/api/context/drug?drug_id=${drugId}`,
+  drugContextEndpoint: vi.fn(({ drugId }) => `/api/context/drug?drug_id=${drugId}`),
   getJson: vi.fn(),
 }))
 vi.mock('../components/DrugAutocomplete.jsx', () => ({
@@ -39,9 +40,39 @@ const METFORMIN_CONTEXT = {
   interpretation: 'Research context only.',
 }
 
+function pagedContext(offset = 0, returned = 50, hasMore = true) {
+  const neighbors = Array.from({ length: returned }, (_, index) => ({
+    node_id: 1000 + offset + index,
+    entity_id: `GENE${1000 + offset + index}`,
+    name: `Gene ${offset + index + 1}`,
+    entity_type: 'gene/protein',
+    source: 'NCBI',
+    relationships: [{ relation: 'target', display_relation: 'Target' }],
+  }))
+  return {
+    ...METFORMIN_CONTEXT,
+    neighbors,
+    counts: {
+      total_neighbors: 143,
+      total_relationships: 143,
+      by_relation: { ...METFORMIN_CONTEXT.counts.by_relation, target: 143 },
+      by_entity_type: { drug: 0, 'gene/protein': 143, disease: 0 },
+    },
+    pagination: {
+      offset,
+      limit: 50,
+      returned_neighbors: returned,
+      returned_relationships: returned,
+      has_more: hasMore,
+      next_offset: hasMore ? offset + 50 : null,
+    },
+  }
+}
+
 describe('SubgraphExplorer navigation', () => {
   beforeEach(() => {
     getJson.mockReset()
+    drugContextEndpoint.mockClear()
     getJson.mockResolvedValue(METFORMIN_CONTEXT)
   })
 
@@ -73,7 +104,7 @@ describe('SubgraphExplorer navigation', () => {
     )
 
     expect(screen.getByTestId('selected-drug')).toHaveTextContent('Metformin')
-    await waitFor(() => expect(screen.getByRole('heading', { name: 'Visible relationships' })).toBeVisible())
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Visible neighborhood' })).toBeVisible())
     expect(getJson).toHaveBeenCalledTimes(1)
     expect(getJson).toHaveBeenCalledWith('/api/context/drug?drug_id=DB00331')
   })
@@ -100,7 +131,58 @@ describe('SubgraphExplorer navigation', () => {
     )
 
     expect(screen.getByTestId('selected-drug')).toHaveTextContent('')
-    expect(screen.getByText(/select one candidate drug/i)).toBeVisible()
+    expect(screen.getByText(/select one medicine to view its one-hop/i)).toBeVisible()
     expect(getJson).not.toHaveBeenCalled()
+  })
+
+  it('distinguishes the matching neighborhood from the current graph page', async () => {
+    getJson
+      .mockResolvedValueOnce(pagedContext())
+      .mockResolvedValueOnce(pagedContext(50))
+    render(
+      <MemoryRouter initialEntries={['/subgraph?drug_id=DB00331&drug_name=Metformin']}>
+        <SubgraphExplorer />
+      </MemoryRouter>,
+    )
+
+    const summary = (await screen.findByText('Filtered G3 neighborhood')).parentElement
+    expect(summary).toHaveTextContent('Showing 1–50 of 143 matching neighbors')
+    expect(screen.getByText('Matching neighbors')).toBeVisible()
+    expect(screen.getByText('Currently displayed')).toBeVisible()
+    expect(screen.getByText('Current graph page: 1 of 3')).toBeVisible()
+    expect(screen.getByText('Select a node or connection to focus it and view details.')).toBeVisible()
+    expect(screen.getByText('Center drug')).toBeVisible()
+    expect(screen.getAllByText(/Gene \/ protein/i).length).toBeGreaterThan(0)
+    expect(screen.getByRole('button', { name: 'Fit graph to view' })).toHaveAttribute('title', 'Fit graph to view')
+    expect(screen.getByText(/Graph associations do not prove causation, a drug interaction, safety, or harm/i)).toBeVisible()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Next 50' }))
+    await waitFor(() => expect(summary).toHaveTextContent('Showing 51–100 of 143 matching neighbors'))
+    expect(screen.getByText('Current graph page: 2 of 3')).toBeVisible()
+  })
+
+  it('uses backend filters and treats an empty filter selection as a valid local result', async () => {
+    getJson.mockResolvedValue(pagedContext())
+    render(
+      <MemoryRouter initialEntries={['/subgraph?drug_id=DB00331&drug_name=Metformin']}>
+        <SubgraphExplorer />
+      </MemoryRouter>,
+    )
+    await screen.findByText('Visible neighborhood')
+
+    await userEvent.click(screen.getByRole('checkbox', { name: /Target/ }))
+    expect(drugContextEndpoint).toHaveBeenLastCalledWith(expect.objectContaining({
+      drugId: 'DB00331',
+      offset: 0,
+      relations: expect.not.arrayContaining(['target']),
+    }))
+
+    for (const label of ['DDI', 'Enzyme', 'Carrier', 'Transporter', 'Indication', 'Contraindication', 'Off-label use']) {
+      await userEvent.click(screen.getByRole('checkbox', { name: new RegExp(`^${label}`) }))
+    }
+
+    expect(screen.getByText('No neighbors match the current filters.')).toBeVisible()
+    expect(screen.getByText(/not proof that no biomedical relationship or DDI exists/i)).toBeVisible()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 })
