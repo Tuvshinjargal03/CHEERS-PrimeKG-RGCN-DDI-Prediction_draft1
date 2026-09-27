@@ -3,6 +3,7 @@
 from pathlib import Path
 import ast
 import importlib.util
+import json
 import sys
 import unittest
 from unittest.mock import patch
@@ -12,7 +13,12 @@ from urllib.error import HTTPError
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from src.gemini_query_interpreter import GeminiQueryInterpreter, open_with_retry
+from src.gemini_query_interpreter import (
+    GEMINI_FALLBACK_MODEL,
+    GEMINI_PRIMARY_MODEL,
+    GeminiQueryInterpreter,
+    open_with_retry,
+)
 from src.gemini_evidence_summarizer import GeminiEvidenceSummarizer, MAX_EVIDENCE_CHARS
 from src.public_search import PublicSearchService
 
@@ -48,6 +54,16 @@ class EmptyResponse:
 
     def __exit__(self, *_args):
         return False
+
+
+class GeminiJsonResponse(EmptyResponse):
+    def __init__(self, value):
+        self.value = value
+
+    def read(self):
+        return json.dumps({
+            "candidates": [{"content": {"parts": [{"text": json.dumps(self.value)}]}}]
+        }).encode("utf-8")
 
 
 class FixtureEvidenceSummarizer:
@@ -384,6 +400,88 @@ class PublicSearchTests(unittest.TestCase):
             response = open_with_retry(object(), 5, backoff_seconds=0)
         self.assertIsInstance(response, EmptyResponse)
         self.assertEqual(mocked_open.call_count, 2)
+
+    @staticmethod
+    def _valid_interpretation():
+        return {
+            "intent": "drug_information",
+            "drug_names": ["metformin"],
+            "disease_names": [],
+            "topic": "",
+            "rewritten_query": "metformin",
+            "confidence": 0.95,
+        }
+
+    def test_gemini_primary_model_success(self):
+        interpreter = GeminiQueryInterpreter(api_key="test-key")
+        with patch(
+            "src.gemini_query_interpreter.urlopen",
+            return_value=GeminiJsonResponse(self._valid_interpretation()),
+        ) as mocked_open:
+            result = interpreter.interpret("what does metformin do")
+        self.assertEqual(result["model_used"], GEMINI_PRIMARY_MODEL)
+        self.assertEqual(mocked_open.call_count, 1)
+        self.assertIn(GEMINI_PRIMARY_MODEL, mocked_open.call_args.args[0].full_url)
+
+    def test_retryable_primary_failure_uses_fallback_model_once(self):
+        failures = [
+            HTTPError("https://example.invalid", 503, "unavailable", {}, None),
+            HTTPError("https://example.invalid", 503, "unavailable", {}, None),
+        ]
+        interpreter = GeminiQueryInterpreter(api_key="test-key")
+        with patch(
+            "src.gemini_query_interpreter.time.sleep",
+        ), patch(
+            "src.gemini_query_interpreter.urlopen",
+            side_effect=[
+                *failures,
+                GeminiJsonResponse(self._valid_interpretation()),
+            ],
+        ) as mocked_open:
+            result = interpreter.interpret("what does metformin do")
+        self.assertEqual(result["model_used"], GEMINI_FALLBACK_MODEL)
+        self.assertEqual(mocked_open.call_count, 3)
+        self.assertIn(GEMINI_FALLBACK_MODEL, mocked_open.call_args.args[0].full_url)
+
+    def test_both_gemini_models_unavailable_keeps_deterministic_fallback(self):
+        failures = [
+            HTTPError("https://example.invalid", 503, "unavailable", {}, None)
+            for _ in range(3)
+        ]
+        interpreter = GeminiQueryInterpreter(api_key="test-key")
+        self.use_interpreter(interpreter)
+        with patch(
+            "src.gemini_query_interpreter.time.sleep",
+        ), patch(
+            "src.gemini_query_interpreter.urlopen",
+            side_effect=failures,
+        ) as mocked_open:
+            payload = self.search.search("banana spaceship medicine purple")
+        self.assertEqual(mocked_open.call_count, 3)
+        self.assertEqual(payload["intent"], "unknown")
+        self.assertEqual(payload["ai_interpretation"], {"status": "unavailable"})
+
+    def test_summarizer_uses_fallback_model_after_primary_unavailable(self):
+        summary = {
+            "status": "answered",
+            "short_answer": "A short grounded explanation.",
+            "key_points": ["One retrieved point."],
+            "what_we_cannot_conclude": "This is not a safety conclusion.",
+            "sources_used": ["FDA label"],
+        }
+        failures = [
+            HTTPError("https://example.invalid", 503, "unavailable", {}, None),
+            HTTPError("https://example.invalid", 503, "unavailable", {}, None),
+        ]
+        summarizer = GeminiEvidenceSummarizer(api_key="test-key")
+        with patch(
+            "src.gemini_query_interpreter.time.sleep",
+        ), patch(
+            "src.gemini_query_interpreter.urlopen",
+            side_effect=[*failures, GeminiJsonResponse(summary)],
+        ):
+            result = summarizer.summarize("question", {"FDA label": ["evidence"]})
+        self.assertEqual(result["model_used"], GEMINI_FALLBACK_MODEL)
 
     def test_approved_disease_description(self):
         payload = self.search.search("what is type 2 diabetes mellitus")

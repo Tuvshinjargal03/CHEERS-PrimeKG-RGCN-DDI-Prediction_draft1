@@ -7,15 +7,14 @@ import os
 import re
 from urllib.request import Request
 
-from src.gemini_query_interpreter import GEMINI_MODEL, open_with_retry
+from src.gemini_query_interpreter import (
+    GEMINI_API_BASE,
+    open_with_model_fallback,
+)
 
 
 MAX_EVIDENCE_CHARS = 6_000
 MAX_ITEM_CHARS = 700
-ENDPOINT = (
-    "https://generativelanguage.googleapis.com/v1beta/models/"
-    f"{GEMINI_MODEL}:generateContent"
-)
 
 
 class GeminiEvidenceSummarizer:
@@ -112,9 +111,7 @@ class GeminiEvidenceSummarizer:
             "required": ["status", "short_answer", "key_points", "what_we_cannot_conclude", "sources_used"],
             "additionalProperties": False,
         }
-        request = Request(
-            ENDPOINT,
-            data=json.dumps({
+        body = {
                 "contents": [{"parts": [{"text": instruction}]}],
                 "generationConfig": {
                     "responseMimeType": "application/json",
@@ -122,15 +119,28 @@ class GeminiEvidenceSummarizer:
                     "temperature": 0,
                     "maxOutputTokens": 600,
                 },
-            }).encode("utf-8"),
-            headers={"Content-Type": "application/json", "x-goog-api-key": self.api_key},
-            method="POST",
-        )
+            }
+        def request_factory(model):
+            return Request(
+                f"{GEMINI_API_BASE}/{model}:generateContent",
+                data=json.dumps(body).encode("utf-8"),
+                headers={
+                    "Content-Type": "application/json",
+                    "x-goog-api-key": self.api_key,
+                },
+                method="POST",
+            )
         try:
-            with open_with_retry(request, self.timeout_seconds) as response:
+            response, model_used = open_with_model_fallback(
+                request_factory, self.timeout_seconds
+            )
+            with response:
                 payload = json.loads(response.read().decode("utf-8"))
             text = payload["candidates"][0]["content"]["parts"][0]["text"]
-            return self._validate(json.loads(text))
+            result = self._validate(json.loads(text))
+            if result is not None:
+                result["model_used"] = model_used
+            return result
         except Exception:
             return None
 

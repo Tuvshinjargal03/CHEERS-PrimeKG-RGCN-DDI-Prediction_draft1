@@ -9,11 +9,9 @@ from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 
-GEMINI_MODEL = "gemini-3.8-flash"
-GEMINI_ENDPOINT = (
-    "https://generativelanguage.googleapis.com/v1beta/models/"
-    f"{GEMINI_MODEL}:generateContent"
-)
+GEMINI_PRIMARY_MODEL = "gemini-3.8-flash"
+GEMINI_FALLBACK_MODEL = "gemini-3.5-flash"
+GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models"
 INTERPRETER_INTENTS = (
     "drug_information",
     "disease_information",
@@ -41,6 +39,30 @@ def open_with_retry(request, timeout_seconds, backoff_seconds=0.4):
         exc.close()
         time.sleep(backoff_seconds)
         return urlopen(request, timeout=timeout_seconds)
+
+
+def open_with_model_fallback(request_factory, timeout_seconds, backoff_seconds=0.4):
+    """Use the fallback model once only after exhausted retryable primary errors."""
+    try:
+        return (
+            open_with_retry(
+                request_factory(GEMINI_PRIMARY_MODEL),
+                timeout_seconds,
+                backoff_seconds,
+            ),
+            GEMINI_PRIMARY_MODEL,
+        )
+    except HTTPError as exc:
+        if exc.code not in RETRYABLE_GEMINI_STATUS:
+            raise
+        exc.close()
+        return (
+            urlopen(
+                request_factory(GEMINI_FALLBACK_MODEL),
+                timeout=timeout_seconds,
+            ),
+            GEMINI_FALLBACK_MODEL,
+        )
 
 
 class GeminiQueryInterpreter:
@@ -129,25 +151,32 @@ class GeminiQueryInterpreter:
                 "maxOutputTokens": 512,
             },
         }
-        request = Request(
-            GEMINI_ENDPOINT,
-            data=json.dumps(body).encode("utf-8"),
-            headers={
-                "Content-Type": "application/json",
-                "x-goog-api-key": self.api_key,
-            },
-            method="POST",
-        )
+        def request_factory(model):
+            return Request(
+                f"{GEMINI_API_BASE}/{model}:generateContent",
+                data=json.dumps(body).encode("utf-8"),
+                headers={
+                    "Content-Type": "application/json",
+                    "x-goog-api-key": self.api_key,
+                },
+                method="POST",
+            )
         try:
-            with open_with_retry(request, self.timeout_seconds) as response:
+            response, model_used = open_with_model_fallback(
+                request_factory, self.timeout_seconds
+            )
+            with response:
                 payload = json.loads(response.read().decode("utf-8"))
             text = payload["candidates"][0]["content"]["parts"][0]["text"]
-            return self._validate(json.loads(text))
+            result = self._validate(json.loads(text))
+            if result is not None:
+                result["model_used"] = model_used
+            return result
         except Exception:
             return None
 
 
 __all__ = [
-    "GeminiQueryInterpreter", "GEMINI_MODEL", "INTERPRETER_INTENTS",
-    "open_with_retry",
+    "GeminiQueryInterpreter", "GEMINI_PRIMARY_MODEL", "GEMINI_FALLBACK_MODEL",
+    "INTERPRETER_INTENTS", "open_with_retry", "open_with_model_fallback",
 ]
