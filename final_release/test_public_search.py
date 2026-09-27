@@ -71,6 +71,55 @@ class PublicSearchTests(unittest.TestCase):
             payload["recognized_entities"][0]["match_type"], "exact_entity_id"
         )
 
+    def test_close_drug_spelling_resolves_when_match_is_clear(self):
+        payload = self.search.search("ibuprofin")
+        self.assertEqual(payload["intent"], "drug_information")
+        self.assertEqual(payload["recognized_entities"][0]["name"], "Ibuprofen")
+        self.assertEqual(
+            payload["recognized_entities"][0]["match_type"],
+            "close_fuzzy_name",
+        )
+
+    def test_uncertain_disease_spelling_returns_diabetes_suggestions(self):
+        payload = self.search.search("diabetis")
+        self.assertEqual(payload["recognized_entities"], [])
+        candidates = payload["ambiguous_matches"][0]["candidates"]
+        self.assertLessEqual(len(candidates), 5)
+        self.assertTrue(candidates)
+        self.assertTrue(
+            all(item["match_type"] == "close_fuzzy_name" for item in candidates)
+        )
+        self.assertTrue(
+            any("diabetes" in item["name"].casefold() for item in candidates)
+        )
+
+    def test_exact_canonical_name_outranks_containing_name(self):
+        search = object.__new__(PublicSearchService)
+        search.entities = (
+            {
+                "entity_type": "drug",
+                "entity_id": "EXACT",
+                "name": "Aspirin",
+                "normalized_name": "aspirin",
+                "normalized_id": "exact",
+                "node_id": 1,
+                "source": "fixture",
+            },
+            {
+                "entity_type": "drug",
+                "entity_id": "LONGER",
+                "name": "Nitroaspirin",
+                "normalized_name": "nitroaspirin",
+                "normalized_id": "longer",
+                "node_id": 2,
+                "source": "fixture",
+            },
+        )
+        match, ambiguity = search._resolve_fragment("aspirin", ("drug",))
+        self.assertIsNone(ambiguity)
+        self.assertEqual(match[0]["name"], "Aspirin")
+        self.assertEqual(match[1], "exact_canonical_name")
+
     def test_approved_disease_description(self):
         payload = self.search.search("what is type 2 diabetes mellitus")
         entity = payload["recognized_entities"][0]

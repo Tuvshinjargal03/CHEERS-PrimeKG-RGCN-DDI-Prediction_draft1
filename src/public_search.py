@@ -8,6 +8,7 @@ generate personalized medical conclusions, infer aliases, or use R-GCN scores.
 from __future__ import annotations
 
 import csv
+from difflib import SequenceMatcher
 import json
 import re
 import unicodedata
@@ -97,6 +98,10 @@ UNSUPPORTED_DIET_PATTERNS = (
     re.compile(r"^weight loss plan(?: for me)?$"),
 )
 MAX_AMBIGUOUS_MATCHES = 20
+MAX_FUZZY_SUGGESTIONS = 5
+FUZZY_MIN_SCORE = 0.84
+FUZZY_AUTO_ACCEPT_SCORE = 0.86
+FUZZY_AUTO_ACCEPT_MARGIN = 0.08
 
 
 def normalize_query(value):
@@ -251,6 +256,32 @@ class PublicSearchService:
             return "canonical_name_substring", 4
         return None
 
+    @staticmethod
+    def _fuzzy_score(entity, fragment):
+        """Score conservative spelling similarity against a canonical name."""
+        if len(fragment) < 5:
+            return 0.0
+        name = entity["normalized_name"]
+        comparisons = [name]
+        comparisons.extend(token for token in name.split() if len(token) >= 5)
+        return max(
+            SequenceMatcher(None, fragment, candidate, autojunk=False).ratio()
+            for candidate in comparisons
+        )
+
+    def _fuzzy_matches(self, fragment, allowed):
+        matches = []
+        for entity in self.entities:
+            if entity["entity_type"] not in allowed:
+                continue
+            score = self._fuzzy_score(entity, fragment)
+            if score >= FUZZY_MIN_SCORE:
+                matches.append(
+                    (score, entity["name"].casefold(), entity, "close_fuzzy_name")
+                )
+        matches.sort(key=lambda item: (-item[0], item[1], item[2]["entity_id"]))
+        return matches
+
     def _resolve_fragment(self, fragment, entity_types=None):
         allowed = set(entity_types or ("drug", "disease"))
         candidates = []
@@ -262,12 +293,40 @@ class PublicSearchService:
                 match_type, priority = match
                 candidates.append((priority, entity["name"].casefold(), entity, match_type))
 
-        if not candidates:
-            return None, None
-
         candidates.sort(key=lambda item: (item[0], item[1], item[2]["entity_id"]))
-        exact = [item for item in candidates if item[0] <= 2]
-        considered = exact if exact else candidates
+        exact_names = [item for item in candidates if item[0] == 1]
+        exact_ids = [item for item in candidates if item[0] == 2]
+        prefixes = [item for item in candidates if item[0] == 3]
+        if exact_names:
+            considered = exact_names
+        elif exact_ids:
+            considered = exact_ids
+        elif prefixes:
+            # Preserve ambiguity when a short prefix also occurs in other names.
+            considered = candidates
+        else:
+            fuzzy_candidates = self._fuzzy_matches(fragment, allowed)
+            if not fuzzy_candidates:
+                considered = candidates
+            else:
+                top_score = fuzzy_candidates[0][0]
+                next_score = fuzzy_candidates[1][0] if len(fuzzy_candidates) > 1 else 0.0
+                if (
+                    top_score >= FUZZY_AUTO_ACCEPT_SCORE
+                    and top_score - next_score >= FUZZY_AUTO_ACCEPT_MARGIN
+                ):
+                    _, _, entity, match_type = fuzzy_candidates[0]
+                    return (entity, match_type), None
+
+                considered = [
+                    (4, name, entity, match_type)
+                    for _, name, entity, match_type in fuzzy_candidates[
+                        :MAX_FUZZY_SUGGESTIONS
+                    ]
+                ]
+
+        if not considered:
+            return None, None
         if len(considered) == 1:
             _, _, entity, match_type = considered[0]
             return (entity, match_type), None
