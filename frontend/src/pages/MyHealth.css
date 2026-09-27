@@ -74,6 +74,14 @@
   margin-bottom: 0.85rem;
 }
 
+.health-section-heading--compact > div > p:last-child {
+  max-width: 46rem;
+  margin: 0.4rem 0 0;
+  color: var(--ink-muted);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
 .health-section-heading h2,
 .health-checker h2,
 .health-review-header h2 {
@@ -131,6 +139,13 @@
   color: var(--ink-muted);
   font-size: 0.75rem;
   font-weight: 800;
+}
+
+.health-context-purpose {
+  margin: 0.35rem 0 0;
+  color: var(--ink-muted);
+  font-size: 0.74rem;
+  line-height: 1.45;
 }
 
 .health-context-items {
@@ -244,8 +259,9 @@
 }
 
 .health-candidate-summary {
-  display: flex;
+  display: grid;
   grid-column: 1 / -1;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
@@ -277,6 +293,18 @@
 .health-candidate-summary p {
   margin: 0;
   text-align: right;
+}
+
+.health-candidate-summary ul {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0.7rem 0 0 1.15rem;
+  border-top: 1px solid var(--line-soft);
+  color: var(--ink-muted);
+  font-size: 0.73rem;
+  line-height: 1.45;
 }
 
 .health-capabilities {
@@ -365,6 +393,34 @@
   padding: 0.75rem 1.5rem;
   border-bottom: 1px solid var(--line-soft);
   background: #fbfcfd;
+}
+
+.health-review-summary {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.55rem;
+  padding: 1rem 1.5rem 0;
+}
+
+.health-review-summary article {
+  display: grid;
+  gap: 0.18rem;
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--line-soft);
+  border-radius: 0.75rem;
+  background: #fff;
+}
+
+.health-review-summary strong {
+  color: var(--ink-strong);
+  font-size: 1rem;
+}
+
+.health-review-summary span {
+  color: var(--ink-muted);
+  font-size: 0.68rem;
+  line-height: 1.35;
 }
 
 .health-review-layout {
@@ -588,6 +644,22 @@
   display: block;
 }
 
+.health-topic-boundary,
+.health-review-boundary {
+  color: var(--ink-muted);
+  font-size: 0.73rem;
+  line-height: 1.5;
+}
+
+.health-topic-boundary {
+  margin: 0.75rem 0 0;
+}
+
+.health-review-boundary {
+  margin: 0;
+  padding: 0 1.5rem 1.4rem;
+}
+
 .health-topic-group li strong {
   color: var(--ink-strong);
   font-size: 0.77rem;
@@ -615,6 +687,10 @@
 }
 
 @media (max-width: 900px) {
+  .health-review-summary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .health-review-layout {
     grid-template-columns: 1fr;
   }
@@ -665,12 +741,15 @@
   }
 
   .health-candidate-summary {
-    align-items: flex-start;
-    flex-direction: column;
+    grid-template-columns: 1fr;
   }
 
   .health-candidate-summary p {
     text-align: left;
+  }
+
+  .health-candidate-summary ul {
+    grid-column: auto;
   }
 
   .health-review-header {
@@ -685,6 +764,15 @@
 
   .health-review-progress {
     padding-inline: 1.15rem;
+  }
+
+  .health-review-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 0.9rem 1.15rem 0;
+  }
+
+  .health-review-boundary {
+    padding: 0 1.15rem 1.15rem;
   }
 
   .health-pair-result__heading,

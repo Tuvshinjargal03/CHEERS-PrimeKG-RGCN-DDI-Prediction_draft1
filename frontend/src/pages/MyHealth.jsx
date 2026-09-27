@@ -36,7 +36,7 @@ const PAIR_STATUS_PRESENTATION = {
   },
   review: {
     label: 'Literature found',
-    description: 'PubMed returned name-matched literature records for this medicine pair.',
+    description: 'PubMed returned name-matched literature records for this medicine pair. This is not a systematic literature review.',
     Icon: BookOpen,
   },
   insufficient: {
@@ -123,7 +123,7 @@ function useSavedInformation(items, kind) {
   return { information, loading };
 }
 
-function ContextGroup({ title, items, emptyLabel, actionLabel, actionTo }) {
+function ContextGroup({ title, description, items, emptyLabel, actionLabel, actionTo }) {
   const visibleItems = items.slice(0, 5);
   const remainingCount = items.length - visibleItems.length;
 
@@ -133,6 +133,7 @@ function ContextGroup({ title, items, emptyLabel, actionLabel, actionTo }) {
         <h3>{title}</h3>
         <span>{items.length}</span>
       </div>
+      <p className="health-context-purpose">{description}</p>
       {items.length ? (
         <div className="health-context-items" aria-label={`Saved ${title.toLowerCase()}`}>
           {visibleItems.map((item) => (
@@ -258,6 +259,23 @@ function MyHealth() {
       return leftPriority - rightPriority || left.originalIndex - right.originalIndex;
     });
   }, [candidateReview.results]);
+
+  const pairSummary = useMemo(() => candidateReview.results.reduce((summary, result) => {
+    summary.reviewed += 1;
+    if (result.failed) summary.unavailable += 1;
+    else {
+      if (result.hasExplicitLabel) summary.explicit += 1;
+      if (result.hasLiterature) summary.literature += 1;
+      if (!result.hasExplicitLabel && !result.hasLiterature) summary.noMatch += 1;
+    }
+    return summary;
+  }, {
+    reviewed: 0,
+    explicit: 0,
+    literature: 0,
+    noMatch: 0,
+    unavailable: 0,
+  }), [candidateReview.results]);
 
   const conditionConnections = useMemo(() => {
     if (!candidate) return [];
@@ -387,6 +405,11 @@ function MyHealth() {
           ...pair,
           failed,
           status: derivePairReviewStatus(evidence, failed).key,
+          hasExplicitLabel: Boolean(
+            evidence?.label_evidence?.evidence_found
+            && evidence.label_evidence?.pair_evidence?.length,
+          ),
+          hasLiterature: Boolean(evidence?.literature?.papers?.length),
         };
         setCandidateReview((current) => ({
           ...current,
@@ -418,7 +441,7 @@ function MyHealth() {
         </p>
         <p className="my-health-privacy-note">
           <Info size={15} aria-hidden="true" />
-          Saved only in this browser. CHEERS organizes available information and does not provide diagnosis or treatment advice.
+          Saved only in this browser. This is not a medical record or clinical profile, and CHEERS does not provide diagnosis or treatment advice.
         </p>
       </header>
 
@@ -426,12 +449,14 @@ function MyHealth() {
         <div className="health-section-heading health-section-heading--compact">
           <div>
             <p className="health-section-kicker">SAVED CONTEXT</p>
-            <h2 id="health-context-title">Your health context</h2>
+            <h2 id="health-context-title">Your saved context</h2>
+            <p>Saved items stay in this browser and are used only to organize the review shown below.</p>
           </div>
         </div>
         <div className="health-context-grid">
           <ContextGroup
             title="Medicines"
+            description="Used for medicine-pair source review."
             items={savedMedicines}
             emptyLabel="No medicines saved yet."
             actionLabel={savedMedicines.length ? 'Manage medicines' : 'Add medicines'}
@@ -439,6 +464,7 @@ function MyHealth() {
           />
           <ContextGroup
             title="Conditions"
+            description="Used to show existing relationships in available CHEERS data."
             items={savedConditions}
             emptyLabel="No conditions saved yet."
             actionLabel={savedConditions.length ? 'Manage conditions' : 'Add conditions'}
@@ -455,7 +481,7 @@ function MyHealth() {
           <div>
             <p className="health-section-kicker">MEDICINE CHECK</p>
             <h2 id="health-checker-title">Check a medicine</h2>
-            <p>Considering another medicine? Review available information against your saved health context.</p>
+            <p>Select one candidate medicine. It remains separate from your saved medicines.</p>
           </div>
         </div>
 
@@ -476,6 +502,10 @@ function MyHealth() {
               <p>
                 Review against {eligibleSavedMedicines.length} saved medicine{eligibleSavedMedicines.length === 1 ? '' : 's'} · {savedConditions.length} saved condition{savedConditions.length === 1 ? '' : 's'}
               </p>
+              <ul>
+                <li>{eligibleSavedMedicines.length ? `${eligibleSavedMedicines.length} medicine-pair review${eligibleSavedMedicines.length === 1 ? '' : 's'} will run.` : 'No medicine-pair reviews will run because no other medicine is saved.'}</li>
+                <li>{savedConditions.length ? `${savedConditions.length} saved condition${savedConditions.length === 1 ? '' : 's'} available for relationship context.` : 'No saved conditions are available for relationship context.'}</li>
+              </ul>
             </div>
           ) : null}
 
@@ -542,6 +572,14 @@ function MyHealth() {
             </p>
           ) : null}
 
+          <section className="health-review-summary" aria-label="Medicine pair review summary">
+            <article><strong>{pairSummary.reviewed}</strong><span>Pairs reviewed</span></article>
+            <article><strong>{pairSummary.explicit}</strong><span>Explicit FDA label information</span></article>
+            <article><strong>{pairSummary.literature}</strong><span>Related PubMed literature</span></article>
+            <article><strong>{pairSummary.noMatch}</strong><span>No matching information retrieved</span></article>
+            <article><strong>{pairSummary.unavailable}</strong><span>Source unavailable</span></article>
+          </section>
+
           <div className="health-review-layout">
             {eligibleSavedMedicines.length > 0 ? (
               <section className="health-results-primary" aria-labelledby="medicine-results-title">
@@ -587,7 +625,21 @@ function MyHealth() {
                   </p>
                 ) : null}
               </section>
-            ) : null}
+            ) : (
+              <section className="health-results-primary" aria-labelledby="medicine-results-title">
+                <div className="health-results-heading">
+                  <div>
+                    <h3 id="medicine-results-title">With your medicines</h3>
+                    <p>Medicine-pair source review</p>
+                  </div>
+                </div>
+                <div className="health-bounded-empty">
+                  <p>No other saved medicine was available for pair review.</p>
+                  <p>The candidate medicine remains separate and its available information can still be reviewed.</p>
+                  <Link className="health-result-link" to="/my-medicines">Add medicines <ArrowRight size={14} aria-hidden="true" /></Link>
+                </div>
+              </section>
+            )}
 
             <div className="health-results-supporting">
               {savedConditions.length > 0 ? (
@@ -627,20 +679,37 @@ function MyHealth() {
                   ) : candidateReview.completed ? (
                     <div className="health-bounded-empty">
                       <p>No recorded medicine–condition relationship was found in the checked CHEERS data.</p>
-                      <p>This does not establish that the medicine is safe or appropriate for the condition.</p>
+                      <p>This does not prove that no biomedical relationship exists or establish that the medicine is safe or appropriate for the condition.</p>
                     </div>
                   ) : null}
                 </section>
-              ) : null}
-
-              {candidateReview.medicineInformationStatus === 'ready' && candidateTopics.length > 0 ? (
-                <section className="health-support-section" aria-labelledby="medicine-information-title">
+              ) : (
+                <section className="health-support-section" aria-labelledby="condition-results-title">
                   <div className="health-results-heading">
                     <div>
-                      <h3 id="medicine-information-title">Other available information</h3>
-                      <p>Topics retrieved for {candidate.name}.</p>
+                      <h3 id="condition-results-title">With your conditions</h3>
+                      <p>Existing relationships in available CHEERS data</p>
                     </div>
                   </div>
+                  <div className="health-bounded-empty">
+                    <p>No saved conditions were available for relationship context.</p>
+                    <p>This does not prevent medicine information from being reviewed.</p>
+                    <Link className="health-result-link" to="/my-conditions">Add conditions <ArrowRight size={14} aria-hidden="true" /></Link>
+                  </div>
+                </section>
+              )}
+
+              <section className="health-support-section" aria-labelledby="medicine-information-title">
+                <div className="health-results-heading">
+                  <div>
+                    <h3 id="medicine-information-title">Candidate medicine information</h3>
+                    <p>Official-label topics retrieved separately for {candidate.name}.</p>
+                  </div>
+                </div>
+                {candidateReview.medicineInformationStatus === 'loading' ? (
+                  <p className="health-inline-state" role="status"><LoaderCircle className="spin" size={15} aria-hidden="true" />Checking candidate medicine information</p>
+                ) : candidateReview.medicineInformationStatus === 'ready' && candidateTopics.length > 0 ? (
+                  <>
                   <div className="health-topic-groups">
                     {candidateTopics.map((group) => (
                       <div className="health-topic-group" key={group.label}>
@@ -658,14 +727,24 @@ function MyHealth() {
                       </div>
                     ))}
                   </div>
+                  <p className="health-topic-boundary">Official-label topics are general source information, not personalized food or lifestyle recommendations.</p>
                   <Link className="health-result-link" to={`/medicines/${encodeURIComponent(candidate.entity_id)}`}>
                     View medicine information
                     <ArrowRight size={14} aria-hidden="true" />
                   </Link>
-                </section>
-              ) : null}
+                  </>
+                ) : candidateReview.completed ? (
+                  <div className="health-bounded-empty">
+                    <p>{candidateReview.medicineInformationStatus === 'error' ? 'Candidate medicine information is currently unavailable.' : 'No supported official-label food or lifestyle topic was retrieved.'}</p>
+                    <p>No available topic is not a personalized recommendation or safety conclusion.</p>
+                  </div>
+                ) : null}
+              </section>
             </div>
           </div>
+          <p className="health-review-boundary">
+            My Health is an information-review workspace, not a medical record or clinical decision-support tool. CHEERS does not diagnose conditions or recommend starting, stopping, or changing treatment.
+          </p>
         </section>
       ) : null}
     </div>
