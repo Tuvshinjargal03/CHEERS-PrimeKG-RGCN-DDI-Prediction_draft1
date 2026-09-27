@@ -13,6 +13,7 @@ import {
 import { AlertCircle, CheckCircle2, LoaderCircle } from 'lucide-react'
 import InfoTooltip from '../components/InfoTooltip.jsx'
 import RobustnessSection, { RobustnessLimitations } from '../components/RobustnessSection.jsx'
+import { getJson } from '../lib/api.js'
 
 const GRAPH_LABELS = {
   G0: 'DDI only',
@@ -57,14 +58,8 @@ function Experiments() {
 
     async function load() {
       const [rankingResult, classificationResult] = await Promise.allSettled([
-        fetch('/api/experiment').then((response) => {
-          if (!response.ok) throw new Error('Ranking experiment data is unavailable.')
-          return response.json()
-        }),
-        fetch('/api/classification').then((response) => {
-          if (!response.ok) throw new Error('Classification metrics are unavailable.')
-          return response.json()
-        }),
+        getJson('/api/experiment'),
+        getJson('/api/classification'),
       ])
 
       if (!active) return
