@@ -187,8 +187,40 @@
   max-width: 820px;
 }
 
+.medicine-landing-primary {
+  display: grid;
+  gap: 4px;
+}
+
+.medicine-landing-primary strong {
+  color: #343749;
+  font-size: 0.9rem;
+}
+
 .medicine-landing-secondary {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #e7e3eb;
+}
+
+.medicine-landing-secondary > div {
+  display: grid;
+  gap: 3px;
+  color: #6f7485;
+  font-size: 0.72rem;
+}
+
+.medicine-landing-secondary > div span {
+  color: #484c5e;
+  font-weight: 750;
+}
+
+.medicine-landing-secondary > div small {
+  max-width: 520px;
+  line-height: 1.45;
 }
 
 .medicine-landing-search .scanner-launch-button {
@@ -293,6 +325,42 @@
   font-weight: 700;
 }
 
+.medicine-profile-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.medicine-profile-status span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #f2f0f5;
+  color: #626779;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.medicine-section-guide {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px 14px;
+  padding: 13px 16px;
+  border: 1px solid #e3e0e8;
+  border-radius: 13px;
+  background: #faf9fc;
+  color: #74798a;
+  font-size: 0.7rem;
+}
+
+.medicine-section-guide strong {
+  color: #3e4254;
+}
+
 .product-back-link {
   display: block;
   margin-bottom: 17px;
@@ -386,6 +454,14 @@
   font-size: 0.82rem;
 }
 
+.medicine-module-grid strong small {
+  display: block;
+  margin-top: 2px;
+  color: #8a8e9d;
+  font-size: 0.6rem;
+  font-weight: 650;
+}
+
 .medicine-module-grid span {
   grid-column: 2;
   color: #6d7283;
@@ -422,6 +498,20 @@
   margin: 4px 0 0;
   color: #292c3f;
   font-size: 1.35rem;
+}
+
+.medicine-context-intro,
+.medicine-availability-boundary {
+  margin: -4px 0 0;
+  color: #6f7485;
+  font-size: 0.76rem;
+  line-height: 1.6;
+}
+
+.medicine-availability-boundary {
+  margin-top: 10px;
+  padding-top: 12px;
+  border-top: 1px solid #ebe8ef;
 }
 
 .medicine-label-entries {
@@ -729,6 +819,11 @@
   margin: 0;
   font-size: 0.78rem;
   line-height: 1.55;
+}
+
+.medicine-source-boundary > div {
+  display: grid;
+  gap: 5px;
 }
 
 .disease-landing-search {
@@ -1631,6 +1726,11 @@
   }
 
   .medicine-profile-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .medicine-landing-secondary {
     align-items: flex-start;
     flex-direction: column;
   }
