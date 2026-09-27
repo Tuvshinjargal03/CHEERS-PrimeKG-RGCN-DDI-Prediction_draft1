@@ -21,6 +21,12 @@ const BASE = {
 const WARFARIN = { entity_type: 'drug', entity_id: 'DB00682', name: 'Warfarin' }
 const METFORMIN = { entity_type: 'drug', entity_id: 'DB00331', name: 'Metformin' }
 const IBUPROFEN = { entity_type: 'drug', entity_id: 'DB01050', name: 'Ibuprofen' }
+const ASPIRIN = {
+  entity_type: 'drug',
+  entity_id: 'DB00945',
+  name: 'Acetylsalicylic acid',
+  display_name: 'Aspirin',
+}
 const DISEASE = { entity_type: 'disease', entity_id: '5148', name: 'type 2 diabetes mellitus' }
 const INFLUENZA = { entity_type: 'disease', entity_id: '5812', name: 'influenza' }
 const HYPERTENSION = {
@@ -450,6 +456,36 @@ describe('deterministic public-search routing', () => {
     const pairHeading = await screen.findByRole('heading', { name: 'Warfarin + Metformin' })
     expect(screen.getByText('Needs review')).toBeVisible()
     expect(pairHeading.closest('section')).toHaveClass('is-review')
+  })
+
+  it('uses the verified Aspirin alias while retaining its canonical identity', async () => {
+    getJson.mockResolvedValue({
+      ...BASE,
+      intent: 'drug_pair_question',
+      recognized_entities: [WARFARIN, ASPIRIN],
+      answer: {
+        answer_type: 'insufficient_information',
+        direct_answer: 'Not enough information',
+        drug_1: WARFARIN,
+        drug_2: { entity_type: 'drug', entity_id: 'DB00945', name: 'Acetylsalicylic acid' },
+        evidence_summary: { label_mentions: 0, pubmed_records: 0 },
+      },
+      explanation: {
+        status: 'limited',
+        short_answer: 'The checked sources did not provide enough information.',
+        key_points: [],
+        what_we_cannot_conclude: 'Missing evidence does not establish safety.',
+        sources_used: ['FDA label', 'PubMed'],
+      },
+    })
+    renderSearch('/search?q=warfarin%20aspirin%20together')
+
+    expect(await screen.findByRole('heading', { name: 'Warfarin + Aspirin' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Aspirin' })).toBeVisible()
+    expect(screen.getByText('Acetylsalicylic acid')).toBeVisible()
+    expect(screen.getByText('DB00945')).toBeVisible()
+    expect(screen.getByText('Sources checked: FDA label, PubMed')).toBeVisible()
+    expect(screen.queryByText('Sources used: FDA label, PubMed')).not.toBeInTheDocument()
   })
 
   it('shows a neutral insufficient state without a safe verdict', async () => {

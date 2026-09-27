@@ -103,13 +103,15 @@ function replaceAmbiguousFragment(query, fragment, replacement) {
 function EntityCard({ entity }) {
   const isDisease = entity.entity_type === 'disease'
   const Icon = isDisease ? GitBranch : Pill
+  const displayName = entity.display_name || entity.name
 
   return (
     <article className="public-entity-card">
       <span className="public-entity-icon"><Icon size={20} /></span>
       <div>
         <span className="public-entity-type">{entityLabel(entity)}</span>
-        <h3>{entity.name}</h3>
+        <h3>{displayName}</h3>
+        {entity.display_name && entity.display_name !== entity.name && <p>{entity.name}</p>}
         <p>{entity.entity_id}</p>
       </div>
       <span className="public-recognized-badge">
@@ -336,7 +338,7 @@ function DrugDiseaseAnswer({ answer }) {
   )
 }
 
-function PairQuestionAnswer({ answer }) {
+function PairQuestionAnswer({ answer, entities = [] }) {
   if (!answer?.drug_1 || !answer?.drug_2) return null
   const states = {
     interaction_warning_found: { tone: 'warning', Icon: AlertCircle },
@@ -347,6 +349,9 @@ function PairQuestionAnswer({ answer }) {
   if (!state) return null
   const Icon = state.Icon
   const counts = answer.evidence_summary || {}
+  const displayName = (drug) => (
+    entities.find((entity) => entity.entity_id === drug.entity_id)?.display_name || drug.name
+  )
 
   return (
     <section className={`public-direct-answer is-${state.tone}`} aria-labelledby="pair-question-answer-title">
@@ -354,7 +359,7 @@ function PairQuestionAnswer({ answer }) {
         <span className="public-direct-answer-icon"><Icon size={22} aria-hidden="true" /></span>
         <div>
           <span className="public-answer-status-label">{answer.direct_answer}</span>
-          <h2 id="pair-question-answer-title">{answer.drug_1.name} + {answer.drug_2.name}</h2>
+          <h2 id="pair-question-answer-title">{displayName(answer.drug_1)} + {displayName(answer.drug_2)}</h2>
         </div>
       </div>
       {answer.supporting_text && <p className="public-direct-answer-copy">{answer.supporting_text}</p>}
@@ -376,7 +381,7 @@ function PairQuestionAnswer({ answer }) {
   )
 }
 
-function PlainLanguageExplanation({ explanation }) {
+function PlainLanguageExplanation({ explanation, evidenceSummary }) {
   if (!explanation?.short_answer) return null
   return (
     <section className="public-answer-card" aria-labelledby="plain-answer-title">
@@ -396,7 +401,12 @@ function PlainLanguageExplanation({ explanation }) {
         </div>
       )}
       {explanation.sources_used?.length > 0 && (
-        <p className="public-provenance">Sources used: {explanation.sources_used.join(', ')}</p>
+        <p className="public-provenance">
+          {evidenceSummary && Object.values(evidenceSummary).some((count) => count === 0)
+            ? 'Sources checked: '
+            : 'Sources used: '}
+          {explanation.sources_used.join(', ')}
+        </p>
       )}
     </section>
   )
@@ -785,7 +795,10 @@ export default function PublicSearch() {
 
       {!loading && !error && data && !isUnknown && !isAmbiguous && (
         <div className="public-results" aria-live="polite">
-          <PlainLanguageExplanation explanation={data.explanation} />
+          <PlainLanguageExplanation
+            explanation={data.explanation}
+            evidenceSummary={data.intent === 'drug_pair_question' ? data.answer?.evidence_summary : undefined}
+          />
           {data.intent === 'general_symptom_or_treatment_question' && (
             <TreatmentQuestionNextSteps medicine={recognized[0]} />
           )}
@@ -793,7 +806,7 @@ export default function PublicSearch() {
             <DrugDiseaseAnswer answer={data.answer} />
           )}
           {data.intent === 'drug_pair_question' && (
-            <PairQuestionAnswer answer={data.answer} />
+            <PairQuestionAnswer answer={data.answer} entities={recognized} />
           )}
           {data.intent === 'medicines_for_disease' && recognized[0]?.entity_type === 'disease' && (
             <MedicinesForDiseaseState answer={data.answer} disease={recognized[0]} />

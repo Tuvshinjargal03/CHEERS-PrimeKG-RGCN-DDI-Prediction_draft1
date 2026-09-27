@@ -221,6 +221,41 @@ class PublicSearchTests(unittest.TestCase):
         self.assertLessEqual(len(explanation["key_points"]), 3)
         self.assertNotIn("recommend", explanation["short_answer"].casefold())
 
+    def test_side_effect_fallback_removes_headings_and_duplicate_points(self):
+        class RepeatedHeadingDrugInformationService:
+            def get_drug_information(self, _drug_name):
+                entry = {"text": "6 ADVERSE REACTIONS 6.1 Clinical Trials Experience Nausea was reported."}
+                return {
+                    "status": "ok",
+                    "records": [{"sections": {"adverse_reactions": [entry, entry]}}],
+                }
+
+        self.use_summarizer(FixtureEvidenceSummarizer(error=TimeoutError()))
+        self.use_drug_information(RepeatedHeadingDrugInformationService())
+        explanation = self.search.search("metformin side effects")["explanation"]
+        self.assertEqual(explanation["key_points"], ["Nausea was reported."])
+        self.assertNotIn("Missing label text", explanation["what_we_cannot_conclude"])
+        self.assertEqual(explanation["sources_used"], ["FDA label"])
+
+    def test_side_effect_summary_is_cleaned_after_gemini(self):
+        summary = {
+            "status": "answered",
+            "short_answer": "6 ADVERSE REACTIONS Nausea was reported.",
+            "key_points": [
+                "6.1 Clinical Trials Experience Nausea was reported.",
+                "Headache was reported.",
+                "Headache was reported.",
+            ],
+            "what_we_cannot_conclude": "Missing label text does not mean no risks exist.",
+            "sources_used": ["FDA label"],
+        }
+        self.use_summarizer(FixtureEvidenceSummarizer(result=summary))
+        self.use_drug_information(FixtureDrugInformationService())
+        explanation = self.search.search("metformin side effects")["explanation"]
+        self.assertEqual(explanation["short_answer"], "Nausea was reported.")
+        self.assertEqual(explanation["key_points"], ["Headache was reported."])
+        self.assertNotIn("Missing label text", explanation["what_we_cannot_conclude"])
+
     def test_exact_drug_name(self):
         payload = self.search.search("Metformin")
         self.assertEqual(payload["intent"], "drug_information")
@@ -386,6 +421,7 @@ class PublicSearchTests(unittest.TestCase):
         self.assertEqual(
             payload["recognized_entities"][0]["match_type"], "exact_common_name"
         )
+        self.assertEqual(payload["recognized_entities"][0]["display_name"], "Aspirin")
 
     def test_two_drug_wording_prefers_pair_question(self):
         cases = (

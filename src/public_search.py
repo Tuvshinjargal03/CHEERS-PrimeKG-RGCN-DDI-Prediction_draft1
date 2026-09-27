@@ -638,6 +638,15 @@ class PublicSearchService:
             "source": entity["source"],
             "match_type": match_type,
         }
+        if entity["entity_type"] == "drug" and match_type == "exact_common_name":
+            result["display_name"] = next(
+                (
+                    alias.title()
+                    for alias, canonical_name in DRUG_NAME_ALIASES.items()
+                    if canonical_name == entity["normalized_name"]
+                ),
+                entity["name"],
+            )
         if entity["entity_type"] == "disease":
             result["verified_description_available"] = bool(entity["description"])
             result["description_status"] = entity["description_status"]
@@ -1441,6 +1450,32 @@ class PublicSearchService:
                         evidence.append(f"{section}: {entry['text']}")
         return evidence
 
+    @staticmethod
+    def _plain_label_points(snippets):
+        points = []
+        seen = set()
+        heading = re.compile(
+            r"^(?:adverse reactions?|warnings(?: and cautions| and precautions)?|"
+            r"clinical trials experience|postmarketing experience)\s*[:.\-]?\s*",
+            re.IGNORECASE,
+        )
+        for snippet in snippets:
+            text = snippet.split(": ", 1)[-1]
+            for _ in range(3):
+                text = re.sub(r"^\s*(?:section\s*)?\d+(?:\.\d+)*[.)]?\s*", "", text, flags=re.IGNORECASE)
+                text = heading.sub("", text)
+            text = " ".join(text.split()).strip(" -:;")
+            if not text:
+                continue
+            point = (text[:237] + "...") if len(text) > 240 else text
+            key = re.sub(r"\W+", " ", point).strip().casefold()
+            if key and key not in seen:
+                points.append(point)
+                seen.add(key)
+            if len(points) == 3:
+                break
+        return points
+
     def _with_explanation(self, query, response):
         intent = response["intent"]
         if intent not in {
@@ -1448,6 +1483,7 @@ class PublicSearchService:
         }:
             return response
         evidence = {}
+        snippets = []
         fallback = self._fallback_explanation(response)
         if intent == "drug_pair_question":
             answer = response.get("answer", {})
@@ -1472,6 +1508,7 @@ class PublicSearchService:
                 else ("indications_and_usage", "description")
             )
             snippets = self._label_evidence(label, sections)
+            plain_points = self._plain_label_points(snippets)
             evidence = {"FDA label": snippets}
             fallback = {
                 "status": "limited" if not snippets else "answered",
@@ -1479,13 +1516,12 @@ class PublicSearchService:
                     f"CHEERS found official label information for {entity['name']}."
                     if snippets else "CHEERS could not retrieve relevant official label text for this medicine."
                 ),
-                "key_points": [
-                    (text[:237] + "...") if len(text) > 240 else text
-                    for text in (
-                        snippet.split(": ", 1)[-1] for snippet in snippets[:3]
-                    )
-                ],
-                "what_we_cannot_conclude": "Missing label text does not mean the medicine has no uses, side effects, or risks.",
+                "key_points": plain_points,
+                "what_we_cannot_conclude": (
+                    "Official label information is general information, not personalized medical advice."
+                    if snippets else
+                    "Missing label text does not mean the medicine has no uses, side effects, or risks."
+                ),
                 "sources_used": ["FDA label"] if snippets else [],
             }
         explanation = None
@@ -1498,6 +1534,19 @@ class PublicSearchService:
                 explanation = self.evidence_summarizer.summarize(query, evidence)
             except Exception:
                 explanation = None
+        if explanation and intent == "drug_side_effects":
+            cleaned = self._plain_label_points(
+                [explanation.get("short_answer", ""), *explanation.get("key_points", [])]
+            )
+            if cleaned:
+                explanation["short_answer"] = cleaned[0]
+                explanation["key_points"] = cleaned[1:]
+            if snippets and explanation.get("what_we_cannot_conclude", "").startswith(
+                "Missing label text"
+            ):
+                explanation["what_we_cannot_conclude"] = (
+                    "Official label information is general information, not personalized medical advice."
+                )
         response["explanation"] = explanation or fallback
         return response
 
