@@ -1452,26 +1452,70 @@ class PublicSearchService:
 
     @staticmethod
     def _plain_label_points(snippets):
-        points = []
-        seen = set()
-        heading = re.compile(
-            r"^(?:adverse reactions?|warnings(?: and cautions| and precautions)?|"
-            r"clinical trials experience|postmarketing experience)\s*[:.\-]?\s*",
-            re.IGNORECASE,
-        )
+        candidates = []
         for snippet in snippets:
             text = snippet.split(": ", 1)[-1]
-            for _ in range(3):
-                text = re.sub(r"^\s*(?:section\s*)?\d+(?:\.\d+)*[.)]?\s*", "", text, flags=re.IGNORECASE)
-                text = heading.sub("", text)
-            text = " ".join(text.split()).strip(" -:;")
-            if not text:
+            common = re.search(
+                r"most common adverse reactions\s*(?:\([^)]*\))?\s*are\s+([^.]+)",
+                text,
+                re.IGNORECASE,
+            )
+            if common:
+                effects = common.group(1).strip(" ,;:")
+                candidates.append(f"Commonly reported side effects include {effects}.")
+
+            cleaned = re.sub(r"\[\s*see\b.*?\]", " ", text, flags=re.IGNORECASE)
+            cleaned = re.sub(r"\(\s*\d+(?:\.\d+)*\s*\)", " ", cleaned)
+            cleaned = re.sub(
+                r"\b\d+(?:\.\d+)?\s+(?:ADVERSE REACTIONS?|WARNINGS(?: AND (?:CAUTIONS|PRECAUTIONS))?|"
+                r"CLINICAL (?:STUDIES|TRIALS) EXPERIENCE|POSTMARKETING EXPERIENCE)\b",
+                " ",
+                cleaned,
+                flags=re.IGNORECASE,
+            )
+            for sentence in re.split(r"(?<=[.!?])\s+", cleaned):
+                sentence = " ".join(sentence.split()).strip(" -:;")
+                sentence = re.sub(r"^[A-Za-z0-9 /-]{2,55}:\s*", "", sentence)
+                sentence = re.sub(r"\s+([.!?])", r"\1", sentence)
+                if not sentence or re.search(
+                    r"following adverse reactions are also discussed|see boxed warning|"
+                    r"to report suspected adverse reactions|clinical trials are conducted|"
+                    r"listed in table|www\.fda\.gov|\btable\s+\d+",
+                    sentence,
+                    re.IGNORECASE,
+                ):
+                    continue
+                words = re.findall(r"[A-Za-z][A-Za-z0-9-]*", sentence)
+                if words and len(words) <= 6 and all(word[0].isupper() for word in words):
+                    continue
+                if len(sentence) > 140:
+                    first_clause = re.split(r"[;:]", sentence, maxsplit=1)[0].strip()
+                    if len(first_clause) < 35 or len(first_clause) > 139:
+                        continue
+                    sentence = first_clause
+                if len(sentence) < 12:
+                    continue
+                candidates.append(sentence.rstrip(".!?") + ".")
+
+        points = []
+        token_sets = []
+        stopwords = {"a", "an", "and", "are", "for", "in", "of", "the", "to", "was", "were", "with"}
+        for point in candidates:
+            tokens = {
+                token for token in re.findall(r"[a-z0-9]+", point.casefold())
+                if token not in stopwords
+            }
+            if not tokens:
                 continue
-            point = (text[:237] + "...") if len(text) > 240 else text
-            key = re.sub(r"\W+", " ", point).strip().casefold()
-            if key and key not in seen:
-                points.append(point)
-                seen.add(key)
+            duplicate = any(
+                len(tokens & prior) / len(tokens | prior) >= 0.5
+                or len(tokens & prior) / min(len(tokens), len(prior)) >= 0.75
+                for prior in token_sets
+            )
+            if duplicate:
+                continue
+            points.append(point)
+            token_sets.append(tokens)
             if len(points) == 3:
                 break
         return points
@@ -1535,18 +1579,22 @@ class PublicSearchService:
             except Exception:
                 explanation = None
         if explanation and intent == "drug_side_effects":
-            cleaned = self._plain_label_points(
-                [explanation.get("short_answer", ""), *explanation.get("key_points", [])]
-            )
-            if cleaned:
-                explanation["short_answer"] = cleaned[0]
-                explanation["key_points"] = cleaned[1:]
-            if snippets and explanation.get("what_we_cannot_conclude", "").startswith(
-                "Missing label text"
-            ):
+            if snippets:
+                entity = response["recognized_entities"][0]
+                explanation["short_answer"] = (
+                    f"CHEERS found official label information for {entity['name']}."
+                )
+                explanation["key_points"] = plain_points
                 explanation["what_we_cannot_conclude"] = (
                     "Official label information is general information, not personalized medical advice."
                 )
+            else:
+                cleaned = self._plain_label_points(
+                    [explanation.get("short_answer", ""), *explanation.get("key_points", [])]
+                )
+                if cleaned:
+                    explanation["short_answer"] = cleaned[0]
+                    explanation["key_points"] = cleaned[1:]
         response["explanation"] = explanation or fallback
         return response
 

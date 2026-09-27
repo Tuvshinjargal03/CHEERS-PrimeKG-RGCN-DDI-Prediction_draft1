@@ -252,9 +252,40 @@ class PublicSearchTests(unittest.TestCase):
         self.use_summarizer(FixtureEvidenceSummarizer(result=summary))
         self.use_drug_information(FixtureDrugInformationService())
         explanation = self.search.search("metformin side effects")["explanation"]
-        self.assertEqual(explanation["short_answer"], "Nausea was reported.")
-        self.assertEqual(explanation["key_points"], ["Headache was reported."])
-        self.assertNotIn("Missing label text", explanation["what_we_cannot_conclude"])
+        self.assertEqual(
+            explanation["short_answer"],
+            "CHEERS found official label information for Metformin.",
+        )
+        self.assertEqual(explanation["key_points"], ["Retrieved side-effect text."])
+        self.assertEqual(
+            explanation["what_we_cannot_conclude"],
+            "Official label information is general information, not personalized medical advice.",
+        )
+
+    def test_current_metformin_side_effect_text_becomes_one_plain_point(self):
+        evidence = (
+            "adverse_reactions: 6 ADVERSE REACTIONS The following adverse reactions "
+            "are also discussed elsewhere in the labeling: Lactic Acidosis [ see Boxed "
+            "Warning and Warnings and Precautions (5.1) ]. Vitamin B12 Deficiency [ see "
+            "Warnings and Precautions (5.2) ]. For metformin hydrochloride tablets, the "
+            "most common adverse reactions (>5.0%) are diarrhea, nausea/vomiting, "
+            "flatulence, asthenia, indigestion, abdominal discomfort, and headache."
+        )
+        points = PublicSearchService._plain_label_points([evidence, evidence])
+        self.assertEqual(len(points), 1)
+        self.assertLessEqual(len(points[0]), 140)
+        self.assertTrue(points[0].endswith("."))
+        combined = " ".join(points)
+        self.assertNotIn("(5.1)", combined)
+        self.assertNotIn("(5.2)", combined)
+        self.assertNotIn("see Boxed Warning", combined)
+
+    def test_side_effect_points_deduplicate_similar_wording(self):
+        points = PublicSearchService._plain_label_points([
+            "warnings: Metformin may lower vitamin B12 levels.",
+            "warnings: Vitamin B12 levels may be lowered by metformin.",
+        ])
+        self.assertEqual(points, ["Metformin may lower vitamin B12 levels."])
 
     def test_exact_drug_name(self):
         payload = self.search.search("Metformin")

@@ -396,6 +396,31 @@ describe('deterministic public-search routing', () => {
     expect(screen.getByTestId('location')).toHaveTextContent('/search?q=what%20does%20metformin%20do')
   })
 
+  it('renders the cleaned Metformin side-effect answer without raw FDA references', async () => {
+    getJson.mockResolvedValue({
+      ...BASE,
+      intent: 'drug_side_effects',
+      recognized_entities: [METFORMIN],
+      explanation: {
+        status: 'answered',
+        short_answer: 'CHEERS found official label information for Metformin.',
+        key_points: [
+          'Commonly reported side effects include diarrhea, nausea/vomiting, flatulence, asthenia, indigestion, abdominal discomfort, and headache.',
+        ],
+        what_we_cannot_conclude: 'Official label information is general information, not personalized medical advice.',
+        sources_used: ['FDA label'],
+      },
+    })
+    renderSearch('/search?q=metphormin%20side%20efects')
+
+    expect(await screen.findByText('CHEERS found official label information for Metformin.')).toBeVisible()
+    expect(screen.getAllByRole('listitem')).toHaveLength(1)
+    expect(screen.getByText('Official label information is general information, not personalized medical advice.')).toBeVisible()
+    expect(document.body).not.toHaveTextContent('(5.1)')
+    expect(document.body).not.toHaveTextContent('(5.2)')
+    expect(document.body).not.toHaveTextContent('see Boxed Warning')
+  })
+
   it('offers useful non-prescribing next steps for a treatment-selection question', async () => {
     getJson.mockResolvedValue({
       ...BASE,
