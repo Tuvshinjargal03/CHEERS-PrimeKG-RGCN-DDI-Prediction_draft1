@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -123,7 +123,10 @@ describe('My Health candidate review workspace', () => {
     renderPage();
 
     expect(screen.getByRole('heading', { name: 'Check a medicine with your saved health information' })).toBeVisible();
-    expect(screen.getByRole('heading', { name: 'Your health context' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Your saved context' })).toBeVisible();
+    expect(screen.getByText('Used for medicine-pair source review.')).toBeVisible();
+    expect(screen.getByText('Used to show existing relationships in available CHEERS data.')).toBeVisible();
+    expect(screen.getByText(/not a medical record or clinical profile/i)).toBeVisible();
     expect(screen.getByText('No medicines saved yet.')).toBeVisible();
     expect(screen.getByText('No conditions saved yet.')).toBeVisible();
     expect(screen.getByRole('combobox', { name: 'Medicine to check' })).toHaveAttribute(
@@ -139,7 +142,7 @@ describe('My Health candidate review workspace', () => {
     expect(getJson).not.toHaveBeenCalled();
   });
 
-  it('uses saved conditions without rendering an empty medicine-result list', async () => {
+  it('uses saved conditions while explaining that no medicine-pair review can run', async () => {
     const user = userEvent.setup();
     save('cheers.my-conditions.v1', [DIABETES]);
     installDefaultApi();
@@ -156,7 +159,11 @@ describe('My Health candidate review workspace', () => {
       'href',
       `/diseases/${DIABETES.entity_id}`,
     );
-    expect(screen.queryByRole('heading', { name: 'With your medicines' })).not.toBeInTheDocument();
+    const medicineResults = screen.getByRole('heading', { name: 'With your medicines' }).closest('section');
+    expect(medicineResults).toBeVisible();
+    expect(screen.getByText('No other saved medicine was available for pair review.')).toBeVisible();
+    expect(within(medicineResults).getByRole('link', { name: 'Add medicines' })).toHaveAttribute('href', '/my-medicines');
+    expect(screen.getByLabelText('Medicine pair review summary')).toHaveTextContent('0Pairs reviewed');
     expect(getJson.mock.calls.some(([path]) => path.startsWith('/api/evidence/pair'))).toBe(false);
   });
 
@@ -192,6 +199,8 @@ describe('My Health candidate review workspace', () => {
     const input = await selectCandidate(user, ASPIRIN);
     expect(input).toHaveValue(ASPIRIN.name);
     expect(screen.getByLabelText('Selected medicine')).toHaveTextContent('DrugBank · DB00945');
+    expect(screen.getByLabelText('Selected medicine')).toHaveTextContent('1 medicine-pair review will run.');
+    expect(screen.getByLabelText('Selected medicine')).toHaveTextContent('No saved conditions are available for relationship context.');
     await user.click(screen.getByRole('button', { name: 'Check medicine' }));
 
     await waitFor(() => expect(
@@ -271,6 +280,12 @@ describe('My Health candidate review workspace', () => {
     expect(cards).toHaveLength(8);
     expect(screen.getByRole('button', { name: 'Show fewer' })).toHaveAttribute('aria-expanded', 'true');
     expect(screen.getByText('Source information unavailable')).toBeInTheDocument();
+    const summary = screen.getByLabelText('Medicine pair review summary');
+    expect(within(summary).getByText('Pairs reviewed').parentElement).toHaveTextContent('8Pairs reviewed');
+    expect(within(summary).getByText('Explicit FDA label information').parentElement).toHaveTextContent('1Explicit FDA label information');
+    expect(within(summary).getByText('Related PubMed literature').parentElement).toHaveTextContent('1Related PubMed literature');
+    expect(within(summary).getByText('No matching information retrieved').parentElement).toHaveTextContent('5No matching information retrieved');
+    expect(within(summary).getByText('Source unavailable').parentElement).toHaveTextContent('1Source unavailable');
     expect(getJson).toHaveBeenCalledTimes(requestCount);
     expect(screen.getAllByRole('link', { name: 'Review evidence' })[0]).toHaveAttribute(
       'href',
@@ -290,18 +305,18 @@ describe('My Health candidate review workspace', () => {
     await user.click(screen.getByRole('button', { name: 'Check medicine' }));
 
     expect(await screen.findByText('No recorded medicine–condition relationship was found in the checked CHEERS data.')).toBeVisible();
-    expect(screen.getByText('This does not establish that the medicine is safe or appropriate for the condition.')).toBeVisible();
+    expect(screen.getByText(/does not prove that no biomedical relationship exists/)).toBeVisible();
     expect(screen.queryByText(/treatment indication/i)).not.toBeInTheDocument();
   });
 
-  it('shows candidate official-label topics when available and hides the section when unavailable', async () => {
+  it('shows candidate official-label topics separately and uses a neutral unavailable state', async () => {
     const user = userEvent.setup();
     installDefaultApi();
     const { unmount } = renderPage();
 
     await selectCandidate(user, METFORMIN);
     await user.click(screen.getByRole('button', { name: 'Check medicine' }));
-    expect(await screen.findByRole('heading', { name: 'Other available information' })).toBeVisible();
+    expect(await screen.findByRole('heading', { name: 'Candidate medicine information' })).toBeVisible();
     expect(screen.getByText('Alcohol')).toBeVisible();
     expect(screen.getByText('Food or meals')).toBeVisible();
     expect(screen.getAllByText('1 official label excerpt available')).toHaveLength(2);
@@ -309,6 +324,7 @@ describe('My Health candidate review workspace', () => {
       'href',
       `/medicines/${METFORMIN.entity_id}`,
     );
+    expect(screen.getByText(/not personalized food or lifestyle recommendations/i)).toBeVisible();
 
     unmount();
     getJson.mockReset();
@@ -317,7 +333,9 @@ describe('My Health candidate review workspace', () => {
     await selectCandidate(user, IBUPROFEN);
     await user.click(screen.getByRole('button', { name: 'Check medicine' }));
     await waitFor(() => expect(screen.getByRole('heading', { name: IBUPROFEN.name })).toBeVisible());
-    expect(screen.queryByRole('heading', { name: 'Other available information' })).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Candidate medicine information' })).toBeVisible();
+    expect(screen.getByText('No supported official-label food or lifestyle topic was retrieved.')).toBeVisible();
+    expect(screen.getByText('No available topic is not a personalized recommendation or safety conclusion.')).toBeVisible();
   });
 
   it('clears old results when the candidate changes and ignores a stale pair response', async () => {

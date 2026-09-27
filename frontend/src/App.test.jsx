@@ -19,7 +19,7 @@ describe('CHEERS application shell', () => {
     })
   })
 
-  it('keeps public and research navigation destinations mounted', async () => {
+  it('keeps public, explore and research navigation destinations mounted', async () => {
     const user = userEvent.setup()
     render(<App />)
 
@@ -33,13 +33,21 @@ describe('CHEERS application shell', () => {
     expect(nav.queryByRole('link', { name: 'My Medicines' })).not.toBeInTheDocument()
     expect(nav.queryByRole('link', { name: 'My Conditions' })).not.toBeInTheDocument()
     expect(nav.queryByRole('link', { name: 'Medicines' })).not.toBeInTheDocument()
-    await user.click(nav.getByRole('button', { name: 'Browse' }))
-    expect(nav.getByRole('link', { name: 'Medicines' })).toHaveAttribute('href', '#/medicines')
-    expect(nav.getByRole('link', { name: 'Diseases' })).toHaveAttribute('href', '#/diseases')
+    expect(nav.queryByRole('button', { name: 'Browse' })).not.toBeInTheDocument()
 
-    await user.click(nav.getByRole('button', { name: 'Explore' }))
-    expect(nav.getByRole('link', { name: 'Graph Explorer' })).toHaveAttribute('href', '#/graph')
-    expect(nav.getByRole('link', { name: 'Subgraph Explorer' })).toHaveAttribute('href', '#/subgraph')
+    const exploreTrigger = nav.getByRole('button', { name: 'Explore' })
+    await user.click(exploreTrigger)
+    const exploreMenu = within(document.getElementById(exploreTrigger.getAttribute('aria-controls')))
+    expect(exploreMenu.getAllByRole('link').map((link) => link.textContent)).toEqual([
+      'Medicines',
+      'Diseases',
+      'Graph Explorer',
+      'Subgraph Explorer',
+    ])
+    expect(exploreMenu.getByRole('link', { name: 'Medicines' })).toHaveAttribute('href', '#/medicines')
+    expect(exploreMenu.getByRole('link', { name: 'Diseases' })).toHaveAttribute('href', '#/diseases')
+    expect(exploreMenu.getByRole('link', { name: 'Graph Explorer' })).toHaveAttribute('href', '#/graph')
+    expect(exploreMenu.getByRole('link', { name: 'Subgraph Explorer' })).toHaveAttribute('href', '#/subgraph')
 
     await user.click(nav.getByRole('button', { name: 'Research' }))
     expect(nav.getByRole('link', { name: 'DDI Predictor' })).toHaveAttribute('href', '#/predictor')
@@ -48,7 +56,7 @@ describe('CHEERS application shell', () => {
     expect(nav.getByRole('link', { name: 'Methodology' })).toHaveAttribute('href', '#/methodology')
   })
 
-  it.each(['Browse', 'Explore', 'Research'])('preserves keyboard, Escape and outside-click behavior for %s', async (group) => {
+  it.each(['Explore', 'Research'])('preserves keyboard, Escape and outside-click behavior for %s', async (group) => {
     const user = userEvent.setup()
     render(<App />)
     const heading = await screen.findByRole('heading', { name: 'Understand your medicines better.' })
@@ -72,12 +80,14 @@ describe('CHEERS application shell', () => {
   it.each([
     ['/medicines/DB00682', 'Medicines'],
     ['/diseases/5148', 'Diseases'],
-  ])('keeps Browse expanded and the destination active on %s', async (path, label) => {
+    ['/graph', 'Graph Explorer'],
+    ['/subgraph', 'Subgraph Explorer'],
+  ])('keeps Explore expanded and the destination active on %s', async (path, label) => {
     window.location.hash = `#${path}`
     render(<App />)
     const nav = within(screen.getByRole('navigation'))
-    expect(nav.getByRole('button', { name: 'Browse' })).toHaveAttribute('aria-expanded', 'true')
-    expect(nav.getByRole('button', { name: 'Browse' })).toHaveClass('active')
+    expect(nav.getByRole('button', { name: 'Explore' })).toHaveAttribute('aria-expanded', 'true')
+    expect(nav.getByRole('button', { name: 'Explore' })).toHaveClass('active')
     expect(nav.getByRole('link', { name: label })).toHaveAttribute('aria-current', 'page')
     await screen.findByRole('heading', { level: 1 })
   })

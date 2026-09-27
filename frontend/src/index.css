@@ -2477,6 +2477,35 @@ textarea:focus-visible {
   overflow-wrap: anywhere;
 }
 
+.predictor-step-label,
+.predictor-scanner-helper > span {
+  display: block;
+  margin-bottom: 7px;
+  color: #344054;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.predictor-step-label + .drug-autocomplete > label {
+  color: #667085;
+  font-weight: 650;
+}
+
+.predictor-scanner-helper {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #eaecf0;
+}
+
+.predictor-scanner-helper small,
+.predictor-field-help {
+  display: block;
+  margin-top: 7px;
+  color: #667085;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
 .predictor-submit-button {
   min-width: 190px;
 }
@@ -2552,6 +2581,40 @@ textarea:focus-visible {
 
 .predictor-results-block {
   margin-top: 20px;
+}
+
+.predictor-results-heading {
+  align-items: flex-start;
+}
+
+.predictor-results-heading > p {
+  max-width: 570px;
+  margin: 0;
+  color: #475467;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.predictor-follow-up-note {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.predictor-follow-up-note p {
+  margin: 0;
+  padding: 11px 13px;
+  border: 1px solid #eaecf0;
+  border-radius: 10px;
+  background: #f9fafb;
+  color: #667085;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.predictor-follow-up-note strong {
+  color: #344054;
 }
 
 .prediction-row {
@@ -2777,6 +2840,58 @@ textarea:focus-visible {
   box-shadow: 0 2px 8px rgba(16, 24, 40, 0.035);
 }
 
+.subgraph-form-heading {
+  grid-column: 1 / -1;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #eaecf0;
+}
+
+.subgraph-form-heading h2,
+.subgraph-result-heading h2 {
+  margin: 5px 0;
+  color: #101828;
+  font-size: 20px;
+}
+
+.subgraph-form-heading p,
+.subgraph-result-heading p {
+  margin: 0;
+  color: #667085;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.subgraph-scanner-helper {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #eaecf0;
+}
+
+.subgraph-scanner-helper > span,
+.subgraph-scanner-helper small {
+  display: block;
+  color: #667085;
+  font-size: 11px;
+}
+
+.subgraph-scanner-helper > span {
+  margin-bottom: 7px;
+  font-weight: 700;
+}
+
+.subgraph-scanner-helper small {
+  margin-top: 7px;
+  line-height: 1.5;
+}
+
+.subgraph-result-heading {
+  margin-top: 34px;
+  padding: 17px 19px;
+  border: 1px solid #d6bbfb;
+  border-radius: 14px;
+  background: linear-gradient(140deg, #f9f5ff, white);
+}
+
 .subgraph-metrics {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -2854,6 +2969,15 @@ textarea:focus-visible {
   margin-top: 14px;
 }
 
+.subgraph-filter-note {
+  margin: 15px 0 0;
+  padding-top: 13px;
+  border-top: 1px solid #eaecf0;
+  color: #667085;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
 .subgraph-filter-card legend {
   margin-bottom: 8px;
   color: #344054;
@@ -2924,6 +3048,12 @@ textarea:focus-visible {
 
 .subgraph-canvas {
   height: 650px;
+}
+
+.subgraph-interaction-guide {
+  margin: 13px 0 10px;
+  color: #475467;
+  font-size: 12px;
 }
 
 .subgraph-pagination {
@@ -4129,6 +4259,10 @@ textarea:focus-visible {
   .predictor-page .prediction-actions .secondary-button,
   .predictor-page .prediction-actions .text-action {
     width: 100%;
+  }
+
+  .predictor-follow-up-note {
+    grid-template-columns: 1fr;
   }
 
   .graph-toolbar {

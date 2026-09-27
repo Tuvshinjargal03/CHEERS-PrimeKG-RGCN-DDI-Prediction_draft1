@@ -31,6 +31,16 @@ const SECTIONS = [
   ['related-diseases', 'Related diseases'],
   ['sources', 'Sources'],
 ]
+const SECTION_DESCRIPTIONS = {
+  overview: 'Availability and source overview',
+  uses: 'Official label information',
+  'side-effects': 'Official label information',
+  warnings: 'Official label information',
+  interactions: 'Official label information',
+  'food-lifestyle': 'Official label excerpts',
+  'related-diseases': 'Knowledge-graph context',
+  sources: 'Source provenance',
+}
 const LABEL_GROUPS = {
   uses: ['indications_and_usage'],
   'side-effects': ['adverse_reactions'],
@@ -169,8 +179,13 @@ function MedicineLanding({ onSelect }) {
         <p>Find available uses, side effects, warnings, interactions, and related conditions.</p>
       </header>
       <div className="product-input-panel medicine-landing-search">
+        <div className="medicine-landing-primary">
+          <span className="eyebrow">Primary search</span>
+          <strong>Search by medicine name or DrugBank ID</strong>
+        </div>
         <DrugAutocomplete label="Medicine" selection={null} onSelect={onSelect} />
         <div className="medicine-landing-secondary">
+          <div><span>Optional label-text helper</span><small>Reads printed label text to help select a supported medicine; it does not identify a medicine clinically.</small></div>
           <MedicineLabelScanner targetLabel="Medicine" onDrugSelect={onSelect} />
         </div>
         <div className="product-example-row">
@@ -332,8 +347,9 @@ function RelatedDiseases({ context, contextError }) {
     <section className="medicine-content-panel" aria-labelledby="related-diseases-heading">
       <div className="medicine-content-heading">
         <span className="public-quick-icon"><Network size={20} /></span>
-        <div><span className="eyebrow">Related information</span><h2 id="related-diseases-heading">Related diseases</h2></div>
+        <div><span className="eyebrow">Knowledge-graph context</span><h2 id="related-diseases-heading">Related diseases</h2></div>
       </div>
+      <p className="medicine-context-intro">These are descriptive relationships recorded in the current graph data. They do not establish diagnosis, causation, or that this medicine is appropriate for a disease.</p>
       {relationships.length ? (
         <div className="medicine-related-list">
           {relationships.slice(0, 20).map((item) => (
@@ -401,12 +417,12 @@ function MedicineOverview({ drugId, labelInformation, context }) {
   const availableSections = new Set(labelInformation?.available_sections || [])
   const foodLifestyleInformation = labelInformation?.food_lifestyle_information
   const modules = [
-    ['uses', 'Uses', availableSections.has('indications_and_usage'), FileText],
-    ['side-effects', 'Side effects', availableSections.has('adverse_reactions'), Info],
-    ['warnings', 'Warnings', ['boxed_warning', 'warnings_and_cautions', 'warnings'].some((item) => availableSections.has(item)), ShieldAlert],
-    ['interactions', 'Interactions', availableSections.has('drug_interactions'), Beaker],
-    ['related-diseases', 'Related diseases', Boolean(context?.context?.disease?.relationships?.length), Network],
-    ['sources', 'Sources', Boolean(labelInformation?.records?.length), BookOpen],
+    ['uses', 'Uses', availableSections.has('indications_and_usage'), FileText, undefined, 'Official label'],
+    ['side-effects', 'Side effects', availableSections.has('adverse_reactions'), Info, undefined, 'Official label'],
+    ['warnings', 'Warnings', ['boxed_warning', 'warnings_and_cautions', 'warnings'].some((item) => availableSections.has(item)), ShieldAlert, undefined, 'Official label'],
+    ['interactions', 'Interactions', availableSections.has('drug_interactions'), Beaker, undefined, 'Official label'],
+    ['related-diseases', 'Related diseases', Boolean(context?.context?.disease?.relationships?.length), Network, undefined, 'Graph context'],
+    ['sources', 'Sources', Boolean(labelInformation?.records?.length), BookOpen, undefined, 'Source metadata'],
   ]
   if (foodLifestyleInformation) {
     const available = foodLifestyleInformation.status === 'available'
@@ -415,7 +431,7 @@ function MedicineOverview({ drugId, labelInformation, context }) {
       no_explicit_mentions: 'No explicit mention',
       unavailable: 'Source unavailable',
     }[foodLifestyleInformation.status] || 'Source unavailable'
-    modules.splice(4, 0, ['food-lifestyle', 'Food & lifestyle', available, Utensils, statusLabel])
+    modules.splice(4, 0, ['food-lifestyle', 'Food & lifestyle', available, Utensils, statusLabel, 'Official label'])
   }
 
   return (
@@ -425,7 +441,7 @@ function MedicineOverview({ drugId, labelInformation, context }) {
         <div><span className="eyebrow">Available information</span><h2 id="medicine-glance-heading">At a glance</h2></div>
       </div>
       <div className="medicine-module-grid">
-        {modules.map(([key, label, available, Icon, statusLabel]) => (
+        {modules.map(([key, label, available, Icon, statusLabel, sourceType]) => (
           <Link
             aria-label={`${label}: ${statusLabel || (available ? 'Available' : 'No section retrieved')}`}
             className={available ? 'is-available' : 'is-unavailable'}
@@ -433,7 +449,7 @@ function MedicineOverview({ drugId, labelInformation, context }) {
             to={`/medicines/${encodeURIComponent(drugId)}?section=${key}`}
           >
             <Icon size={18} aria-hidden="true" />
-            <strong>{label}</strong>
+            <strong>{label}<small>{sourceType}</small></strong>
             <span>{statusLabel || (available ? 'Available' : 'No section retrieved')}</span>
           </Link>
         ))}
@@ -441,6 +457,7 @@ function MedicineOverview({ drugId, labelInformation, context }) {
       <p className="medicine-overview-meta">
         {labelInformation.records_examined} label {labelInformation.records_examined === 1 ? 'record' : 'records'} reviewed · {labelInformation.available_sections.length} label sections available
       </p>
+      <p className="medicine-availability-boundary">Availability means information was retrieved from the named source; it does not mean complete medical coverage. Missing information is not proof of safety.</p>
     </section>
   )
 }
@@ -494,6 +511,19 @@ export default function MedicineGuide() {
   const drug = payload?.drug
   const labelInformation = payload?.label_information
   const labelStatus = labelInformation?.status
+  const contextSupported = CONTEXT_IDS.has(drugId.toUpperCase())
+  const labelStatusText = {
+    ok: `${labelInformation?.records_examined || 0} official label ${labelInformation?.records_examined === 1 ? 'record' : 'records'} retrieved`,
+    no_matches: 'No openFDA label record retrieved',
+    error: 'Official label source unavailable',
+  }[labelStatus]
+  const contextStatusText = context
+    ? 'G3 graph context retrieved'
+    : contextError
+      ? 'G3 graph context unavailable'
+      : contextSupported
+        ? 'No G3 graph context returned'
+        : 'No exported G3 graph context for this medicine'
 
   return (
     <section className="page product-page medicine-profile-page">
@@ -503,6 +533,12 @@ export default function MedicineGuide() {
           <span className="eyebrow">Medicine profile</span>
           <h1>{drug?.drug_name || 'Medicine information'}</h1>
           <p><span>DrugBank ID</span> {drug?.drug_id || drugId}</p>
+          {!loading && payload && (
+            <div className="medicine-profile-status" aria-label="Medicine information source status">
+              {labelStatusText && <span><FileText size={14} />{labelStatusText}</span>}
+              <span><Network size={14} />{contextStatusText}</span>
+            </div>
+          )}
         </div>
         {drug && (
           <div className="medicine-header-actions">
@@ -525,12 +561,19 @@ export default function MedicineGuide() {
 
       {!loading && !error && payload && (
         <>
+          <div className="medicine-section-guide">
+            <strong>Choose an information section</strong>
+            <span>Official label: Uses, Side effects, Warnings, Interactions, Food & lifestyle</span>
+            <span>Graph context: Related diseases</span>
+            <span>Provenance: Sources</span>
+          </div>
           <nav className="medicine-section-nav" aria-label="Medicine information sections">
             {SECTIONS.map(([key, label]) => (
               <Link
                 key={key}
                 className={activeSection === key ? 'active' : ''}
                 aria-current={activeSection === key ? 'page' : undefined}
+                title={SECTION_DESCRIPTIONS[key]}
                 to={`/medicines/${encodeURIComponent(drugId)}${key === 'overview' ? '' : `?section=${key}`}`}
               >
                 {label}
@@ -555,7 +598,10 @@ export default function MedicineGuide() {
 
           <aside className="medicine-source-boundary">
             <Search size={19} />
-            <p>{payload.safety_note || 'Official label information is presented for source review, not personalized medical advice.'}</p>
+            <div>
+              <p>{payload.safety_note || 'Official label information is presented for source review, not personalized medical advice.'}</p>
+              <p>CHEERS organizes available source material and graph context. It does not diagnose or provide personalized treatment or nutrition advice, and it is not clinical decision support. Missing label information is not proof of safety; graph relationships are descriptive context, not causation or R-GCN predictions.</p>
+            </div>
           </aside>
         </>
       )}

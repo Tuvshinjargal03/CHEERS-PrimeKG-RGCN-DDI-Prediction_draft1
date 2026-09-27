@@ -473,16 +473,22 @@ export default function GraphExplorer() {
         <div className="graph-form-heading">
           <span className="eyebrow">Pair selection</span>
           <h2>Choose two drugs</h2>
-          <p>Select candidates with verified G3 context to explore their shared relationships.</p>
+          <p>Search for each medicine first. Both need verified exported G3 context for this pair view.</p>
         </div>
         <div className="drug-selection-field">
           <DrugAutocomplete label="Drug A" selection={drugA} onSelect={selectDrugA} disabled={resolving} getOptionAnnotation={g3ContextAnnotation} />
-          <MedicineLabelScanner targetLabel="Drug A" onDrugSelect={selectDrugA} disabled={resolving} />
+          <div className="graph-scanner-helper">
+            <span>Optional label-text helper</span>
+            <MedicineLabelScanner targetLabel="Drug A" onDrugSelect={selectDrugA} disabled={resolving} />
+          </div>
           <ContextAvailability drug={drugA} available={drugAHasContext} />
         </div>
         <div className="drug-selection-field">
           <DrugAutocomplete label="Drug B" selection={drugB} onSelect={selectDrugB} disabled={resolving} getOptionAnnotation={g3ContextAnnotation} />
-          <MedicineLabelScanner targetLabel="Drug B" onDrugSelect={selectDrugB} disabled={resolving} />
+          <div className="graph-scanner-helper">
+            <span>Optional label-text helper</span>
+            <MedicineLabelScanner targetLabel="Drug B" onDrugSelect={selectDrugB} disabled={resolving} />
+          </div>
           <ContextAvailability drug={drugB} available={drugBHasContext} />
         </div>
         <button className="primary-button graph-explore-button" type="submit" disabled={!contextReady || loading || resolving}>
@@ -512,7 +518,7 @@ export default function GraphExplorer() {
       {error && <div className="inline-alert error graph-page-state" role="alert"><AlertCircle size={20} />{error}</div>}
 
       {!context && !loading && !error && !hasUnavailableContext && (
-        <div className="empty-feature-state graph-page-state"><Focus size={28} /><div><strong>Choose a drug pair.</strong><p>Shared G3 context will appear as an interactive, limited subgraph.</p></div></div>
+        <div className="empty-feature-state graph-page-state"><Focus size={28} /><div><strong>Choose a drug pair.</strong><p>The graph will show shared G3 gene/protein and disease context, plus the relation types connecting each medicine. This is descriptive graph context only.</p></div></div>
       )}
 
       {context && (
@@ -521,11 +527,15 @@ export default function GraphExplorer() {
             <span className="eyebrow">Verified G3 context</span>
             <h2>Shared context overview</h2>
           </div>
+          <div className="graph-pair-summary" aria-label="Selected pair summary">
+            <div><span>Selected pair</span><strong>{context.drug_a.drug_name} + {context.drug_b.drug_name}</strong></div>
+            <p>{context.shared.total > displayedCount ? `Showing ${displayedCount} of ${context.shared.total.toLocaleString()} shared context entities` : `Showing all ${displayedCount.toLocaleString()} shared context entities`}</p>
+          </div>
           <div className="context-metrics graph-context-metrics">
             <article><span>Shared entities</span><strong>{context.shared.total.toLocaleString()}</strong></article>
             <article><span>Gene / protein</span><strong>{context.shared.gene_protein_count.toLocaleString()}</strong></article>
             <article><span>Disease</span><strong>{context.shared.disease_count.toLocaleString()}</strong></article>
-            <article><span>Displayed</span><strong>{displayedCount}</strong><small>{displayLimit === DEFAULT_SHARED_NODES ? 'focused view' : 'expanded view'}</small></article>
+            <article><span>Currently displayed</span><strong>{displayedCount}</strong><small>{displayLimit === DEFAULT_SHARED_NODES ? 'focused view' : 'expanded view'}</small></article>
           </div>
 
           <div className="subgraph-workspace">
@@ -533,14 +543,14 @@ export default function GraphExplorer() {
             <div className="graph-toolbar">
               <div><span className="eyebrow">G3 pair subgraph</span><h2>{context.drug_a.drug_name} + {context.drug_b.drug_name}</h2></div>
               <div className="graph-controls" aria-label="Graph controls">
-                <button type="button" onClick={() => cyRef.current?.zoom({ level: cyRef.current.zoom() * 1.2, renderedPosition: { x: 360, y: 230 } })} aria-label="Zoom in"><Plus size={17} /></button>
-                <button type="button" onClick={() => cyRef.current?.zoom({ level: cyRef.current.zoom() / 1.2, renderedPosition: { x: 360, y: 230 } })} aria-label="Zoom out"><Minus size={17} /></button>
-                <button type="button" onClick={fitGraph}><Focus size={16} />Fit</button>
+                <button type="button" title="Zoom in" onClick={() => cyRef.current?.zoom({ level: cyRef.current.zoom() * 1.2, renderedPosition: { x: 360, y: 230 } })} aria-label="Zoom in"><Plus size={17} /></button>
+                <button type="button" title="Zoom out" onClick={() => cyRef.current?.zoom({ level: cyRef.current.zoom() / 1.2, renderedPosition: { x: 360, y: 230 } })} aria-label="Zoom out"><Minus size={17} /></button>
+                <button type="button" title="Fit graph to view" aria-label="Fit graph to view" onClick={fitGraph}><Focus size={16} />Fit</button>
               </div>
             </div>
             <div className="graph-legend"><span><i className="drug-dot" />Drug</span><span><i className="gene-dot" />Gene / protein</span><span><i className="disease-dot" />Disease</span></div>
             <div className="graph-inspection-bar">
-              <p>Select a node or edge to inspect its relationships.</p>
+              <p>Select a node to highlight its connections and view details. Select an edge to inspect its relation.</p>
               {context.shared.total > DEFAULT_SHARED_NODES && (
                 <button type="button" className="secondary-button graph-display-toggle" onClick={() => { setDisplayLimit((current) => current === DEFAULT_SHARED_NODES ? MAX_SHARED_NODES : DEFAULT_SHARED_NODES); setSelected(null) }}>
                   {displayLimit === DEFAULT_SHARED_NODES ? `Show more (up to ${MAX_SHARED_NODES})` : 'Show fewer'}
@@ -620,7 +630,7 @@ export default function GraphExplorer() {
           <div className="workflow-actions">
             <div>
               <BookOpen size={20} />
-              <p><strong>Continue with external evidence</strong><span>Review openFDA label excerpts and PubMed records for this drug pair.</span></p>
+              <p><strong>Continue with independent external evidence</strong><span>Review openFDA label excerpts and PubMed records. This evidence does not validate graph context or an R-GCN prediction.</span></p>
             </div>
             <button type="button" className="primary-button" onClick={() => navigate(evidenceDestination(context, navigationScore))}>
               Review evidence<ArrowRight size={16} />
@@ -630,7 +640,14 @@ export default function GraphExplorer() {
             </Link>
           </div>
 
-          <aside className="safety-notice"><AlertCircle size={21} /><div><strong>Interpretation boundary</strong><p>{context.interpretation}</p></div></aside>
+          <aside className="safety-notice">
+            <AlertCircle size={21} />
+            <div>
+              <strong>Interpretation boundary</strong>
+              <p>{context.interpretation}</p>
+              <p>Shared or missing graph context does not prove a DDI, causation, safety, or harm, and it does not explain or validate an R-GCN score. CHEERS is a research and information prototype, not clinical decision support.</p>
+            </div>
+          </aside>
         </>
       )}
     </section>

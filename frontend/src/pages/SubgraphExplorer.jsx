@@ -324,15 +324,24 @@ export default function SubgraphExplorer() {
       <div className="page-heading">
         <span className="eyebrow">Single-drug G3 context</span>
         <h1>Subgraph Explorer</h1>
-        <p>Explore the 1-hop biomedical neighborhood available in the G3 graph.</p>
+        <p>Explore the available one-hop G3 neighborhood around one selected medicine.</p>
       </div>
 
       <aside className="subgraph-scope-note"><AlertCircle size={20} /><p><strong>Research context</strong>This view shows relationships available in the G3 graph. Drug–drug edges are training-only G3 relationships. The graph is descriptive context, not a causal model explanation or clinical safety assessment.</p></aside>
 
       <form className="subgraph-search-form" onSubmit={explore}>
+        <div className="subgraph-form-heading">
+          <span className="eyebrow">Medicine selection</span>
+          <h2>Choose one center medicine</h2>
+          <p>Search by medicine name or DrugBank ID. Label scanning is an optional text-selection helper.</p>
+        </div>
         <div className="drug-selection-field">
-          <DrugAutocomplete label="Center drug" selection={drug} onSelect={selectDrug} />
-          <MedicineLabelScanner targetLabel="Drug" onDrugSelect={selectDrug} />
+          <DrugAutocomplete label="Center medicine" selection={drug} onSelect={selectDrug} />
+          <div className="subgraph-scanner-helper">
+            <span>Optional label-text helper</span>
+            <MedicineLabelScanner targetLabel="Medicine" onDrugSelect={selectDrug} />
+            <small>Reads printed label text to help select a supported medicine; it is not authoritative medicine identification.</small>
+          </div>
         </div>
         <button type="submit" className="primary-button" disabled={!drug || loading}>
           {loading ? <LoaderCircle className="spin" size={18} /> : <Share2 size={18} />}
@@ -341,38 +350,45 @@ export default function SubgraphExplorer() {
       </form>
 
       {error && <div className="inline-alert error"><AlertCircle size={20} />{error}</div>}
-      {!data && !loading && !error && <div className="empty-feature-state"><Share2 size={28} /><div><strong>No drug explored yet.</strong><p>Select one candidate drug to load its training-safe, 1-hop G3 neighborhood.</p></div></div>}
+      {!data && !loading && !error && <div className="empty-feature-state"><Share2 size={28} /><div><strong>No medicine explored yet.</strong><p>Select one medicine to view its one-hop drug, gene/protein, and disease neighbors and their G3 relation types. This is descriptive research context only.</p></div></div>}
       {loading && <div className="experiment-state"><LoaderCircle className="spin" size={27} />Fetching graph context…</div>}
 
       {data && !loading && (
         <>
+          <div className="subgraph-result-heading">
+            <span className="eyebrow">Filtered G3 neighborhood</span>
+            <h2>{data.center.name}</h2>
+            <p>{data.center.entity_id} · {neighbors.length ? `Showing ${rangeStart.toLocaleString()}–${rangeEnd.toLocaleString()} of ${totalNeighbors.toLocaleString()} matching neighbors` : 'No matching neighbors are currently displayed'}</p>
+          </div>
           <div className="subgraph-metrics">
-            <article><span>Total neighbors</span><strong>{data.counts.total_neighbors.toLocaleString()}</strong></article>
-            <article><span>Relationships</span><strong>{data.counts.total_relationships.toLocaleString()}</strong></article>
+            <article><span>Matching neighbors</span><strong>{data.counts.total_neighbors.toLocaleString()}</strong><small>under active filters</small></article>
+            <article><span>Matching relationships</span><strong>{data.counts.total_relationships.toLocaleString()}</strong><small>under active filters</small></article>
             <article><span>Drug neighbors</span><strong>{data.counts.by_entity_type.drug.toLocaleString()}</strong></article>
             <article><span>Gene / protein</span><strong>{data.counts.by_entity_type['gene/protein'].toLocaleString()}</strong></article>
             <article><span>Disease</span><strong>{data.counts.by_entity_type.disease.toLocaleString()}</strong></article>
-            <article><span>Displayed</span><strong>{neighbors.length.toLocaleString()}</strong><small>unique neighbors</small></article>
+            <article><span>Currently displayed</span><strong>{neighbors.length.toLocaleString()}</strong><small>this graph page</small></article>
           </div>
 
           <section className="subgraph-filter-card" aria-label="Subgraph filters">
-            <div className="filter-heading"><div><span className="eyebrow">Backend filters</span><h2>Visible relationships</h2></div><p>Filters reset the graph and are applied before pagination.</p></div>
+            <div className="filter-heading"><div><span className="eyebrow">Backend filters</span><h2>Visible neighborhood</h2></div><p>Changing a filter reloads matching context from the backend, then resets pagination.</p></div>
             <fieldset><legend>Relations</legend><div className="filter-chip-grid">{RELATIONS.map(([value, label]) => <label key={value} className={enabledRelations.includes(value) ? 'checked' : ''}><input type="checkbox" checked={enabledRelations.includes(value)} onChange={() => toggleFilter('relation', value)} /><span>{label}</span><b>{data.counts.by_relation[value].toLocaleString()}</b></label>)}</div></fieldset>
             <fieldset><legend>Entity types</legend><div className="filter-chip-grid entity-filters">{ENTITY_TYPES.map(([value, label]) => <label key={value} className={enabledEntityTypes.includes(value) ? 'checked' : ''}><input type="checkbox" checked={enabledEntityTypes.includes(value)} onChange={() => toggleFilter('entity', value)} /><span>{label}</span><b>{data.counts.by_entity_type[value].toLocaleString()}</b></label>)}</div></fieldset>
+            <p className="subgraph-filter-note">Relation labels describe recorded graph data. DDI edges are not current R-GCN predictions; indication, contraindication, and off-label-use relations are not personalized treatment advice.</p>
           </section>
 
           {!neighbors.length ? (
-            <div className="empty-feature-state"><Focus size={28} /><div><strong>No neighbors match the current filters.</strong><p>Enable at least one relation and entity type, or broaden the selected filters.</p></div></div>
+            <div className="empty-feature-state"><Focus size={28} /><div><strong>No neighbors match the current filters.</strong><p>Enable another relation or entity type, or broaden the filters. This filtered result is not proof that no biomedical relationship or DDI exists.</p></div></div>
           ) : (
             <div className="subgraph-workspace">
               <article className="graph-card subgraph-graph-card">
-                <div className="graph-toolbar"><div><span className="eyebrow">One-hop G3 neighborhood</span><h2>{data.center.name}</h2></div><div className="graph-controls" aria-label="Graph controls"><button type="button" title="Zoom in" aria-label="Zoom in" onClick={() => cyRef.current?.zoom({ level: cyRef.current.zoom() * 1.2, renderedPosition: { x: 360, y: 260 } })}><Plus size={17} /></button><button type="button" title="Zoom out" aria-label="Zoom out" onClick={() => cyRef.current?.zoom({ level: cyRef.current.zoom() / 1.2, renderedPosition: { x: 360, y: 260 } })}><Minus size={17} /></button><button type="button" title="Fit graph" onClick={fitGraph}><Focus size={16} />Fit</button></div></div>
+                <div className="graph-toolbar"><div><span className="eyebrow">One-hop G3 neighborhood</span><h2>{data.center.name}</h2></div><div className="graph-controls" aria-label="Graph controls"><button type="button" title="Zoom in" aria-label="Zoom in" onClick={() => cyRef.current?.zoom({ level: cyRef.current.zoom() * 1.2, renderedPosition: { x: 360, y: 260 } })}><Plus size={17} /></button><button type="button" title="Zoom out" aria-label="Zoom out" onClick={() => cyRef.current?.zoom({ level: cyRef.current.zoom() / 1.2, renderedPosition: { x: 360, y: 260 } })}><Minus size={17} /></button><button type="button" title="Fit graph to view" aria-label="Fit graph to view" onClick={fitGraph}><Focus size={16} />Fit</button></div></div>
                 <div className="graph-legend subgraph-legend"><span><i className="center-dot" />Center drug</span><span><i className="drug-dot" />Drug</span><span><i className="gene-dot" />Gene / protein</span><span><i className="disease-dot" />Disease</span></div>
+                <p className="subgraph-interaction-guide">Select a node or connection to focus it and view details.</p>
                 <div ref={containerRef} className="cytoscape-canvas subgraph-canvas" role="img" aria-label={`Interactive one-hop G3 neighborhood for ${data.center.name}`} />
                 <div className="subgraph-pagination">
                   <p>
                     Showing neighbors <strong>{rangeStart.toLocaleString()}–{rangeEnd.toLocaleString()}</strong> of <strong>{totalNeighbors.toLocaleString()}</strong>
-                    {totalPages > 0 && <small>Page {currentPage.toLocaleString()} of {totalPages.toLocaleString()}</small>}
+                    {totalPages > 0 && <small>Current graph page: {currentPage.toLocaleString()} of {totalPages.toLocaleString()}</small>}
                   </p>
                   <div className="subgraph-page-buttons">
                     {pageOffset > 0 && <button type="button" className="secondary-button" disabled={pageLoading} onClick={() => changePage(Math.max(0, pageOffset - PAGE_SIZE))}>Previous {PAGE_SIZE}</button>}
@@ -385,7 +401,7 @@ export default function SubgraphExplorer() {
           )}
 
           <div className="subgraph-relation-summary"><strong>Filtered relationship counts</strong><div>{RELATIONS.filter(([value]) => data.counts.by_relation[value] > 0).map(([value, label]) => <span key={value}>{label} <b>{data.counts.by_relation[value].toLocaleString()}</b></span>)}</div></div>
-          <aside className="safety-notice"><AlertCircle size={21} /><div><strong>Interpretation boundary</strong><p>{data.interpretation}</p></div></aside>
+          <aside className="safety-notice"><AlertCircle size={21} /><div><strong>Interpretation boundary</strong><p>{data.interpretation}</p><p>Graph associations do not prove causation, a drug interaction, safety, or harm. Absence from this page or after filtering is not proof of no relationship. DDI edges are recorded graph relationships, not current R-GCN ranking output, and this view does not explain or validate a model score. CHEERS is a research and information prototype, not clinical decision support.</p></div></aside>
         </>
       )}
     </section>

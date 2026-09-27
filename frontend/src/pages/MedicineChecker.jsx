@@ -164,20 +164,34 @@ export default function MedicineChecker() {
           <div>
             <span className="eyebrow">Medicine pair</span>
             <h2>Which medicines would you like to check?</h2>
+            <p>Search by medicine name or DrugBank ID. Label scanning is an optional text-selection helper.</p>
           </div>
           <span className="product-step-badge">2 medicines</span>
         </div>
 
         <div className="checker-fields">
           <div className="product-drug-field">
+            <div className="checker-field-step"><span>1</span><strong>Choose the first medicine</strong></div>
             <DrugAutocomplete label="First medicine" selection={drugA} onSelect={selectA} disabled={loading || resolving} />
-            <MedicineLabelScanner targetLabel="First medicine" onDrugSelect={selectA} disabled={loading || resolving} />
+            <div className="checker-scanner-helper">
+              <small>Optional label-text helper</small>
+              <MedicineLabelScanner targetLabel="First medicine" onDrugSelect={selectA} disabled={loading || resolving} />
+            </div>
           </div>
           <div className="checker-plus" aria-hidden="true">+</div>
           <div className="product-drug-field">
+            <div className="checker-field-step"><span>2</span><strong>Choose the second medicine</strong></div>
             <DrugAutocomplete label="Second medicine" selection={drugB} onSelect={selectB} disabled={loading || resolving} />
-            <MedicineLabelScanner targetLabel="Second medicine" onDrugSelect={selectB} disabled={loading || resolving} />
+            <div className="checker-scanner-helper">
+              <small>Optional label-text helper</small>
+              <MedicineLabelScanner targetLabel="Second medicine" onDrugSelect={selectB} disabled={loading || resolving} />
+            </div>
           </div>
+        </div>
+
+        <div className="checker-selection-status" aria-live="polite" aria-label="Selected medicine pair">
+          <span className={drugA ? 'is-selected' : ''}><b>1</b>{drugA?.name || 'First medicine not selected'}</span>
+          <span className={drugB ? 'is-selected' : ''}><b>2</b>{drugB?.name || 'Second medicine not selected'}</span>
         </div>
 
         {drugA && drugB && drugA.entity_id === drugB.entity_id && (
@@ -192,15 +206,15 @@ export default function MedicineChecker() {
 
       {!submitted && !loading && (
         <div className="product-empty-state">
-          <Beaker size={25} />
-          <div><strong>Start with two medicines</strong><p>Results keep official sources, biomedical connections, and advanced research output separate.</p></div>
+          <Beaker size={25} aria-hidden="true" />
+          <div><strong>Choose two different medicines above</strong><p>Use text search as the primary method. Label scanning is optional. Results will keep checked sources, graph context, and research output separate.</p></div>
         </div>
       )}
 
       {loading && (
         <div className="product-empty-state" role="status" aria-live="polite">
           <LoaderCircle className="spin" size={25} />
-          <div><strong>Checking available sources…</strong><p>This may take a moment while external information is retrieved.</p></div>
+          <div><strong>Checking available sources…</strong><p>openFDA, PubMed, and graph context are checked independently. One result may still appear if another source is unavailable.</p></div>
         </div>
       )}
 
@@ -211,12 +225,12 @@ export default function MedicineChecker() {
               {status.key === 'important' ? <ShieldAlert size={24} /> : status.key === 'review' ? <Info size={24} /> : <AlertCircle size={24} />}
             </div>
             <div>
-              <span>Checked-source status</span>
               <div className="checker-result-pair" aria-label="Checked medicine pair">
                 <strong>{drugA?.name}</strong>
                 <b aria-hidden="true">+</b>
                 <strong>{drugB?.name}</strong>
               </div>
+              <span>Checked-source status</span>
               <h2>{status.title}</h2>
               <p>{status.description}</p>
               <small>This status summarizes retrieved sources; it is not an interaction-severity or personal-safety assessment and does not guarantee that the combination is safe for a specific person.</small>
@@ -226,15 +240,15 @@ export default function MedicineChecker() {
           <section className="checker-summary-grid" aria-label="Checked information summary">
             <article>
               <FileSearch size={18} aria-hidden="true" />
-              <div><strong>{labelItems.length}</strong><span>FDA label {labelItems.length === 1 ? 'mention' : 'mentions'}</span></div>
+              <div><strong>{evidence ? labelItems.length : '—'}</strong><span>FDA label mentions</span><small>{evidenceError ? 'Source unavailable' : 'Retrieved result'}</small></div>
             </article>
             <article>
               <BookOpen size={18} aria-hidden="true" />
-              <div><strong>{papers.length}</strong><span>Related PubMed {papers.length === 1 ? 'article' : 'articles'}</span></div>
+              <div><strong>{evidence ? papers.length : '—'}</strong><span>Related PubMed records</span><small>{evidenceError ? 'Source unavailable' : 'Retrieved result'}</small></div>
             </article>
             <article>
               <Network size={18} aria-hidden="true" />
-              <div><strong>{context ? context.shared?.total || 0 : '—'}</strong><span>Shared biomedical connections</span></div>
+              <div><strong>{context ? context.shared?.total || 0 : '—'}</strong><span>Shared biomedical connections</span><small>{context ? 'Available context' : contextError ? 'Context unavailable' : 'Not available for this pair'}</small></div>
             </article>
           </section>
 
@@ -303,6 +317,7 @@ export default function MedicineChecker() {
                 ) : (
                   <div className="product-card-empty"><strong>No related PubMed record retrieved.</strong><p>This is not a systematic literature review.</p></div>
                 )}
+                {papers.length > 0 && <p className="checker-source-boundary">This PubMed search is not a systematic literature review.</p>}
               </article>
             </div>
           </section>
@@ -315,7 +330,7 @@ export default function MedicineChecker() {
               <span className="public-quick-icon"><Network size={21} /></span>
               <div>
                 {context ? (
-                  <><h3>{context.shared?.total || 0} shared connections found</h3><p>CHEERS found {context.shared?.disease_count || 0} disease and {context.shared?.gene_protein_count || 0} gene/protein connections in the knowledge graph.</p></>
+                  <><h3>{context.shared?.total || 0} shared connections found</h3><p>CHEERS found {context.shared?.disease_count || 0} disease and {context.shared?.gene_protein_count || 0} gene/protein connections in the knowledge graph. Shared relationships are context, not proof of interaction, causation, or safety.</p></>
                 ) : (
                   <><h3>{contextAvailable ? 'Shared context could not be displayed' : 'Verified pair context is not available'}</h3><p>{contextError || 'One or both medicines do not have exported G3 support context. This does not mean no biomedical relationship exists.'}</p></>
                 )}
@@ -326,14 +341,14 @@ export default function MedicineChecker() {
 
           <aside className="research-output-gateway">
             <span><Search size={20} /></span>
-            <div><small>Optional research</small><strong>R-GCN Predictor</strong><p>The Predictor ranks candidate graph links. Its raw score is not a probability or clinical safety score.</p></div>
+            <div><small>Optional research only</small><strong>R-GCN Predictor</strong><p>Its ranking score is not probability, risk, severity, confidence, diagnosis, or treatment advice. openFDA and PubMed evidence does not validate or modify it.</p></div>
             <Link to="/predictor">Open research Predictor <ArrowRight size={15} /></Link>
           </aside>
         </div>
       )}
 
       <p className="product-page-boundary">
-        <CheckCircle2 size={15} /> Information from checked sources supports review, not personalized medical advice.
+        <CheckCircle2 size={15} /> CHEERS is a research and information prototype, not clinical decision support.
       </p>
     </section>
   )

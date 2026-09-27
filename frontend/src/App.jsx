@@ -1,7 +1,6 @@
 ﻿import {
   BarChart3,
   Beaker,
-  BookOpen,
   ChevronDown,
   ChevronRight,
   FlaskConical,
@@ -36,17 +35,11 @@ const SubgraphExplorer = lazy(() => import('./pages/SubgraphExplorer.jsx'))
 
 const navigationGroups = [
   {
-    label: 'Browse',
-    icon: BookOpen,
-    items: [
-      { path: '/medicines', label: 'Medicines', icon: Pill },
-      { path: '/diseases', label: 'Diseases', icon: HeartPulse },
-    ],
-  },
-  {
     label: 'Explore',
     icon: Network,
     items: [
+      { path: '/medicines', label: 'Medicines', icon: Pill },
+      { path: '/diseases', label: 'Diseases', icon: HeartPulse },
       { path: '/graph', label: 'Graph Explorer', icon: Network },
       { path: '/subgraph', label: 'Subgraph Explorer', icon: Share2 },
     ],

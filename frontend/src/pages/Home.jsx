@@ -1,5 +1,6 @@
 import {
   ArrowRight,
+  BarChart3,
   Beaker,
   BookOpen,
   FlaskConical,
@@ -16,16 +17,24 @@ import './PublicSearch.css'
 
 const QUICK_ACTIONS = [
   {
-    title: 'Check medicines together',
-    description: 'Compare two medicines and review available openFDA and PubMed sources.',
+    title: 'Check Medicines',
+    description: 'Review two medicines together with available openFDA and PubMed sources.',
     path: '/check',
     icon: Beaker,
     tone: 'violet',
     emphasis: 'featured',
   },
   {
-    title: 'Browse medicines and diseases',
-    description: 'Open medicine details and condition information with available sources.',
+    title: 'My Health',
+    description: 'Review information using your saved medicines and conditions.',
+    path: '/my-health',
+    icon: LayoutDashboard,
+    tone: 'rose',
+    emphasis: 'featured',
+  },
+  {
+    title: 'Medicines and diseases',
+    description: 'Find grounded medicine and condition information with available sources.',
     links: [
       { path: '/medicines', label: 'Medicines' },
       { path: '/diseases', label: 'Diseases' },
@@ -34,15 +43,8 @@ const QUICK_ACTIONS = [
     tone: 'blue',
   },
   {
-    title: 'My Health',
-    description: 'Bring saved medicines and conditions together to review available information.',
-    path: '/my-health',
-    icon: LayoutDashboard,
-    tone: 'rose',
-  },
-  {
-    title: 'Explore connections',
-    description: 'See shared G3 gene/protein and disease relationships for two medicines.',
+    title: 'Explore graph context',
+    description: 'View entity and shared G3 gene/protein or disease context.',
     path: '/graph',
     icon: Network,
     tone: 'green',
@@ -72,8 +74,8 @@ export default function Home() {
           <span className="public-brand-word">CHEERS</span>
           <h1 id="public-home-title">Understand your medicines better.</h1>
           <p>
-            Search medicines, diseases, side effects, and available evidence and context
-            — with sources you can explore.
+            Search for a medicine or disease, then review available sources, graph context,
+            and clearly separated research information.
           </p>
         </div>
 
@@ -97,9 +99,9 @@ export default function Home() {
         <div className="public-section-heading public-section-heading-row">
           <div>
             <span className="eyebrow">What would you like to do?</span>
-            <h2 id="quick-actions-title">Start with a simple question</h2>
+            <h2 id="quick-actions-title">Choose where to start</h2>
           </div>
-          <p>Move from available information to its sources and deeper context whenever you need it.</p>
+          <p>Search above, check a medicine pair, or use saved health information without reading a long guide first.</p>
         </div>
 
         <div className="public-quick-grid">
@@ -126,47 +128,37 @@ export default function Home() {
 
       <section className="public-section public-home-flow" aria-labelledby="capabilities-title">
         <div className="public-section-heading">
-          <span className="eyebrow">Available information</span>
-          <h2 id="capabilities-title">What can CHEERS help with?</h2>
+          <span className="eyebrow">Know what you are viewing</span>
+          <h2 id="capabilities-title">Four separate kinds of information</h2>
+          <p>CHEERS keeps sourced information, external evidence, graph context, and model ranking distinct.</p>
         </div>
-        <ul className="public-flow-list">
+        <ul className="public-flow-list public-information-grid">
           <li>
             <span><Pill size={18} /></span>
             <div>
-              <small>Source-backed medicine and disease information</small>
-              <strong>What information is available about this medicine or disease?</strong>
-              <p>CHEERS provides available medicine details and disease information, including supported label, nutrition, lifestyle, and relationship information.</p>
-              <div className="public-gateway-links">
-                <Link to="/medicines">Browse medicines</Link>
-                <Link to="/diseases">Browse diseases</Link>
-              </div>
+              <strong>Grounded medicine and disease information</strong>
+              <p>Available medicine details and disease information are shown with their supporting sources.</p>
             </div>
           </li>
           <li>
             <span><Beaker size={18} /></span>
             <div>
-              <small>External pair evidence</small>
-              <strong>What do checked sources say about these two medicines?</strong>
-              <p>CHEERS retrieves available openFDA label information and related PubMed records for the selected pair, separately from graph context and model predictions.</p>
-              <div className="public-gateway-links"><Link to="/check">Check medicines</Link></div>
+              <strong>External pair evidence</strong>
+              <p>openFDA label information and PubMed records are independent from the R-GCN score. Missing evidence does not confirm non-interaction or safety.</p>
             </div>
           </li>
           <li>
             <span><Network size={18} /></span>
             <div>
-              <small>Graph context</small>
-              <strong>What graph context do these medicines share?</strong>
-              <p>CHEERS shows shared G3 gene/protein and disease relationships. Shared graph context is not an interaction or safety verdict.</p>
-              <div className="public-gateway-links"><Link to="/graph">Explore graph</Link></div>
+              <strong>Knowledge-graph context</strong>
+              <p>Shared relationships provide context, not proof of interaction, causation, or safety.</p>
             </div>
           </li>
           <li>
             <span><Search size={18} /></span>
             <div>
-              <small>R-GCN research ranking</small>
-              <strong>What candidates does the research model rank for this medicine?</strong>
-              <p>CHEERS shows eligible unobserved PrimeKG candidate links ranked by the R-GCN using raw model scores. These are research ranking values, not clinical probability, severity, confidence, or risk.</p>
-              <div className="public-gateway-links"><Link to="/predictor">Open Research Predictor</Link></div>
+              <strong>R-GCN research ranking</strong>
+              <p>The R-GCN score is a ranking score—not probability, risk, severity, confidence, diagnosis, or treatment advice.</p>
             </div>
           </li>
         </ul>
@@ -175,12 +167,11 @@ export default function Home() {
       <aside className="public-scope-note public-home-scope" aria-labelledby="public-scope-title">
         <ShieldCheck size={22} aria-hidden="true" />
         <div>
-          <h2 id="public-scope-title">Information, not a personal prescription</h2>
+          <h2 id="public-scope-title">A research and information prototype</h2>
           <p>
-            CHEERS organizes available sources, graph relationships, and research rankings.
-            It cannot diagnose a condition, determine whether a combination is safe for you,
-            or advise starting, stopping, or changing treatment. Missing evidence and high model
-            scores are not clinical conclusions.
+            CHEERS is not clinical decision support. It cannot diagnose a condition, determine
+            whether a combination is safe for you, or advise starting, stopping, or changing
+            treatment. Missing interaction or evidence is not confirmation of safety.
           </p>
         </div>
       </aside>
@@ -189,11 +180,12 @@ export default function Home() {
         <div>
           <span className="eyebrow">Behind the product</span>
           <h2 id="public-research-title">Built on CHEERS knowledge-graph DDI research</h2>
-          <p>Explore the experiments, research predictor, and methodology behind the system.</p>
+          <p>Review the model, controlled results, relation analysis, and study methods.</p>
         </div>
         <div className="public-gateway-links">
+          <Link to="/predictor"><Search size={18} /> DDI Predictor</Link>
           <Link to="/experiments"><BookOpen size={18} /> Experiments</Link>
-          <Link to="/predictor"><Search size={18} /> Research Predictor</Link>
+          <Link to="/relations"><BarChart3 size={18} /> Relation Analysis</Link>
           <Link to="/methodology"><FlaskConical size={18} /> Methodology</Link>
         </div>
       </section>
