@@ -29,6 +29,7 @@ from src.disease_information import DiseaseInformationService
 from src.drug_information import OpenFDADrugInformationService
 from src.entity_metadata import EntityMetadataStore
 from src.g3_context import G3ContextStore
+from src.gemini_query_interpreter import GeminiQueryInterpreter
 from src.graph_neighborhood import GraphNeighborhoodStore
 from src.lightweight_inference import DDIPredictor
 from src.pubmed_literature import PubMedLiteratureService
@@ -106,6 +107,7 @@ async def lifespan(app: FastAPI):
         disease_information_service=app.state.disease_information,
         label_evidence_service=app.state.label_evidence_service,
         literature_service=app.state.literature_service,
+        query_interpreter=GeminiQueryInterpreter(),
     )
 
     app.state.entity_metadata_store = load_entity_metadata_store()

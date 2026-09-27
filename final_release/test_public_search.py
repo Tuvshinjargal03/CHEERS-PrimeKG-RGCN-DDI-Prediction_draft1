@@ -5,12 +5,39 @@ import ast
 import importlib.util
 import sys
 import unittest
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from src.gemini_query_interpreter import GeminiQueryInterpreter
 from src.public_search import PublicSearchService
+
+
+class FixtureQueryInterpreter:
+    def __init__(self, result=None, error=None):
+        self.result = result
+        self.error = error
+        self.calls = []
+
+    def interpret(self, query):
+        self.calls.append(query)
+        if self.error:
+            raise self.error
+        return self.result
+
+
+class InvalidGeminiResponse:
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_args):
+        return False
+
+    @staticmethod
+    def read():
+        return b'{"candidates":[{"content":{"parts":[{"text":"not json"}]}}]}'
 
 
 class UnavailableDiseaseInformationService:
@@ -54,6 +81,11 @@ class PublicSearchTests(unittest.TestCase):
             literature_service=FixtureLiteratureService(),
         )
 
+    def use_interpreter(self, interpreter):
+        previous = self.search.query_interpreter
+        self.search.query_interpreter = interpreter
+        self.addCleanup(setattr, self.search, "query_interpreter", previous)
+
     def test_exact_drug_name(self):
         payload = self.search.search("Metformin")
         self.assertEqual(payload["intent"], "drug_information")
@@ -62,6 +94,88 @@ class PublicSearchTests(unittest.TestCase):
             payload["recognized_entities"][0]["match_type"],
             "exact_canonical_name",
         )
+
+    def test_deterministic_match_does_not_call_interpreter(self):
+        interpreter = FixtureQueryInterpreter(error=AssertionError("unexpected call"))
+        self.use_interpreter(interpreter)
+        payload = self.search.search("Metformin")
+        self.assertEqual(payload["recognized_entities"][0]["entity_id"], "DB00331")
+        self.assertEqual(interpreter.calls, [])
+        self.assertNotIn("ai_interpretation", payload)
+
+    def test_interpreted_natural_language_routes_through_deterministic_search(self):
+        interpreter = FixtureQueryInterpreter(
+            result={
+                "intent": "drug_information",
+                "drug_names": ["metformin"],
+                "disease_names": [],
+                "topic": "",
+                "rewritten_query": "metformin",
+                "confidence": 0.95,
+            }
+        )
+        self.use_interpreter(interpreter)
+        payload = self.search.search("what does metformin do?")
+        self.assertEqual(payload["intent"], "drug_information")
+        self.assertEqual(payload["recognized_entities"][0]["entity_id"], "DB00331")
+        self.assertEqual(payload["original_query"], "what does metformin do?")
+        self.assertEqual(payload["ai_interpretation"]["status"], "used")
+
+    def test_interpreted_typo_correction_still_uses_entity_matching(self):
+        interpreter = FixtureQueryInterpreter(
+            result={
+                "intent": "drug_side_effects",
+                "drug_names": ["metformin"],
+                "disease_names": [],
+                "topic": "side effects",
+                "rewritten_query": "metformin side effects",
+                "confidence": 0.94,
+            }
+        )
+        self.use_interpreter(interpreter)
+        payload = self.search.search("tell me about metphormin side efects")
+        self.assertEqual(payload["intent"], "drug_side_effects")
+        self.assertEqual(payload["recognized_entities"][0]["entity_id"], "DB00331")
+
+    def test_interpreter_failure_preserves_unknown_response(self):
+        interpreter = FixtureQueryInterpreter(error=TimeoutError())
+        self.use_interpreter(interpreter)
+        payload = self.search.search("banana spaceship medicine purple")
+        self.assertEqual(payload["intent"], "unknown")
+        self.assertEqual(payload["recognized_entities"], [])
+        self.assertEqual(payload["ai_interpretation"], {"status": "unavailable"})
+
+    def test_personalized_treatment_question_has_no_recommendation(self):
+        interpreter = FixtureQueryInterpreter(
+            result={
+                "intent": "general_symptom_or_treatment_question",
+                "drug_names": [],
+                "disease_names": [],
+                "topic": "pain",
+                "rewritten_query": "what should I take for pain",
+                "confidence": 0.98,
+            }
+        )
+        self.use_interpreter(interpreter)
+        payload = self.search.search("what should I take for pain?")
+        self.assertEqual(payload["intent"], "general_symptom_or_treatment_question")
+        self.assertNotIn("answer", payload)
+        self.assertNotIn("recommendation", payload)
+        self.assertEqual(payload["ai_interpretation"]["topic"], "pain")
+
+    def test_invalid_interpreter_output_fails_safely(self):
+        interpreter = GeminiQueryInterpreter(api_key="test-key")
+        with patch(
+            "src.gemini_query_interpreter.urlopen",
+            return_value=InvalidGeminiResponse(),
+        ):
+            result = interpreter.interpret("banana spaceship medicine purple")
+        self.assertIsNone(result)
+        interpreter = FixtureQueryInterpreter(result=result)
+        self.use_interpreter(interpreter)
+        payload = self.search.search("banana spaceship medicine purple")
+        self.assertEqual(payload["intent"], "unknown")
+        self.assertEqual(payload["ai_interpretation"], {"status": "unavailable"})
 
     def test_exact_drugbank_id(self):
         payload = self.search.search("DB00682")

@@ -31,6 +31,7 @@ SUPPORTED_INTENTS = frozenset(
         "drug_for_disease",
         "medicines_for_disease",
         "disease_nutrition",
+        "general_symptom_or_treatment_question",
         "unknown",
         "unsupported",
     }
@@ -130,6 +131,7 @@ class PublicSearchService:
         disease_information_service=None,
         label_evidence_service=None,
         literature_service=None,
+        query_interpreter=None,
     ):
         if project_dir is None:
             project_dir = Path(__file__).resolve().parents[1]
@@ -160,6 +162,7 @@ class PublicSearchService:
         )
         self.label_evidence_service = label_evidence_service
         self.literature_service = literature_service
+        self.query_interpreter = query_interpreter
         self.entities = self.drugs + self.diseases
         self._validate()
 
@@ -953,7 +956,7 @@ class PublicSearchService:
                     )
         return response
 
-    def search(self, query):
+    def _search_deterministic(self, query):
         original_query = str(query)
         normalized = normalize_query(original_query)
         if not normalized:
@@ -1197,6 +1200,79 @@ class PublicSearchService:
         return self._resolved_response(
             original_query, normalized, intent, [(entity, match_type)]
         )
+
+    @staticmethod
+    def _interpreted_query(interpretation):
+        intent = interpretation["intent"]
+        drugs = interpretation["drug_names"]
+        diseases = interpretation["disease_names"]
+        topic = interpretation["topic"]
+        if intent == "drug_information" and drugs:
+            return drugs[0]
+        if intent == "disease_information" and diseases:
+            return f"what is {diseases[0]}"
+        if intent == "drug_side_effects" and drugs:
+            return f"{drugs[0]} side effects"
+        if intent == "drug_interactions" and drugs:
+            return f"{drugs[0]} interactions"
+        if intent == "drug_food_lifestyle" and drugs and topic:
+            return f"{drugs[0]} {topic}"
+        if intent == "drug_pair_question" and len(drugs) >= 2:
+            return f"can i take {drugs[0]} with {drugs[1]} together"
+        if intent == "drug_for_disease" and drugs and diseases:
+            return f"is {drugs[0]} used for {diseases[0]}"
+        if intent == "medicines_for_disease" and diseases:
+            return f"medicines for {diseases[0]}"
+        if intent == "disease_nutrition" and diseases:
+            return f"nutrition for {diseases[0]}"
+        return interpretation["rewritten_query"]
+
+    @staticmethod
+    def _ai_metadata(status, interpretation=None):
+        metadata = {"status": status}
+        if interpretation is not None:
+            metadata.update(interpretation)
+        return metadata
+
+    def search(self, query):
+        deterministic = self._search_deterministic(query)
+        if deterministic["intent"] != "unknown" or self.query_interpreter is None:
+            return deterministic
+
+        try:
+            interpretation = self.query_interpreter.interpret(query)
+        except Exception:
+            interpretation = None
+        if not interpretation or interpretation.get("confidence", 0) < 0.7:
+            deterministic["ai_interpretation"] = self._ai_metadata("unavailable")
+            return deterministic
+
+        intent = interpretation["intent"]
+        if intent in {"general_symptom_or_treatment_question", "unsupported"}:
+            response = self._base_response(
+                query,
+                normalize_query(query),
+                intent,
+            )
+            response["unavailable_modules"].append(
+                {
+                    "module": "query_resolution",
+                    "reason": (
+                        "CHEERS does not select treatments or provide personalized "
+                        "medicine recommendations."
+                    ),
+                }
+            )
+        elif intent == "unknown":
+            response = deterministic
+        else:
+            response = self._search_deterministic(
+                self._interpreted_query(interpretation)
+            )
+            response["original_query"] = str(query)
+            response["normalized_query"] = normalize_query(query)
+        response["ai_interpretation"] = self._ai_metadata("used", interpretation)
+        return response
 
 
 __all__ = ["PublicSearchService", "SUPPORTED_INTENTS", "normalize_query"]
