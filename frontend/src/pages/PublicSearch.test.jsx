@@ -1,7 +1,7 @@
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { getJson } from '../lib/api.js'
 import Home from './Home.jsx'
 import PublicSearch from './PublicSearch.jsx'
@@ -101,6 +101,10 @@ describe('deterministic public-search routing', () => {
     getJson.mockReset()
   })
 
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('presents Search as a question-answer tool with supported examples', () => {
     renderSearch('/search')
     expect(screen.getByRole('heading', { name: 'Ask CHEERS' })).toBeVisible()
@@ -122,7 +126,7 @@ describe('deterministic public-search routing', () => {
     getJson.mockResolvedValue({ ...BASE, intent: 'drug_information', recognized_entities: [METFORMIN] })
     renderSearch('/search?q=metformin')
     await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/medicines/DB00331'))
-    expect(getJson).toHaveBeenCalledWith('/api/public/search?q=metformin')
+    expect(getJson).toHaveBeenCalledWith('/api/public/search?q=metformin', { timeoutMs: 65000 })
   })
 
   it('routes side-effect and interaction intents to focused medicine sections', async () => {
@@ -679,7 +683,38 @@ describe('deterministic public-search routing', () => {
   it('shows an invalid API response as an error', async () => {
     getJson.mockResolvedValue(null)
     renderSearch()
-    expect(await screen.findByRole('alert')).toHaveTextContent('The public search service returned an invalid response.')
+    expect(await screen.findByRole('alert')).toHaveTextContent('CHEERS could not load this answer. Please try again.')
+  })
+
+  it('shows a delayed startup message without issuing another request', async () => {
+    vi.useFakeTimers()
+    let resolveSearch
+    getJson.mockReturnValue(new Promise((resolve) => { resolveSearch = resolve }))
+    renderSearch('/search?q=metformin')
+
+    expect(screen.getByText('Searching CHEERS…').closest('[role="status"]')).toHaveClass('public-loading')
+    expect(screen.getByRole('button', { name: 'Searching…' })).toBeDisabled()
+    await act(async () => { vi.advanceTimersByTime(10_000) })
+    expect(screen.getByText('Still working — the information service may be starting up.')).toBeVisible()
+    expect(getJson).toHaveBeenCalledTimes(1)
+
+    await act(async () => { resolveSearch({ ...BASE, intent: 'unknown' }) })
+    expect(screen.queryByText('Searching CHEERS…')).not.toBeInTheDocument()
+    vi.useRealTimers()
+  })
+
+  it('shows a generic timeout and retries only when requested', async () => {
+    const timeout = Object.assign(new Error('internal timeout detail'), { code: 'REQUEST_TIMEOUT' })
+    getJson.mockRejectedValueOnce(timeout).mockResolvedValueOnce({ ...BASE, intent: 'unknown' })
+    const user = userEvent.setup()
+    renderSearch('/search?q=metformin')
+
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent('CHEERS is taking longer than expected. Please try again.')
+    expect(alert).not.toHaveTextContent('internal timeout detail')
+    expect(getJson).toHaveBeenCalledTimes(1)
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    await waitFor(() => expect(getJson).toHaveBeenCalledTimes(2))
   })
 
   it('submits a revised query to the backend router', async () => {

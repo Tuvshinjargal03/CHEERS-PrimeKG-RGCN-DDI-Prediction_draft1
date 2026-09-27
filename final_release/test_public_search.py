@@ -287,6 +287,13 @@ class PublicSearchTests(unittest.TestCase):
         ])
         self.assertEqual(points, ["Metformin may lower vitamin B12 levels."])
 
+    def test_side_effect_points_skip_incomplete_product_heading(self):
+        points = PublicSearchService._plain_label_points([
+            "adverse_reactions: Metformin Hydrochloride Tablets In a U.S. "
+            "Diarrhea was reported more often than with placebo.",
+        ])
+        self.assertEqual(points, ["Diarrhea was reported more often than with placebo."])
+
     def test_exact_drug_name(self):
         payload = self.search.search("Metformin")
         self.assertEqual(payload["intent"], "drug_information")

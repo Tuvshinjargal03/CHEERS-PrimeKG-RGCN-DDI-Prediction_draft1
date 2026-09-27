@@ -16,8 +16,8 @@ const PRIMARY_ACTIONS = [
 const INFORMATION_TYPES = [
   ['Medicine & disease info', 'Source-backed uses, side effects, and condition information.', Pill],
   ['FDA & PubMed evidence', 'External evidence is kept separate from the model ranking.', BookOpen],
-  ['Research connections', 'Shared biomedical relationships provide context, not proof of causation or clinical interaction.', Network],
-  ['Model results', 'R-GCN research ranking values are not clinical risk or safety scores.', BarChart3],
+  ['Research connections', 'Shared biomedical relationships. A connection does not prove a clinical interaction.', Network],
+  ['Model results', 'Research ranking values from the R-GCN model. They are not clinical safety or risk scores.', BarChart3],
 ]
 
 const ADVANCED_LINKS = [

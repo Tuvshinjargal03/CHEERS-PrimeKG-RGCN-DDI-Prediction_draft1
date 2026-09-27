@@ -7,6 +7,7 @@ export default function PublicSearchBox({
   label = 'Search medicines and diseases',
   placeholder = 'Search a medicine, disease, or medicine pair…',
   autoFocus = false,
+  disabled = false,
 }) {
   const inputId = useId()
   const [value, setValue] = useState(initialValue)
@@ -14,7 +15,7 @@ export default function PublicSearchBox({
   function submit(event) {
     event.preventDefault()
     const query = value.trim()
-    if (query) onSearch(query)
+    if (query && !disabled) onSearch(query)
   }
 
   return (
@@ -30,9 +31,10 @@ export default function PublicSearchBox({
           placeholder={placeholder}
           autoComplete="off"
           autoFocus={autoFocus}
+          disabled={disabled}
         />
-        <button type="submit" className="primary-button" disabled={!value.trim()}>
-          Search
+        <button type="submit" className="primary-button" disabled={disabled || !value.trim()}>
+          {disabled ? 'Searching…' : 'Search'}
         </button>
       </div>
     </form>

@@ -653,6 +653,21 @@
   color: #5b4c7e;
 }
 
+.public-loading > div {
+  display: grid;
+  gap: 3px;
+}
+
+.public-loading strong {
+  color: #4e416f;
+}
+
+.public-loading p {
+  margin: 0;
+  color: #716985;
+  font-size: 0.8rem;
+}
+
 .public-error {
   border: 1px solid #efcac6;
   background: #fff8f7;
@@ -669,6 +684,10 @@
 .public-neutral-state p {
   margin: 0;
   line-height: 1.6;
+}
+
+.public-retry-button {
+  margin-top: 12px;
 }
 
 .public-results {

@@ -26,8 +26,8 @@ const MODULE_LABELS = {
   single_drug_label_interactions: 'Single-medicine label interactions',
   drug_food_lifestyle_information: 'Food & lifestyle label information',
   pair_external_evidence: 'Medicine-pair source information',
-  pair_graph_context: 'Shared biomedical graph context',
-  research_graph_context: 'Biomedical graph context',
+  pair_graph_context: 'Shared biomedical research connections',
+  research_graph_context: 'Biomedical research connections',
   drug_disease_relationship_answer: 'Medicine and condition answer',
   disease_indication_medicines_answer: 'Condition indication medicines',
   disease_nutrition_information: 'Disease nutrition information',
@@ -52,6 +52,9 @@ const NATURAL_QUESTION_EXAMPLES = [
   'What medicines are used for type 2 diabetes mellitus?',
   'Metformin side effects',
 ]
+
+const PUBLIC_SEARCH_TIMEOUT_MS = 65_000
+const SLOW_SEARCH_NOTICE_MS = 10_000
 
 const DESTINATION_DETAILS = {
   pair_external_evidence: {
@@ -114,7 +117,7 @@ function MatchIndicator({ query, entities }) {
       <Sparkles size={15} aria-hidden="true" />
       <span>
         {matches.map(({ entity, fragment }) => `Matched “${fragment}” to ${displayEntityName(entity)}`).join(' · ')}
-        {alias ? ` · Canonical name: ${alias.entity.name}` : ''}
+        {alias ? ` · Database name: ${alias.entity.name}` : ''}
       </span>
     </div>
   )
@@ -391,7 +394,7 @@ function PairQuestionAnswer({ answer, entities = [], hasMainAnswer = false }) {
           )
         })}
       </div>
-      {answer.supporting_text && <p className="public-direct-answer-copy">{answer.supporting_text}</p>}
+      {!hasMainAnswer && answer.supporting_text && <p className="public-direct-answer-copy">{answer.supporting_text}</p>}
       <div className="public-answer-facts public-evidence-counts" aria-label="Retrieved source counts">
         {Number.isFinite(counts.label_mentions) && (
           <div><span>FDA label mentions</span><strong>{counts.label_mentions}</strong></div>
@@ -400,7 +403,7 @@ function PairQuestionAnswer({ answer, entities = [], hasMainAnswer = false }) {
           <div><span>PubMed records</span><strong>{counts.pubmed_records}</strong></div>
         )}
       </div>
-      {(answer.source_scope || answer.safety_note) && (
+      {!hasMainAnswer && (answer.source_scope || answer.safety_note) && (
         <div className="public-answer-boundary">
           {answer.source_scope && <p>{answer.source_scope}</p>}
           {answer.safety_note && <p>{answer.safety_note}</p>}
@@ -473,7 +476,7 @@ function WhyThisAnswer({ data, entities }) {
           </p>
         ))}
         {counts && <p>FDA label mentions: {counts.label_mentions} · PubMed records: {counts.pubmed_records}</p>}
-        {data.available_modules?.includes('pair_graph_context') && <p>Knowledge-graph context is available separately.</p>}
+        {data.available_modules?.includes('pair_graph_context') && <p>Knowledge-graph relationships are available separately.</p>}
         <p>Research-model rankings are separate from FDA, PubMed, and knowledge-graph information.</p>
       </div>
     </details>
@@ -622,7 +625,7 @@ function PairDestinations({ data, includeChecker = false }) {
         </Link>
       </div>
       <p className="public-context-boundary">
-        Source information and graph context are independent of the R-GCN score.
+        Source information and research connections are independent of the R-GCN ranking score.
         They do not explain or clinically validate a model prediction.
       </p>
     </section>
@@ -726,24 +729,34 @@ export default function PublicSearch() {
     error: '',
     foodLifestyleStatus: null,
   })
+  const [attempt, setAttempt] = useState(0)
+  const [slowSearchQuery, setSlowSearchQuery] = useState('')
   const requestIsCurrent = request.query === query
   const data = requestIsCurrent ? request.data : null
   const error = requestIsCurrent ? request.error : ''
   const foodLifestyleStatus = requestIsCurrent ? request.foodLifestyleStatus : null
   const loading = Boolean(query) && !requestIsCurrent
+  const slowSearch = loading && slowSearchQuery === query
 
   useEffect(() => {
     if (!query) return undefined
 
     let active = true
-    getJson(`/api/public/search?q=${encodeURIComponent(query)}`).then(
+    const slowNoticeId = setTimeout(() => {
+      if (active) setSlowSearchQuery(query)
+    }, SLOW_SEARCH_NOTICE_MS)
+    getJson(`/api/public/search?q=${encodeURIComponent(query)}`, {
+      timeoutMs: PUBLIC_SEARCH_TIMEOUT_MS,
+    }).then(
       async (payload) => {
         if (active) {
+          clearTimeout(slowNoticeId)
+          setSlowSearchQuery('')
           if (!payload || typeof payload.intent !== 'string') {
             setRequest({
               query,
               data: null,
-              error: 'The public search service returned an invalid response.',
+              error: 'CHEERS could not load this answer. Please try again.',
               foodLifestyleStatus: null,
             })
           } else {
@@ -789,10 +802,14 @@ export default function PublicSearch() {
       },
       (requestError) => {
         if (active) {
+          clearTimeout(slowNoticeId)
+          setSlowSearchQuery('')
           setRequest({
             query,
             data: null,
-            error: requestError.message || 'Search information could not be loaded.',
+            error: requestError.code === 'REQUEST_TIMEOUT'
+              ? 'CHEERS is taking longer than expected. Please try again.'
+              : 'CHEERS could not load this answer. Please try again.',
             foodLifestyleStatus: null,
           })
         }
@@ -801,8 +818,9 @@ export default function PublicSearch() {
 
     return () => {
       active = false
+      clearTimeout(slowNoticeId)
     }
-  }, [navigate, query])
+  }, [attempt, navigate, query])
 
   function search(nextQuery) {
     navigate(`/search?q=${encodeURIComponent(nextQuery)}`)
@@ -810,6 +828,11 @@ export default function PublicSearch() {
 
   function chooseAlternative(fragment, name) {
     search(replaceAmbiguousFragment(data.normalized_query || query, fragment, name))
+  }
+
+  function retrySearch() {
+    setRequest((current) => ({ ...current, query: '' }))
+    setAttempt((current) => current + 1)
   }
 
   const recognized = data?.recognized_entities || []
@@ -833,6 +856,7 @@ export default function PublicSearch() {
         label="Ask about medicines or diseases"
         placeholder="Ask a question about medicines or diseases…"
         onSearch={search}
+        disabled={loading}
       />
 
       {query && (
@@ -843,7 +867,11 @@ export default function PublicSearch() {
 
       {loading && (
         <div className="public-loading" role="status" aria-live="polite">
-          <LoaderCircle className="spin" size={22} /> Finding available information…
+          <LoaderCircle className="spin" size={22} />
+          <div>
+            <strong>{slowSearch ? 'Still working — the information service may be starting up.' : 'Searching CHEERS…'}</strong>
+            {slowSearch && <p>The first search can sometimes take a little longer.</p>}
+          </div>
         </div>
       )}
 
@@ -851,8 +879,9 @@ export default function PublicSearch() {
         <div className="public-error" role="alert">
           <AlertCircle size={22} />
           <div>
-            <h2>Search could not be completed</h2>
+            <h2>I couldn’t load that answer.</h2>
             <p>{error}</p>
+            <button type="button" className="secondary-button public-retry-button" onClick={retrySearch}>Try again</button>
           </div>
         </div>
       )}

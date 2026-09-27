@@ -47,8 +47,8 @@ describe('Home product hierarchy', () => {
     expect(within(section).getByText('Research connections')).toBeVisible()
     expect(within(section).getByText('Model results')).toBeVisible()
     expect(within(section).getAllByRole('listitem')).toHaveLength(4)
-    expect(section).toHaveTextContent('not proof of causation or clinical interaction')
-    expect(section).toHaveTextContent('not clinical risk or safety scores')
+    expect(section).toHaveTextContent('does not prove a clinical interaction')
+    expect(section).toHaveTextContent('not clinical safety or risk scores')
     expect(document.body).not.toHaveTextContent(/\bG3\b/)
   })
 

@@ -1485,6 +1485,12 @@ class PublicSearchService:
                     re.IGNORECASE,
                 ):
                     continue
+                if re.search(
+                    r"\btablets?\s+in\s+(?:an?\s+)?u\.s\.?$",
+                    sentence,
+                    re.IGNORECASE,
+                ):
+                    continue
                 words = re.findall(r"[A-Za-z][A-Za-z0-9-]*", sentence)
                 if words and len(words) <= 6 and all(word[0].isupper() for word in words):
                     continue
