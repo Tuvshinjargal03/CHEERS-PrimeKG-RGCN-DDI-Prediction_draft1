@@ -70,7 +70,8 @@ describe('public Home', () => {
     expect(within(primary).getAllByRole('heading', { level: 3 })).toHaveLength(3)
     expect(within(primary).queryByRole('link', { name: /Predictor/ })).not.toBeInTheDocument()
     const research = screen.getByRole('region', { name: 'Research & advanced tools' })
-    expect(within(research).getByRole('link', { name: 'DDI Predictor' })).toHaveAttribute('href', '/predictor')
+    expect(within(research).getByRole('link', { name: 'Research overview' })).toHaveAttribute('href', '/research')
+    expect(within(research).getByRole('link', { name: 'Research Predictor' })).toHaveAttribute('href', '/predictor')
   })
 
   it('submits the smart-search query without parsing it on Home', async () => {

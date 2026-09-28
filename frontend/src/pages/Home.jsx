@@ -1,5 +1,5 @@
 import {
-  ArrowRight, BarChart3, Beaker, BookOpen, FlaskConical, HeartPulse,
+  ArrowRight, BarChart3, Beaker, BookOpen, HeartPulse,
   LayoutDashboard, Network, Pill, Search, ShieldCheck,
 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -21,9 +21,9 @@ const INFORMATION_TYPES = [
 ]
 
 const ADVANCED_LINKS = [
-  ['/graph', 'Explore relationships', Network], ['/predictor', 'DDI Predictor', Search],
-  ['/experiments', 'Experiments', BookOpen], ['/relations', 'Relation Analysis', BarChart3],
-  ['/methodology', 'Methodology', FlaskConical],
+  ['/research', 'Research overview', BarChart3],
+  ['/predictor', 'Research Predictor', Search],
+  ['/graph', 'Explore relationships', Network],
 ]
 
 export default function Home() {

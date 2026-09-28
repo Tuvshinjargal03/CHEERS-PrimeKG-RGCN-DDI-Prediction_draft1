@@ -11,6 +11,7 @@ import {
   YAxis,
 } from 'recharts'
 import { AlertCircle, CheckCircle2, LoaderCircle } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import InfoTooltip from '../components/InfoTooltip.jsx'
 import RobustnessSection, { RobustnessLimitations } from '../components/RobustnessSection.jsx'
 import { getJson } from '../lib/api.js'
@@ -157,10 +158,11 @@ function Experiments() {
   return (
     <section className="page experiments-page">
       <div className="page-heading">
+        <Link className="research-back-link" to="/research">← Back to Research overview</Link>
         <span className="eyebrow">Evaluation</span>
-        <h1>Experiments</h1>
+        <h1>Detailed experimental results</h1>
         <p>
-          Controlled five-seed comparison of G0–G3. MRR and Hits@K are the
+          Full five-seed results for G0–G3. MRR and Hits@K are the
           primary link-ranking metrics; Accuracy, Precision, Recall, and F1
           provide a complementary binary discrimination view.
         </p>

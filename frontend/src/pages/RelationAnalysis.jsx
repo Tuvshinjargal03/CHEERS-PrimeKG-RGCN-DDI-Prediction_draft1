@@ -1,5 +1,6 @@
 import { AlertCircle, CheckCircle2, LoaderCircle } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Bar, BarChart, CartesianGrid, Cell, ErrorBar, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import InfoTooltip from '../components/InfoTooltip.jsx'
 import { getJson } from '../lib/api.js'
@@ -40,9 +41,10 @@ export default function RelationAnalysis() {
   return (
     <section className="page relation-analysis-page">
       <div className="page-heading">
+        <Link className="research-back-link" to="/research">← See Research overview</Link>
         <span className="eyebrow">Verified five-seed follow-up · v1</span>
-        <h1>Relation Analysis</h1>
-        <p>Each variant keeps the G0 DDI-only backbone and adds one biomedical relation plus its reverse edges. Paired ΔMRR compares every run with the matching G0 training seed on the same fixed split.</p>
+        <h1>Detailed relation analysis</h1>
+        <p>What happened when individual relation types were examined? Each variant keeps the G0 DDI-only backbone and adds one biomedical relation plus its reverse edges. Paired ΔMRR compares every run with the matching G0 training seed on the same fixed split.</p>
       </div>
 
       {loading && <div className="experiment-state"><LoaderCircle className="spin" size={26} /> Loading verified relation results…</div>}

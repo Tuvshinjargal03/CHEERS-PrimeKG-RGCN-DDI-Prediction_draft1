@@ -50,10 +50,11 @@ describe('CHEERS application shell', () => {
     expect(exploreMenu.getByRole('link', { name: 'Subgraph Explorer' })).toHaveAttribute('href', '#/subgraph')
 
     await user.click(nav.getByRole('button', { name: 'Research' }))
-    expect(nav.getByRole('link', { name: 'DDI Predictor' })).toHaveAttribute('href', '#/predictor')
-    expect(nav.getByRole('link', { name: 'Experiments' })).toHaveAttribute('href', '#/experiments')
+    expect(nav.getByRole('link', { name: 'Overview' })).toHaveAttribute('href', '#/research')
+    expect(nav.getByRole('link', { name: 'Detailed Results' })).toHaveAttribute('href', '#/experiments')
     expect(nav.getByRole('link', { name: 'Relation Analysis' })).toHaveAttribute('href', '#/relations')
     expect(nav.getByRole('link', { name: 'Methodology' })).toHaveAttribute('href', '#/methodology')
+    expect(nav.getByRole('link', { name: 'Research Predictor' })).toHaveAttribute('href', '#/predictor')
   })
 
   it.each(['Explore', 'Research'])('preserves keyboard, Escape and outside-click behavior for %s', async (group) => {

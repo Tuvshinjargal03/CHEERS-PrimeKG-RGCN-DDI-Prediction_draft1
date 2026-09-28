@@ -30,6 +30,7 @@ const MyHealth = lazy(() => import('./pages/MyHealth.jsx'))
 const MyMedicines = lazy(() => import('./pages/MyMedicines.jsx'))
 const MyConditions = lazy(() => import('./pages/MyConditions.jsx'))
 const PublicSearch = lazy(() => import('./pages/PublicSearch.jsx'))
+const Research = lazy(() => import('./pages/Research.jsx'))
 const RelationAnalysis = lazy(() => import('./pages/RelationAnalysis.jsx'))
 const SubgraphExplorer = lazy(() => import('./pages/SubgraphExplorer.jsx'))
 
@@ -48,10 +49,11 @@ const navigationGroups = [
     label: 'Research',
     icon: BarChart3,
     items: [
-      { path: '/predictor', label: 'DDI Predictor', icon: Search },
-      { path: '/experiments', label: 'Experiments', icon: BarChart3 },
+      { path: '/research', label: 'Overview', icon: BarChart3 },
+      { path: '/experiments', label: 'Detailed Results', icon: BarChart3 },
       { path: '/relations', label: 'Relation Analysis', icon: GitBranch },
       { path: '/methodology', label: 'Methodology', icon: FlaskConical },
+      { path: '/predictor', label: 'Research Predictor', icon: Search },
     ],
   },
 ]
@@ -233,7 +235,7 @@ function AppShell() {
         </nav>
 
         <div className="sidebar-footer">
-          <NavLink className="sidebar-scope-link" to="/methodology">
+          <NavLink className="sidebar-scope-link" to="/research">
             <FlaskConical size={15} aria-hidden="true" />
             <span>Research-backed information</span>
           </NavLink>
@@ -255,6 +257,7 @@ function AppShell() {
             <Route path="/diseases" element={<DiseaseGuide />} />
             <Route path="/diseases/:diseaseId" element={<DiseaseGuide />} />
             <Route path="/experiments" element={<Experiments />} />
+            <Route path="/research" element={<Research />} />
             <Route path="/relations" element={<RelationAnalysis />} />
             <Route path="/predictor" element={<DDIPredictor />} />
             <Route path="/graph" element={<GraphExplorer />} />

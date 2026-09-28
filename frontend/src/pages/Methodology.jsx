@@ -1,5 +1,6 @@
 import { AlertCircle, Database, GitCompareArrows, Layers3, LoaderCircle, Target } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { getJson } from '../lib/api.js'
 
 export default function Methodology() {
@@ -46,6 +47,7 @@ export default function Methodology() {
   return (
     <section className="page">
       <div className="page-heading">
+        <Link className="research-back-link" to="/research">← See Research overview</Link>
         <span className="eyebrow">Controlled research design</span>
         <h1>Methodology</h1>
         <p>
@@ -55,12 +57,24 @@ export default function Methodology() {
         </p>
       </div>
 
+      <nav className="experiment-section-nav" aria-label="Methodology sections">
+        <a href="#method-data">Data preparation</a>
+        <a href="#method-variants">Graph variants</a>
+        <a href="#method-model">R-GCN model</a>
+        <a href="#method-training">Training</a>
+        <a href="#method-evaluation">Evaluation</a>
+        <Link to="/experiments">Five-seed comparison</Link>
+        <a href="#method-relation">Relation ablation</a>
+        <a href="#method-external">External exploration</a>
+        <a href="#method-limitations">Limitations</a>
+      </nav>
+
       {!data && !error && <div className="experiment-state"><LoaderCircle className="spin" size={26} />Loading methodology metadata…</div>}
       {error && <div className="experiment-state error"><AlertCircle size={26} />{error}</div>}
 
       {data && (
         <>
-          <div className="methodology-flow">
+          <div id="method-model" className="methodology-flow">
             {model ? <article><Database size={23} /><span>1</span><h2>PrimeKG</h2><p>Canonical biomedical entities and relations, targeting <em>{model.target_relation.primekg_display_relation}</em>.</p></article> : <article><AlertCircle size={23} /><span>1</span><h2>Target metadata unavailable</h2><p>{sourceErrors.model}</p></article>}
             <article><GitCompareArrows size={23} /><span>2</span><h2>G0–G3</h2><p>Controlled DDI-only, molecular-context, disease-context, and combined graphs.</p></article>
             {model ? <article><Layers3 size={23} /><span>3</span><h2>{model.architecture}</h2><p>{model.embedding_dim}-dimensional embeddings with a {model.decoder}.</p></article> : <article><AlertCircle size={23} /><span>3</span><h2>Model metadata unavailable</h2><p>{sourceErrors.model}</p></article>}
@@ -68,19 +82,19 @@ export default function Methodology() {
           </div>
 
           <div className="methodology-grid">
-            <article className="method-card">
+            <article id="method-data" className="method-card">
               <span className="card-kicker">Dataset and split</span><h2>One fixed DDI split</h2>
               <dl className="number-list"><div><dt>Training pairs</dt><dd>{summary.ddi_split.train.toLocaleString()}</dd></div><div><dt>Validation pairs</dt><dd>{summary.ddi_split.validation.toLocaleString()}</dd></div><div><dt>Test pairs</dt><dd>{summary.ddi_split.test.toLocaleString()}</dd></div><div><dt>Candidate drugs</dt><dd>{summary.candidate_drugs.toLocaleString()}</dd></div></dl>
               <p>Validation and test DDI edges are excluded from message passing. The same split is reused for every graph.</p>
             </article>
 
-            <article className="method-card">
+            <article id="method-variants" className="method-card">
               <span className="card-kicker">Graph composition</span><h2>Four controlled variants</h2>
               <div className="composition-list">{Object.entries(summary.graph_variants).map(([graph, composition]) => <div key={graph}><strong>{graph}</strong><span>{composition}</span></div>)}</div>
               <p>G3 combines DDI, Drug–Gene/Protein, and Drug–Disease context while retaining the same target relation.</p>
             </article>
 
-            <article className="method-card">
+            <article id="method-evaluation" className="method-card">
               <span className="card-kicker">Primary evaluation</span><h2>Full filtered ranking</h2>
               <p>Each held-out test pair is evaluated in both directions against all {summary.candidate_drugs.toLocaleString()} candidate drugs, producing {summary.evaluation.ranking_queries.toLocaleString()} ranking queries.</p>
               <div className="definition-list"><div><strong>MRR</strong><span>Rewards placing the true target near the top.</span></div><div><strong>Hits@1</strong><span>True target ranks first.</span></div><div><strong>Hits@5 / Hits@10</strong><span>True target appears in the top 5 or 10.</span></div></div>
@@ -92,22 +106,27 @@ export default function Methodology() {
               <div className="definition-list"><div><strong>Threshold</strong><span>Chosen per graph and seed by maximizing validation F1, then frozen for test evaluation.</span></div><div><strong>Metrics</strong><span>Accuracy, Precision, Recall, and F1.</span></div></div>
             </article> : <article className="method-card"><span className="card-kicker">Complementary evaluation</span><h2>Classification methodology unavailable</h2><p>{sourceErrors.classification}</p></article>}
 
-            {relationAnalysis ? <article className="method-card">
+            {relationAnalysis ? <article id="method-relation" className="method-card">
               <span className="card-kicker">Relation extension · ranking only</span><h2>Five paired training seeds</h2>
               <p>Seven single-relation variants produce {relationAnalysis.relation_runs} ranking runs for seeds {relationAnalysis.seeds.join(', ')}, each paired with the matching G0 run on one fixed split.</p>
               <p>{relationAnalysis.implementation_lineage}</p>
               <p>{relationAnalysis.classification_note}</p>
-            </article> : <article className="method-card"><span className="card-kicker">Relation extension</span><h2>Relation methodology unavailable</h2><p>{sourceErrors.relationAnalysis}</p></article>}
+            </article> : <article id="method-relation" className="method-card"><span className="card-kicker">Relation extension</span><h2>Relation methodology unavailable</h2><p>{sourceErrors.relationAnalysis}</p></article>}
+
+            <article id="method-external" className="method-card">
+              <span className="card-kicker">External exploration</span><h2>DDInter comparison</h2>
+              <p>DDInter was used for exploratory external evaluation, not for training.</p>
+            </article>
           </div>
 
-          <div className="method-parameters section-block">
+          <div id="method-training" className="method-parameters section-block">
             <div className="section-title"><div><span className="eyebrow">Fixed model settings</span><h2>Architecture and training</h2></div></div>
             <div className="parameter-grid">
               {[['Architecture', summary.model.architecture], ['Embedding / hidden', `${summary.model.embedding_dim} / ${summary.model.hidden_dim}`], ['Dropout', summary.model.dropout], ['Learning rate', summary.model.learning_rate], ['Weight decay', summary.model.weight_decay], ['Maximum epochs', summary.model.max_epochs], ['Positives per epoch', summary.model.train_positives_per_epoch.toLocaleString()], ['Seeds', summary.random_seeds.join(', ')]].map(([label, value]) => <div key={label}><span>{label}</span><strong>{value}</strong></div>)}
             </div>
           </div>
 
-          <aside className="limitations-card"><AlertCircle size={21} /><div><strong>Interpretation boundaries</strong><ul><li>Sampled unobserved pairs are not confirmed non-interactions.</li><li>Raw model scores are ranking values, not probabilities or clinical risk estimates.</li><li>Five seeds provide robustness evidence; statistical significance is not claimed.</li><li>This research prototype does not establish whether a drug pair is safe, dangerous, beneficial, or harmful.</li></ul></div></aside>
+          <aside id="method-limitations" className="limitations-card"><AlertCircle size={21} /><div><strong>Interpretation boundaries</strong><ul><li>Sampled unobserved pairs are not confirmed non-interactions.</li><li>Raw model scores are ranking values, not probabilities or clinical risk estimates.</li><li>Five seeds provide robustness evidence; statistical significance is not claimed.</li><li>This research prototype does not establish whether a drug pair is safe, dangerous, beneficial, or harmful.</li></ul></div></aside>
         </>
       )}
     </section>
