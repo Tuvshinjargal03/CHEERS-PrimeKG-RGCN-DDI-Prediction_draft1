@@ -110,7 +110,7 @@ describe('CHEERS application shell', () => {
     window.location.hash = '#/my-health'
     render(<App />)
 
-    expect(await screen.findByRole('heading', { name: 'Check a medicine with your saved health information' })).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'My Health', level: 1 })).toBeVisible()
   })
 
   it('restores scroll and main-content focus only when the pathname changes', async () => {
@@ -120,7 +120,7 @@ describe('CHEERS application shell', () => {
     expect(window.scrollTo).not.toHaveBeenCalled()
 
     await user.click(within(screen.getByRole('navigation')).getByRole('link', { name: 'My Health' }))
-    await screen.findByRole('heading', { name: 'Check a medicine with your saved health information' })
+    await screen.findByRole('heading', { name: 'My Health', level: 1 })
 
     const mainContent = document.getElementById('main-content')
     expect(window.scrollTo).toHaveBeenCalledTimes(1)
