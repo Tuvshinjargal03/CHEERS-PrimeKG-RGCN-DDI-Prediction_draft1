@@ -5,12 +5,12 @@ import {
   BookOpen,
   CheckCircle2,
   ExternalLink,
-  GitBranch,
   Info,
   LoaderCircle,
   Network,
   Pill,
   Search,
+  Sparkles,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
@@ -19,21 +19,6 @@ import { getJson } from '../lib/api.js'
 import { publicSearchDestination } from '../lib/publicSearchRouting.js'
 import './PublicSearch.css'
 
-const INTENT_LABELS = {
-  disease_information: 'Disease information',
-  drug_information: 'Medicine information',
-  drug_side_effects: 'Medicine side effects',
-  drug_interactions: 'Medicine interactions',
-  drug_food_lifestyle: 'Medicine food & lifestyle information',
-  drug_pair: 'Medicine pair',
-  drug_pair_question: 'Medicine-pair question',
-  drug_for_disease: 'Medicine and condition question',
-  medicines_for_disease: 'Medicines linked to a condition',
-  disease_nutrition: 'Disease nutrition information',
-  unsupported: 'Recognized request',
-  unknown: 'Search not recognized',
-}
-
 const MODULE_LABELS = {
   disease_explanation: 'Disease explanation',
   drug_explanation: 'General medicine explanation',
@@ -41,8 +26,8 @@ const MODULE_LABELS = {
   single_drug_label_interactions: 'Single-medicine label interactions',
   drug_food_lifestyle_information: 'Food & lifestyle label information',
   pair_external_evidence: 'Medicine-pair source information',
-  pair_graph_context: 'Shared biomedical graph context',
-  research_graph_context: 'Biomedical graph context',
+  pair_graph_context: 'Shared biomedical research connections',
+  research_graph_context: 'Biomedical research connections',
   drug_disease_relationship_answer: 'Medicine and condition answer',
   disease_indication_medicines_answer: 'Condition indication medicines',
   disease_nutrition_information: 'Disease nutrition information',
@@ -62,20 +47,23 @@ const FOOD_LIFESTYLE_TOPIC_LABELS = {
 }
 
 const NATURAL_QUESTION_EXAMPLES = [
-  'Can I take warfarin with ibuprofen?',
-  'Is metformin used for type 2 diabetes mellitus?',
-  'What medicines are used for type 2 diabetes mellitus?',
+  'What does metformin do?',
   'Metformin side effects',
+  'Warfarin and aspirin together?',
+  'What is diabetes?',
 ]
+
+const PUBLIC_SEARCH_TIMEOUT_MS = 65_000
+const SLOW_SEARCH_NOTICE_MS = 10_000
 
 const DESTINATION_DETAILS = {
   pair_external_evidence: {
-    title: 'Review medicine-pair sources',
+    title: 'Review sources',
     description: 'Open independent openFDA and PubMed information retrieved for this pair.',
     icon: Beaker,
   },
   pair_graph_context: {
-    title: 'Explore shared biomedical connections',
+    title: 'Explore relationships',
     description: 'View available gene/protein and disease relationships in the knowledge graph.',
     icon: Network,
   },
@@ -83,6 +71,56 @@ const DESTINATION_DETAILS = {
 
 function entityLabel(entity) {
   return entity.entity_type === 'disease' ? 'Disease' : 'Medicine'
+}
+
+function displayEntityName(entity) {
+  return entity?.display_name || entity?.name || ''
+}
+
+function answerTitle(data, entities, query = '') {
+  const first = entities[0]
+  const firstName = displayEntityName(first)
+  if (data.intent === 'drug_side_effects') return `${firstName} side effects`
+  if (data.intent === 'drug_information') return `About ${firstName}`
+  if (data.intent === 'drug_pair_question' || data.intent === 'drug_pair') {
+    return entities.map(displayEntityName).join(' + ')
+  }
+  if (data.intent === 'general_symptom_or_treatment_question' && first) {
+    const wording = data.normalized_query || data.original_query || query
+    return `${firstName} and ${wording.toLocaleLowerCase().includes('pain') ? 'pain' : 'your question'}`
+  }
+  if (data.intent === 'disease_information' && first) return sentenceCase(firstName)
+  return firstName || 'Your CHEERS answer'
+}
+
+const CORRECTION_WORDS = new Set([
+  'about', 'and', 'can', 'does', 'effects', 'efects', 'for', 'information', 'side',
+  'take', 'tell', 'the', 'together', 'use', 'used', 'what', 'with', 'your', 'pain',
+])
+
+function correctionFragment(query, entity) {
+  if (entity?.match_type === 'exact_common_name') return displayEntityName(entity).toLocaleLowerCase()
+  if (entity?.match_type !== 'close_fuzzy_name') return ''
+  return String(query || '').toLocaleLowerCase().match(/[a-z0-9-]+/g)
+    ?.filter((word) => word.length > 2 && !CORRECTION_WORDS.has(word))
+    .sort((left, right) => right.length - left.length)[0] || ''
+}
+
+function MatchIndicator({ query, entities }) {
+  const matches = entities
+    .map((entity) => ({ entity, fragment: correctionFragment(query, entity) }))
+    .filter(({ fragment }) => fragment)
+  if (!matches.length) return null
+  const alias = matches.find(({ entity }) => entity.display_name && entity.display_name !== entity.name)
+  return (
+    <div className="public-match-note">
+      <Sparkles size={15} aria-hidden="true" />
+      <span>
+        {matches.map(({ entity, fragment }) => `Matched “${fragment}” to ${displayEntityName(entity)}`).join(' · ')}
+        {alias ? ` · Database name: ${alias.entity.name}` : ''}
+      </span>
+    </div>
+  )
 }
 
 function sentenceCase(value) {
@@ -97,25 +135,6 @@ function escapeRegExp(value) {
 function replaceAmbiguousFragment(query, fragment, replacement) {
   const pattern = new RegExp(`\\b${escapeRegExp(fragment)}\\b`, 'i')
   return pattern.test(query) ? query.replace(pattern, replacement) : replacement
-}
-
-function EntityCard({ entity }) {
-  const isDisease = entity.entity_type === 'disease'
-  const Icon = isDisease ? GitBranch : Pill
-
-  return (
-    <article className="public-entity-card">
-      <span className="public-entity-icon"><Icon size={20} /></span>
-      <div>
-        <span className="public-entity-type">{entityLabel(entity)}</span>
-        <h3>{entity.name}</h3>
-        <p>{entity.entity_id}</p>
-      </div>
-      <span className="public-recognized-badge">
-        <CheckCircle2 size={14} /> Recognized
-      </span>
-    </article>
-  )
 }
 
 function DiseaseExplanation({ entity }) {
@@ -152,6 +171,7 @@ function DiseaseExplanation({ entity }) {
 }
 
 function DrugInformationState({ entity }) {
+  const medicinePath = `/medicines/${encodeURIComponent(entity.entity_id)}`
   return (
     <section className="public-neutral-state" aria-labelledby="drug-information-status">
       <BookOpen size={21} aria-hidden="true" />
@@ -161,7 +181,12 @@ function DrugInformationState({ entity }) {
           CHEERS recognized {entity.name} ({entity.entity_id}). Open its medicine
           profile to review available official label information and related connections.
         </p>
-        <Link className="text-action" to={`/medicines/${encodeURIComponent(entity.entity_id)}`}>Open medicine profile <ArrowRight size={16} /></Link>
+        <div className="public-answer-actions">
+          <Link to={medicinePath}>View medicine</Link>
+          <Link to={`${medicinePath}?section=side-effects`}>Side effects</Link>
+          <Link to={`/check?drug_a_id=${encodeURIComponent(entity.entity_id)}`}>Check Medicines</Link>
+          <Link to={`${medicinePath}?section=uses`}>Original source</Link>
+        </div>
       </div>
     </section>
   )
@@ -250,7 +275,7 @@ function DiseaseNutritionSearchState({ answer, disease }) {
         )}
       </div>
       <Link className="public-view-all-medicines" to={destination}>
-        {available ? 'View Nutrition & lifestyle' : 'View disease information'}
+        {available ? 'View Nutrition & lifestyle' : 'View disease'}
         <ArrowRight size={17} aria-hidden="true" />
       </Link>
     </section>
@@ -315,9 +340,9 @@ function DrugDiseaseAnswer({ answer }) {
         )}
       </div>
       <div className="public-answer-actions" aria-label="Medicine and condition actions">
-        <Link to={`/medicines/${encodeURIComponent(drug.entity_id)}`}>View {drug.name}</Link>
-        <Link to={`/diseases/${encodeURIComponent(disease.entity_id)}`}>View {sentenceCase(disease.name)}</Link>
-        <Link to={`/check?drug_a_id=${encodeURIComponent(drug.entity_id)}`}>Check {drug.name} with another medicine</Link>
+        <Link to={`/medicines/${encodeURIComponent(drug.entity_id)}`}>View medicine</Link>
+        <Link to={`/diseases/${encodeURIComponent(disease.entity_id)}`}>View disease</Link>
+        <Link to={`/check?drug_a_id=${encodeURIComponent(drug.entity_id)}`}>Check Medicines</Link>
       </div>
       {(answer.source_scope || answer.safety_note) && (
         <div className="public-answer-boundary">
@@ -329,7 +354,7 @@ function DrugDiseaseAnswer({ answer }) {
   )
 }
 
-function PairQuestionAnswer({ answer }) {
+function PairQuestionAnswer({ answer, explanation, entities = [] }) {
   if (!answer?.drug_1 || !answer?.drug_2) return null
   const states = {
     interaction_warning_found: { tone: 'warning', Icon: AlertCircle },
@@ -340,17 +365,36 @@ function PairQuestionAnswer({ answer }) {
   if (!state) return null
   const Icon = state.Icon
   const counts = answer.evidence_summary || {}
+  const displayName = (drug) => (
+    entities.find((entity) => entity.entity_id === drug.entity_id)?.display_name || drug.name
+  )
 
   return (
     <section className={`public-direct-answer is-${state.tone}`} aria-labelledby="pair-question-answer-title">
-      <div className="public-direct-answer-heading">
+      <div className="public-direct-answer-heading public-pair-heading">
         <span className="public-direct-answer-icon"><Icon size={22} aria-hidden="true" /></span>
         <div>
           <span className="public-answer-status-label">{answer.direct_answer}</span>
-          <h2 id="pair-question-answer-title">{answer.drug_1.name} + {answer.drug_2.name}</h2>
+          <h2 id="pair-question-answer-title">{displayName(answer.drug_1)} + {displayName(answer.drug_2)}</h2>
         </div>
       </div>
-      {answer.supporting_text && <p className="public-direct-answer-copy">{answer.supporting_text}</p>}
+      <div className="public-pair-medicines" aria-label="Medicines in this pair">
+        {[answer.drug_1, answer.drug_2].map((drug) => {
+          const matched = entities.find((entity) => entity.entity_id === drug.entity_id)
+          return (
+            <div key={drug.entity_id}>
+              <Pill size={18} aria-hidden="true" />
+              <span>
+                <strong>{displayName(drug)}</strong>
+                {matched?.display_name && <small>{drug.name}</small>}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+      {(explanation?.short_answer || answer.supporting_text) && (
+        <p className="public-direct-answer-copy">{explanation?.short_answer || answer.supporting_text}</p>
+      )}
       <div className="public-answer-facts public-evidence-counts" aria-label="Retrieved source counts">
         {Number.isFinite(counts.label_mentions) && (
           <div><span>FDA label mentions</span><strong>{counts.label_mentions}</strong></div>
@@ -359,12 +403,109 @@ function PairQuestionAnswer({ answer }) {
           <div><span>PubMed records</span><strong>{counts.pubmed_records}</strong></div>
         )}
       </div>
-      {(answer.source_scope || answer.safety_note) && (
+      {(explanation?.what_we_cannot_conclude || answer.safety_note) && (
         <div className="public-answer-boundary">
-          {answer.source_scope && <p>{answer.source_scope}</p>}
-          {answer.safety_note && <p>{answer.safety_note}</p>}
+          <strong>Keep in mind</strong>
+          <p>{explanation?.what_we_cannot_conclude || answer.safety_note}</p>
         </div>
       )}
+      <SourceChips
+        sources={explanation?.sources_used}
+        checked={Object.values(counts).some((count) => count === 0)}
+      />
+    </section>
+  )
+}
+
+function SourceChips({ sources, checked }) {
+  if (!sources?.length) return null
+  return (
+    <div className="public-source-row" aria-label={checked ? 'Sources checked' : 'Sources used'}>
+      <span>{checked ? 'Sources checked' : 'Sources'}</span>
+      {sources.map((source) => <span className="public-source-chip" key={source}>{source}</span>)}
+    </div>
+  )
+}
+
+function PlainLanguageExplanation({ explanation, evidenceSummary, title, matchNote, actions }) {
+  if (!explanation?.short_answer) return null
+  const checked = evidenceSummary && Object.values(evidenceSummary).some((count) => count === 0)
+  return (
+    <section className="public-answer-card" aria-labelledby="plain-answer-title">
+      {matchNote}
+      <h2 id="plain-answer-title">{title}</h2>
+      <p className="public-answer-text">{explanation.short_answer}</p>
+      {explanation.key_points?.length > 0 && (
+        <div className="public-key-points">
+          <h3>Key things to know</h3>
+          <ul>{explanation.key_points.map((point) => <li key={point}>{point}</li>)}</ul>
+        </div>
+      )}
+      {explanation.what_we_cannot_conclude && (
+        <div className="public-answer-boundary">
+          <strong>Keep in mind</strong>
+          <p>{explanation.what_we_cannot_conclude}</p>
+        </div>
+      )}
+      <SourceChips sources={explanation.sources_used} checked={checked} />
+      {actions}
+    </section>
+  )
+}
+
+function ResultActions({ intent, entity }) {
+  if (!entity || !['drug_information', 'drug_side_effects'].includes(intent)) return null
+  const medicinePath = `/medicines/${encodeURIComponent(entity.entity_id)}`
+  return (
+    <div className="public-answer-actions public-answer-primary-actions" aria-label="Explore more">
+      <Link to={medicinePath}>View medicine</Link>
+      <Link to={`${medicinePath}?section=uses`}>Uses</Link>
+      <Link to={`${medicinePath}?section=side-effects`}>Side effects</Link>
+      <Link to={`/check?drug_a_id=${encodeURIComponent(entity.entity_id)}`}>Check Medicines</Link>
+      <Link to={`${medicinePath}?section=${intent === 'drug_side_effects' ? 'side-effects' : 'uses'}`}>Original source</Link>
+    </div>
+  )
+}
+
+function WhyThisAnswer({ data, entities }) {
+  if (!entities.length) return null
+  const counts = data.answer?.evidence_summary
+  return (
+    <details className="public-answer-details">
+      <summary>Why this answer?</summary>
+      <div>
+        {entities.map((entity) => (
+          <p key={`${entity.entity_type}-${entity.entity_id}`}>
+            <strong>{displayEntityName(entity)}</strong> · {entity.entity_id} · {entityLabel(entity)}
+          </p>
+        ))}
+        {counts && <p>FDA label mentions: {counts.label_mentions} · PubMed records: {counts.pubmed_records}</p>}
+        {data.available_modules?.includes('pair_graph_context') && <p>Knowledge-graph relationships are available separately.</p>}
+        <p>Research-model rankings are separate from FDA, PubMed, and knowledge-graph information.</p>
+      </div>
+    </details>
+  )
+}
+
+function TreatmentQuestionNextSteps({ medicine }) {
+  const medicinePath = medicine
+    ? `/medicines/${encodeURIComponent(medicine.entity_id)}`
+    : '/medicines'
+  const checkerPath = medicine
+    ? `/check?drug_a_id=${encodeURIComponent(medicine.entity_id)}`
+    : '/check'
+  return (
+    <section className="public-next-steps" aria-labelledby="treatment-next-steps">
+      <div className="public-section-heading">
+        <span className="eyebrow">Next steps</span>
+        <h2 id="treatment-next-steps">Review information without choosing a treatment</h2>
+      </div>
+      <div className="public-answer-actions">
+        <Link to={medicinePath}>{medicine ? 'View medicine' : 'Find a medicine profile'}</Link>
+        {medicine && <Link to={`${medicinePath}?section=uses`}>Uses</Link>}
+        {medicine && <Link to={`${medicinePath}?section=side-effects`}>Side effects</Link>}
+        <Link to={checkerPath}>Check Medicines</Link>
+      </div>
     </section>
   )
 }
@@ -409,7 +550,6 @@ function MedicinesForDiseaseState({ answer, disease: recognizedDisease }) {
                 <div>
                   <span>Indication</span>
                   <h3>{medicine.drug_name}</h3>
-                  <p>{medicine.drug_id}</p>
                 </div>
                 <div className="public-medicine-answer-actions">
                   <Link to={`/medicines/${encodeURIComponent(medicine.drug_id)}`}>View medicine</Link>
@@ -450,15 +590,14 @@ function PairDestinations({ data, includeChecker = false }) {
   return (
     <section className="public-next-steps" aria-labelledby="pair-next-steps-title">
       <div className="public-section-heading">
-        <span className="eyebrow">Available next steps</span>
-        <h2 id="pair-next-steps-title">Choose how deeply you want to explore</h2>
+        <h2 id="pair-next-steps-title">Explore more</h2>
       </div>
       <div className="public-destination-grid">
         {includeChecker && checkerParams && (
           <Link to={`/check?${checkerParams}`} className="public-destination-card">
             <span><Pill size={20} /></span>
             <div>
-              <h3>Open Medicine Checker</h3>
+              <h3>Check Medicines</h3>
               <p>Review the same pair with its source details and available context.</p>
             </div>
             <ArrowRight size={18} aria-hidden="true" />
@@ -489,7 +628,7 @@ function PairDestinations({ data, includeChecker = false }) {
         </Link>
       </div>
       <p className="public-context-boundary">
-        Source information and graph context are independent of the R-GCN score.
+        Source information and research connections are independent of the R-GCN ranking score.
         They do not explain or clinically validate a model prediction.
       </p>
     </section>
@@ -531,11 +670,18 @@ function UnavailableModules({ modules, intent }) {
 }
 
 function AmbiguousState({ data, onChoose }) {
+  const isGeneralDiabetes = data.intent === 'disease_information'
+    && /^(?:what is|what s|tell me about)?\s*diabetes$/.test(data.normalized_query || '')
+  const topic = isGeneralDiabetes ? 'diabetes condition' : 'match'
   return (
     <section className="public-ambiguous" aria-labelledby="ambiguous-title">
-      <span className="eyebrow">More than one match</span>
-      <h2 id="ambiguous-title">Which entity did you mean?</h2>
-      <p>CHEERS did not choose silently. Select the intended repository entity to search again.</p>
+      <h2 id="ambiguous-title">{isGeneralDiabetes ? 'Diabetes' : `Which ${topic} do you mean?`}</h2>
+      <p>
+        {isGeneralDiabetes
+          ? 'CHEERS does not have a single general diabetes description in its reviewed data.'
+          : 'Choose the closest match to continue.'}
+      </p>
+      {isGeneralDiabetes && <h3>Explore specific diabetes conditions</h3>}
       {data.ambiguous_matches.map((ambiguity) => (
         <div className="public-alternative-list" key={ambiguity.query_fragment}>
           {ambiguity.candidates.map((candidate) => (
@@ -546,7 +692,7 @@ function AmbiguousState({ data, onChoose }) {
             >
               <span>
                 <strong>{candidate.name}</strong>
-                <small>{entityLabel(candidate)} · {candidate.entity_id}</small>
+                <small>{entityLabel(candidate)}</small>
               </span>
               <ArrowRight size={17} aria-hidden="true" />
             </button>
@@ -566,14 +712,19 @@ function EmptyOrUnknownState({ hasQuery }) {
   return (
     <section className="public-empty-state" aria-labelledby="public-empty-title">
       <Search size={28} aria-hidden="true" />
-      <h2 id="public-empty-title">
-        {hasQuery ? 'We could not confidently recognize that search' : 'Start with a simple search'}
-      </h2>
+      <h2 id="public-empty-title">{hasQuery ? 'I couldn’t answer that directly.' : 'Start with a simple search'}</h2>
       <p>
         {hasQuery
-          ? 'Try an exact medicine name, DrugBank ID, disease name, or two exact medicine names.'
+          ? 'Try a medicine name, a disease, or two medicines you want to compare.'
           : 'Use a few words about a medicine, disease, interaction, or medicine pair.'}
       </p>
+      {hasQuery && (
+        <div className="public-answer-actions">
+          <Link to="/medicines">Browse medicines</Link>
+          <Link to="/diseases">Browse diseases</Link>
+          <Link to="/check">Check Medicines</Link>
+        </div>
+      )}
     </section>
   )
 }
@@ -588,24 +739,34 @@ export default function PublicSearch() {
     error: '',
     foodLifestyleStatus: null,
   })
+  const [attempt, setAttempt] = useState(0)
+  const [slowSearchQuery, setSlowSearchQuery] = useState('')
   const requestIsCurrent = request.query === query
   const data = requestIsCurrent ? request.data : null
   const error = requestIsCurrent ? request.error : ''
   const foodLifestyleStatus = requestIsCurrent ? request.foodLifestyleStatus : null
   const loading = Boolean(query) && !requestIsCurrent
+  const slowSearch = loading && slowSearchQuery === query
 
   useEffect(() => {
     if (!query) return undefined
 
     let active = true
-    getJson(`/api/public/search?q=${encodeURIComponent(query)}`).then(
+    const slowNoticeId = setTimeout(() => {
+      if (active) setSlowSearchQuery(query)
+    }, SLOW_SEARCH_NOTICE_MS)
+    getJson(`/api/public/search?q=${encodeURIComponent(query)}`, {
+      timeoutMs: PUBLIC_SEARCH_TIMEOUT_MS,
+    }).then(
       async (payload) => {
         if (active) {
+          clearTimeout(slowNoticeId)
+          setSlowSearchQuery('')
           if (!payload || typeof payload.intent !== 'string') {
             setRequest({
               query,
               data: null,
-              error: 'The public search service returned an invalid response.',
+              error: 'CHEERS could not load this answer. Please try again.',
               foodLifestyleStatus: null,
             })
           } else {
@@ -651,10 +812,14 @@ export default function PublicSearch() {
       },
       (requestError) => {
         if (active) {
+          clearTimeout(slowNoticeId)
+          setSlowSearchQuery('')
           setRequest({
             query,
             data: null,
-            error: requestError.message || 'Search information could not be loaded.',
+            error: requestError.code === 'REQUEST_TIMEOUT'
+              ? 'CHEERS is taking longer than expected. Please try again.'
+              : 'CHEERS could not load this answer. Please try again.',
             foodLifestyleStatus: null,
           })
         }
@@ -663,8 +828,9 @@ export default function PublicSearch() {
 
     return () => {
       active = false
+      clearTimeout(slowNoticeId)
     }
-  }, [navigate, query])
+  }, [attempt, navigate, query])
 
   function search(nextQuery) {
     navigate(`/search?q=${encodeURIComponent(nextQuery)}`)
@@ -672,6 +838,11 @@ export default function PublicSearch() {
 
   function chooseAlternative(fragment, name) {
     search(replaceAmbiguousFragment(data.normalized_query || query, fragment, name))
+  }
+
+  function retrySearch() {
+    setRequest((current) => ({ ...current, query: '' }))
+    setAttempt((current) => current + 1)
   }
 
   const recognized = data?.recognized_entities || []
@@ -695,6 +866,7 @@ export default function PublicSearch() {
         label="Ask about medicines or diseases"
         placeholder="Ask a question about medicines or diseases…"
         onSearch={search}
+        disabled={loading}
       />
 
       {query && (
@@ -705,7 +877,11 @@ export default function PublicSearch() {
 
       {loading && (
         <div className="public-loading" role="status" aria-live="polite">
-          <LoaderCircle className="spin" size={22} /> Finding available information…
+          <LoaderCircle className="spin" size={22} />
+          <div>
+            <strong>{slowSearch ? 'Still working — the information service may be starting up.' : 'Searching CHEERS…'}</strong>
+            {slowSearch && <p>The first search can sometimes take a little longer.</p>}
+          </div>
         </div>
       )}
 
@@ -713,8 +889,9 @@ export default function PublicSearch() {
         <div className="public-error" role="alert">
           <AlertCircle size={22} />
           <div>
-            <h2>Search could not be completed</h2>
+            <h2>I couldn’t load that answer.</h2>
             <p>{error}</p>
+            <button type="button" className="secondary-button public-retry-button" onClick={retrySearch}>Try again</button>
           </div>
         </div>
       )}
@@ -729,11 +906,21 @@ export default function PublicSearch() {
 
       {!loading && !error && data && !isUnknown && !isAmbiguous && (
         <div className="public-results" aria-live="polite">
+          <PlainLanguageExplanation
+            explanation={data.intent === 'drug_pair_question' ? null : data.explanation}
+            evidenceSummary={data.intent === 'drug_pair_question' ? data.answer?.evidence_summary : undefined}
+            title={answerTitle(data, recognized, query)}
+            matchNote={<MatchIndicator query={query} entities={recognized} />}
+            actions={<ResultActions intent={data.intent} entity={recognized[0]} />}
+          />
+          {data.intent === 'general_symptom_or_treatment_question' && (
+            <TreatmentQuestionNextSteps medicine={recognized[0]} />
+          )}
           {data.intent === 'drug_for_disease' && (
             <DrugDiseaseAnswer answer={data.answer} />
           )}
           {data.intent === 'drug_pair_question' && (
-            <PairQuestionAnswer answer={data.answer} />
+            <PairQuestionAnswer answer={data.answer} explanation={data.explanation} entities={recognized} />
           )}
           {data.intent === 'medicines_for_disease' && recognized[0]?.entity_type === 'disease' && (
             <MedicinesForDiseaseState answer={data.answer} disease={recognized[0]} />
@@ -749,28 +936,20 @@ export default function PublicSearch() {
             />
           )}
 
-          <section className="public-recognized" aria-labelledby="recognized-title">
-            <span className="eyebrow">{INTENT_LABELS[data.intent] || 'Search result'}</span>
-            <h2 id="recognized-title">We understood this as</h2>
-            <div className="public-entity-grid">
-              {recognized.map((entity) => (
-                <EntityCard key={`${entity.entity_type}-${entity.entity_id}`} entity={entity} />
-              ))}
-            </div>
-          </section>
-
           {data.intent === 'disease_information' && recognized[0] && (
             <DiseaseExplanation entity={recognized[0]} />
           )}
-          {data.intent === 'drug_information' && recognized[0] && (
+          {data.intent === 'drug_information' && recognized[0] && !data.explanation && (
             <DrugInformationState entity={recognized[0]} />
           )}
-          {(data.intent === 'drug_side_effects' || data.intent === 'drug_interactions') && recognized[0] && (
+          {(data.intent === 'drug_side_effects' || data.intent === 'drug_interactions') && recognized[0] && !data.explanation && (
             <SingleDrugTopicState intent={data.intent} entity={recognized[0]} />
           )}
           {(data.intent === 'drug_pair' || data.intent === 'drug_pair_question') && recognized.length === 2 && (
             <PairDestinations data={data} includeChecker={data.intent === 'drug_pair_question'} />
           )}
+
+          <WhyThisAnswer data={data} entities={recognized} />
 
           <UnavailableModules modules={data.unavailable_modules} intent={data.intent} />
         </div>
@@ -788,7 +967,7 @@ export default function PublicSearch() {
       )}
 
       <aside className="public-result-safety">
-        <strong>Information boundary</strong>
+        <strong>Important</strong>
         <p>
           {data?.safety_note || (
             'CHEERS does not provide medical advice or decide whether a medicine '

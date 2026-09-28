@@ -2,12 +2,14 @@
 
 This module resolves only repository-backed drug and disease identities and may
 query the existing evidence services for a resolved medicine pair. It does not
-generate personalized medical conclusions, infer aliases, or use R-GCN scores.
+generate personalized medical conclusions, invent unverified aliases, or use
+R-GCN scores.
 """
 
 from __future__ import annotations
 
 import csv
+from difflib import SequenceMatcher
 import json
 import re
 import unicodedata
@@ -30,6 +32,7 @@ SUPPORTED_INTENTS = frozenset(
         "drug_for_disease",
         "medicines_for_disease",
         "disease_nutrition",
+        "general_symptom_or_treatment_question",
         "unknown",
         "unsupported",
     }
@@ -97,6 +100,25 @@ UNSUPPORTED_DIET_PATTERNS = (
     re.compile(r"^weight loss plan(?: for me)?$"),
 )
 MAX_AMBIGUOUS_MATCHES = 20
+DRUG_NAME_ALIASES = {"aspirin": "acetylsalicylic acid"}
+GENERIC_SYMPTOM_TERMS = frozenset(
+    {"pain", "headache", "fever", "nausea", "cough", "dizziness", "fatigue"}
+)
+NATURAL_SINGLE_ENTITY_PATTERNS = (
+    ("drug_side_effects", ("drug",), re.compile(r"^(?:tell me(?: about)? )?(?P<entity>.+?) side efects$")),
+    ("drug_side_effects", ("drug",), re.compile(r"^tell me (?P<entity>.+?) side effects$")),
+    ("drug_side_effects", ("drug",), re.compile(r"^what are the side effects of (?P<entity>.+)$")),
+    ("drug_information", ("drug",), re.compile(r"^what does (?P<entity>.+?) do$")),
+    ("drug_information", ("drug",), re.compile(r"^what is (?P<entity>.+?) used for$")),
+    ("drug_information", ("drug",), re.compile(r"^what is (?P<entity>.+?) for$")),
+    (None, ("drug", "disease"), re.compile(r"^what s (?P<entity>.+)$")),
+    (None, ("drug", "disease"), re.compile(r"^tell me about (?P<entity>.+)$")),
+    (None, ("drug", "disease"), re.compile(r"^(?P<entity>.+?) information$")),
+)
+MAX_FUZZY_SUGGESTIONS = 5
+FUZZY_MIN_SCORE = 0.84
+FUZZY_AUTO_ACCEPT_SCORE = 0.86
+FUZZY_AUTO_ACCEPT_MARGIN = 0.08
 
 
 def normalize_query(value):
@@ -125,6 +147,9 @@ class PublicSearchService:
         disease_information_service=None,
         label_evidence_service=None,
         literature_service=None,
+        query_interpreter=None,
+        drug_information_service=None,
+        evidence_summarizer=None,
     ):
         if project_dir is None:
             project_dir = Path(__file__).resolve().parents[1]
@@ -155,6 +180,9 @@ class PublicSearchService:
         )
         self.label_evidence_service = label_evidence_service
         self.literature_service = literature_service
+        self.query_interpreter = query_interpreter
+        self.drug_information_service = drug_information_service
+        self.evidence_summarizer = evidence_summarizer
         self.entities = self.drugs + self.diseases
         self._validate()
 
@@ -251,6 +279,32 @@ class PublicSearchService:
             return "canonical_name_substring", 4
         return None
 
+    @staticmethod
+    def _fuzzy_score(entity, fragment):
+        """Score conservative spelling similarity against a canonical name."""
+        if len(fragment) < 5:
+            return 0.0
+        name = entity["normalized_name"]
+        comparisons = [name]
+        comparisons.extend(token for token in name.split() if len(token) >= 5)
+        return max(
+            SequenceMatcher(None, fragment, candidate, autojunk=False).ratio()
+            for candidate in comparisons
+        )
+
+    def _fuzzy_matches(self, fragment, allowed):
+        matches = []
+        for entity in self.entities:
+            if entity["entity_type"] not in allowed:
+                continue
+            score = self._fuzzy_score(entity, fragment)
+            if score >= FUZZY_MIN_SCORE:
+                matches.append(
+                    (score, entity["name"].casefold(), entity, "close_fuzzy_name")
+                )
+        matches.sort(key=lambda item: (-item[0], item[1], item[2]["entity_id"]))
+        return matches
+
     def _resolve_fragment(self, fragment, entity_types=None):
         allowed = set(entity_types or ("drug", "disease"))
         candidates = []
@@ -262,12 +316,51 @@ class PublicSearchService:
                 match_type, priority = match
                 candidates.append((priority, entity["name"].casefold(), entity, match_type))
 
-        if not candidates:
-            return None, None
-
         candidates.sort(key=lambda item: (item[0], item[1], item[2]["entity_id"]))
-        exact = [item for item in candidates if item[0] <= 2]
-        considered = exact if exact else candidates
+        exact_names = [item for item in candidates if item[0] == 1]
+        exact_ids = [item for item in candidates if item[0] == 2]
+        aliases = []
+        alias_name = DRUG_NAME_ALIASES.get(fragment) if "drug" in allowed else None
+        if alias_name:
+            aliases = [
+                (2.5, entity["name"].casefold(), entity, "exact_common_name")
+                for entity in self.entities
+                if entity["entity_type"] == "drug"
+                and entity["normalized_name"] == alias_name
+            ]
+        prefixes = [item for item in candidates if item[0] == 3]
+        if exact_names:
+            considered = exact_names
+        elif exact_ids:
+            considered = exact_ids
+        elif aliases:
+            considered = aliases
+        elif prefixes:
+            # Preserve ambiguity when a short prefix also occurs in other names.
+            considered = candidates
+        else:
+            fuzzy_candidates = self._fuzzy_matches(fragment, allowed)
+            if not fuzzy_candidates:
+                considered = candidates
+            else:
+                top_score = fuzzy_candidates[0][0]
+                next_score = fuzzy_candidates[1][0] if len(fuzzy_candidates) > 1 else 0.0
+                if (
+                    top_score >= FUZZY_AUTO_ACCEPT_SCORE
+                    and top_score - next_score >= FUZZY_AUTO_ACCEPT_MARGIN
+                ):
+                    _, _, entity, match_type = fuzzy_candidates[0]
+                    return (entity, match_type), None
+
+                considered = [
+                    (4, name, entity, match_type)
+                    for _, name, entity, match_type in fuzzy_candidates[
+                        :MAX_FUZZY_SUGGESTIONS
+                    ]
+                ]
+
+        if not considered:
+            return None, None
         if len(considered) == 1:
             _, _, entity, match_type = considered[0]
             return (entity, match_type), None
@@ -275,6 +368,25 @@ class PublicSearchService:
         return None, self._ambiguity(fragment, considered)
 
     def _ambiguity(self, fragment, matches):
+        displayed_matches = matches
+        if fragment == "diabetes" and all(
+            entity["entity_type"] == "disease" for _, _, entity, _ in matches
+        ):
+            preferred_names = {
+                "diabetes mellitus disease": 0,
+                "type 2 diabetes mellitus": 1,
+                "type 1 diabetes mellitus": 2,
+                "gestational diabetes": 3,
+            }
+            preferred = sorted(
+                (
+                    item for item in matches
+                    if item[2]["normalized_name"] in preferred_names
+                ),
+                key=lambda item: preferred_names[item[2]["normalized_name"]],
+            )
+            if preferred:
+                displayed_matches = preferred
         return {
             "query_fragment": fragment,
             "total_matches": len(matches),
@@ -289,7 +401,7 @@ class PublicSearchService:
                     "match_type": match_type,
                     "verified_description_available": bool(entity.get("description")),
                 }
-                for _, _, entity, match_type in matches[:MAX_AMBIGUOUS_MATCHES]
+                for _, _, entity, match_type in displayed_matches[:MAX_AMBIGUOUS_MATCHES]
             ],
         }
 
@@ -305,6 +417,16 @@ class PublicSearchService:
                     mentions.append(
                         (match.start(), match.end(), -(match.end() - match.start()), drug, match_type)
                     )
+        for alias, canonical_name in DRUG_NAME_ALIASES.items():
+            drug = next(
+                (item for item in self.drugs if item["normalized_name"] == canonical_name),
+                None,
+            )
+            match = re.search(rf"(?<!\w){re.escape(alias)}(?!\w)", content)
+            if drug is not None and match:
+                mentions.append(
+                    (match.start(), match.end(), -(match.end() - match.start()), drug, "exact_common_name")
+                )
 
         mentions.sort(key=lambda item: (item[2], item[0], item[3]["entity_id"]))
         selected = []
@@ -354,10 +476,109 @@ class PublicSearchService:
                     return resolved, None
                 return None, None
 
+        words = content.split()
+        for index in range(1, len(words)):
+            left = " ".join(words[:index])
+            right = " ".join(words[index:])
+            left_match, left_ambiguity = self._resolve_fragment(left, ("drug",))
+            right_match, right_ambiguity = self._resolve_fragment(right, ("drug",))
+            if left_ambiguity or right_ambiguity:
+                continue
+            if (
+                left_match and right_match
+                and left_match[0]["entity_id"] != right_match[0]["entity_id"]
+            ):
+                return [left_match, right_match], None
+
         mentions = self._exact_drug_mentions(content)
         if len(mentions) == 2:
             return mentions, None
         return None, None
+
+    def _resolve_generic_treatment_question(self, normalized):
+        selection_match = re.fullmatch(
+            r"^what should i (?:take|use) for (?P<topic>.+)$", normalized
+        )
+        if selection_match and selection_match.group("topic") in GENERIC_SYMPTOM_TERMS:
+            return True, None, None, selection_match.group("topic")
+        for pattern in DRUG_FOR_DISEASE_PATTERNS:
+            query_match = pattern.fullmatch(normalized)
+            if query_match is None:
+                continue
+            topic = query_match.group("disease")
+            if topic not in GENERIC_SYMPTOM_TERMS:
+                continue
+            match, ambiguity = self._resolve_fragment(query_match.group("drug"), ("drug",))
+            return True, match, ambiguity, topic
+        return False, None, None, None
+
+    def _resolve_natural_single_entity(self, normalized):
+        for intent, entity_types, pattern in NATURAL_SINGLE_ENTITY_PATTERNS:
+            query_match = pattern.fullmatch(normalized)
+            if query_match is None:
+                continue
+            match, ambiguity = self._resolve_fragment(
+                query_match.group("entity"), entity_types
+            )
+            return True, intent, match, ambiguity
+        return False, None, None, None
+
+    def _generic_treatment_response(self, original_query, normalized, match, topic):
+        response = self._base_response(
+            original_query, normalized, "general_symptom_or_treatment_question"
+        )
+        drug = match[0] if match else None
+        if match:
+            response["recognized_entities"] = [self._serialize_entity(*match)]
+            response["available_modules"].append("entity_identity")
+        response["topic"] = topic
+        supported_use = False
+        if drug and self.drug_information_service is not None:
+            try:
+                label = self.drug_information_service.get_drug_information(drug["name"])
+            except (KeyError, OSError, TypeError, ValueError):
+                label = None
+            use_evidence = self._label_evidence(
+                label, ("indications_and_usage",), drug["name"]
+            )
+            supported_use = topic == "pain" and any(
+                re.search(r"\b(?:pain|analges(?:ia|ic)|aches?)\b", item, re.IGNORECASE)
+                for item in use_evidence
+            )
+        response["explanation"] = {
+            "status": "limited",
+            "short_answer": (
+                (
+                    f"{drug['name']} is used for pain relief in the available label information."
+                    if supported_use else
+                    f"CHEERS can show available label information about {drug['name']}, "
+                    f"but it cannot decide whether it is appropriate for your {topic}."
+                )
+                if drug else "CHEERS cannot choose a medicine or treatment for you."
+            ),
+            "key_points": [
+                (
+                    "Review the medicine profile for available uses and side-effect information."
+                    if drug else "Search for a medicine you are already considering to review its available information."
+                ),
+                "Use Check Medicines if you want to review it with another medicine.",
+                "Ask a pharmacist or qualified health professional about a personal treatment choice.",
+            ],
+            "what_we_cannot_conclude": (
+                "CHEERS cannot determine whether it is appropriate for your specific situation."
+                if supported_use else
+                "CHEERS cannot recommend what you should take or provide a dose."
+            ),
+            "sources_used": ["FDA label"] if supported_use else [],
+        }
+        if drug:
+            response["destinations"] = [
+                {"module": "medicine_profile", "frontend_path": f"/medicines/{drug['entity_id']}"},
+                {"module": "medicine_uses", "frontend_path": f"/medicines/{drug['entity_id']}?section=uses"},
+                {"module": "medicine_side_effects", "frontend_path": f"/medicines/{drug['entity_id']}?section=side-effects"},
+                {"module": "medicine_checker", "frontend_path": f"/check?drug_a_id={drug['entity_id']}"},
+            ]
+        return response
 
     @staticmethod
     def _pair_question_content(normalized):
@@ -455,6 +676,15 @@ class PublicSearchService:
             "source": entity["source"],
             "match_type": match_type,
         }
+        if entity["entity_type"] == "drug" and match_type == "exact_common_name":
+            result["display_name"] = next(
+                (
+                    alias.title()
+                    for alias, canonical_name in DRUG_NAME_ALIASES.items()
+                    if canonical_name == entity["normalized_name"]
+                ),
+                entity["name"],
+            )
         if entity["entity_type"] == "disease":
             result["verified_description_available"] = bool(entity["description"])
             result["description_status"] = entity["description_status"]
@@ -894,7 +1124,7 @@ class PublicSearchService:
                     )
         return response
 
-    def search(self, query):
+    def _search_deterministic(self, query):
         original_query = str(query)
         normalized = normalize_query(original_query)
         if not normalized:
@@ -972,6 +1202,53 @@ class PublicSearchService:
                 original_query,
                 normalized,
                 "No repository-backed disease identity matched conservatively.",
+            )
+
+        natural_attempted, natural_intent, natural_match, natural_ambiguity = (
+            self._resolve_natural_single_entity(normalized)
+        )
+        if natural_attempted:
+            if natural_ambiguity:
+                candidate_types = set(natural_ambiguity["entity_types"])
+                intent = natural_intent
+                if intent is None and candidate_types == {"disease"}:
+                    intent = "disease_information"
+                elif intent is None and candidate_types == {"drug"}:
+                    intent = "drug_information"
+                response = self._base_response(
+                    original_query, normalized, intent or "unknown"
+                )
+                response["ambiguous_matches"] = [natural_ambiguity]
+                return response
+            if natural_match:
+                entity = natural_match[0]
+                intent = natural_intent or (
+                    "disease_information"
+                    if entity["entity_type"] == "disease"
+                    else "drug_information"
+                )
+                return self._resolved_response(
+                    original_query, normalized, intent, [natural_match]
+                )
+
+        generic_attempted, generic_match, generic_ambiguity, generic_topic = (
+            self._resolve_generic_treatment_question(normalized)
+        )
+        if generic_attempted:
+            if generic_match or (generic_topic and generic_ambiguity is None):
+                return self._generic_treatment_response(
+                    original_query, normalized, generic_match, generic_topic
+                )
+            if generic_ambiguity:
+                response = self._base_response(
+                    original_query, normalized, "general_symptom_or_treatment_question"
+                )
+                response["ambiguous_matches"] = [generic_ambiguity]
+                return response
+            return self._unknown_response(
+                original_query,
+                normalized,
+                "The medicine could not be resolved conservatively.",
             )
 
         drug_disease_attempted, drug_disease_matches, drug_disease_ambiguities = (
@@ -1138,6 +1415,327 @@ class PublicSearchService:
         return self._resolved_response(
             original_query, normalized, intent, [(entity, match_type)]
         )
+
+    @staticmethod
+    def _interpreted_query(interpretation):
+        intent = interpretation["intent"]
+        drugs = interpretation["drug_names"]
+        diseases = interpretation["disease_names"]
+        topic = interpretation["topic"]
+        if intent == "drug_information" and drugs:
+            return drugs[0]
+        if intent == "disease_information" and diseases:
+            return f"what is {diseases[0]}"
+        if intent == "drug_side_effects" and drugs:
+            return f"{drugs[0]} side effects"
+        if intent == "drug_interactions" and drugs:
+            return f"{drugs[0]} interactions"
+        if intent == "drug_food_lifestyle" and drugs and topic:
+            return f"{drugs[0]} {topic}"
+        if intent == "drug_pair_question" and len(drugs) >= 2:
+            return f"can i take {drugs[0]} with {drugs[1]} together"
+        if intent == "drug_for_disease" and drugs and diseases:
+            return f"is {drugs[0]} used for {diseases[0]}"
+        if intent == "medicines_for_disease" and diseases:
+            return f"medicines for {diseases[0]}"
+        if intent == "disease_nutrition" and diseases:
+            return f"nutrition for {diseases[0]}"
+        return interpretation["rewritten_query"]
+
+    @staticmethod
+    def _ai_metadata(status, interpretation=None):
+        metadata = {"status": status}
+        if interpretation is not None:
+            metadata.update(interpretation)
+        return metadata
+
+    @staticmethod
+    def _fallback_explanation(response):
+        intent = response["intent"]
+        answer = response.get("answer", {})
+        if intent == "drug_pair_question":
+            return {
+                "status": "limited" if answer.get("answer_type") == "insufficient_information" else "answered",
+                "short_answer": answer.get("supporting_text", "CHEERS could not summarize this pair."),
+                "key_points": [
+                    f"FDA label mentions retrieved: {answer.get('evidence_summary', {}).get('label_mentions', 0)}.",
+                    f"PubMed records retrieved: {answer.get('evidence_summary', {}).get('pubmed_records', 0)}.",
+                ],
+                "what_we_cannot_conclude": "These retrieved sources do not establish that the combination is safe or appropriate for a person.",
+                "sources_used": ["FDA label", "PubMed"],
+            }
+        if intent == "drug_for_disease":
+            relations = [item.get("relation") for item in answer.get("relationships", []) if item.get("relation")]
+            return {
+                "status": "answered" if relations else "limited",
+                "short_answer": answer.get("direct_answer", "CHEERS could not determine a relationship from its checked data."),
+                "key_points": [f"CHEERS relationship found: {relation}." for relation in relations[:3]],
+                "what_we_cannot_conclude": "A graph relationship is not a personalized treatment recommendation.",
+                "sources_used": ["CHEERS knowledge graph"],
+            }
+        return None
+
+    @staticmethod
+    def _label_evidence(label_information, sections, selected_drug_name=None):
+        evidence = []
+        if not isinstance(label_information, dict) or label_information.get("status") != "ok":
+            return evidence
+        for record in label_information.get("records", [])[:3]:
+            classification = record.get("product_classification", {})
+            if (
+                selected_drug_name
+                and classification.get("category") == "combination"
+            ):
+                continue
+            record_sections = record.get("sections", {})
+            for section in sections:
+                for entry in record_sections.get(section, [])[:2]:
+                    if isinstance(entry, dict) and entry.get("text"):
+                        evidence.append(f"{section}: {entry['text']}")
+        return evidence
+
+    @staticmethod
+    def _plain_use_points(snippets, drug_name):
+        points = []
+        for snippet in snippets:
+            text = snippet.split(": ", 1)[-1]
+            if re.search(
+                r"adjunct to diet and exercise to improve glycemic control.*type 2 diabetes",
+                text,
+                re.IGNORECASE,
+            ):
+                return [
+                    f"{drug_name} is used to help control blood sugar in people with type 2 diabetes, together with diet and exercise.",
+                    "It is used for blood-sugar control in type 2 diabetes.",
+                    "It is commonly used alongside diet and exercise.",
+                ]
+        return PublicSearchService._plain_label_points(snippets)
+
+    @staticmethod
+    def _plain_label_points(snippets):
+        candidates = []
+        for snippet in snippets:
+            text = snippet.split(": ", 1)[-1]
+            common = re.search(
+                r"most common adverse reactions\s*(?:\([^)]*\))?\s*are\s+([^.]+)",
+                text,
+                re.IGNORECASE,
+            )
+            if common:
+                effects = common.group(1).strip(" ,;:")
+                candidates.append(f"Commonly reported side effects include {effects}.")
+
+            cleaned = re.sub(r"\[\s*see\b.*?\]", " ", text, flags=re.IGNORECASE)
+            cleaned = re.sub(r"\(\s*\d+(?:\.\d+)*\s*\)", " ", cleaned)
+            cleaned = re.sub(
+                r"\b\d+(?:\.\d+)?\s+(?:ADVERSE REACTIONS?|WARNINGS(?: AND (?:CAUTIONS|PRECAUTIONS))?|"
+                r"CLINICAL (?:STUDIES|TRIALS) EXPERIENCE|POSTMARKETING EXPERIENCE)\b",
+                " ",
+                cleaned,
+                flags=re.IGNORECASE,
+            )
+            for sentence in re.split(r"(?<=[.!?])\s+", cleaned):
+                sentence = " ".join(sentence.split()).strip(" -:;")
+                sentence = re.sub(r"^[A-Za-z0-9 /-]{2,55}:\s*", "", sentence)
+                sentence = re.sub(r"\s+([.!?])", r"\1", sentence)
+                if not sentence or re.search(
+                    r"following adverse reactions are also discussed|see boxed warning|"
+                    r"following adverse reactions have been identified|"
+                    r"to report suspected adverse reactions|clinical trials are conducted|"
+                    r"listed in table|www\.fda\.gov|\btable\s+\d+",
+                    sentence,
+                    re.IGNORECASE,
+                ):
+                    continue
+                if re.search(
+                    r"\btablets?\s+in\s+(?:an?\s+)?u\.s\.?$",
+                    sentence,
+                    re.IGNORECASE,
+                ):
+                    continue
+                words = re.findall(r"[A-Za-z][A-Za-z0-9-]*", sentence)
+                if words and len(words) <= 6 and all(word[0].isupper() for word in words):
+                    continue
+                if len(sentence) > 140:
+                    first_clause = re.split(r"[;:]", sentence, maxsplit=1)[0].strip()
+                    if len(first_clause) < 35 or len(first_clause) > 139:
+                        continue
+                    sentence = first_clause
+                if len(sentence) < 12:
+                    continue
+                candidates.append(sentence.rstrip(".!?") + ".")
+
+        points = []
+        token_sets = []
+        stopwords = {"a", "an", "and", "are", "for", "in", "of", "the", "to", "was", "were", "with"}
+        for point in candidates:
+            tokens = {
+                token for token in re.findall(r"[a-z0-9]+", point.casefold())
+                if token not in stopwords
+            }
+            if not tokens:
+                continue
+            duplicate = any(
+                len(tokens & prior) / len(tokens | prior) >= 0.5
+                or len(tokens & prior) / min(len(tokens), len(prior)) >= 0.75
+                for prior in token_sets
+            )
+            if duplicate:
+                continue
+            points.append(point)
+            token_sets.append(tokens)
+            if len(points) == 3:
+                break
+        return points
+
+    def _with_explanation(self, query, response):
+        intent = response["intent"]
+        if intent not in {
+            "drug_pair_question", "drug_information", "drug_side_effects", "drug_for_disease",
+        }:
+            return response
+        evidence = {}
+        snippets = []
+        fallback = self._fallback_explanation(response)
+        if intent == "drug_pair_question":
+            answer = response.get("answer", {})
+            evidence = {
+                "FDA label": [
+                    answer.get("supporting_text", ""),
+                    f"Retrieved label mentions: {answer.get('evidence_summary', {}).get('label_mentions', 0)}",
+                ],
+                "PubMed": [f"Retrieved records: {answer.get('evidence_summary', {}).get('pubmed_records', 0)}"],
+            }
+        elif intent == "drug_for_disease":
+            evidence = {"CHEERS knowledge graph": [json.dumps(response.get("answer", {}))]}
+        elif self.drug_information_service is not None and response.get("recognized_entities"):
+            entity = response["recognized_entities"][0]
+            try:
+                label = self.drug_information_service.get_drug_information(entity["name"])
+            except (KeyError, OSError, TypeError, ValueError):
+                label = None
+            sections = (
+                ("adverse_reactions", "warnings", "warnings_and_cautions")
+                if intent == "drug_side_effects"
+                else ("indications_and_usage", "description")
+            )
+            snippets = self._label_evidence(label, sections, entity["name"])
+            plain_points = (
+                self._plain_label_points(snippets)
+                if intent == "drug_side_effects"
+                else self._plain_use_points(snippets, entity["name"])
+            )
+            evidence = {"FDA label": snippets}
+            direct_use_answer = (
+                plain_points[0]
+                if intent == "drug_information"
+                and plain_points
+                and plain_points[0].casefold().startswith(
+                    f"{entity['name'].casefold()} is used"
+                )
+                else None
+            )
+            fallback = {
+                "status": "limited" if not snippets else "answered",
+                "short_answer": (
+                    direct_use_answer or f"CHEERS found official label information for {entity['name']}."
+                    if snippets else "CHEERS could not retrieve relevant official label text for this medicine."
+                ),
+                "key_points": plain_points[1:] if direct_use_answer else plain_points,
+                "what_we_cannot_conclude": (
+                    "Official label information is general information, not personalized medical advice."
+                    if snippets else
+                    "Missing label text does not mean the medicine has no uses, side effects, or risks."
+                ),
+                "sources_used": ["FDA label"] if snippets else [],
+            }
+        explanation = None
+        can_summarize = not (
+            intent == "drug_pair_question"
+            and response.get("answer", {}).get("answer_type") == "insufficient_information"
+        )
+        if self.evidence_summarizer is not None and any(evidence.values()) and can_summarize:
+            try:
+                explanation = self.evidence_summarizer.summarize(query, evidence)
+            except Exception:
+                explanation = None
+        if explanation and intent == "drug_side_effects":
+            if snippets:
+                entity = response["recognized_entities"][0]
+                explanation["short_answer"] = (
+                    f"CHEERS found official label information for {entity['name']}."
+                )
+                explanation["key_points"] = plain_points
+                explanation["what_we_cannot_conclude"] = (
+                    "Official label information is general information, not personalized medical advice."
+                )
+            else:
+                cleaned = self._plain_label_points(
+                    [explanation.get("short_answer", ""), *explanation.get("key_points", [])]
+                )
+                if cleaned:
+                    explanation["short_answer"] = cleaned[0]
+                    explanation["key_points"] = cleaned[1:]
+        elif explanation and intent == "drug_information" and direct_use_answer:
+            explanation["short_answer"] = direct_use_answer
+            explanation["key_points"] = plain_points[1:]
+            explanation["what_we_cannot_conclude"] = (
+                "Official label information is general information, not personalized medical advice."
+            )
+        response["explanation"] = explanation or fallback
+        return response
+
+    def search(self, query):
+        deterministic = self._search_deterministic(query)
+        if deterministic["intent"] != "unknown" or self.query_interpreter is None:
+            return self._with_explanation(query, deterministic)
+
+        try:
+            interpretation = self.query_interpreter.interpret(query)
+        except Exception:
+            interpretation = None
+        if not interpretation or interpretation.get("confidence", 0) < 0.7:
+            deterministic["ai_interpretation"] = self._ai_metadata("unavailable")
+            return deterministic
+
+        intent = interpretation["intent"]
+        if intent in {"general_symptom_or_treatment_question", "unsupported"}:
+            response = self._base_response(
+                query,
+                normalize_query(query),
+                intent,
+            )
+            response["unavailable_modules"].append(
+                {
+                    "module": "query_resolution",
+                    "reason": (
+                        "CHEERS does not select treatments or provide personalized "
+                        "medicine recommendations."
+                    ),
+                }
+            )
+            if intent == "general_symptom_or_treatment_question":
+                response["explanation"] = {
+                    "status": "limited",
+                    "short_answer": "CHEERS cannot choose a medicine or treatment for you.",
+                    "key_points": [
+                        "You can search for a medicine you are already considering.",
+                        "You can compare two medicines in Check Medicines.",
+                        "A pharmacist or other qualified health professional can help with a personal treatment choice.",
+                    ],
+                    "what_we_cannot_conclude": "CHEERS cannot recommend what you should take.",
+                    "sources_used": [],
+                }
+        elif intent == "unknown":
+            response = deterministic
+        else:
+            response = self._search_deterministic(
+                self._interpreted_query(interpretation)
+            )
+            response["original_query"] = str(query)
+            response["normalized_query"] = normalize_query(query)
+        response["ai_interpretation"] = self._ai_metadata("used", interpretation)
+        return self._with_explanation(query, response)
 
 
 __all__ = ["PublicSearchService", "SUPPORTED_INTENTS", "normalize_query"]

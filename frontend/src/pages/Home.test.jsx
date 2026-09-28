@@ -5,11 +5,7 @@ import { describe, expect, it, vi } from 'vitest'
 import Home from './Home.jsx'
 
 vi.mock('../components/PublicSearchBox.jsx', () => ({
-  default: ({ onSearch }) => (
-    <button type="button" onClick={() => onSearch('aspirin interaction')}>
-      Run test search
-    </button>
-  ),
+  default: ({ onSearch }) => <button type="button" onClick={() => onSearch('aspirin interaction')}>Run test search</button>,
 }))
 
 function Destination() {
@@ -20,72 +16,63 @@ function Destination() {
 function renderHome() {
   render(
     <MemoryRouter initialEntries={['/']}>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="*" element={<Destination />} />
-      </Routes>
+      <Routes><Route path="/" element={<Home />} /><Route path="*" element={<Destination />} /></Routes>
     </MemoryRouter>,
   )
 }
 
-describe('Home capability guidance', () => {
-  it('renders four distinct capability categories', () => {
+describe('Home product hierarchy', () => {
+  it('shows three clear primary actions without the old floating paragraph', () => {
     renderHome()
-    const section = screen.getByRole('region', { name: 'Four separate kinds of information' })
-
-    expect(within(section).getByText('Grounded medicine and disease information')).toBeVisible()
-    expect(within(section).getByText('External pair evidence')).toBeVisible()
-    expect(within(section).getByText('Knowledge-graph context')).toBeVisible()
-    expect(within(section).getByText('R-GCN research ranking')).toBeVisible()
-    expect(within(section).getAllByRole('listitem')).toHaveLength(4)
-  })
-
-  it('prioritizes public actions and keeps secondary destinations available', () => {
-    renderHome()
-    const section = screen.getByRole('region', { name: 'Choose where to start' })
-
+    const section = screen.getByRole('region', { name: 'Choose what you want to do' })
+    expect(within(section).getByRole('link', { name: /Ask about a medicine/ })).toHaveAttribute('href', '/search')
     expect(within(section).getByRole('link', { name: /Check Medicines/ })).toHaveAttribute('href', '/check')
     expect(within(section).getByRole('link', { name: /My Health/ })).toHaveAttribute('href', '/my-health')
+    expect(section).toHaveTextContent('Find medicine information, compare medicines, or use your saved health information.')
+    expect(screen.queryByText(/without reading a long guide first/i)).not.toBeInTheDocument()
+  })
+
+  it('keeps direct browsing separate from the primary actions', () => {
+    renderHome()
+    const section = screen.getByRole('region', { name: 'Browse information' })
     expect(within(section).getByRole('link', { name: 'Medicines' })).toHaveAttribute('href', '/medicines')
     expect(within(section).getByRole('link', { name: 'Diseases' })).toHaveAttribute('href', '/diseases')
-    expect(within(section).getByRole('link', { name: /Explore graph context/ })).toHaveAttribute('href', '/graph')
   })
 
-  it('keeps evidence, graph, model, and clinical-use boundaries distinct', () => {
+  it('uses four compact information types and preserves concise boundaries', () => {
     renderHome()
-    const section = screen.getByRole('region', { name: 'Four separate kinds of information' })
-    const note = screen.getByRole('complementary', { name: 'A research and information prototype' })
-
-    expect(section).toHaveTextContent('openFDA label information and PubMed records are independent from the R-GCN score.')
-    expect(section).toHaveTextContent('Missing evidence does not confirm non-interaction or safety.')
-    expect(section).toHaveTextContent('not proof of interaction, causation, or safety')
-    expect(section).toHaveTextContent('ranking score—not probability, risk, severity, confidence, diagnosis, or treatment advice')
-    expect(note).toHaveTextContent('not clinical decision support')
-    expect(note).toHaveTextContent('It cannot diagnose a condition')
-    expect(note).toHaveTextContent('advise starting, stopping, or changing treatment')
-    expect(note).toHaveTextContent('Missing interaction or evidence is not confirmation of safety.')
-    expect(note).not.toHaveTextContent(/missing evidence (means|shows|proves).*safe/i)
+    const section = screen.getByRole('region', { name: 'What you can explore' })
+    expect(within(section).getByText('Medicine info')).toBeVisible()
+    expect(within(section).getByText('Uses and side effects')).toBeVisible()
+    expect(within(section).getByText('FDA & PubMed')).toBeVisible()
+    expect(within(section).getByText('External sources')).toBeVisible()
+    expect(within(section).getByText('Research connections')).toBeVisible()
+    expect(within(section).getByText('Related genes, proteins, and diseases')).toBeVisible()
+    expect(within(section).getByText('Model results')).toBeVisible()
+    expect(within(section).getByText('Research ranking only')).toBeVisible()
+    expect(within(section).getAllByRole('listitem')).toHaveLength(4)
+    expect(section).toHaveTextContent('Research connections and model results are for exploration, not medical advice.')
+    expect(within(section).getByRole('link', { name: /How CHEERS works/ })).toHaveAttribute('href', '/methodology')
+    expect(section).not.toHaveTextContent('Different information types are kept separate')
+    expect(document.body).not.toHaveTextContent(/\bG3\b/)
   })
 
-  it('keeps all four research destinations in the lower research gateway', () => {
+  it('keeps one secondary research and advanced-tools gateway', () => {
     renderHome()
-    const section = screen.getByRole('region', { name: 'Built on CHEERS knowledge-graph DDI research' })
-
-    expect(within(section).getByRole('link', { name: /DDI Predictor/ })).toHaveAttribute('href', '/predictor')
-    expect(within(section).getByRole('link', { name: /Experiments/ })).toHaveAttribute('href', '/experiments')
-    expect(within(section).getByRole('link', { name: /Relation Analysis/ })).toHaveAttribute('href', '/relations')
-    expect(within(section).getByRole('link', { name: /Methodology/ })).toHaveAttribute('href', '/methodology')
+    const section = screen.getByRole('region', { name: 'Research & advanced tools' })
+    expect(section).toHaveTextContent('Explore biomedical relationships or review the research behind CHEERS.')
+    expect(within(section).getByRole('link', { name: 'Explore relationships' })).toHaveAttribute('href', '/graph')
+    expect(within(section).getByRole('link', { name: 'DDI Predictor' })).toHaveAttribute('href', '/predictor')
+    expect(within(section).getByRole('link', { name: 'Experiments' })).toHaveAttribute('href', '/experiments')
+    expect(within(section).getByRole('link', { name: 'Relation Analysis' })).toHaveAttribute('href', '/relations')
+    expect(within(section).getByRole('link', { name: 'Methodology' })).toHaveAttribute('href', '/methodology')
+    expect(screen.queryByRole('region', { name: 'Explore the research behind CHEERS' })).not.toBeInTheDocument()
   })
 
-  it('preserves Home search and existing quick actions', async () => {
+  it('preserves search routing and the compact prototype boundary', async () => {
     renderHome()
-
-    expect(screen.getByRole('link', { name: /Check Medicines/ })).toHaveAttribute('href', '/check')
-    expect(screen.getByRole('link', { name: /My Health/ })).toHaveAttribute('href', '/my-health')
-    expect(screen.getByRole('link', { name: /Explore graph context/ })).toHaveAttribute('href', '/graph')
-    expect(screen.getByRole('link', { name: 'Medicines' })).toHaveAttribute('href', '/medicines')
-    expect(screen.getByRole('link', { name: 'Diseases' })).toHaveAttribute('href', '/diseases')
-
+    const note = screen.getByRole('complementary', { name: 'Important' })
+    expect(note).toHaveTextContent('does not diagnose conditions, choose treatments, or confirm that a medicine combination is safe')
     await userEvent.click(screen.getByRole('button', { name: 'Run test search' }))
     expect(screen.getByText('Destination: /search?q=aspirin%20interaction')).toBeVisible()
   })

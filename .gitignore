@@ -59,3 +59,6 @@ data/derived/entity_descriptions/
 # The verified deployment exports below are intentionally NOT ignored:
 # final_release/lightweight_runtime/
 # final_release/g3_context_runtime/
+
+.env.local
+.env

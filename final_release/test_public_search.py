@@ -3,14 +3,112 @@
 from pathlib import Path
 import ast
 import importlib.util
+import json
 import sys
 import unittest
+from unittest.mock import patch
+from urllib.error import HTTPError
 
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from src.gemini_query_interpreter import (
+    GEMINI_FALLBACK_MODEL,
+    GEMINI_PRIMARY_MODEL,
+    GeminiQueryInterpreter,
+    open_with_retry,
+)
+from src.gemini_evidence_summarizer import GeminiEvidenceSummarizer, MAX_EVIDENCE_CHARS
 from src.public_search import PublicSearchService
+
+
+class FixtureQueryInterpreter:
+    def __init__(self, result=None, error=None):
+        self.result = result
+        self.error = error
+        self.calls = []
+
+    def interpret(self, query):
+        self.calls.append(query)
+        if self.error:
+            raise self.error
+        return self.result
+
+
+class InvalidGeminiResponse:
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_args):
+        return False
+
+    @staticmethod
+    def read():
+        return b'{"candidates":[{"content":{"parts":[{"text":"not json"}]}}]}'
+
+
+class EmptyResponse:
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_args):
+        return False
+
+
+class GeminiJsonResponse(EmptyResponse):
+    def __init__(self, value):
+        self.value = value
+
+    def read(self):
+        return json.dumps({
+            "candidates": [{"content": {"parts": [{"text": json.dumps(self.value)}]}}]
+        }).encode("utf-8")
+
+
+class FixtureEvidenceSummarizer:
+    def __init__(self, result=None, error=None):
+        self.result = result
+        self.error = error
+        self.calls = []
+
+    def summarize(self, question, evidence):
+        self.calls.append((question, evidence))
+        if self.error:
+            raise self.error
+        return self.result
+
+
+class FixtureDrugInformationService:
+    def get_drug_information(self, _drug_name):
+        return {
+            "status": "ok",
+            "records": [{
+                "sections": {
+                    "indications_and_usage": [{"text": "Retrieved use text."}],
+                    "adverse_reactions": [{"text": "Retrieved side-effect text."}],
+                },
+            }],
+        }
+
+
+class GroundedUseDrugInformationService:
+    def get_drug_information(self, drug_name):
+        if drug_name == "Ibuprofen":
+            text = "Ibuprofen tablets are indicated for relief of mild to moderate pain."
+        else:
+            text = (
+                "Metformin hydrochloride tablets are indicated as an adjunct to diet "
+                "and exercise to improve glycemic control in people with type 2 diabetes mellitus."
+            )
+        return {
+            "status": "ok",
+            "records": [{
+                "product_name": drug_name,
+                "product_classification": {"category": "single_ingredient"},
+                "sections": {"indications_and_usage": [{"text": text}]},
+            }],
+        }
 
 
 class UnavailableDiseaseInformationService:
@@ -54,6 +152,197 @@ class PublicSearchTests(unittest.TestCase):
             literature_service=FixtureLiteratureService(),
         )
 
+    def use_interpreter(self, interpreter):
+        previous = self.search.query_interpreter
+        self.search.query_interpreter = interpreter
+        self.addCleanup(setattr, self.search, "query_interpreter", previous)
+
+    def use_summarizer(self, summarizer):
+        previous = self.search.evidence_summarizer
+        self.search.evidence_summarizer = summarizer
+        self.addCleanup(setattr, self.search, "evidence_summarizer", previous)
+
+    def use_drug_information(self, service):
+        previous = self.search.drug_information_service
+        self.search.drug_information_service = service
+        self.addCleanup(setattr, self.search, "drug_information_service", previous)
+
+    def test_grounded_pair_explanation_uses_retrieved_source_summary(self):
+        explanation = {
+            "status": "answered",
+            "short_answer": "The retrieved FDA label information includes an interaction warning.",
+            "key_points": ["One label mention and one PubMed record were retrieved."],
+            "what_we_cannot_conclude": "This does not establish whether the pair is safe for you.",
+            "sources_used": ["FDA label", "PubMed"],
+        }
+        summarizer = FixtureEvidenceSummarizer(result=explanation)
+        self.use_summarizer(summarizer)
+        payload = self.search.search("can i take warfarin with ibuprofen")
+        self.assertEqual(payload["explanation"], explanation)
+        self.assertEqual(len(summarizer.calls), 1)
+        self.assertIn("FDA label", summarizer.calls[0][1])
+        self.assertIn("PubMed", summarizer.calls[0][1])
+
+    def test_summarizer_failure_keeps_safe_deterministic_pair_explanation(self):
+        self.use_summarizer(FixtureEvidenceSummarizer(error=TimeoutError()))
+        payload = self.search.search("can i take fluoxymesterone with icosapent")
+        self.assertEqual(payload["explanation"]["status"], "limited")
+        self.assertIn("not establish", payload["explanation"]["what_we_cannot_conclude"])
+        self.assertNotEqual(payload["explanation"]["short_answer"].casefold(), "safe")
+        self.assertNotIn("test-key", str(payload))
+
+    def test_evidence_sent_for_summarization_is_bounded(self):
+        bounded = GeminiEvidenceSummarizer.bound_evidence(
+            {"FDA label": ["x" * 20_000], "PubMed": ["y" * 20_000]}
+        )
+        self.assertLessEqual(
+            sum(len(item) for values in bounded.values() for item in values),
+            MAX_EVIDENCE_CHARS,
+        )
+        self.assertTrue(all(len(item) <= 700 for values in bounded.values() for item in values))
+        unsafe = {
+            "status": "answered",
+            "short_answer": "This combination is safe.",
+            "key_points": [],
+            "what_we_cannot_conclude": "",
+            "sources_used": [],
+        }
+        self.assertIsNone(GeminiEvidenceSummarizer._validate(unsafe))
+
+    def test_medicine_uses_and_side_effects_use_retrieved_label_sections(self):
+        explanation = {
+            "status": "answered",
+            "short_answer": "A short grounded label explanation.",
+            "key_points": [],
+            "what_we_cannot_conclude": "This is not personal medical advice.",
+            "sources_used": ["FDA label"],
+        }
+        summarizer = FixtureEvidenceSummarizer(result=explanation)
+        self.use_summarizer(summarizer)
+        self.use_drug_information(FixtureDrugInformationService())
+        information = self.search.search("metformin")
+        side_effects = self.search.search("metformin side effects")
+        self.assertEqual(information["explanation"], explanation)
+        self.assertEqual(side_effects["explanation"], explanation)
+        self.assertIn("Retrieved use text.", str(summarizer.calls[0][1]))
+        self.assertIn("Retrieved side-effect text.", str(summarizer.calls[1][1]))
+
+    def test_label_fallback_is_short_and_useful_when_gemini_is_unavailable(self):
+        self.use_summarizer(FixtureEvidenceSummarizer(error=TimeoutError()))
+        self.use_drug_information(FixtureDrugInformationService())
+        payload = self.search.search("what does metformin do?")
+        explanation = payload["explanation"]
+        self.assertEqual(
+            explanation["short_answer"],
+            "CHEERS found official label information for Metformin.",
+        )
+        self.assertEqual(explanation["key_points"], ["Retrieved use text."])
+        self.assertLessEqual(len(explanation["key_points"]), 3)
+        self.assertNotIn("recommend", explanation["short_answer"].casefold())
+
+    def test_metformin_answer_excludes_combination_product_evidence(self):
+        class MixedProductDrugInformationService:
+            def get_drug_information(self, _drug_name):
+                return {
+                    "status": "ok",
+                    "records": [
+                        {
+                            "product_name": "ZITUVIMET",
+                            "product_classification": {"category": "combination"},
+                            "sections": {"indications_and_usage": [{"text": "ZITUVIMET combination-product wording."}]},
+                        },
+                        GroundedUseDrugInformationService().get_drug_information("Metformin")["records"][0],
+                    ],
+                }
+
+        self.use_summarizer(FixtureEvidenceSummarizer(error=TimeoutError()))
+        self.use_drug_information(MixedProductDrugInformationService())
+        explanation = self.search.search("What does metformin do?")["explanation"]
+        self.assertIn("control blood sugar", explanation["short_answer"])
+        self.assertNotIn("ZITUVIMET", str(explanation))
+
+    def test_grounded_pain_use_answers_directly(self):
+        self.use_drug_information(GroundedUseDrugInformationService())
+        payload = self.search.search("can i use ibuprofin for pain?")
+        self.assertEqual(payload["recognized_entities"][0]["entity_id"], "DB01050")
+        self.assertIn("used for pain relief", payload["explanation"]["short_answer"])
+        self.assertIn("specific", payload["explanation"]["what_we_cannot_conclude"])
+        self.assertNotIn("dose recommendation", str(payload).casefold())
+
+    def test_side_effect_fallback_removes_headings_and_duplicate_points(self):
+        class RepeatedHeadingDrugInformationService:
+            def get_drug_information(self, _drug_name):
+                entry = {"text": "6 ADVERSE REACTIONS 6.1 Clinical Trials Experience Nausea was reported."}
+                return {
+                    "status": "ok",
+                    "records": [{"sections": {"adverse_reactions": [entry, entry]}}],
+                }
+
+        self.use_summarizer(FixtureEvidenceSummarizer(error=TimeoutError()))
+        self.use_drug_information(RepeatedHeadingDrugInformationService())
+        explanation = self.search.search("metformin side effects")["explanation"]
+        self.assertEqual(explanation["key_points"], ["Nausea was reported."])
+        self.assertNotIn("Missing label text", explanation["what_we_cannot_conclude"])
+        self.assertEqual(explanation["sources_used"], ["FDA label"])
+
+    def test_side_effect_summary_is_cleaned_after_gemini(self):
+        summary = {
+            "status": "answered",
+            "short_answer": "6 ADVERSE REACTIONS Nausea was reported.",
+            "key_points": [
+                "6.1 Clinical Trials Experience Nausea was reported.",
+                "Headache was reported.",
+                "Headache was reported.",
+            ],
+            "what_we_cannot_conclude": "Missing label text does not mean no risks exist.",
+            "sources_used": ["FDA label"],
+        }
+        self.use_summarizer(FixtureEvidenceSummarizer(result=summary))
+        self.use_drug_information(FixtureDrugInformationService())
+        explanation = self.search.search("metformin side effects")["explanation"]
+        self.assertEqual(
+            explanation["short_answer"],
+            "CHEERS found official label information for Metformin.",
+        )
+        self.assertEqual(explanation["key_points"], ["Retrieved side-effect text."])
+        self.assertEqual(
+            explanation["what_we_cannot_conclude"],
+            "Official label information is general information, not personalized medical advice.",
+        )
+
+    def test_current_metformin_side_effect_text_becomes_one_plain_point(self):
+        evidence = (
+            "adverse_reactions: 6 ADVERSE REACTIONS The following adverse reactions "
+            "are also discussed elsewhere in the labeling: Lactic Acidosis [ see Boxed "
+            "Warning and Warnings and Precautions (5.1) ]. Vitamin B12 Deficiency [ see "
+            "Warnings and Precautions (5.2) ]. For metformin hydrochloride tablets, the "
+            "most common adverse reactions (>5.0%) are diarrhea, nausea/vomiting, "
+            "flatulence, asthenia, indigestion, abdominal discomfort, and headache."
+        )
+        points = PublicSearchService._plain_label_points([evidence, evidence])
+        self.assertEqual(len(points), 1)
+        self.assertLessEqual(len(points[0]), 140)
+        self.assertTrue(points[0].endswith("."))
+        combined = " ".join(points)
+        self.assertNotIn("(5.1)", combined)
+        self.assertNotIn("(5.2)", combined)
+        self.assertNotIn("see Boxed Warning", combined)
+
+    def test_side_effect_points_deduplicate_similar_wording(self):
+        points = PublicSearchService._plain_label_points([
+            "warnings: Metformin may lower vitamin B12 levels.",
+            "warnings: Vitamin B12 levels may be lowered by metformin.",
+        ])
+        self.assertEqual(points, ["Metformin may lower vitamin B12 levels."])
+
+    def test_side_effect_points_skip_incomplete_product_heading(self):
+        points = PublicSearchService._plain_label_points([
+            "adverse_reactions: Metformin Hydrochloride Tablets In a U.S. "
+            "Diarrhea was reported more often than with placebo.",
+            "adverse_reactions: The following adverse reactions have been identified during postapproval use.",
+        ])
+        self.assertEqual(points, ["Diarrhea was reported more often than with placebo."])
+
     def test_exact_drug_name(self):
         payload = self.search.search("Metformin")
         self.assertEqual(payload["intent"], "drug_information")
@@ -63,6 +352,108 @@ class PublicSearchTests(unittest.TestCase):
             "exact_canonical_name",
         )
 
+    def test_deterministic_match_does_not_call_interpreter(self):
+        interpreter = FixtureQueryInterpreter(error=AssertionError("unexpected call"))
+        self.use_interpreter(interpreter)
+        payload = self.search.search("Metformin")
+        self.assertEqual(payload["recognized_entities"][0]["entity_id"], "DB00331")
+        self.assertEqual(interpreter.calls, [])
+        self.assertNotIn("ai_interpretation", payload)
+
+    def test_natural_language_drug_information_works_without_interpreter(self):
+        interpreter = FixtureQueryInterpreter(error=TimeoutError())
+        self.use_interpreter(interpreter)
+        payload = self.search.search("what does metformin do?")
+        self.assertEqual(payload["intent"], "drug_information")
+        self.assertEqual(payload["recognized_entities"][0]["entity_id"], "DB00331")
+        self.assertEqual(payload["original_query"], "what does metformin do?")
+        self.assertEqual(interpreter.calls, [])
+
+    def test_typo_side_effects_work_without_interpreter(self):
+        interpreter = FixtureQueryInterpreter(error=TimeoutError())
+        self.use_interpreter(interpreter)
+        payload = self.search.search("tell me about metphormin side efects")
+        self.assertEqual(payload["intent"], "drug_side_effects")
+        self.assertEqual(payload["recognized_entities"][0]["entity_id"], "DB00331")
+        self.assertEqual(interpreter.calls, [])
+
+    def test_common_single_entity_phrasings_resolve_deterministically(self):
+        cases = (
+            ("what is metformin used for", "drug_information", "DB00331"),
+            ("tell me about metformin", "drug_information", "DB00331"),
+            ("metformin information", "drug_information", "DB00331"),
+            ("what is ibuprofen for", "drug_information", "DB01050"),
+            ("tell me metformin side effects", "drug_side_effects", "DB00331"),
+            ("what are the side effects of metformin", "drug_side_effects", "DB00331"),
+        )
+        interpreter = FixtureQueryInterpreter(error=AssertionError("unexpected call"))
+        self.use_interpreter(interpreter)
+        for query, intent, entity_id in cases:
+            with self.subTest(query=query):
+                payload = self.search.search(query)
+                self.assertEqual(payload["intent"], intent)
+                self.assertEqual(payload["recognized_entities"][0]["entity_id"], entity_id)
+        self.assertEqual(interpreter.calls, [])
+
+    def test_whats_diabetes_returns_choices_without_interpreter(self):
+        interpreter = FixtureQueryInterpreter(error=AssertionError("unexpected call"))
+        self.use_interpreter(interpreter)
+        payload = self.search.search("what's diabetes?")
+        self.assertEqual(payload["intent"], "disease_information")
+        self.assertEqual(payload["recognized_entities"], [])
+        self.assertTrue(payload["ambiguous_matches"][0]["candidates"])
+        self.assertEqual(
+            [item["name"] for item in payload["ambiguous_matches"][0]["candidates"]],
+            [
+                "diabetes mellitus (disease)",
+                "type 2 diabetes mellitus",
+                "type 1 diabetes mellitus",
+                "gestational diabetes",
+            ],
+        )
+        self.assertEqual(interpreter.calls, [])
+
+    def test_interpreter_failure_preserves_unknown_response(self):
+        interpreter = FixtureQueryInterpreter(error=TimeoutError())
+        self.use_interpreter(interpreter)
+        payload = self.search.search("banana spaceship medicine purple")
+        self.assertEqual(payload["intent"], "unknown")
+        self.assertEqual(payload["recognized_entities"], [])
+        self.assertEqual(payload["ai_interpretation"], {"status": "unavailable"})
+
+    def test_personalized_treatment_question_has_no_recommendation(self):
+        interpreter = FixtureQueryInterpreter(
+            result={
+                "intent": "general_symptom_or_treatment_question",
+                "drug_names": [],
+                "disease_names": [],
+                "topic": "pain",
+                "rewritten_query": "what should I take for pain",
+                "confidence": 0.98,
+            }
+        )
+        self.use_interpreter(interpreter)
+        payload = self.search.search("what should I take for pain?")
+        self.assertEqual(payload["intent"], "general_symptom_or_treatment_question")
+        self.assertNotIn("answer", payload)
+        self.assertNotIn("recommendation", payload)
+        self.assertEqual(payload["topic"], "pain")
+        self.assertEqual(interpreter.calls, [])
+
+    def test_invalid_interpreter_output_fails_safely(self):
+        interpreter = GeminiQueryInterpreter(api_key="test-key")
+        with patch(
+            "src.gemini_query_interpreter.urlopen",
+            return_value=InvalidGeminiResponse(),
+        ):
+            result = interpreter.interpret("banana spaceship medicine purple")
+        self.assertIsNone(result)
+        interpreter = FixtureQueryInterpreter(result=result)
+        self.use_interpreter(interpreter)
+        payload = self.search.search("banana spaceship medicine purple")
+        self.assertEqual(payload["intent"], "unknown")
+        self.assertEqual(payload["ai_interpretation"], {"status": "unavailable"})
+
     def test_exact_drugbank_id(self):
         payload = self.search.search("DB00682")
         self.assertEqual(payload["intent"], "drug_information")
@@ -70,6 +461,182 @@ class PublicSearchTests(unittest.TestCase):
         self.assertEqual(
             payload["recognized_entities"][0]["match_type"], "exact_entity_id"
         )
+
+    def test_close_drug_spelling_resolves_when_match_is_clear(self):
+        payload = self.search.search("ibuprofin")
+        self.assertEqual(payload["intent"], "drug_information")
+        self.assertEqual(payload["recognized_entities"][0]["name"], "Ibuprofen")
+        self.assertEqual(
+            payload["recognized_entities"][0]["match_type"],
+            "close_fuzzy_name",
+        )
+
+    def test_uncertain_disease_spelling_returns_diabetes_suggestions(self):
+        payload = self.search.search("diabetis")
+        self.assertEqual(payload["recognized_entities"], [])
+        candidates = payload["ambiguous_matches"][0]["candidates"]
+        self.assertLessEqual(len(candidates), 5)
+        self.assertTrue(candidates)
+        self.assertTrue(
+            all(item["match_type"] == "close_fuzzy_name" for item in candidates)
+        )
+        self.assertTrue(
+            any("diabetes" in item["name"].casefold() for item in candidates)
+        )
+
+    def test_exact_canonical_name_outranks_containing_name(self):
+        search = object.__new__(PublicSearchService)
+        search.entities = (
+            {
+                "entity_type": "drug",
+                "entity_id": "EXACT",
+                "name": "Aspirin",
+                "normalized_name": "aspirin",
+                "normalized_id": "exact",
+                "node_id": 1,
+                "source": "fixture",
+            },
+            {
+                "entity_type": "drug",
+                "entity_id": "LONGER",
+                "name": "Nitroaspirin",
+                "normalized_name": "nitroaspirin",
+                "normalized_id": "longer",
+                "node_id": 2,
+                "source": "fixture",
+            },
+        )
+        match, ambiguity = search._resolve_fragment("aspirin", ("drug",))
+        self.assertIsNone(ambiguity)
+        self.assertEqual(match[0]["name"], "Aspirin")
+        self.assertEqual(match[1], "exact_canonical_name")
+
+    def test_common_aspirin_name_resolves_to_canonical_drug(self):
+        payload = self.search.search("aspirin")
+        self.assertEqual(payload["recognized_entities"][0]["entity_id"], "DB00945")
+        self.assertEqual(
+            payload["recognized_entities"][0]["match_type"], "exact_common_name"
+        )
+        self.assertEqual(payload["recognized_entities"][0]["display_name"], "Aspirin")
+
+    def test_two_drug_wording_prefers_pair_question(self):
+        cases = (
+            "warfarin aspirin together?",
+            "warfarin and aspirin?",
+            "aspirin with warfarin",
+            "can I take warfarin aspirin together?",
+            "ibuprofin aspirin together?",
+        )
+        for query in cases:
+            with self.subTest(query=query):
+                payload = self.search.search(query)
+                self.assertEqual(payload["intent"], "drug_pair_question")
+                self.assertEqual(
+                    {item["entity_id"] for item in payload["recognized_entities"]},
+                    {"DB00682", "DB00945"}
+                    if "warfarin" in query.casefold()
+                    else {"DB01050", "DB00945"},
+                )
+
+    def test_generic_pain_is_not_resolved_as_specific_disease(self):
+        payload = self.search.search("can i use ibuprofin for pain?")
+        self.assertEqual(payload["intent"], "general_symptom_or_treatment_question")
+        self.assertEqual(payload["recognized_entities"][0]["entity_id"], "DB01050")
+        self.assertNotIn("myofascial pain syndrome", str(payload).casefold())
+        self.assertIn("cannot decide", payload["explanation"]["short_answer"])
+        self.assertNotIn("dose", payload["explanation"]["short_answer"].casefold())
+
+    def test_gemini_http_retries_one_retryable_failure(self):
+        retryable = HTTPError("https://example.invalid", 503, "unavailable", {}, None)
+        with patch(
+            "src.gemini_query_interpreter.urlopen",
+            side_effect=[retryable, EmptyResponse()],
+        ) as mocked_open:
+            response = open_with_retry(object(), 5, backoff_seconds=0)
+        self.assertIsInstance(response, EmptyResponse)
+        self.assertEqual(mocked_open.call_count, 2)
+
+    @staticmethod
+    def _valid_interpretation():
+        return {
+            "intent": "drug_information",
+            "drug_names": ["metformin"],
+            "disease_names": [],
+            "topic": "",
+            "rewritten_query": "metformin",
+            "confidence": 0.95,
+        }
+
+    def test_gemini_primary_model_success(self):
+        interpreter = GeminiQueryInterpreter(api_key="test-key")
+        with patch(
+            "src.gemini_query_interpreter.urlopen",
+            return_value=GeminiJsonResponse(self._valid_interpretation()),
+        ) as mocked_open:
+            result = interpreter.interpret("what does metformin do")
+        self.assertEqual(result["model_used"], GEMINI_PRIMARY_MODEL)
+        self.assertEqual(mocked_open.call_count, 1)
+        self.assertIn(GEMINI_PRIMARY_MODEL, mocked_open.call_args.args[0].full_url)
+
+    def test_retryable_primary_failure_uses_fallback_model_once(self):
+        failures = [
+            HTTPError("https://example.invalid", 503, "unavailable", {}, None),
+            HTTPError("https://example.invalid", 503, "unavailable", {}, None),
+        ]
+        interpreter = GeminiQueryInterpreter(api_key="test-key")
+        with patch(
+            "src.gemini_query_interpreter.time.sleep",
+        ), patch(
+            "src.gemini_query_interpreter.urlopen",
+            side_effect=[
+                *failures,
+                GeminiJsonResponse(self._valid_interpretation()),
+            ],
+        ) as mocked_open:
+            result = interpreter.interpret("what does metformin do")
+        self.assertEqual(result["model_used"], GEMINI_FALLBACK_MODEL)
+        self.assertEqual(mocked_open.call_count, 3)
+        self.assertIn(GEMINI_FALLBACK_MODEL, mocked_open.call_args.args[0].full_url)
+
+    def test_both_gemini_models_unavailable_keeps_deterministic_fallback(self):
+        failures = [
+            HTTPError("https://example.invalid", 503, "unavailable", {}, None)
+            for _ in range(3)
+        ]
+        interpreter = GeminiQueryInterpreter(api_key="test-key")
+        self.use_interpreter(interpreter)
+        with patch(
+            "src.gemini_query_interpreter.time.sleep",
+        ), patch(
+            "src.gemini_query_interpreter.urlopen",
+            side_effect=failures,
+        ) as mocked_open:
+            payload = self.search.search("banana spaceship medicine purple")
+        self.assertEqual(mocked_open.call_count, 3)
+        self.assertEqual(payload["intent"], "unknown")
+        self.assertEqual(payload["ai_interpretation"], {"status": "unavailable"})
+
+    def test_summarizer_uses_fallback_model_after_primary_unavailable(self):
+        summary = {
+            "status": "answered",
+            "short_answer": "A short grounded explanation.",
+            "key_points": ["One retrieved point."],
+            "what_we_cannot_conclude": "This is not a safety conclusion.",
+            "sources_used": ["FDA label"],
+        }
+        failures = [
+            HTTPError("https://example.invalid", 503, "unavailable", {}, None),
+            HTTPError("https://example.invalid", 503, "unavailable", {}, None),
+        ]
+        summarizer = GeminiEvidenceSummarizer(api_key="test-key")
+        with patch(
+            "src.gemini_query_interpreter.time.sleep",
+        ), patch(
+            "src.gemini_query_interpreter.urlopen",
+            side_effect=[*failures, GeminiJsonResponse(summary)],
+        ):
+            result = summarizer.summarize("question", {"FDA label": ["evidence"]})
+        self.assertEqual(result["model_used"], GEMINI_FALLBACK_MODEL)
 
     def test_approved_disease_description(self):
         payload = self.search.search("what is type 2 diabetes mellitus")

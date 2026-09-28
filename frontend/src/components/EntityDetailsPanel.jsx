@@ -3,19 +3,19 @@ import { useState } from 'react'
 
 const ENTITY_TYPE_DETAILS = {
   drug: { label: 'Drug', idLabel: 'DrugBank ID', summary: "A DrugBank-linked drug node in the model's candidate set." },
-  'gene/protein': { label: 'Gene / Protein', idLabel: 'NCBI ID', summary: 'A gene/protein context node identified by an NCBI ID in the G3 graph.' },
-  disease: { label: 'Disease', idLabel: 'Context ID', summary: 'A disease context node identified from MONDO or MONDO_grouped in the G3 graph.' },
+  'gene/protein': { label: 'Gene / Protein', idLabel: 'NCBI ID', summary: 'A gene/protein node identified by an NCBI ID in the available knowledge graph.' },
+  disease: { label: 'Disease', idLabel: 'Context ID', summary: 'A disease node identified from MONDO or MONDO_grouped in the available knowledge graph.' },
 }
 
 const RELATION_EXPLANATIONS = {
-  drug_drug: { text: 'The training portion of the G3 graph records a PrimeKG drug–drug relationship between the selected drug and this drug.', note: 'This is graph context, not an interaction severity or safety assessment.' },
-  target: { text: 'The G3 graph records this gene/protein through a target relationship with the selected drug.' },
-  enzyme: { text: 'The G3 graph records this gene/protein through an enzyme relationship with the selected drug.' },
-  carrier: { text: 'The G3 graph records this gene/protein through a carrier relationship with the selected drug.' },
-  transporter: { text: 'The G3 graph records this gene/protein through a transporter relationship with the selected drug.' },
-  indication: { text: 'The G3 graph records this disease through an indication relationship with the selected drug.' },
-  contraindication: { text: 'The G3 graph records this disease through a contraindication relationship with the selected drug.' },
-  'off-label use': { text: 'The G3 graph records this disease through an off-label-use relationship with the selected drug.' },
+  drug_drug: { text: 'The training data records a PrimeKG drug–drug relationship between the selected medicine and this medicine.', note: 'This knowledge-graph relationship is not an interaction severity or safety assessment.' },
+  target: { text: 'The knowledge graph records this gene/protein through a target relationship with the selected medicine.' },
+  enzyme: { text: 'The knowledge graph records this gene/protein through an enzyme relationship with the selected medicine.' },
+  carrier: { text: 'The knowledge graph records this gene/protein through a carrier relationship with the selected medicine.' },
+  transporter: { text: 'The knowledge graph records this gene/protein through a transporter relationship with the selected medicine.' },
+  indication: { text: 'The knowledge graph records this disease through an indication relationship with the selected medicine.' },
+  contraindication: { text: 'The knowledge graph records this disease through a contraindication relationship with the selected medicine.' },
+  'off-label use': { text: 'The knowledge graph records this disease through an off-label-use relationship with the selected medicine.' },
 }
 
 function displaySubstance(value, entityName) {
@@ -71,7 +71,7 @@ export default function EntityDetailsPanel({ selected, center }) {
                   return (
                     <article key={`${path.center.node_id}:${edge.relation}`}>
                       <strong>{relationshipPaths.length > 1 ? `${path.center.name} · ${edge.display_relation}` : edge.display_relation}</strong>
-                      <p>{explanation?.text || 'The G3 graph records this relationship with the selected drug.'}</p>
+                      <p>{explanation?.text || 'The knowledge graph records this relationship with the selected medicine.'}</p>
                       {explanation?.note && <small>{explanation.note}</small>}
                     </article>
                   )
@@ -147,5 +147,5 @@ export default function EntityDetailsPanel({ selected, center }) {
   }
 
   const { center: source, neighbor, displayRelation, relation } = selected.data
-  return <div className="subgraph-detail-content"><span className="card-kicker">Graph relationship</span><h3>{displayRelation}</h3><dl><div><dt>Source</dt><dd>{source.name}</dd></div><div><dt>Relation</dt><dd>{displayRelation} <small>{relation}</small></dd></div><div><dt>Target</dt><dd>{neighbor.name}</dd></div><div><dt>Status</dt><dd>Known G3 graph relationship</dd></div><div><dt>{relation === 'drug_drug' ? 'DDI scope' : 'Context scope'}</dt><dd>{relation === 'drug_drug' ? 'Training-only G3 relationship' : 'G3 forward support relationship'}</dd></div><div><dt>Predicted</dt><dd>No</dd></div></dl></div>
+  return <div className="subgraph-detail-content"><span className="card-kicker">Graph relationship</span><h3>{displayRelation}</h3><dl><div><dt>Source</dt><dd>{source.name}</dd></div><div><dt>Relation</dt><dd>{displayRelation} <small>{relation}</small></dd></div><div><dt>Target</dt><dd>{neighbor.name}</dd></div><div><dt>Status</dt><dd>Known knowledge-graph relationship</dd></div><div><dt>{relation === 'drug_drug' ? 'DDI scope' : 'Context scope'}</dt><dd>{relation === 'drug_drug' ? 'Training-set relationship' : 'Available knowledge-graph relationship'}</dd></div><div><dt>Predicted</dt><dd>No</dd></div></dl></div>
 }
