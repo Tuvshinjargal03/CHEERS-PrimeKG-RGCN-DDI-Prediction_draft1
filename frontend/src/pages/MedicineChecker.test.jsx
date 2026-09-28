@@ -77,7 +77,7 @@ describe('MedicineChecker', () => {
 
     expect(screen.getByText('Choose the first medicine')).toBeVisible()
     expect(screen.getByText('Choose the second medicine')).toBeVisible()
-    expect(screen.getAllByText('Optional label-text helper')).toHaveLength(2)
+    expect(screen.getAllByText('Scan a medicine label')).toHaveLength(2)
     expect(screen.getByRole('button', { name: 'Scan medicine label for First medicine' })).toBeVisible()
     expect(screen.getByRole('button', { name: 'Scan medicine label for Second medicine' })).toBeVisible()
     expect(screen.getByRole('button', { name: 'Check available information' })).toBeDisabled()

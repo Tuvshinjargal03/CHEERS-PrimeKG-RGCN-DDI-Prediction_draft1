@@ -9,9 +9,8 @@ import {
   Search,
   Utensils,
 } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import PublicSearchBox from '../components/PublicSearchBox.jsx'
 import { getJson } from '../lib/api.js'
 import './PublicSearch.css'
 import './PublicProduct.css'
@@ -33,21 +32,74 @@ function relationLabel(value) {
   return RELATION_LABELS[value] || sentenceCase(String(value).replaceAll('_', ' '))
 }
 
-function DiseaseLanding({ onSearch }) {
+function DiseaseSearch({ onSearch, onSelect }) {
+  const inputId = useId()
+  const listId = `${inputId}-suggestions`
+  const sequenceRef = useRef(0)
+  const [value, setValue] = useState('')
+  const [suggestions, setSuggestions] = useState([])
+  const [activeIndex, setActiveIndex] = useState(-1)
+  const [loading, setLoading] = useState(false)
+  const query = value.trim()
+
+  useEffect(() => {
+    const sequence = ++sequenceRef.current
+    if (query.length < 2) return undefined
+    const controller = new AbortController()
+    const timer = setTimeout(() => {
+      setLoading(true)
+      getJson(`/api/public/disease-suggestions?q=${encodeURIComponent(query)}&limit=6`, { cache: false, signal: controller.signal }).then((payload) => {
+        if (sequence !== sequenceRef.current) return
+        setSuggestions(payload?.suggestions || [])
+        setActiveIndex(-1)
+        setLoading(false)
+      }, () => {
+        if (sequence !== sequenceRef.current) return
+        setSuggestions([])
+        setActiveIndex(-1)
+        setLoading(false)
+      })
+    }, 250)
+    return () => { clearTimeout(timer); controller.abort() }
+  }, [query])
+
+  function choose(suggestion) { setSuggestions([]); onSelect(suggestion) }
+  function handleKeyDown(event) {
+    if (event.key === 'Escape') { setSuggestions([]); setActiveIndex(-1); return }
+    if (!suggestions.length) return
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault()
+      const direction = event.key === 'ArrowDown' ? 1 : -1
+      setActiveIndex((current) => current < 0 ? (direction > 0 ? 0 : suggestions.length - 1) : (current + direction + suggestions.length) % suggestions.length)
+    } else if (event.key === 'Enter' && activeIndex >= 0) {
+      event.preventDefault(); choose(suggestions[activeIndex])
+    }
+  }
+
+  const showResults = query.length >= 2 && !loading
+  return <form className="public-search-form disease-live-search" role="search" onSubmit={(event) => { event.preventDefault(); if (query) onSearch(query) }}>
+    <label htmlFor={inputId}>Search for a condition</label>
+    <div className="public-search-control"><Search size={21} aria-hidden="true" /><input id={inputId} type="search" role="combobox" aria-autocomplete="list" aria-controls={listId} aria-expanded={showResults} aria-activedescendant={activeIndex >= 0 ? `${listId}-${activeIndex}` : undefined} value={value} onChange={(event) => { setValue(event.target.value); if (event.target.value.trim().length < 2) { setSuggestions([]); setLoading(false) } }} onKeyDown={handleKeyDown} placeholder="Search conditions..." autoComplete="off" /><button type="submit" className="primary-button" disabled={!query}>Search</button></div>
+    {loading && <small className="disease-suggestion-status" role="status">Searching...</small>}
+    {showResults && <div id={listId} className="disease-suggestions" role="listbox" aria-label="Condition suggestions">{suggestions.length ? suggestions.map((suggestion, index) => <button id={`${listId}-${index}`} key={suggestion.entity_id} type="button" role="option" aria-selected={index === activeIndex} className={index === activeIndex ? 'active' : ''} onMouseEnter={() => setActiveIndex(index)} onClick={() => choose(suggestion)}><strong>{sentenceCase(suggestion.name)}</strong><small>Condition</small></button>) : <p>No matching condition found.</p>}</div>}
+  </form>
+}
+
+function DiseaseLanding({ onSearch, onSelect }) {
   return (
     <section className="page product-page disease-guide-page">
       <header className="product-page-header">
         <span className="eyebrow">Disease guide</span>
-        <h1>Understand a condition</h1>
+        <h1>Find a condition</h1>
         <p>Search a disease to read an available explanation and explore medicines connected through verified biomedical relationships.</p>
       </header>
       <div className="product-input-panel disease-landing-search">
-        <PublicSearchBox
+        <DiseaseSearch
           label="Search for a disease"
           placeholder="Enter a disease name…"
           onSearch={onSearch}
+          onSelect={onSelect}
         />
-        <p className="product-search-helper">If more than one disease matches, CHEERS will ask you to choose.</p>
         <div className="product-example-row">
           <span>Try an example</span>
           <div className="product-example-chips">
@@ -70,7 +122,7 @@ function MedicineRelationshipCard({ item, indication = false }) {
           {relationLabel(item.relation)}
         </span>
         <h3>{item.drug_name}</h3>
-        <p>{item.drug_id} · {item.context_source}</p>
+        <p>{relationLabel(item.relation)} in the available data</p>
       </div>
       <div className="disease-medicine-actions">
         <Link to={`/medicines/${encodeURIComponent(item.drug_id)}`}>View medicine</Link>
@@ -175,7 +227,10 @@ export default function DiseaseGuide() {
   }, [diseaseId])
 
   if (!diseaseId) {
-    return <DiseaseLanding onSearch={(query) => navigate(`/search?q=${encodeURIComponent(query)}`)} />
+    return <DiseaseLanding
+      onSearch={(query) => navigate(`/search?q=${encodeURIComponent(query)}`)}
+      onSelect={(disease) => navigate(`/diseases/${encodeURIComponent(disease.entity_id)}`)}
+    />
   }
 
   const disease = payload?.disease
@@ -207,8 +262,8 @@ export default function DiseaseGuide() {
       <header className="disease-profile-header">
         <Link className="product-back-link" to="/diseases">← Disease guide</Link>
         <span className="eyebrow">Disease profile</span>
-        <h1>{sentenceCase(disease?.name) || 'Disease information'}</h1>
-        <p><span>Source entity ID</span> {disease?.entity_id || diseaseId}</p>
+        <h1>{sentenceCase(disease?.name) || 'Condition information'}</h1>
+        <details className="medicine-technical-details"><summary>Technical details</summary><p><span>Source entity ID</span> {disease?.entity_id || diseaseId}</p></details>
       </header>
 
       {loading && <div className="product-empty-state" role="status"><LoaderCircle className="spin" size={24} /><div><strong>Loading disease information…</strong></div></div>}
@@ -240,7 +295,7 @@ export default function DiseaseGuide() {
           <section className="disease-description-card" aria-labelledby="disease-about-heading">
             <div className="medicine-content-heading">
               <span className="public-quick-icon"><BookOpen size={20} /></span>
-              <div><span className="eyebrow">Simple explanation</span><h2 id="disease-about-heading">About this disease</h2></div>
+              <div><span className="eyebrow">Overview</span><h2 id="disease-about-heading">About this condition</h2></div>
             </div>
             {disease.verified_description_available ? (
               <>
@@ -259,8 +314,8 @@ export default function DiseaseGuide() {
           <section className="disease-relationship-section" aria-labelledby="indication-medicines-heading">
             <div className="product-section-title">
               <div>
-                <span className="eyebrow">Treatment-related graph relationships</span>
-                <h2 id="indication-medicines-heading">Medicines associated through indication</h2>
+                <span className="eyebrow">Medicines in the available data</span>
+                <h2 id="indication-medicines-heading">Medicines with an indication relationship</h2>
               </div>
               <span className="product-step-badge">{indications.length} {indications.length === 1 ? 'medicine' : 'medicines'}</span>
             </div>
@@ -325,7 +380,7 @@ export default function DiseaseGuide() {
 
           <aside className="medicine-source-boundary">
             <Search size={19} />
-            <p>{payload.relationship_scope}</p>
+            <p>These connections show relationships in the research data; they do not prove cause or medical effect.</p>
             <Link className="product-inline-link" to="/methodology">Methodology <ExternalLink size={14} /></Link>
           </aside>
             </div>

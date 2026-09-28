@@ -15,7 +15,7 @@ import {
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import PublicSearchBox from '../components/PublicSearchBox.jsx'
-import { getJson } from '../lib/api.js'
+import { getJson, postJson } from '../lib/api.js'
 import { publicSearchDestination } from '../lib/publicSearchRouting.js'
 import './PublicSearch.css'
 
@@ -54,6 +54,7 @@ const NATURAL_QUESTION_EXAMPLES = [
 ]
 
 const PUBLIC_SEARCH_TIMEOUT_MS = 65_000
+const PUBLIC_EXPLANATION_TIMEOUT_MS = 15_000
 const SLOW_SEARCH_NOTICE_MS = 10_000
 
 const DESTINATION_DETAILS = {
@@ -758,7 +759,7 @@ export default function PublicSearch() {
     getJson(`/api/public/search?q=${encodeURIComponent(query)}`, {
       timeoutMs: PUBLIC_SEARCH_TIMEOUT_MS,
     }).then(
-      async (payload) => {
+      (payload) => {
         if (active) {
           clearTimeout(slowNoticeId)
           setSlowSearchQuery('')
@@ -770,18 +771,29 @@ export default function PublicSearch() {
               foodLifestyleStatus: null,
             })
           } else {
-            let nextFoodLifestyleStatus = null
+            setRequest({
+              query,
+              data: payload,
+              error: '',
+              foodLifestyleStatus: null,
+            })
+            const destination = publicSearchDestination(payload)
+            if (destination) {
+              navigate(destination, { replace: true })
+              return
+            }
+
             const medicine = payload.recognized_entities?.[0]
             if (
               payload.intent === 'drug_food_lifestyle'
               && medicine?.entity_type === 'drug'
             ) {
-              try {
-                const medicinePayload = await getJson(
+              getJson(
                   `/api/public/medicine?drug_id=${encodeURIComponent(medicine.entity_id)}`,
-                )
+              ).then((medicinePayload) => {
                 const information = medicinePayload?.label_information
                   ?.food_lifestyle_information
+                let nextFoodLifestyleStatus = 'unavailable'
                 if (information?.status === 'available') {
                   nextFoodLifestyleStatus = information.topics?.some(
                     (item) => item.topic === payload.topic,
@@ -794,19 +806,32 @@ export default function PublicSearch() {
                     ? information.status
                     : 'unavailable'
                 }
-              } catch {
-                nextFoodLifestyleStatus = 'unavailable'
-              }
+                if (!active) return
+                setRequest((current) => current.query === query
+                  ? { ...current, foodLifestyleStatus: nextFoodLifestyleStatus }
+                  : current)
+              }, () => {
+                if (!active) return
+                setRequest((current) => current.query === query
+                  ? { ...current, foodLifestyleStatus: 'unavailable' }
+                  : current)
+              })
             }
-            if (!active) return
-            setRequest({
-              query,
-              data: payload,
-              error: '',
-              foodLifestyleStatus: nextFoodLifestyleStatus,
-            })
-            const destination = publicSearchDestination(payload)
-            if (destination) navigate(destination, { replace: true })
+
+            if (payload.ai_explanation_eligible) {
+              postJson(
+                '/api/public/explain',
+                { query },
+                { timeoutMs: PUBLIC_EXPLANATION_TIMEOUT_MS },
+              ).then((enhanced) => {
+                if (!active || !enhanced || typeof enhanced.intent !== 'string') return
+                setRequest((current) => current.query === query
+                  ? { ...current, data: enhanced }
+                  : current)
+              }, () => {
+                // The deterministic result remains visible when AI or sources fail.
+              })
+            }
           }
         }
       },

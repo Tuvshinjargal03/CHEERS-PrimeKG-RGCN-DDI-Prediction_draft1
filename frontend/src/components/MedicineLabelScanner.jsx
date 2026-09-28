@@ -552,7 +552,7 @@ export default function MedicineLabelScanner({ targetLabel, onDrugSelect, disabl
         {detectedText && (
           <details className="scanner-detected-text">
             <summary>Detected text</summary>
-            <p>OCR output may contain errors. Review it before selecting a supported drug.</p>
+            <p>Results should be checked before continuing.</p>
             <label>
               <span>Text read from the image</span>
               <textarea

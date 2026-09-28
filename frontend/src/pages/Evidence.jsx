@@ -185,18 +185,15 @@ export default function Evidence() {
     <section className="page evidence-page">
       <div className="page-heading">
         <span className="eyebrow">Independent external sources</span>
-        <h1>Evidence</h1>
-        <p>
-          Review openFDA label text and related PubMed records retrieved
-          independently from the R-GCN ranking score.
-        </p>
+        <h1>Medicine pair sources</h1>
+        <p>Review official medicine information and related research articles for two medicines.</p>
       </div>
 
       <form className="pair-form evidence-pair-form" onSubmit={loadEvidence}>
         <div className="evidence-form-heading">
-          <span className="eyebrow">Evidence query</span>
-          <h2>Choose two drugs</h2>
-          <p>Select a pair to retrieve independent openFDA and PubMed information.</p>
+          <span className="eyebrow">Medicine pair</span>
+          <h2>Choose two medicines</h2>
+          <p>Check official information and related research articles.</p>
         </div>
         <div className="drug-selection-field">
           <DrugAutocomplete label="Drug A" selection={drugA} onSelect={selectDrugA} disabled={resolving || loading} />
@@ -248,10 +245,10 @@ export default function Evidence() {
             </article>
             <article className="external-source-card">
               <span>Independent external information</span>
-              <h2>openFDA + PubMed</h2>
+              <h2>What we found</h2>
               <div className="evidence-source-counts">
                 <div><strong>{evidenceItems.length.toLocaleString()}</strong><span>label excerpts</span></div>
-                <div><strong>{papers.length.toLocaleString()}</strong><span>PubMed records</span></div>
+                <div><strong>{papers.length.toLocaleString()}</strong><span>Research articles</span></div>
               </div>
               <p>openFDA and PubMed information is retrieved independently of the R-GCN model. It was not used as model input, does not explain the model score, and does not validate or prove a predicted drug–drug interaction.</p>
             </article>
@@ -273,11 +270,11 @@ export default function Evidence() {
 
           <div className="evidence-record-heading">
             <span className="eyebrow">Retrieved sources</span>
-            <h2>Evidence records</h2>
+            <h2>Sources</h2>
           </div>
           <div className="evidence-grid">
-            <article className="evidence-panel">
-              <div className="panel-title"><FileSearch size={21} /><div><span>Source: openFDA Drug Label</span><h2>Explicit label mentions</h2></div></div>
+            <article className="evidence-panel" hidden={!evidenceItems.length}>
+              <div className="panel-title"><FileSearch size={21} /><div><span>FDA label</span><h2>Official label matches</h2></div></div>
               {evidenceItems.length ? (
                 <div>
                   <div className="evidence-items">
@@ -306,8 +303,8 @@ export default function Evidence() {
               )}
             </article>
 
-            <article className="evidence-panel">
-              <div className="panel-title"><BookOpen size={21} /><div><span>Source: PubMed</span><h2>Related literature</h2></div></div>
+            <article className="evidence-panel" hidden={!papers.length}>
+              <div className="panel-title"><BookOpen size={21} /><div><span>PubMed</span><h2>Research articles</h2></div></div>
               {papers.length ? (
                 <div className="paper-list">
                   {papers.map((paper) => {
@@ -320,6 +317,13 @@ export default function Evidence() {
               )}
             </article>
           </div>
+
+          {!evidenceItems.length && !papers.length && (
+            <div className="source-state">
+              <strong>No source matches were available from this check.</strong>
+              <p>This does not establish that the pair is safe or that no interaction or relevant literature exists.</p>
+            </div>
+          )}
 
           <aside className="limitations-card"><AlertCircle size={21} /><div><strong>Retrieval and interpretation limitations</strong><ul>{limitations.map((item) => <li key={item}>{item}</li>)}</ul></div></aside>
         </>

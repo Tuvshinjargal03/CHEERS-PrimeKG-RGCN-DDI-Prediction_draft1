@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -111,9 +111,9 @@ describe('MedicineGuide', () => {
   it('routes a selected recognized medicine to its profile', async () => {
     const user = userEvent.setup()
     renderGuide('/medicines')
-    expect(screen.getByText('Search by medicine name or DrugBank ID')).toBeVisible()
-    expect(screen.getByText('Optional label-text helper')).toBeVisible()
-    expect(screen.getByText(/does not identify a medicine clinically/i)).toBeVisible()
+    expect(screen.getByText('Search by a medicine name.')).toBeVisible()
+    expect(screen.getByText('Scan a medicine label')).toBeVisible()
+    expect(screen.getByText(/camera or an image/i)).toBeVisible()
     expect(screen.getByText('Try an example')).toBeVisible()
     await user.click(screen.getByRole('button', { name: 'Choose Metformin' }))
     expect(screen.getByTestId('location')).toHaveTextContent('/medicines/DB00331')
@@ -122,27 +122,44 @@ describe('MedicineGuide', () => {
   it('shows the recognized medicine and a public-facing module overview', async () => {
     renderGuide('/medicines/DB00331')
     expect(await screen.findByRole('heading', { name: 'Metformin' })).toBeVisible()
-    expect(screen.getByText('DB00331')).toBeVisible()
+    expect(screen.getByText('Technical details')).toBeVisible()
     expect(screen.getByRole('heading', { name: 'At a glance' })).toBeVisible()
     expect(screen.getByRole('link', { name: 'Uses: Available' })).toBeVisible()
     expect(screen.getByRole('link', { name: 'Food & lifestyle: Available' })).toBeVisible()
     expect(screen.getByRole('link', { name: 'Related diseases: Available' })).toBeVisible()
     expect(screen.getByLabelText('Medicine information source status')).toHaveTextContent('1 official label record retrieved')
     expect(screen.getByLabelText('Medicine information source status')).toHaveTextContent('Research connections retrieved')
-    expect(screen.getByText('Official label: Uses, Side effects, Warnings, Interactions, Food & lifestyle')).toBeVisible()
-    expect(screen.getByText('Research connections: Related diseases')).toBeVisible()
     expect(screen.getByRole('link', { name: 'Warnings' })).toHaveAttribute('title', 'Official label information')
     expect(screen.getByRole('link', { name: 'Related diseases' })).toHaveAttribute('title', 'Knowledge-graph context')
     expect(screen.getByText(/does not mean complete medical coverage/i)).toBeVisible()
     expect(screen.getByText(/Missing information is not proof of safety/i)).toBeVisible()
-    expect(screen.getByText(/not clinical decision support/i)).toBeVisible()
+    expect(screen.getByText(/does not replace advice from a healthcare professional/i)).toBeVisible()
     expect(screen.getByText(/1 label record reviewed · 4 label sections available/)).toBeVisible()
+  })
+
+  it('renders medicine information without waiting for optional graph context', async () => {
+    let resolveContext
+    getJson.mockImplementation((path) => (
+      path.startsWith('/api/public/medicine')
+        ? Promise.resolve(LABEL_PAYLOAD)
+        : new Promise((resolve) => { resolveContext = resolve })
+    ))
+
+    renderGuide('/medicines/DB00331')
+
+    expect(await screen.findByRole('heading', { name: 'Metformin' })).toBeVisible()
+    expect(screen.getByLabelText('Medicine information source status')).toHaveTextContent(
+      'Loading research connections',
+    )
+
+    await act(async () => resolveContext(CONTEXT))
+    expect(await screen.findByText('Research connections retrieved')).toBeVisible()
   })
 
   it('passes the displayed medicine to the Subgraph Explorer', async () => {
     renderGuide('/medicines/DB00331')
 
-    expect(await screen.findByRole('link', { name: /explore graph/i })).toHaveAttribute(
+    expect(await screen.findByRole('link', { name: /research connections/i })).toHaveAttribute(
       'href',
       '/subgraph?drug_id=DB00331&drug_name=Metformin',
     )
@@ -203,10 +220,9 @@ describe('MedicineGuide', () => {
     expect(screen.getByText(/Bounded alcohol preview/)).toBeVisible()
 
     await user.click(screen.getByRole('link', { name: 'Warnings' }))
-    toggle = await screen.findByRole('button', { name: 'View full label text' })
-    await user.click(toggle)
-    expect(screen.getByText(fullWarningText)).toBeVisible()
-    expect(screen.queryByText(/Bounded warning preview/)).not.toBeInTheDocument()
+    expect(await screen.findByText('Bounded warning preview.')).toBeVisible()
+    expect(screen.queryByText(fullWarningText)).not.toBeInTheDocument()
+    expect(screen.getByText(/Full text remains available under Official source/)).toBeVisible()
   })
 
   it('sends very long FDA sections to the official label instead of expanding inline', async () => {
@@ -313,13 +329,9 @@ describe('MedicineGuide', () => {
     renderGuide('/medicines/DB00331?section=side-effects')
     const sourceText = await screen.findByText('Official adverse reactions section.')
     expect(sourceText).toBeVisible()
-    expect(sourceText).toHaveClass('is-clamped')
     expect(screen.getByRole('link', { name: 'Side effects' })).toHaveAttribute('aria-current', 'page')
 
-    const expandButton = screen.getByRole('button', { name: 'View full label text' })
-    await user.click(expandButton)
-    expect(sourceText).not.toHaveClass('is-clamped')
-    expect(expandButton).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.queryByRole('button', { name: 'View full label text' })).not.toBeInTheDocument()
 
     await user.click(screen.getByRole('link', { name: 'Warnings' }))
     expect(await screen.findByText('Official warning section.')).toBeVisible()

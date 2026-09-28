@@ -162,7 +162,7 @@ describe('DrugAutocomplete', () => {
     const option = await screen.findByRole('option', { name: new RegExp(LONG_CANONICAL_NAME.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')) })
     expect(option).toHaveAccessibleName(expect.stringContaining(LONG_CANONICAL_NAME.name))
     expect(within(option).getByText(LONG_CANONICAL_NAME.name)).toHaveAttribute('title', LONG_CANONICAL_NAME.name)
-    expect(within(option).getByText('DrugBank · DB08496')).toBeVisible()
+    expect(within(option).queryByText(/DB08496/)).not.toBeInTheDocument()
     expect(within(option).getByText('Research connections available')).toBeVisible()
   })
 })

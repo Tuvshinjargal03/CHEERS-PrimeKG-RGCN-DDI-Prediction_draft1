@@ -461,10 +461,10 @@ export default function GraphExplorer() {
     <section className="page graph-page">
       <div className="page-heading">
         <span className="eyebrow">Supporting biomedical context</span>
-        <h1>Graph Explorer</h1>
+        <h1>Compare two medicines</h1>
         <p>
-          Explore shared gene/protein and disease associations available in the
-          available exported knowledge-graph data. These relationships are not a causal explanation
+          Explore shared gene/protein and disease associations in the available
+          knowledge-graph data. These relationships are not a causal explanation
           of a model score and do not establish clinical safety or harm.
         </p>
       </div>
@@ -472,13 +472,13 @@ export default function GraphExplorer() {
       <form className="pair-form graph-pair-form" onSubmit={loadContext}>
         <div className="graph-form-heading">
           <span className="eyebrow">Pair selection</span>
-          <h2>Choose two drugs</h2>
-          <p>Search for each medicine first. Both need available exported knowledge-graph data for this pair view.</p>
+          <h2>Choose two medicines</h2>
+          <p>Choose two medicines to see shared biomedical relationships in the available research data.</p>
         </div>
         <div className="drug-selection-field">
           <DrugAutocomplete label="Drug A" selection={drugA} onSelect={selectDrugA} disabled={resolving} getOptionAnnotation={g3ContextAnnotation} />
           <div className="graph-scanner-helper">
-            <span>Optional label-text helper</span>
+            <span>Scan a medicine label</span>
             <MedicineLabelScanner targetLabel="Drug A" onDrugSelect={selectDrugA} disabled={resolving} />
           </div>
           <ContextAvailability drug={drugA} available={drugAHasContext} />
@@ -486,7 +486,7 @@ export default function GraphExplorer() {
         <div className="drug-selection-field">
           <DrugAutocomplete label="Drug B" selection={drugB} onSelect={selectDrugB} disabled={resolving} getOptionAnnotation={g3ContextAnnotation} />
           <div className="graph-scanner-helper">
-            <span>Optional label-text helper</span>
+            <span>Scan a medicine label</span>
             <MedicineLabelScanner targetLabel="Drug B" onDrugSelect={selectDrugB} disabled={resolving} />
           </div>
           <ContextAvailability drug={drugB} available={drugBHasContext} />

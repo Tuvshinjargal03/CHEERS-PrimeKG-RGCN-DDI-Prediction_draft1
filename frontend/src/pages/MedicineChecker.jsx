@@ -164,7 +164,7 @@ export default function MedicineChecker() {
           <div>
             <span className="eyebrow">Medicine pair</span>
             <h2>Which medicines would you like to check?</h2>
-            <p>Search by medicine name or DrugBank ID. Label scanning is an optional text-selection helper.</p>
+            <p>Search by a medicine name. You can also scan a label to help find it.</p>
           </div>
           <span className="product-step-badge">2 medicines</span>
         </div>
@@ -174,7 +174,7 @@ export default function MedicineChecker() {
             <div className="checker-field-step"><span>1</span><strong>Choose the first medicine</strong></div>
             <DrugAutocomplete label="First medicine" selection={drugA} onSelect={selectA} disabled={loading || resolving} />
             <div className="checker-scanner-helper">
-              <small>Optional label-text helper</small>
+              <small>Scan a medicine label</small>
               <MedicineLabelScanner targetLabel="First medicine" onDrugSelect={selectA} disabled={loading || resolving} />
             </div>
           </div>
@@ -183,7 +183,7 @@ export default function MedicineChecker() {
             <div className="checker-field-step"><span>2</span><strong>Choose the second medicine</strong></div>
             <DrugAutocomplete label="Second medicine" selection={drugB} onSelect={selectB} disabled={loading || resolving} />
             <div className="checker-scanner-helper">
-              <small>Optional label-text helper</small>
+              <small>Scan a medicine label</small>
               <MedicineLabelScanner targetLabel="Second medicine" onDrugSelect={selectB} disabled={loading || resolving} />
             </div>
           </div>

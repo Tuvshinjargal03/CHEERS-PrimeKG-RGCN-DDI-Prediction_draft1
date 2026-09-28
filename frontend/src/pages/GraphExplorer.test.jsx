@@ -132,7 +132,7 @@ describe('GraphExplorer context availability', () => {
     await selectDrug(drugBInput, 'Aspirin')
 
     expect(screen.getAllByText('Research connections available')).toHaveLength(2)
-    expect(screen.getAllByText('Optional label-text helper')).toHaveLength(2)
+    expect(screen.getAllByText('Scan a medicine label')).toHaveLength(2)
     expect(screen.getByRole('button', { name: 'Explore pair' })).toBeEnabled()
     expect(screen.queryByText(/remains available in the DDI Predictor/)).not.toBeInTheDocument()
     expect(screen.getByText('Choose a drug pair.')).toBeVisible()
