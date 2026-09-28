@@ -489,7 +489,7 @@ export default function MyConditions() {
         ) : (
           <div className="my-conditions-empty">
             <HeartPulse size={25} aria-hidden="true" />
-            <div><strong>Save a condition to organize its available CHEERS information.</strong><p>Use Browse conditions above to find a canonical disease entity, then open its details, typed medicine relationships, nutrition information when available, and My Health connections.</p></div>
+            <div><strong>Save a condition to organize its available CHEERS information.</strong><p>Use Find a condition above, then open its details, medicine relationships, nutrition information when available, and My Health connections.</p></div>
           </div>
         )}
       </section>

@@ -330,7 +330,7 @@ export default function MyMedicines() {
             label="Search medicine"
             selection={pendingMedicine}
             onSelect={setPendingMedicine}
-            placeholder="Search by medicine name or DrugBank ID"
+            placeholder="Search by medicine name"
             disabled={checking || atLimit}
           />
           <button

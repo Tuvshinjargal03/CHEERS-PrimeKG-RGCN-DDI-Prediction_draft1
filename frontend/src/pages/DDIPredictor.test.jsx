@@ -64,7 +64,7 @@ describe('DDI Predictor research workflow', () => {
 
     const action = screen.getByRole('button', { name: 'Run R-GCN ranking' })
     expect(action).toBeDisabled()
-    expect(screen.getByText('Optional label-text helper')).toBeVisible()
+    expect(screen.getByText('Optional label scan')).toBeVisible()
     expect(screen.getByText(/does not mean there is no interaction/i)).toBeVisible()
 
     await userEvent.click(screen.getByRole('button', { name: 'Choose Warfarin' }))
@@ -84,8 +84,9 @@ describe('DDI Predictor research workflow', () => {
     await selectAndRun('5')
 
     expect(screen.getByRole('status')).toHaveTextContent('Ranking possible interaction links')
-    rejectRequest(new Error('Runtime unavailable'))
-    expect(await screen.findByRole('alert')).toHaveTextContent('Runtime unavailable')
+    rejectRequest(new Error('HTTP 503 Runtime unavailable'))
+    expect(await screen.findByRole('alert')).toHaveTextContent('Research ranking is temporarily unavailable. Try again.')
+    expect(screen.getByRole('alert')).not.toHaveTextContent(/HTTP|runtime/i)
   })
 
   it('renders metadata, raw ranked output, and interpretation boundaries', async () => {

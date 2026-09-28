@@ -374,7 +374,7 @@ describe('deterministic public-search routing', () => {
     expect(pairHeading.closest('section')).toHaveClass('is-warning')
     expect(screen.getAllByText('The retrieved FDA label information includes an interaction warning for this pair.')).toHaveLength(1)
     expect(screen.getByLabelText('Retrieved source counts')).toHaveTextContent('FDA label mentions16')
-    expect(screen.getByLabelText('Retrieved source counts')).toHaveTextContent('PubMed records5')
+    expect(screen.getByLabelText('Retrieved source counts')).toHaveTextContent('Research articles5PubMed')
     expect(screen.getByRole('link', { name: /Check Medicines/ })).toHaveAttribute(
       'href',
       '/check?drug_a_id=DB00682&drug_b_id=DB01050',

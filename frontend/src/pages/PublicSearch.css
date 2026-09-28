@@ -1276,6 +1276,11 @@
   overflow-wrap: anywhere;
 }
 
+.public-evidence-counts small {
+  color: var(--public-muted);
+  font-size: 0.68rem;
+}
+
 .public-result-safety a {
   display: inline-flex;
   min-width: 0;

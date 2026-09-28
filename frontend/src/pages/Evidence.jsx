@@ -122,7 +122,7 @@ export default function Evidence() {
         setDrugA(resolvedA)
         setDrugB(resolvedB)
         if ((initialAId && !resolvedA) || (initialBId && !resolvedB)) {
-          setError('One of the requested DrugBank identifiers could not be resolved.')
+          setError('One of the requested medicines could not be found.')
         }
       })
       .catch((requestError) => {
@@ -210,7 +210,7 @@ export default function Evidence() {
       </form>
 
       {error && <div className="inline-alert error evidence-page-state" role="alert"><AlertCircle size={20} />{error}</div>}
-      {loading && <div className="empty-feature-state evidence-page-state" role="status" aria-live="polite"><LoaderCircle className="spin" size={28} /><div><strong>Retrieving external sources…</strong><p>openFDA label information and PubMed records are being retrieved independently.</p></div></div>}
+      {loading && <div className="empty-feature-state evidence-page-state" role="status" aria-live="polite"><LoaderCircle className="spin" size={28} /><div><strong>Retrieving external sources…</strong><p>Official label information and PubMed research articles are being retrieved independently.</p></div></div>}
       {!data && !loading && !error && <div className="empty-feature-state evidence-page-state"><BookOpen size={28} /><div><strong>Choose a drug pair.</strong><p>FDA label and PubMed retrieval will remain visibly separate from model output.</p></div></div>}
 
       {data && (
@@ -313,7 +313,7 @@ export default function Evidence() {
                   })}
                 </div>
               ) : (
-                <div className={`source-state ${literature?.status === 'error' ? 'error' : ''}`}><strong>{literature?.status === 'error' ? 'PubMed literature could not be retrieved.' : 'No related PubMed records were retrieved.'}</strong><p>Unavailable or empty retrieval does not indicate safety, absence of a DDI, or absence of relevant literature.</p></div>
+                <div className={`source-state ${literature?.status === 'error' ? 'error' : ''}`}><strong>{literature?.status === 'error' ? 'PubMed research articles could not be retrieved.' : 'No related PubMed research articles were retrieved.'}</strong><p>Unavailable or empty retrieval does not indicate safety, absence of a DDI, or absence of relevant literature.</p></div>
               )}
             </article>
           </div>

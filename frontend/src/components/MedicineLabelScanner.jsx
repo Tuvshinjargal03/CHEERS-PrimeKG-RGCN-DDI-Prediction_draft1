@@ -17,7 +17,7 @@ function getLocalOcrAssetPaths(baseUrl = import.meta.env.BASE_URL) {
 
 const MATCH_LABELS = {
   exact_name_in_text: 'Exact label match',
-  exact_drugbank_id: 'Exact DrugBank ID match',
+  exact_drugbank_id: 'Exact database ID match',
   possible_text_match: 'Possible text match',
 }
 

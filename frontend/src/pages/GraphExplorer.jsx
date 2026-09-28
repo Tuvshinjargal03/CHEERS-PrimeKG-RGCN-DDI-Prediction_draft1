@@ -253,7 +253,7 @@ export default function GraphExplorer() {
         setDrugA(resolvedA)
         setDrugB(resolvedB)
         if ((initialAId && !resolvedA) || (initialBId && !resolvedB)) {
-          setError('One of the requested DrugBank identifiers could not be resolved.')
+          setError('One of the requested medicines could not be found.')
         }
       })
       .catch((requestError) => {
@@ -630,7 +630,7 @@ export default function GraphExplorer() {
           <div className="workflow-actions">
             <div>
               <BookOpen size={20} />
-              <p><strong>Continue with independent external evidence</strong><span>Review openFDA label excerpts and PubMed records. This evidence does not validate knowledge-graph relationships or an R-GCN prediction.</span></p>
+              <p><strong>Continue with independent external evidence</strong><span>Review official label excerpts and PubMed research articles. This evidence does not validate knowledge-graph relationships or an R-GCN prediction.</span></p>
             </div>
             <button type="button" className="primary-button" onClick={() => navigate(evidenceDestination(context, navigationScore))}>
               Review evidence<ArrowRight size={16} />

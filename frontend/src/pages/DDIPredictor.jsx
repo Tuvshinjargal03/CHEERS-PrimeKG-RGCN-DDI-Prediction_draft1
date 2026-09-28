@@ -43,8 +43,8 @@ export default function DDIPredictor() {
         top_k: Number(topK),
       })
       setResult(payload)
-    } catch (requestError) {
-      setError(requestError.message || 'Prediction could not be completed.')
+    } catch {
+      setError('Research ranking is temporarily unavailable. Try again.')
     } finally {
       setLoading(false)
     }
@@ -68,9 +68,9 @@ export default function DDIPredictor() {
         </div>
         <div className="drug-selection-field">
           <span className="predictor-step-label">1. Choose query medicine</span>
-          <DrugAutocomplete label="Medicine name or DrugBank ID" selection={drug} onSelect={selectDrug} />
+          <DrugAutocomplete label="Medicine name" selection={drug} onSelect={selectDrug} />
           <div className="predictor-scanner-helper">
-            <span>Optional label-text helper</span>
+            <span>Optional label scan</span>
             <MedicineLabelScanner targetLabel="Query medicine" onDrugSelect={selectDrug} />
             <small>Reads printed label text to help select a supported medicine; it does not identify a medicine clinically.</small>
           </div>

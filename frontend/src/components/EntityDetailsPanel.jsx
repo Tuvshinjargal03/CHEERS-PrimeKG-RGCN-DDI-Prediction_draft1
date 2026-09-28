@@ -2,7 +2,7 @@ import { Focus } from 'lucide-react'
 import { useState } from 'react'
 
 const ENTITY_TYPE_DETAILS = {
-  drug: { label: 'Drug', idLabel: 'DrugBank ID', summary: "A DrugBank-linked drug node in the model's candidate set." },
+  drug: { label: 'Medicine', idLabel: 'Database reference', summary: 'A medicine represented in the available knowledge graph.' },
   'gene/protein': { label: 'Gene / Protein', idLabel: 'NCBI ID', summary: 'A gene/protein node identified by an NCBI ID in the available knowledge graph.' },
   disease: { label: 'Disease', idLabel: 'Context ID', summary: 'A disease node identified from MONDO or MONDO_grouped in the available knowledge graph.' },
 }

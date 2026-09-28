@@ -401,7 +401,7 @@ function PairQuestionAnswer({ answer, explanation, entities = [] }) {
           <div><span>FDA label mentions</span><strong>{counts.label_mentions}</strong></div>
         )}
         {Number.isFinite(counts.pubmed_records) && (
-          <div><span>PubMed records</span><strong>{counts.pubmed_records}</strong></div>
+          <div><span>Research articles</span><strong>{counts.pubmed_records}</strong><small>PubMed</small></div>
         )}
       </div>
       {(explanation?.what_we_cannot_conclude || answer.safety_note) && (
@@ -480,7 +480,7 @@ function WhyThisAnswer({ data, entities }) {
             <strong>{displayEntityName(entity)}</strong> · {entity.entity_id} · {entityLabel(entity)}
           </p>
         ))}
-        {counts && <p>FDA label mentions: {counts.label_mentions} · PubMed records: {counts.pubmed_records}</p>}
+        {counts && <p>FDA label mentions: {counts.label_mentions} · PubMed research articles: {counts.pubmed_records}</p>}
         {data.available_modules?.includes('pair_graph_context') && <p>Knowledge-graph relationships are available separately.</p>}
         <p>Research-model rankings are separate from FDA, PubMed, and knowledge-graph information.</p>
       </div>

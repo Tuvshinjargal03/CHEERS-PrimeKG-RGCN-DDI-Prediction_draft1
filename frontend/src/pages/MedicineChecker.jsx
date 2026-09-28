@@ -244,7 +244,7 @@ export default function MedicineChecker() {
             </article>
             <article>
               <BookOpen size={18} aria-hidden="true" />
-              <div><strong>{evidence ? papers.length : '—'}</strong><span>Related PubMed records</span><small>{evidenceError ? 'Source unavailable' : 'Retrieved result'}</small></div>
+              <div><strong>{evidence ? papers.length : '—'}</strong><span>Research articles</span><small>PubMed · {evidenceError ? 'Source unavailable' : 'Retrieved result'}</small></div>
             </article>
             <article>
               <Network size={18} aria-hidden="true" />
@@ -307,7 +307,7 @@ export default function MedicineChecker() {
                         {validSourceUrl(paper.url, 'pubmed.ncbi.nlm.nih.gov') && <a href={paper.url} target="_blank" rel="noopener noreferrer">PMID {paper.pmid} <ExternalLink size={13} /></a>}
                       </article>
                     ))}
-                    <p className="product-count-note">{papers.length} related {papers.length === 1 ? 'record' : 'records'} retrieved.</p>
+                    <p className="product-count-note">{papers.length} related research {papers.length === 1 ? 'article' : 'articles'} retrieved.</p>
                     {papers.length > 3 && (
                       <button type="button" className="product-inline-button" onClick={() => setShowAllPapers((current) => !current)}>
                         {showAllPapers ? 'Show fewer' : `View all ${papers.length}`}
@@ -315,7 +315,7 @@ export default function MedicineChecker() {
                     )}
                   </div>
                 ) : (
-                  <div className="product-card-empty"><strong>No related PubMed record retrieved.</strong><p>This is not a systematic literature review.</p></div>
+                  <div className="product-card-empty"><strong>No related PubMed research article retrieved.</strong><p>This is not a systematic literature review.</p></div>
                 )}
                 {papers.length > 0 && <p className="checker-source-boundary">This PubMed search is not a systematic literature review.</p>}
               </article>
@@ -348,7 +348,7 @@ export default function MedicineChecker() {
       )}
 
       <p className="product-page-boundary">
-        <CheckCircle2 size={15} /> CHEERS is a research and information prototype, not clinical decision support.
+        <CheckCircle2 size={15} /> CHEERS helps you explore medicine information. It does not replace advice from a healthcare professional.
       </p>
     </section>
   )
