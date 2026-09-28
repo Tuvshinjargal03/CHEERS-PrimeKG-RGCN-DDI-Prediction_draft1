@@ -68,7 +68,7 @@ describe('public Home', () => {
     const primary = screen.getByRole('region', { name: 'Choose what you want to do' })
     expect(within(primary).getAllByRole('heading', { level: 3 })).toHaveLength(3)
     expect(within(primary).queryByRole('link', { name: /Predictor/ })).not.toBeInTheDocument()
-    const research = screen.getByRole('region', { name: 'Explore the research behind CHEERS' })
+    const research = screen.getByRole('region', { name: 'Research & advanced tools' })
     expect(within(research).getByRole('link', { name: 'DDI Predictor' })).toHaveAttribute('href', '/predictor')
   })
 

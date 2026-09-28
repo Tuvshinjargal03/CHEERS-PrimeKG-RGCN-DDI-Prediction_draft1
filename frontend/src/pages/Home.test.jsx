@@ -57,15 +57,16 @@ describe('Home product hierarchy', () => {
     expect(document.body).not.toHaveTextContent(/\bG3\b/)
   })
 
-  it('keeps advanced and research destinations secondary but available', () => {
+  it('keeps one secondary research and advanced-tools gateway', () => {
     renderHome()
-    const advanced = screen.getByRole('region', { name: 'Advanced exploration' })
-    expect(within(advanced).getByRole('link', { name: 'Explore relationships' })).toHaveAttribute('href', '/graph')
-    const research = screen.getByRole('region', { name: 'Explore the research behind CHEERS' })
-    expect(within(research).getByRole('link', { name: 'DDI Predictor' })).toHaveAttribute('href', '/predictor')
-    expect(within(research).getByRole('link', { name: 'Experiments' })).toHaveAttribute('href', '/experiments')
-    expect(within(research).getByRole('link', { name: 'Relation Analysis' })).toHaveAttribute('href', '/relations')
-    expect(within(research).getByRole('link', { name: 'Methodology' })).toHaveAttribute('href', '/methodology')
+    const section = screen.getByRole('region', { name: 'Research & advanced tools' })
+    expect(section).toHaveTextContent('Explore biomedical relationships or review the research behind CHEERS.')
+    expect(within(section).getByRole('link', { name: 'Explore relationships' })).toHaveAttribute('href', '/graph')
+    expect(within(section).getByRole('link', { name: 'DDI Predictor' })).toHaveAttribute('href', '/predictor')
+    expect(within(section).getByRole('link', { name: 'Experiments' })).toHaveAttribute('href', '/experiments')
+    expect(within(section).getByRole('link', { name: 'Relation Analysis' })).toHaveAttribute('href', '/relations')
+    expect(within(section).getByRole('link', { name: 'Methodology' })).toHaveAttribute('href', '/methodology')
+    expect(screen.queryByRole('region', { name: 'Explore the research behind CHEERS' })).not.toBeInTheDocument()
   })
 
   it('preserves search routing and the compact prototype boundary', async () => {

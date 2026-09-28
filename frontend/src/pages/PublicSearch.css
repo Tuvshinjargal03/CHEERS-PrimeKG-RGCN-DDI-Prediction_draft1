@@ -1598,7 +1598,7 @@
 .public-information-tiles strong { color: #303347; font-size: 0.86rem; }
 .public-information-tiles p { margin: 2px 0 0; color: #73798b; font-size: 0.76rem; line-height: 1.35; }
 
-.public-information-strip { gap: 14px; padding-top: 22px; padding-bottom: 22px; }
+.public-information-strip { gap: 12px; padding-top: 18px; padding-bottom: 18px; }
 .public-information-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 18px; }
 .public-information-footer p { min-width: 0; margin: 0; color: #6d7384; font-size: 0.78rem; line-height: 1.45; }
 .public-information-footer a { display: inline-flex; align-items: center; gap: 5px; color: #6044aa; font-size: 0.78rem; font-weight: 750; text-decoration: none; }

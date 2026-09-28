@@ -103,23 +103,13 @@ export default function Home() {
 
       <section className="public-section public-advanced-section" aria-labelledby="advanced-title">
         <div className="public-section-heading">
-          <h2 id="advanced-title">Advanced exploration</h2>
-          <p>Explore research connections and model results when you want more technical detail.</p>
+          <h2 id="advanced-title">Research &amp; advanced tools</h2>
+          <p>Explore biomedical relationships or review the research behind CHEERS.</p>
         </div>
         <div className="public-advanced-links">
           {ADVANCED_LINKS.map(([path, label, Icon]) => (
             <Link to={path} key={path}><Icon size={18} aria-hidden="true" /> {label}</Link>
           ))}
-        </div>
-      </section>
-
-      <section className="public-research-gateway" aria-labelledby="public-research-title">
-        <div><h2 id="public-research-title">Explore the research behind CHEERS</h2><p>Review the model, experiments, relation analysis, and methodology.</p></div>
-        <div className="public-gateway-links">
-          <Link to="/predictor"><Search size={18} /> DDI Predictor</Link>
-          <Link to="/experiments"><BookOpen size={18} /> Experiments</Link>
-          <Link to="/relations"><BarChart3 size={18} /> Relation Analysis</Link>
-          <Link to="/methodology"><FlaskConical size={18} /> Methodology</Link>
         </div>
       </section>
     </div>
