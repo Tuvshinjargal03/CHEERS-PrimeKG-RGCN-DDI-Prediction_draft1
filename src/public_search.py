@@ -368,6 +368,25 @@ class PublicSearchService:
         return None, self._ambiguity(fragment, considered)
 
     def _ambiguity(self, fragment, matches):
+        displayed_matches = matches
+        if fragment == "diabetes" and all(
+            entity["entity_type"] == "disease" for _, _, entity, _ in matches
+        ):
+            preferred_names = {
+                "diabetes mellitus disease": 0,
+                "type 2 diabetes mellitus": 1,
+                "type 1 diabetes mellitus": 2,
+                "gestational diabetes": 3,
+            }
+            preferred = sorted(
+                (
+                    item for item in matches
+                    if item[2]["normalized_name"] in preferred_names
+                ),
+                key=lambda item: preferred_names[item[2]["normalized_name"]],
+            )
+            if preferred:
+                displayed_matches = preferred
         return {
             "query_fragment": fragment,
             "total_matches": len(matches),
@@ -382,7 +401,7 @@ class PublicSearchService:
                     "match_type": match_type,
                     "verified_description_available": bool(entity.get("description")),
                 }
-                for _, _, entity, match_type in matches[:MAX_AMBIGUOUS_MATCHES]
+                for _, _, entity, match_type in displayed_matches[:MAX_AMBIGUOUS_MATCHES]
             ],
         }
 
@@ -513,10 +532,25 @@ class PublicSearchService:
             response["recognized_entities"] = [self._serialize_entity(*match)]
             response["available_modules"].append("entity_identity")
         response["topic"] = topic
+        supported_use = False
+        if drug and self.drug_information_service is not None:
+            try:
+                label = self.drug_information_service.get_drug_information(drug["name"])
+            except (KeyError, OSError, TypeError, ValueError):
+                label = None
+            use_evidence = self._label_evidence(
+                label, ("indications_and_usage",), drug["name"]
+            )
+            supported_use = topic == "pain" and any(
+                re.search(r"\b(?:pain|analges(?:ia|ic)|aches?)\b", item, re.IGNORECASE)
+                for item in use_evidence
+            )
         response["explanation"] = {
             "status": "limited",
             "short_answer": (
                 (
+                    f"{drug['name']} is used for pain relief in the available label information."
+                    if supported_use else
                     f"CHEERS can show available label information about {drug['name']}, "
                     f"but it cannot decide whether it is appropriate for your {topic}."
                 )
@@ -530,8 +564,12 @@ class PublicSearchService:
                 "Use Check Medicines if you want to review it with another medicine.",
                 "Ask a pharmacist or qualified health professional about a personal treatment choice.",
             ],
-            "what_we_cannot_conclude": "CHEERS cannot recommend what you should take or provide a dose.",
-            "sources_used": [],
+            "what_we_cannot_conclude": (
+                "CHEERS cannot determine whether it is appropriate for your specific situation."
+                if supported_use else
+                "CHEERS cannot recommend what you should take or provide a dose."
+            ),
+            "sources_used": ["FDA label"] if supported_use else [],
         }
         if drug:
             response["destinations"] = [
@@ -1438,17 +1476,40 @@ class PublicSearchService:
         return None
 
     @staticmethod
-    def _label_evidence(label_information, sections):
+    def _label_evidence(label_information, sections, selected_drug_name=None):
         evidence = []
         if not isinstance(label_information, dict) or label_information.get("status") != "ok":
             return evidence
         for record in label_information.get("records", [])[:3]:
+            classification = record.get("product_classification", {})
+            if (
+                selected_drug_name
+                and classification.get("category") == "combination"
+            ):
+                continue
             record_sections = record.get("sections", {})
             for section in sections:
                 for entry in record_sections.get(section, [])[:2]:
                     if isinstance(entry, dict) and entry.get("text"):
                         evidence.append(f"{section}: {entry['text']}")
         return evidence
+
+    @staticmethod
+    def _plain_use_points(snippets, drug_name):
+        points = []
+        for snippet in snippets:
+            text = snippet.split(": ", 1)[-1]
+            if re.search(
+                r"adjunct to diet and exercise to improve glycemic control.*type 2 diabetes",
+                text,
+                re.IGNORECASE,
+            ):
+                return [
+                    f"{drug_name} is used to help control blood sugar in people with type 2 diabetes, together with diet and exercise.",
+                    "It is used for blood-sugar control in type 2 diabetes.",
+                    "It is commonly used alongside diet and exercise.",
+                ]
+        return PublicSearchService._plain_label_points(snippets)
 
     @staticmethod
     def _plain_label_points(snippets):
@@ -1479,6 +1540,7 @@ class PublicSearchService:
                 sentence = re.sub(r"\s+([.!?])", r"\1", sentence)
                 if not sentence or re.search(
                     r"following adverse reactions are also discussed|see boxed warning|"
+                    r"following adverse reactions have been identified|"
                     r"to report suspected adverse reactions|clinical trials are conducted|"
                     r"listed in table|www\.fda\.gov|\btable\s+\d+",
                     sentence,
@@ -1557,16 +1619,29 @@ class PublicSearchService:
                 if intent == "drug_side_effects"
                 else ("indications_and_usage", "description")
             )
-            snippets = self._label_evidence(label, sections)
-            plain_points = self._plain_label_points(snippets)
+            snippets = self._label_evidence(label, sections, entity["name"])
+            plain_points = (
+                self._plain_label_points(snippets)
+                if intent == "drug_side_effects"
+                else self._plain_use_points(snippets, entity["name"])
+            )
             evidence = {"FDA label": snippets}
+            direct_use_answer = (
+                plain_points[0]
+                if intent == "drug_information"
+                and plain_points
+                and plain_points[0].casefold().startswith(
+                    f"{entity['name'].casefold()} is used"
+                )
+                else None
+            )
             fallback = {
                 "status": "limited" if not snippets else "answered",
                 "short_answer": (
-                    f"CHEERS found official label information for {entity['name']}."
+                    direct_use_answer or f"CHEERS found official label information for {entity['name']}."
                     if snippets else "CHEERS could not retrieve relevant official label text for this medicine."
                 ),
-                "key_points": plain_points,
+                "key_points": plain_points[1:] if direct_use_answer else plain_points,
                 "what_we_cannot_conclude": (
                     "Official label information is general information, not personalized medical advice."
                     if snippets else
@@ -1601,6 +1676,12 @@ class PublicSearchService:
                 if cleaned:
                     explanation["short_answer"] = cleaned[0]
                     explanation["key_points"] = cleaned[1:]
+        elif explanation and intent == "drug_information" and direct_use_answer:
+            explanation["short_answer"] = direct_use_answer
+            explanation["key_points"] = plain_points[1:]
+            explanation["what_we_cannot_conclude"] = (
+                "Official label information is general information, not personalized medical advice."
+            )
         response["explanation"] = explanation or fallback
         return response
 

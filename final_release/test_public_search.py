@@ -92,6 +92,25 @@ class FixtureDrugInformationService:
         }
 
 
+class GroundedUseDrugInformationService:
+    def get_drug_information(self, drug_name):
+        if drug_name == "Ibuprofen":
+            text = "Ibuprofen tablets are indicated for relief of mild to moderate pain."
+        else:
+            text = (
+                "Metformin hydrochloride tablets are indicated as an adjunct to diet "
+                "and exercise to improve glycemic control in people with type 2 diabetes mellitus."
+            )
+        return {
+            "status": "ok",
+            "records": [{
+                "product_name": drug_name,
+                "product_classification": {"category": "single_ingredient"},
+                "sections": {"indications_and_usage": [{"text": text}]},
+            }],
+        }
+
+
 class UnavailableDiseaseInformationService:
     def get_disease_information(self, disease_id):
         raise OSError(f"Relationship data unavailable for {disease_id}.")
@@ -221,6 +240,35 @@ class PublicSearchTests(unittest.TestCase):
         self.assertLessEqual(len(explanation["key_points"]), 3)
         self.assertNotIn("recommend", explanation["short_answer"].casefold())
 
+    def test_metformin_answer_excludes_combination_product_evidence(self):
+        class MixedProductDrugInformationService:
+            def get_drug_information(self, _drug_name):
+                return {
+                    "status": "ok",
+                    "records": [
+                        {
+                            "product_name": "ZITUVIMET",
+                            "product_classification": {"category": "combination"},
+                            "sections": {"indications_and_usage": [{"text": "ZITUVIMET combination-product wording."}]},
+                        },
+                        GroundedUseDrugInformationService().get_drug_information("Metformin")["records"][0],
+                    ],
+                }
+
+        self.use_summarizer(FixtureEvidenceSummarizer(error=TimeoutError()))
+        self.use_drug_information(MixedProductDrugInformationService())
+        explanation = self.search.search("What does metformin do?")["explanation"]
+        self.assertIn("control blood sugar", explanation["short_answer"])
+        self.assertNotIn("ZITUVIMET", str(explanation))
+
+    def test_grounded_pain_use_answers_directly(self):
+        self.use_drug_information(GroundedUseDrugInformationService())
+        payload = self.search.search("can i use ibuprofin for pain?")
+        self.assertEqual(payload["recognized_entities"][0]["entity_id"], "DB01050")
+        self.assertIn("used for pain relief", payload["explanation"]["short_answer"])
+        self.assertIn("specific", payload["explanation"]["what_we_cannot_conclude"])
+        self.assertNotIn("dose recommendation", str(payload).casefold())
+
     def test_side_effect_fallback_removes_headings_and_duplicate_points(self):
         class RepeatedHeadingDrugInformationService:
             def get_drug_information(self, _drug_name):
@@ -291,6 +339,7 @@ class PublicSearchTests(unittest.TestCase):
         points = PublicSearchService._plain_label_points([
             "adverse_reactions: Metformin Hydrochloride Tablets In a U.S. "
             "Diarrhea was reported more often than with placebo.",
+            "adverse_reactions: The following adverse reactions have been identified during postapproval use.",
         ])
         self.assertEqual(points, ["Diarrhea was reported more often than with placebo."])
 
@@ -353,6 +402,15 @@ class PublicSearchTests(unittest.TestCase):
         self.assertEqual(payload["intent"], "disease_information")
         self.assertEqual(payload["recognized_entities"], [])
         self.assertTrue(payload["ambiguous_matches"][0]["candidates"])
+        self.assertEqual(
+            [item["name"] for item in payload["ambiguous_matches"][0]["candidates"]],
+            [
+                "diabetes mellitus (disease)",
+                "type 2 diabetes mellitus",
+                "type 1 diabetes mellitus",
+                "gestational diabetes",
+            ],
+        )
         self.assertEqual(interpreter.calls, [])
 
     def test_interpreter_failure_preserves_unknown_response(self):

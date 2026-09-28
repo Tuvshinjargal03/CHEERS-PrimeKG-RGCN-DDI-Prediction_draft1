@@ -362,15 +362,14 @@ describe('deterministic public-search routing', () => {
     })
     renderSearch('/search?q=can%20i%20take%20warfarin%20with%20ibuprofen')
 
-    expect(await screen.findByRole('heading', { name: 'Warfarin + Ibuprofen' })).toBeVisible()
-    const evidenceHeading = screen.getByRole('heading', { name: 'Evidence checked' })
+    const pairHeading = await screen.findByRole('heading', { name: 'Warfarin + Ibuprofen' })
     expect(screen.getByText('The retrieved FDA label information includes an interaction warning for this pair.')).toBeVisible()
-    expect(screen.getByRole('heading', { name: 'Key things to know' })).toBeVisible()
     expect(screen.getByText('This does not establish whether the combination is safe for you.')).toBeVisible()
     expect(screen.getByLabelText('Sources used')).toHaveTextContent('FDA label')
     expect(screen.getByLabelText('Sources used')).toHaveTextContent('PubMed')
     expect(screen.getByText('Interaction warning found')).toBeVisible()
-    expect(evidenceHeading.closest('section')).toHaveClass('is-warning')
+    expect(pairHeading.closest('section')).toHaveClass('is-warning')
+    expect(screen.getAllByText('The retrieved FDA label information includes an interaction warning for this pair.')).toHaveLength(1)
     expect(screen.getByLabelText('Retrieved source counts')).toHaveTextContent('FDA label mentions16')
     expect(screen.getByLabelText('Retrieved source counts')).toHaveTextContent('PubMed records5')
     expect(screen.getByRole('link', { name: /Check Medicines/ })).toHaveAttribute(
@@ -476,6 +475,25 @@ describe('deterministic public-search routing', () => {
     expect(screen.queryByText(/myofascial pain syndrome/i)).not.toBeInTheDocument()
   })
 
+  it('answers a medicine-and-symptom question directly when label evidence supports it', async () => {
+    getJson.mockResolvedValue({
+      ...BASE,
+      intent: 'general_symptom_or_treatment_question',
+      recognized_entities: [{ ...IBUPROFEN, match_type: 'close_fuzzy_name' }],
+      explanation: {
+        status: 'limited',
+        short_answer: 'Ibuprofen is used for pain relief in the available label information.',
+        key_points: [],
+        what_we_cannot_conclude: 'CHEERS cannot determine whether it is appropriate for your specific situation.',
+        sources_used: ['FDA label'],
+      },
+    })
+    renderSearch('/search?q=can%20i%20use%20ibuprofin%20for%20pain')
+    expect(await screen.findByText('Ibuprofen is used for pain relief in the available label information.')).toBeVisible()
+    expect(screen.getByText('CHEERS cannot determine whether it is appropriate for your specific situation.')).toBeVisible()
+    expect(screen.queryByText(/take \d|mg|dose/i)).not.toBeInTheDocument()
+  })
+
   it('shows an amber review state for literature-only pair information', async () => {
     getJson.mockResolvedValue({
       ...BASE,
@@ -523,7 +541,8 @@ describe('deterministic public-search routing', () => {
     expect(await screen.findByRole('heading', { name: 'Warfarin + Aspirin' })).toBeVisible()
     expect(screen.getAllByText('Aspirin').length).toBeGreaterThan(0)
     expect(screen.getByLabelText('Medicines in this pair')).toHaveTextContent('Acetylsalicylic acid')
-    expect(screen.getByLabelText('Medicines in this pair')).toHaveTextContent('DB00945')
+    expect(screen.getByLabelText('Medicines in this pair')).not.toHaveTextContent('DB00945')
+    expect(screen.getByText(/DB00945/).closest('details')).toHaveTextContent('Why this answer?')
     expect(screen.getByLabelText('Sources checked')).toHaveTextContent('FDA label')
     expect(screen.getByLabelText('Sources checked')).toHaveTextContent('PubMed')
   })
@@ -654,7 +673,10 @@ describe('deterministic public-search routing', () => {
       unavailable_modules: [{ module: 'query_resolution', reason: 'Choose one.' }],
     })
     renderSearch('/search?q=what%20is%20diabetes')
-    expect(await screen.findByText('Which diabetes condition do you mean?')).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Diabetes' })).toBeVisible()
+    expect(screen.getByText('CHEERS does not have a single general diabetes description in its reviewed data.')).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Explore specific diabetes conditions' })).toBeVisible()
+    expect(screen.getByRole('button', { name: /type 2 diabetes mellitus/i })).not.toHaveTextContent('5148')
     await user.click(screen.getByRole('button', { name: /type 2 diabetes mellitus/i }))
     expect(screen.getByTestId('location')).toHaveTextContent('/search?q=what%20is%20type%202%20diabetes%20mellitus')
   })

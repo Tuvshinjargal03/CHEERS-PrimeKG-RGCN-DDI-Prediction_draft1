@@ -354,7 +354,7 @@ function DrugDiseaseAnswer({ answer }) {
   )
 }
 
-function PairQuestionAnswer({ answer, entities = [], hasMainAnswer = false }) {
+function PairQuestionAnswer({ answer, explanation, entities = [] }) {
   if (!answer?.drug_1 || !answer?.drug_2) return null
   const states = {
     interaction_warning_found: { tone: 'warning', Icon: AlertCircle },
@@ -375,9 +375,7 @@ function PairQuestionAnswer({ answer, entities = [], hasMainAnswer = false }) {
         <span className="public-direct-answer-icon"><Icon size={22} aria-hidden="true" /></span>
         <div>
           <span className="public-answer-status-label">{answer.direct_answer}</span>
-          <h2 id="pair-question-answer-title">
-            {hasMainAnswer ? 'Evidence checked' : `${displayName(answer.drug_1)} + ${displayName(answer.drug_2)}`}
-          </h2>
+          <h2 id="pair-question-answer-title">{displayName(answer.drug_1)} + {displayName(answer.drug_2)}</h2>
         </div>
       </div>
       <div className="public-pair-medicines" aria-label="Medicines in this pair">
@@ -388,13 +386,15 @@ function PairQuestionAnswer({ answer, entities = [], hasMainAnswer = false }) {
               <Pill size={18} aria-hidden="true" />
               <span>
                 <strong>{displayName(drug)}</strong>
-                {matched?.display_name && <small>{drug.name} · {drug.entity_id}</small>}
+                {matched?.display_name && <small>{drug.name}</small>}
               </span>
             </div>
           )
         })}
       </div>
-      {!hasMainAnswer && answer.supporting_text && <p className="public-direct-answer-copy">{answer.supporting_text}</p>}
+      {(explanation?.short_answer || answer.supporting_text) && (
+        <p className="public-direct-answer-copy">{explanation?.short_answer || answer.supporting_text}</p>
+      )}
       <div className="public-answer-facts public-evidence-counts" aria-label="Retrieved source counts">
         {Number.isFinite(counts.label_mentions) && (
           <div><span>FDA label mentions</span><strong>{counts.label_mentions}</strong></div>
@@ -403,12 +403,16 @@ function PairQuestionAnswer({ answer, entities = [], hasMainAnswer = false }) {
           <div><span>PubMed records</span><strong>{counts.pubmed_records}</strong></div>
         )}
       </div>
-      {!hasMainAnswer && (answer.source_scope || answer.safety_note) && (
+      {(explanation?.what_we_cannot_conclude || answer.safety_note) && (
         <div className="public-answer-boundary">
-          {answer.source_scope && <p>{answer.source_scope}</p>}
-          {answer.safety_note && <p>{answer.safety_note}</p>}
+          <strong>Keep in mind</strong>
+          <p>{explanation?.what_we_cannot_conclude || answer.safety_note}</p>
         </div>
       )}
+      <SourceChips
+        sources={explanation?.sources_used}
+        checked={Object.values(counts).some((count) => count === 0)}
+      />
     </section>
   )
 }
@@ -546,7 +550,6 @@ function MedicinesForDiseaseState({ answer, disease: recognizedDisease }) {
                 <div>
                   <span>Indication</span>
                   <h3>{medicine.drug_name}</h3>
-                  <p>{medicine.drug_id}</p>
                 </div>
                 <div className="public-medicine-answer-actions">
                   <Link to={`/medicines/${encodeURIComponent(medicine.drug_id)}`}>View medicine</Link>
@@ -667,11 +670,18 @@ function UnavailableModules({ modules, intent }) {
 }
 
 function AmbiguousState({ data, onChoose }) {
-  const topic = data.normalized_query?.includes('diabetes') ? 'diabetes condition' : 'match'
+  const isGeneralDiabetes = data.intent === 'disease_information'
+    && /^(?:what is|what s|tell me about)?\s*diabetes$/.test(data.normalized_query || '')
+  const topic = isGeneralDiabetes ? 'diabetes condition' : 'match'
   return (
     <section className="public-ambiguous" aria-labelledby="ambiguous-title">
-      <h2 id="ambiguous-title">Which {topic} do you mean?</h2>
-      <p>Choose the closest match to continue.</p>
+      <h2 id="ambiguous-title">{isGeneralDiabetes ? 'Diabetes' : `Which ${topic} do you mean?`}</h2>
+      <p>
+        {isGeneralDiabetes
+          ? 'CHEERS does not have a single general diabetes description in its reviewed data.'
+          : 'Choose the closest match to continue.'}
+      </p>
+      {isGeneralDiabetes && <h3>Explore specific diabetes conditions</h3>}
       {data.ambiguous_matches.map((ambiguity) => (
         <div className="public-alternative-list" key={ambiguity.query_fragment}>
           {ambiguity.candidates.map((candidate) => (
@@ -682,7 +692,7 @@ function AmbiguousState({ data, onChoose }) {
             >
               <span>
                 <strong>{candidate.name}</strong>
-                <small>{entityLabel(candidate)} · {candidate.entity_id}</small>
+                <small>{entityLabel(candidate)}</small>
               </span>
               <ArrowRight size={17} aria-hidden="true" />
             </button>
@@ -897,7 +907,7 @@ export default function PublicSearch() {
       {!loading && !error && data && !isUnknown && !isAmbiguous && (
         <div className="public-results" aria-live="polite">
           <PlainLanguageExplanation
-            explanation={data.explanation}
+            explanation={data.intent === 'drug_pair_question' ? null : data.explanation}
             evidenceSummary={data.intent === 'drug_pair_question' ? data.answer?.evidence_summary : undefined}
             title={answerTitle(data, recognized, query)}
             matchNote={<MatchIndicator query={query} entities={recognized} />}
@@ -910,7 +920,7 @@ export default function PublicSearch() {
             <DrugDiseaseAnswer answer={data.answer} />
           )}
           {data.intent === 'drug_pair_question' && (
-            <PairQuestionAnswer answer={data.answer} entities={recognized} hasMainAnswer={Boolean(data.explanation)} />
+            <PairQuestionAnswer answer={data.answer} explanation={data.explanation} entities={recognized} />
           )}
           {data.intent === 'medicines_for_disease' && recognized[0]?.entity_type === 'disease' && (
             <MedicinesForDiseaseState answer={data.answer} disease={recognized[0]} />
