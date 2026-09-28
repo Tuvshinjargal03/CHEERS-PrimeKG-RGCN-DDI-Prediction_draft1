@@ -88,7 +88,7 @@ describe('SubgraphExplorer navigation', () => {
     const selection = screen.getByTestId('selected-drug')
     expect(selection).not.toHaveTextContent('DB00331')
     expect(selection).toHaveAttribute('data-entity-id', 'DB00331')
-    expect(screen.getByRole('button', { name: /Fetching graph context/ })).toBeVisible()
+    expect(screen.getByRole('button', { name: /Fetching research connections/ })).toBeVisible()
     expect(getJson).toHaveBeenCalledWith('/api/context/drug?drug_id=DB00331')
 
     await act(async () => { resolveRequest(METFORMIN_CONTEXT) })
@@ -145,7 +145,7 @@ describe('SubgraphExplorer navigation', () => {
       </MemoryRouter>,
     )
 
-    const summary = (await screen.findByText('Filtered G3 neighborhood')).parentElement
+    const summary = (await screen.findByText('Filtered knowledge-graph neighborhood')).parentElement
     expect(summary).toHaveTextContent('Showing 1–50 of 143 matching neighbors')
     expect(screen.getByText('Matching neighbors')).toBeVisible()
     expect(screen.getByText('Currently displayed')).toBeVisible()

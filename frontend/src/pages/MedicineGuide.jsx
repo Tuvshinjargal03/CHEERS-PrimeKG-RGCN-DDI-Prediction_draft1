@@ -421,7 +421,7 @@ function MedicineOverview({ drugId, labelInformation, context }) {
     ['side-effects', 'Side effects', availableSections.has('adverse_reactions'), Info, undefined, 'Official label'],
     ['warnings', 'Warnings', ['boxed_warning', 'warnings_and_cautions', 'warnings'].some((item) => availableSections.has(item)), ShieldAlert, undefined, 'Official label'],
     ['interactions', 'Interactions', availableSections.has('drug_interactions'), Beaker, undefined, 'Official label'],
-    ['related-diseases', 'Related diseases', Boolean(context?.context?.disease?.relationships?.length), Network, undefined, 'Graph context'],
+    ['related-diseases', 'Related diseases', Boolean(context?.context?.disease?.relationships?.length), Network, undefined, 'Research connections'],
     ['sources', 'Sources', Boolean(labelInformation?.records?.length), BookOpen, undefined, 'Source metadata'],
   ]
   if (foodLifestyleInformation) {
@@ -518,12 +518,12 @@ export default function MedicineGuide() {
     error: 'Official label source unavailable',
   }[labelStatus]
   const contextStatusText = context
-    ? 'G3 graph context retrieved'
+    ? 'Research connections retrieved'
     : contextError
-      ? 'G3 graph context unavailable'
+      ? 'Research connections unavailable'
       : contextSupported
-        ? 'No G3 graph context returned'
-        : 'No exported G3 graph context for this medicine'
+        ? 'No research connections returned'
+        : 'No exported knowledge-graph data for this medicine'
 
   return (
     <section className="page product-page medicine-profile-page">
@@ -564,7 +564,7 @@ export default function MedicineGuide() {
           <div className="medicine-section-guide">
             <strong>Choose an information section</strong>
             <span>Official label: Uses, Side effects, Warnings, Interactions, Food & lifestyle</span>
-            <span>Graph context: Related diseases</span>
+            <span>Research connections: Related diseases</span>
             <span>Provenance: Sources</span>
           </div>
           <nav className="medicine-section-nav" aria-label="Medicine information sections">
@@ -600,7 +600,7 @@ export default function MedicineGuide() {
             <Search size={19} />
             <div>
               <p>{payload.safety_note || 'Official label information is presented for source review, not personalized medical advice.'}</p>
-              <p>CHEERS organizes available source material and graph context. It does not diagnose or provide personalized treatment or nutrition advice, and it is not clinical decision support. Missing label information is not proof of safety; graph relationships are descriptive context, not causation or R-GCN predictions.</p>
+              <p>CHEERS organizes available source material and research connections. It does not diagnose or provide personalized treatment or nutrition advice, and it is not clinical decision support. Knowledge-graph relationships are descriptive context, not causation or R-GCN predictions, and missing relationships do not mean no biological relationship exists.</p>
             </div>
           </aside>
         </>

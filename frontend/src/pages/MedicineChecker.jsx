@@ -143,7 +143,7 @@ export default function MedicineChecker() {
     if (contextResult.status === 'fulfilled') {
       setContext(contextResult.value)
     } else {
-      setContextError(contextResult.reason?.message || 'Related biomedical information could not be loaded.')
+      setContextError('Research connections are temporarily unavailable.')
     }
     setLoading(false)
   }
@@ -207,14 +207,14 @@ export default function MedicineChecker() {
       {!submitted && !loading && (
         <div className="product-empty-state">
           <Beaker size={25} aria-hidden="true" />
-          <div><strong>Choose two different medicines above</strong><p>Use text search as the primary method. Label scanning is optional. Results will keep checked sources, graph context, and research output separate.</p></div>
+          <div><strong>Choose two different medicines above</strong><p>Use text search as the primary method. Label scanning is optional. Results will keep checked sources, research connections, and research output separate.</p></div>
         </div>
       )}
 
       {loading && (
         <div className="product-empty-state" role="status" aria-live="polite">
           <LoaderCircle className="spin" size={25} />
-          <div><strong>Checking available sources…</strong><p>openFDA, PubMed, and graph context are checked independently. One result may still appear if another source is unavailable.</p></div>
+          <div><strong>Checking available sources…</strong><p>openFDA, PubMed, and research connections are checked independently. One result may still appear if another source is unavailable.</p></div>
         </div>
       )}
 
@@ -332,7 +332,7 @@ export default function MedicineChecker() {
                 {context ? (
                   <><h3>{context.shared?.total || 0} shared connections found</h3><p>CHEERS found {context.shared?.disease_count || 0} disease and {context.shared?.gene_protein_count || 0} gene/protein connections in the knowledge graph. Shared relationships are context, not proof of interaction, causation, or safety.</p></>
                 ) : (
-                  <><h3>{contextAvailable ? 'Shared context could not be displayed' : 'Verified pair context is not available'}</h3><p>{contextError || 'One or both medicines do not have exported G3 support context. This does not mean no biomedical relationship exists.'}</p></>
+                  <><h3>{contextAvailable ? 'Shared research connections could not be displayed' : 'Research connections are not available'}</h3><p>{contextError || 'One or both medicines do not have available exported knowledge-graph data. This does not mean no biomedical relationship exists.'}</p></>
                 )}
               </div>
               {context && params && <Link className="secondary-button" to={`/graph?${params}`}>Explore graph <Network size={16} /></Link>}

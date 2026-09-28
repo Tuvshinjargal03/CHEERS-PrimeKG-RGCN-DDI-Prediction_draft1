@@ -690,6 +690,7 @@ describe('deterministic public-search routing', () => {
     renderSearch('/search?q=quantum%20umbrella')
     expect(await screen.findByText('I couldn’t answer that directly.')).toBeVisible()
     expect(screen.getByRole('link', { name: 'Browse medicines' })).toHaveAttribute('href', '/medicines')
+    expect(screen.getByRole('link', { name: /Read the methodology/ })).toHaveAttribute('href', '/methodology')
     expect(screen.getByTestId('location')).toHaveTextContent('/search?q=quantum%20umbrella')
   })
 

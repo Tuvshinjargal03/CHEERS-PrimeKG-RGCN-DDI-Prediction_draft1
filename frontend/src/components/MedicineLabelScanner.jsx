@@ -576,7 +576,7 @@ export default function MedicineLabelScanner({ targetLabel, onDrugSelect, disabl
         {matches.length > 0 && (
           <div className="scanner-matches">
             <h3>Possible supported drugs found</h3>
-            <p>Select one candidate to fill {targetLabel}. Selection does not run a prediction or load graph context.</p>
+            <p>Select one candidate to fill {targetLabel}. Selection does not run a prediction or load research connections.</p>
             <div role="group" aria-label={`Possible supported drugs for ${targetLabel}`}>
               {matches.map((match) => (
                 <button

@@ -14,10 +14,10 @@ const PRIMARY_ACTIONS = [
 ]
 
 const INFORMATION_TYPES = [
-  ['Medicine & disease info', 'Source-backed uses, side effects, and condition information.', Pill],
-  ['FDA & PubMed evidence', 'External evidence is kept separate from the model ranking.', BookOpen],
-  ['Research connections', 'Shared biomedical relationships. A connection does not prove a clinical interaction.', Network],
-  ['Model results', 'Research ranking values from the R-GCN model. They are not clinical safety or risk scores.', BarChart3],
+  ['Medicine info', 'Uses and side effects', Pill],
+  ['FDA & PubMed', 'External sources', BookOpen],
+  ['Research connections', 'Related genes, proteins, and diseases', Network],
+  ['Model results', 'Research ranking only', BarChart3],
 ]
 
 const ADVANCED_LINKS = [
@@ -77,16 +77,19 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="public-section public-home-flow" aria-labelledby="capabilities-title">
+      <section className="public-section public-home-flow public-information-strip" aria-labelledby="capabilities-title">
         <div className="public-section-heading">
-          <h2 id="capabilities-title">How CHEERS organizes information</h2>
-          <p>Different information types are kept separate so you can see where each result comes from.</p>
+          <h2 id="capabilities-title">What you can explore</h2>
         </div>
         <ul className="public-information-tiles">
           {INFORMATION_TYPES.map(([title, description, Icon]) => (
             <li key={title}><span><Icon size={18} aria-hidden="true" /></span><div><strong>{title}</strong><p>{description}</p></div></li>
           ))}
         </ul>
+        <div className="public-information-footer">
+          <p>Research connections and model results are for exploration, not medical advice.</p>
+          <Link to="/methodology">How CHEERS works <ArrowRight size={15} aria-hidden="true" /></Link>
+        </div>
       </section>
 
       <aside className="public-scope-note public-home-scope" aria-labelledby="public-scope-title">

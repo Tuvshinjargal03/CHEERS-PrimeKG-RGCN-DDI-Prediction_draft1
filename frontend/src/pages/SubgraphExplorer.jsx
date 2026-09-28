@@ -236,7 +236,7 @@ export default function SubgraphExplorer() {
       setNeighbors(payload.neighbors)
       setSelected(null)
     } catch (requestError) {
-      if (requestId.current === currentRequest) setError(requestError.message || 'Subgraph context could not be loaded.')
+      if (requestId.current === currentRequest) setError(requestError.message || 'Research connections could not be loaded.')
     } finally {
       if (requestId.current === currentRequest) {
         setLoading(false)
@@ -322,12 +322,12 @@ export default function SubgraphExplorer() {
   return (
     <section className="page subgraph-page">
       <div className="page-heading">
-        <span className="eyebrow">Single-drug G3 context</span>
+        <span className="eyebrow">Medicine research connections</span>
         <h1>Subgraph Explorer</h1>
-        <p>Explore the available one-hop G3 neighborhood around one selected medicine.</p>
+        <p>Explore the available one-hop knowledge-graph neighborhood around one selected medicine.</p>
       </div>
 
-      <aside className="subgraph-scope-note"><AlertCircle size={20} /><p><strong>Research context</strong>This view shows relationships available in the G3 graph. Drug–drug edges are training-only G3 relationships. The graph is descriptive context, not a causal model explanation or clinical safety assessment.</p></aside>
+      <aside className="subgraph-scope-note"><AlertCircle size={20} /><p><strong>Research context</strong>This view shows available knowledge-graph relationships. Drug–drug edges are training-set relationships. The graph is descriptive context, not a causal model explanation or clinical safety assessment.</p></aside>
 
       <form className="subgraph-search-form" onSubmit={explore}>
         <div className="subgraph-form-heading">
@@ -345,18 +345,18 @@ export default function SubgraphExplorer() {
         </div>
         <button type="submit" className="primary-button" disabled={!drug || loading}>
           {loading ? <LoaderCircle className="spin" size={18} /> : <Share2 size={18} />}
-          {loading ? 'Fetching graph context…' : 'Explore subgraph'}
+          {loading ? 'Fetching research connections…' : 'Explore subgraph'}
         </button>
       </form>
 
       {error && <div className="inline-alert error"><AlertCircle size={20} />{error}</div>}
-      {!data && !loading && !error && <div className="empty-feature-state"><Share2 size={28} /><div><strong>No medicine explored yet.</strong><p>Select one medicine to view its one-hop drug, gene/protein, and disease neighbors and their G3 relation types. This is descriptive research context only.</p></div></div>}
-      {loading && <div className="experiment-state"><LoaderCircle className="spin" size={27} />Fetching graph context…</div>}
+      {!data && !loading && !error && <div className="empty-feature-state"><Share2 size={28} /><div><strong>No medicine explored yet.</strong><p>Select one medicine to view its one-hop drug, gene/protein, and disease neighbors and their relationship types. This is descriptive research context only.</p></div></div>}
+      {loading && <div className="experiment-state"><LoaderCircle className="spin" size={27} />Fetching research connections…</div>}
 
       {data && !loading && (
         <>
           <div className="subgraph-result-heading">
-            <span className="eyebrow">Filtered G3 neighborhood</span>
+            <span className="eyebrow">Filtered knowledge-graph neighborhood</span>
             <h2>{data.center.name}</h2>
             <p>{data.center.entity_id} · {neighbors.length ? `Showing ${rangeStart.toLocaleString()}–${rangeEnd.toLocaleString()} of ${totalNeighbors.toLocaleString()} matching neighbors` : 'No matching neighbors are currently displayed'}</p>
           </div>
@@ -381,10 +381,10 @@ export default function SubgraphExplorer() {
           ) : (
             <div className="subgraph-workspace">
               <article className="graph-card subgraph-graph-card">
-                <div className="graph-toolbar"><div><span className="eyebrow">One-hop G3 neighborhood</span><h2>{data.center.name}</h2></div><div className="graph-controls" aria-label="Graph controls"><button type="button" title="Zoom in" aria-label="Zoom in" onClick={() => cyRef.current?.zoom({ level: cyRef.current.zoom() * 1.2, renderedPosition: { x: 360, y: 260 } })}><Plus size={17} /></button><button type="button" title="Zoom out" aria-label="Zoom out" onClick={() => cyRef.current?.zoom({ level: cyRef.current.zoom() / 1.2, renderedPosition: { x: 360, y: 260 } })}><Minus size={17} /></button><button type="button" title="Fit graph to view" aria-label="Fit graph to view" onClick={fitGraph}><Focus size={16} />Fit</button></div></div>
+                <div className="graph-toolbar"><div><span className="eyebrow">One-hop knowledge-graph neighborhood</span><h2>{data.center.name}</h2></div><div className="graph-controls" aria-label="Graph controls"><button type="button" title="Zoom in" aria-label="Zoom in" onClick={() => cyRef.current?.zoom({ level: cyRef.current.zoom() * 1.2, renderedPosition: { x: 360, y: 260 } })}><Plus size={17} /></button><button type="button" title="Zoom out" aria-label="Zoom out" onClick={() => cyRef.current?.zoom({ level: cyRef.current.zoom() / 1.2, renderedPosition: { x: 360, y: 260 } })}><Minus size={17} /></button><button type="button" title="Fit graph to view" aria-label="Fit graph to view" onClick={fitGraph}><Focus size={16} />Fit</button></div></div>
                 <div className="graph-legend subgraph-legend"><span><i className="center-dot" />Center drug</span><span><i className="drug-dot" />Drug</span><span><i className="gene-dot" />Gene / protein</span><span><i className="disease-dot" />Disease</span></div>
                 <p className="subgraph-interaction-guide">Select a node or connection to focus it and view details.</p>
-                <div ref={containerRef} className="cytoscape-canvas subgraph-canvas" role="img" aria-label={`Interactive one-hop G3 neighborhood for ${data.center.name}`} />
+                <div ref={containerRef} className="cytoscape-canvas subgraph-canvas" role="img" aria-label={`Interactive one-hop knowledge-graph neighborhood for ${data.center.name}`} />
                 <div className="subgraph-pagination">
                   <p>
                     Showing neighbors <strong>{rangeStart.toLocaleString()}–{rangeEnd.toLocaleString()}</strong> of <strong>{totalNeighbors.toLocaleString()}</strong>

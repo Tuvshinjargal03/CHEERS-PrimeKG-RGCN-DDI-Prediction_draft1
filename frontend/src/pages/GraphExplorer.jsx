@@ -21,7 +21,7 @@ function g3ContextAnnotation(drug) {
   const available = hasVerifiedG3Context(drug)
   return {
     available,
-    label: available ? 'G3 context' : 'No G3 context',
+    label: available ? 'Research connections' : 'No research connections',
   }
 }
 
@@ -30,7 +30,7 @@ function ContextAvailability({ drug, available }) {
   return (
     <p className={`graph-context-status ${available ? 'available' : 'unavailable'}`} role="status">
       {available ? <CheckCircle2 size={14} aria-hidden="true" /> : <Info size={14} aria-hidden="true" />}
-      {available ? 'G3 context available' : 'No verified G3 context'}
+      {available ? 'Research connections available' : 'No research connections available'}
     </p>
   )
 }
@@ -450,7 +450,7 @@ export default function GraphExplorer() {
       }
     } catch (requestError) {
       if (contextRequestId.current === requestId) {
-        setError(requestError.message || 'Graph context could not be loaded.')
+        setError(requestError.message || 'Research connections could not be loaded.')
       }
     } finally {
       if (contextRequestId.current === requestId) setLoading(false)
@@ -464,8 +464,8 @@ export default function GraphExplorer() {
         <h1>Graph Explorer</h1>
         <p>
           Explore shared gene/protein and disease associations available in the
-          verified G3 knowledge graph. This context is not a causal explanation
-          of a model score and does not establish clinical safety or harm.
+          available exported knowledge-graph data. These relationships are not a causal explanation
+          of a model score and do not establish clinical safety or harm.
         </p>
       </div>
 
@@ -473,7 +473,7 @@ export default function GraphExplorer() {
         <div className="graph-form-heading">
           <span className="eyebrow">Pair selection</span>
           <h2>Choose two drugs</h2>
-          <p>Search for each medicine first. Both need verified exported G3 context for this pair view.</p>
+          <p>Search for each medicine first. Both need available exported knowledge-graph data for this pair view.</p>
         </div>
         <div className="drug-selection-field">
           <DrugAutocomplete label="Drug A" selection={drugA} onSelect={selectDrugA} disabled={resolving} getOptionAnnotation={g3ContextAnnotation} />
@@ -501,10 +501,10 @@ export default function GraphExplorer() {
         <div className="graph-context-unavailable" role="status">
           <Info size={20} aria-hidden="true" />
           <div>
-            <strong>Verified G3 support context is unavailable for one or more selected drugs.</strong>
+            <strong>Research connections are unavailable for one or more selected medicines.</strong>
             <p>
               This drug is recognized and remains available in the DDI Predictor, but no gene/protein
-              or disease relationships are available for it in the verified G3 context artifact.
+              or disease relationships are available for it in the exported knowledge-graph data.
             </p>
             <p>
               Missing context does not imply no drug-drug interaction, safety, or an absence of
@@ -518,13 +518,13 @@ export default function GraphExplorer() {
       {error && <div className="inline-alert error graph-page-state" role="alert"><AlertCircle size={20} />{error}</div>}
 
       {!context && !loading && !error && !hasUnavailableContext && (
-        <div className="empty-feature-state graph-page-state"><Focus size={28} /><div><strong>Choose a drug pair.</strong><p>The graph will show shared G3 gene/protein and disease context, plus the relation types connecting each medicine. This is descriptive graph context only.</p></div></div>
+        <div className="empty-feature-state graph-page-state"><Focus size={28} /><div><strong>Choose a drug pair.</strong><p>The graph will show shared gene/protein and disease relationships, plus the relation types connecting each medicine. These are descriptive research connections only.</p></div></div>
       )}
 
       {context && (
         <>
           <div className="graph-result-heading">
-            <span className="eyebrow">Verified G3 context</span>
+            <span className="eyebrow">Available knowledge-graph relationships</span>
             <h2>Shared context overview</h2>
           </div>
           <div className="graph-pair-summary" aria-label="Selected pair summary">
@@ -541,7 +541,7 @@ export default function GraphExplorer() {
           <div className="subgraph-workspace">
           <article className="graph-card graph-pair-card subgraph-graph-card">
             <div className="graph-toolbar">
-              <div><span className="eyebrow">G3 pair subgraph</span><h2>{context.drug_a.drug_name} + {context.drug_b.drug_name}</h2></div>
+              <div><span className="eyebrow">Shared biomedical relationships</span><h2>{context.drug_a.drug_name} + {context.drug_b.drug_name}</h2></div>
               <div className="graph-controls" aria-label="Graph controls">
                 <button type="button" title="Zoom in" onClick={() => cyRef.current?.zoom({ level: cyRef.current.zoom() * 1.2, renderedPosition: { x: 360, y: 230 } })} aria-label="Zoom in"><Plus size={17} /></button>
                 <button type="button" title="Zoom out" onClick={() => cyRef.current?.zoom({ level: cyRef.current.zoom() / 1.2, renderedPosition: { x: 360, y: 230 } })} aria-label="Zoom out"><Minus size={17} /></button>
@@ -561,9 +561,9 @@ export default function GraphExplorer() {
               <strong>Relations in displayed subgraph</strong>
               <div>{displayedRelations.map((relation) => <span key={relation}>{relation}</span>)}</div>
             </div>
-            <div ref={containerRef} className={`cytoscape-canvas ${displayLimit > DEFAULT_SHARED_NODES ? 'expanded' : ''}`} role="img" aria-label={`Interactive G3 graph context for ${context.drug_a.drug_name} and ${context.drug_b.drug_name}`} />
+            <div ref={containerRef} className={`cytoscape-canvas ${displayLimit > DEFAULT_SHARED_NODES ? 'expanded' : ''}`} role="img" aria-label={`Interactive knowledge-graph relationships for ${context.drug_a.drug_name} and ${context.drug_b.drug_name}`} />
             {context.shared.total > displayedCount && <p className="graph-limit-note">Showing {displayedCount} of {context.shared.total.toLocaleString()} shared entities returned by the context endpoint to reduce visual clutter. Omitted entities are not considered less important.</p>}
-            {!context.shared.total && <div className="graph-empty-overlay">No direct shared G3 context entities were found for this pair.</div>}
+            {!context.shared.total && <div className="graph-empty-overlay">No direct shared research connections were found for this pair.</div>}
           </article>
           <aside className="subgraph-details-card" aria-live="polite">
             <EntityDetailsPanel
@@ -577,9 +577,9 @@ export default function GraphExplorer() {
           {context.shared.total === 0 && (
             <section className="graph-card" aria-labelledby="pair-suggestions-heading">
               <span className="eyebrow">Optional next step</span>
-              <h2 id="pair-suggestions-heading">Try another pair with shared graph context</h2>
+              <h2 id="pair-suggestions-heading">Try another pair with shared research connections</h2>
               <p>
-                These pairs have shared entities in the available G3 graph. This does not indicate
+                These pairs have shared entities in the available knowledge graph. This does not indicate
                 interaction strength, safety, or clinical relevance.
               </p>
               {suggestionsLoading && <p role="status">Loading alternative pairs...</p>}
@@ -621,7 +621,7 @@ export default function GraphExplorer() {
           <div className="individual-context-grid">
             {[[context.drug_a, countsA], [context.drug_b, countsB]].map(([drug, counts]) => (
               <article key={drug.drug_id} className="context-detail-card">
-                <span>Total G3 context for this drug</span><h3>{drug.drug_name}</h3><strong>{drug.total_context_edges.toLocaleString()} relationships</strong>
+                <span>Total research connections for this medicine</span><h3>{drug.drug_name}</h3><strong>{drug.total_context_edges.toLocaleString()} relationships</strong>
                 <div className="relation-chip-list">{counts.map(([relation, count]) => <span key={relation}>{relationLabel(relation)} <b>{count.toLocaleString()}</b></span>)}</div>
               </article>
             ))}
@@ -630,7 +630,7 @@ export default function GraphExplorer() {
           <div className="workflow-actions">
             <div>
               <BookOpen size={20} />
-              <p><strong>Continue with independent external evidence</strong><span>Review openFDA label excerpts and PubMed records. This evidence does not validate graph context or an R-GCN prediction.</span></p>
+              <p><strong>Continue with independent external evidence</strong><span>Review openFDA label excerpts and PubMed records. This evidence does not validate knowledge-graph relationships or an R-GCN prediction.</span></p>
             </div>
             <button type="button" className="primary-button" onClick={() => navigate(evidenceDestination(context, navigationScore))}>
               Review evidence<ArrowRight size={16} />
@@ -645,7 +645,7 @@ export default function GraphExplorer() {
             <div>
               <strong>Interpretation boundary</strong>
               <p>{context.interpretation}</p>
-              <p>Shared or missing graph context does not prove a DDI, causation, safety, or harm, and it does not explain or validate an R-GCN score. CHEERS is a research and information prototype, not clinical decision support.</p>
+              <p>Shared or missing knowledge-graph information does not prove a DDI, causation, safety, or harm, and it does not explain or validate an R-GCN score. CHEERS is a research and information prototype, not clinical decision support.</p>
             </div>
           </aside>
         </>

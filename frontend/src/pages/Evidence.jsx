@@ -235,7 +235,7 @@ export default function Evidence() {
             </div>
             <div className="evidence-query-actions">
               <Link className="secondary-button" to={pairEndpoint('/graph', drugA.entity_id, drugB.entity_id)}>
-                <Network size={16} aria-hidden="true" /> Explore graph context
+                <Network size={16} aria-hidden="true" /> Explore relationships
               </Link>
             </div>
           </div>

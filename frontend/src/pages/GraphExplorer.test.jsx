@@ -104,8 +104,8 @@ describe('GraphExplorer context availability', () => {
     await selectDrug(drugAInput, 'Testosterone')
     await selectDrug(drugBInput, 'Warfarin')
 
-    expect(screen.getByText('No verified G3 context')).toBeVisible()
-    expect(screen.getByText('G3 context available')).toBeVisible()
+    expect(screen.getByText('No research connections available')).toBeVisible()
+    expect(screen.getByText('Research connections available')).toBeVisible()
     expect(screen.getByRole('button', { name: 'Explore pair' })).toBeDisabled()
     expect(screen.getByText(/remains available in the DDI Predictor/)).toBeVisible()
     expect(screen.getByRole('link', { name: 'Open DDI Predictor' })).toHaveAttribute('href', '/predictor')
@@ -119,7 +119,7 @@ describe('GraphExplorer context availability', () => {
     await selectDrug(drugAInput, 'Testosterone')
     await selectDrug(drugBInput, 'Ethanolamine')
 
-    expect(screen.getAllByText('No verified G3 context')).toHaveLength(2)
+    expect(screen.getAllByText('No research connections available')).toHaveLength(2)
     expect(screen.getByRole('button', { name: 'Explore pair' })).toBeDisabled()
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
@@ -131,7 +131,7 @@ describe('GraphExplorer context availability', () => {
     await selectDrug(drugAInput, 'Warfarin')
     await selectDrug(drugBInput, 'Aspirin')
 
-    expect(screen.getAllByText('G3 context available')).toHaveLength(2)
+    expect(screen.getAllByText('Research connections available')).toHaveLength(2)
     expect(screen.getAllByText('Optional label-text helper')).toHaveLength(2)
     expect(screen.getByRole('button', { name: 'Explore pair' })).toBeEnabled()
     expect(screen.queryByText(/remains available in the DDI Predictor/)).not.toBeInTheDocument()
@@ -168,12 +168,12 @@ describe('GraphExplorer context availability', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Explore pair' }))
 
-    expect(await screen.findByText('No direct shared G3 context entities were found for this pair.')).toBeVisible()
+    expect(await screen.findByText('No direct shared research connections were found for this pair.')).toBeVisible()
     expect(suggestionRequests()).toEqual([
       ['/api/context/pair-suggestions?drug_a_id=DB00682&drug_b_id=DB00945&limit=6'],
     ])
     const section = screen.getByRole('region', {
-      name: 'Try another pair with shared graph context',
+      name: 'Try another pair with shared research connections',
     })
     expect(within(section).getByRole('heading', { name: 'Warfarin + Acetaminophen' })).toBeVisible()
     expect(within(section).getByText('12')).toBeVisible()
@@ -200,9 +200,9 @@ describe('GraphExplorer context availability', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Explore pair' }))
 
-    expect(await screen.findByRole('img', { name: /Interactive G3 graph context for Warfarin and Aspirin/ })).toBeVisible()
+    expect(await screen.findByRole('img', { name: /Interactive knowledge-graph relationships for Warfarin and Aspirin/ })).toBeVisible()
     expect(suggestionRequests()).toHaveLength(0)
-    expect(screen.queryByText('Try another pair with shared graph context')).not.toBeInTheDocument()
+    expect(screen.queryByText('Try another pair with shared research connections')).not.toBeInTheDocument()
   })
 
   it('summarizes the pair, makes display limits explicit, and explains graph interaction', async () => {
@@ -221,7 +221,7 @@ describe('GraphExplorer context availability', () => {
     expect(screen.getByRole('button', { name: 'Zoom in' })).toHaveAttribute('title', 'Zoom in')
     expect(screen.getByRole('button', { name: 'Zoom out' })).toHaveAttribute('title', 'Zoom out')
     expect(screen.getByRole('button', { name: 'Fit graph to view' })).toHaveAttribute('title', 'Fit graph to view')
-    expect(screen.getByText(/does not validate graph context or an R-GCN prediction/i)).toBeVisible()
+    expect(screen.getByText(/does not validate knowledge-graph relationships or an R-GCN prediction/i)).toBeVisible()
     expect(screen.getByText(/does not prove a DDI, causation, safety, or harm/i)).toBeVisible()
   })
 
@@ -237,7 +237,7 @@ describe('GraphExplorer context availability', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Explore pair' }))
 
     expect(await screen.findByText('No alternative pairs with shared context were found for these medicines.')).toBeVisible()
-    expect(screen.getByText('No direct shared G3 context entities were found for this pair.')).toBeVisible()
+    expect(screen.getByText('No direct shared research connections were found for this pair.')).toBeVisible()
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 
@@ -253,7 +253,7 @@ describe('GraphExplorer context availability', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Explore pair' }))
 
     expect(await screen.findByText('Alternative pair suggestions could not be loaded.')).toBeVisible()
-    expect(screen.getByText('No direct shared G3 context entities were found for this pair.')).toBeVisible()
+    expect(screen.getByText('No direct shared research connections were found for this pair.')).toBeVisible()
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 
@@ -275,7 +275,7 @@ describe('GraphExplorer context availability', () => {
     await selectDrug(drugBInput, 'Ibuprofen')
     getJson.mockResolvedValueOnce(pairContext(WARFARIN, IBUPROFEN, 1))
     await userEvent.click(screen.getByRole('button', { name: 'Explore pair' }))
-    expect(await screen.findByRole('img', { name: /Interactive G3 graph context for Warfarin and Ibuprofen/ })).toBeVisible()
+    expect(await screen.findByRole('img', { name: /Interactive knowledge-graph relationships for Warfarin and Ibuprofen/ })).toBeVisible()
 
     await act(async () => {
       resolveSuggestions({ suggestions: SUGGESTIONS, count: 1 })
@@ -312,7 +312,7 @@ describe('GraphExplorer context availability', () => {
 
     fireEvent.change(drugAInput, { target: { value: 'drug' } })
 
-    expect(await screen.findAllByText('No G3 context')).toHaveLength(2)
-    expect(screen.getAllByText('G3 context')).toHaveLength(3)
+    expect(await screen.findAllByText('No research connections')).toHaveLength(2)
+    expect(screen.getAllByText('Research connections')).toHaveLength(3)
   })
 })

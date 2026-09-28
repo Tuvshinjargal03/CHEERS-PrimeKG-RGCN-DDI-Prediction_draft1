@@ -141,7 +141,7 @@ describe('DrugAutocomplete', () => {
     fireEvent.change(input, { target: { value: 'a' } })
 
     expect(await screen.findByRole('option', { name: /Aspirin/ })).toBeVisible()
-    expect(screen.queryByText('G3 context')).not.toBeInTheDocument()
+    expect(screen.queryByText('Research connections')).not.toBeInTheDocument()
   })
 
   it('keeps the full canonical identity accessible while presenting secondary metadata', async () => {
@@ -151,7 +151,7 @@ describe('DrugAutocomplete', () => {
         label="Query drug"
         selection={null}
         onSelect={vi.fn()}
-        getOptionAnnotation={() => ({ available: true, label: 'G3 context available' })}
+        getOptionAnnotation={() => ({ available: true, label: 'Research connections available' })}
       />,
     )
 
@@ -163,6 +163,6 @@ describe('DrugAutocomplete', () => {
     expect(option).toHaveAccessibleName(expect.stringContaining(LONG_CANONICAL_NAME.name))
     expect(within(option).getByText(LONG_CANONICAL_NAME.name)).toHaveAttribute('title', LONG_CANONICAL_NAME.name)
     expect(within(option).getByText('DrugBank · DB08496')).toBeVisible()
-    expect(within(option).getByText('G3 context available')).toBeVisible()
+    expect(within(option).getByText('Research connections available')).toBeVisible()
   })
 })
