@@ -7,6 +7,7 @@ import { getJson } from '../lib/api.js'
 vi.mock('../lib/api.js', () => ({ getJson: vi.fn() }))
 
 const ASPIRIN = { name: 'Aspirin', entity_id: 'DB00945', node_id: 101 }
+const CANONICAL_ASPIRIN = { name: 'Acetylsalicylic acid', entity_id: 'DB00945', node_id: 101 }
 const AMPICILLIN = { name: 'Ampicillin', entity_id: 'DB00415', node_id: 102 }
 const LONG_CANONICAL_NAME = {
   name: '(R)-warfarin sodium 2-(13C)-isotope reference compound',
@@ -53,6 +54,20 @@ describe('DrugAutocomplete', () => {
 
     await screen.findByRole('option', { name: /Aspirin/ })
     expect(getJson).toHaveBeenCalledWith('/api/drugs/search?q=a&limit=50&offset=0')
+  })
+
+  it.each(['asp', 'aspi', 'aspir', 'aspirin'])('presents and selects verified Aspirin for %s', async (query) => {
+    const user = userEvent.setup()
+    getJson.mockResolvedValue(searchResponse([CANONICAL_ASPIRIN]))
+    const { input, onSelect } = renderAutocomplete()
+
+    fireEvent.change(input, { target: { value: query } })
+    const option = await screen.findByRole('option', { name: /Aspirin/ })
+    expect(within(option).getByText('Aspirin')).toBeVisible()
+    expect(within(option).getByText('Acetylsalicylic acid')).toBeVisible()
+    await user.click(option)
+
+    expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({ entity_id: 'DB00945' }))
   })
 
   it('supports ArrowDown, ArrowUp, and Enter selection', async () => {

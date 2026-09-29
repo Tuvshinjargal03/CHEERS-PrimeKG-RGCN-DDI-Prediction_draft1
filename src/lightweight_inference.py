@@ -140,13 +140,18 @@ class DDIPredictor:
         """Return deterministic candidate rows for browsing or text search."""
         query = str(query).strip()
         query_folded = query.casefold()
-        canonical_query = DRUG_NAME_ALIASES.get(query_folded, query_folded)
+        alias_targets = {
+            canonical_name.casefold()
+            for alias, canonical_name in DRUG_NAME_ALIASES.items()
+            if alias.startswith(query_folded)
+        } if query_folded else set()
 
         if query_folded:
             matches = [
                 row
                 for row in self.drug_metadata
-                if canonical_query in row["entity_name"].casefold()
+                if query_folded in row["entity_name"].casefold()
+                or row["entity_name"].casefold() in alias_targets
                 or row["entity_id"].casefold() == query_folded
             ]
         else:
@@ -157,13 +162,15 @@ class DDIPredictor:
             entity_id_folded = row["entity_id"].casefold()
             if not query_folded:
                 return 0
-            if name_folded == canonical_query:
+            if name_folded == query_folded:
                 return 0
             if entity_id_folded == query_folded:
                 return 1
-            if name_folded.startswith(canonical_query):
+            if name_folded in alias_targets:
                 return 2
-            return 3
+            if name_folded.startswith(query_folded):
+                return 3
+            return 4
 
         matches.sort(
             key=lambda row: (

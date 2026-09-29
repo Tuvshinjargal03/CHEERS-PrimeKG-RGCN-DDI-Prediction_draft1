@@ -53,7 +53,7 @@ const navigationGroups = [
       { path: '/experiments', label: 'Detailed Results', icon: BarChart3 },
       { path: '/relations', label: 'Relation Analysis', icon: GitBranch },
       { path: '/methodology', label: 'Methodology', icon: FlaskConical },
-      { path: '/predictor', label: 'Research Predictor', icon: Search },
+      { path: '/predictor', label: 'DDI Predictor', icon: Search },
     ],
   },
 ]
