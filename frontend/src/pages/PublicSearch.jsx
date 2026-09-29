@@ -398,7 +398,7 @@ function PairQuestionAnswer({ answer, explanation, entities = [] }) {
       )}
       <div className="public-answer-facts public-evidence-counts" aria-label="Retrieved source counts">
         {Number.isFinite(counts.label_mentions) && (
-          <div><span>FDA label mentions</span><strong>{counts.label_mentions}</strong></div>
+          <div><span>Official label matches</span><strong>{counts.label_mentions}</strong><small>FDA label</small></div>
         )}
         {Number.isFinite(counts.pubmed_records) && (
           <div><span>Research articles</span><strong>{counts.pubmed_records}</strong><small>PubMed</small></div>
@@ -480,7 +480,7 @@ function WhyThisAnswer({ data, entities }) {
             <strong>{displayEntityName(entity)}</strong> · {entityLabel(entity)}
           </p>
         ))}
-        {counts && <p>FDA label mentions: {counts.label_mentions} · PubMed research articles: {counts.pubmed_records}</p>}
+        {counts && <p>Official label matches: {counts.label_mentions} (FDA label) · PubMed research articles: {counts.pubmed_records}</p>}
         {data.available_modules?.includes('pair_graph_context') && <p>Knowledge-graph relationships are available separately.</p>}
         <p>Research-model rankings are separate from FDA, PubMed, and knowledge-graph information.</p>
       </div>

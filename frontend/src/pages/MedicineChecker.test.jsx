@@ -103,7 +103,7 @@ describe('MedicineChecker', () => {
     expect(screen.getByText('A source-backed paper')).toBeVisible()
     expect(screen.getByText(/4 shared connections found/)).toBeVisible()
     const summary = screen.getByLabelText('Checked information summary')
-    expect(within(summary).getByText('FDA label mentions').parentElement).toHaveTextContent('1FDA label mentionsRetrieved result')
+    expect(within(summary).getByText('Official label matches').parentElement).toHaveTextContent('1Official label matchesFDA label · Retrieved result')
     expect(within(summary).getByText('Research articles').parentElement).toHaveTextContent('1Research articlesPubMed · Retrieved result')
     expect(within(summary).getByText('Shared biomedical connections').parentElement).toHaveTextContent('4Shared biomedical connectionsAvailable context')
     const statusBoundary = screen.getByText(/This status summarizes retrieved sources/)
@@ -169,7 +169,7 @@ describe('MedicineChecker', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('The checked sources could not be retrieved. Please try again.')
     expect(screen.getByRole('alert')).not.toHaveTextContent('Sources are temporarily unavailable.')
     expect(screen.getByText(/4 shared connections found/)).toBeVisible()
-    expect(screen.getByText('FDA label mentions').parentElement).toHaveTextContent('—FDA label mentionsSource unavailable')
+    expect(screen.getByText('Official label matches').parentElement).toHaveTextContent('—Official label matchesFDA label · Source unavailable')
   })
 
   it('keeps evidence visible when graph context retrieval fails', async () => {

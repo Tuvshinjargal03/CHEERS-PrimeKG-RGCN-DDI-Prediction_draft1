@@ -54,8 +54,10 @@ export default function DDIPredictor() {
   return (
     <section className="page predictor-page">
       <div className="page-heading">
-        <Link className="research-back-link" to="/research">← Research overview</Link>
-        <span className="eyebrow">RESEARCH MODEL</span>
+        <div className="predictor-heading-kicker">
+          <Link className="research-back-link" to="/research">← Research overview</Link>
+          <span className="eyebrow">RESEARCH MODEL</span>
+        </div>
         <h1>DDI Research Predictor</h1>
         <p>Explore how the trained CHEERS research model ranks possible drug-drug interaction links.</p>
         <p><strong>The model gives each eligible pair a research ranking score.</strong> This is not a probability, safety score, interaction severity, or medical recommendation.</p>
@@ -71,9 +73,9 @@ export default function DDIPredictor() {
           <span className="predictor-step-label">1. Choose query medicine</span>
           <DrugAutocomplete label="Medicine name" selection={drug} onSelect={selectDrug} />
           <div className="predictor-scanner-helper">
-            <span>Optional label scan</span>
+            <span>Scan a medicine label</span>
             <MedicineLabelScanner targetLabel="Query medicine" onDrugSelect={selectDrug} />
-            <small>Reads printed label text to help select a supported medicine; it does not identify a medicine clinically.</small>
+            <small>Use your camera or an image to help find a medicine name.</small>
           </div>
         </div>
         <label className="select-field">

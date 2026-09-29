@@ -241,7 +241,7 @@ export default function MedicineChecker() {
           <section className="checker-summary-grid" aria-label="Checked information summary">
             <article>
               <FileSearch size={18} aria-hidden="true" />
-              <div><strong>{evidence ? labelItems.length : '—'}</strong><span>FDA label mentions</span><small>{evidenceError ? 'Source unavailable' : 'Retrieved result'}</small></div>
+              <div><strong>{evidence ? labelItems.length : '—'}</strong><span>Official label matches</span><small>FDA label · {evidenceError ? 'Source unavailable' : 'Retrieved result'}</small></div>
             </article>
             <article>
               <BookOpen size={18} aria-hidden="true" />
