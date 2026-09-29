@@ -231,14 +231,25 @@ describe('My Conditions', () => {
     expect(screen.queryByText(/recommended medicines|best treatment|you should take/i)).not.toBeInTheDocument()
   })
 
-  it('shows neutral browse guidance on empty focus without requesting an unsupported empty query', async () => {
+  it('shows verified starters on empty focus and restores them after clearing', async () => {
     const user = userEvent.setup()
     installApiFixtures()
     renderPage()
 
     await user.click(screen.getByRole('combobox', { name: 'Search condition' }))
-    expect(screen.getByRole('listbox', { name: 'Condition suggestions' })).toHaveTextContent('Browse conditions')
+    const listbox = screen.getByRole('listbox', { name: 'Condition suggestions' })
+    expect(within(listbox).getByText('Suggested conditions')).toBeVisible()
+    expect(within(listbox).getAllByRole('option').map((option) => option.textContent)).toEqual([
+      'Diabetes mellitus', 'Type 2 diabetes mellitus', 'Asthma', 'Gout',
+    ])
+    expect(listbox).not.toHaveTextContent(/5015|5148|4979|5393/)
     expect(getJson).not.toHaveBeenCalled()
+
+    const input = screen.getByRole('combobox', { name: 'Search condition' })
+    await user.type(input, 'diab')
+    expect(await screen.findByText('Results')).toBeVisible()
+    await user.clear(input)
+    expect(screen.getByText('Suggested conditions')).toBeVisible()
   })
 
   it('supports keyboard suggestion selection and Escape closing', async () => {

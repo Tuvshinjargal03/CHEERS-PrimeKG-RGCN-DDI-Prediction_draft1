@@ -35,15 +35,37 @@ describe('DrugAutocomplete', () => {
     getJson.mockReset()
   })
 
-  it('opens with useful guidance without loading an arbitrary alphabetical browse', async () => {
+  it('opens with verified starter medicines without loading an arbitrary backend browse', async () => {
     const user = userEvent.setup()
     getJson.mockResolvedValue(searchResponse([ASPIRIN]))
     const { input } = renderAutocomplete()
 
     await user.click(input)
 
-    expect(screen.getByText('Type a medicine name to search.')).toBeVisible()
+    const listbox = screen.getByRole('listbox')
+    expect(within(listbox).getByText('Suggested medicines')).toBeVisible()
+    expect(within(listbox).getAllByRole('option').map((option) => option.textContent)).toEqual([
+      'Metformin', 'Aspirin', 'Warfarin', 'Ibuprofen',
+    ])
+    expect(listbox).not.toHaveTextContent(/DB00331|DB00945|DB00682|DB01050|Acetylsalicylic acid/)
     expect(getJson).not.toHaveBeenCalled()
+  })
+
+  it('selects the verified Aspirin starter and restores starters after clearing typed text', async () => {
+    const user = userEvent.setup()
+    getJson.mockResolvedValue(searchResponse([AMPICILLIN]))
+    const { input, onSelect } = renderAutocomplete()
+
+    await user.click(input)
+    await user.click(screen.getByRole('option', { name: 'Aspirin' }))
+    expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({ entity_id: 'DB00945' }))
+
+    onSelect.mockClear()
+    fireEvent.change(input, { target: { value: 'amp' } })
+    expect(await screen.findByText('Results')).toBeVisible()
+    fireEvent.change(input, { target: { value: '' } })
+    expect(screen.getByText('Suggested medicines')).toBeVisible()
+    expect(getJson).toHaveBeenCalledWith('/api/drugs/search?q=amp&limit=50&offset=0')
   })
 
   it('accepts and searches a one-character query', async () => {

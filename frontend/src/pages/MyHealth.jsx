@@ -33,7 +33,7 @@ function SavedItemsPanel({ kind, items, onRemove, showAddAction }) {
   const title = isMedicine ? 'My medicines' : 'My conditions';
   const manageRoute = isMedicine ? '/my-medicines' : '/my-conditions';
   return (
-    <section className="my-health-panel" aria-labelledby={`my-${kind}s-heading`}>
+    <section className={`my-health-panel ${items.length ? '' : 'is-empty'}`} aria-labelledby={`my-${kind}s-heading`}>
       <div className="my-health-panel__heading">
         <div><span className="my-health-panel__icon" aria-hidden="true">{isMedicine ? <Pill size={20} /> : <HeartPulse size={20} />}</span><h2 id={`my-${kind}s-heading`}>{title}</h2></div>
         <span className="my-health-count" aria-label={`${items.length} saved ${kind}${items.length === 1 ? '' : 's'}`}>{items.length}</span>

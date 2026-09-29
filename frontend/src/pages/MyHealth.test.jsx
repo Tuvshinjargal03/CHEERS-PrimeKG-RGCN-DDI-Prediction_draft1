@@ -29,6 +29,10 @@ describe('My Health dashboard', () => {
     expect(screen.getByRole('heading', { name: 'Things to review' })).toBeVisible();
     expect(screen.getByRole('heading', { name: 'Ask CHEERS' })).toBeVisible();
     expect(screen.getByText('Saved items are not attached automatically.', { exact: false })).toBeVisible();
+    const savedGrid = document.querySelector('.my-health-saved-grid');
+    expect(savedGrid.querySelectorAll('.my-health-panel.is-empty')).toHaveLength(2);
+    expect(savedGrid.nextElementSibling).toHaveClass('my-health-reviews');
+    expect(screen.getByRole('textbox', { name: 'Question' })).toHaveAttribute('placeholder', 'Ask about one of your saved medicines or conditions...');
     expect(document.body).not.toHaveTextContent(/saved context|health context/i);
   });
 

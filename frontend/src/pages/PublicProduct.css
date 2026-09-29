@@ -925,6 +925,13 @@
   cursor: pointer;
 }
 
+.disease-suggestions-heading {
+  padding: 8px 11px 5px;
+  color: #74798a;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
 .disease-suggestions button:hover,
 .disease-suggestions button.active,
 .disease-suggestions button:focus-visible {

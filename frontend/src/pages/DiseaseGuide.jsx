@@ -12,6 +12,7 @@ import {
 import { useEffect, useId, useRef, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { getJson } from '../lib/api.js'
+import { VERIFIED_CONDITION_STARTERS } from '../lib/conditionStarters.js'
 import { medicineDisplayName } from '../lib/medicineNames.js'
 import './PublicSearch.css'
 import './PublicProduct.css'
@@ -41,7 +42,9 @@ function DiseaseSearch({ onSearch, onSelect }) {
   const [suggestions, setSuggestions] = useState([])
   const [activeIndex, setActiveIndex] = useState(-1)
   const [loading, setLoading] = useState(false)
+  const [open, setOpen] = useState(false)
   const query = value.trim()
+  const options = query ? suggestions : VERIFIED_CONDITION_STARTERS
 
   useEffect(() => {
     const sequence = ++sequenceRef.current
@@ -64,25 +67,26 @@ function DiseaseSearch({ onSearch, onSelect }) {
     return () => { clearTimeout(timer); controller.abort() }
   }, [query])
 
-  function choose(suggestion) { setSuggestions([]); onSelect(suggestion) }
+  function choose(suggestion) { setSuggestions([]); setOpen(false); onSelect(suggestion) }
   function handleKeyDown(event) {
-    if (event.key === 'Escape') { setSuggestions([]); setActiveIndex(-1); return }
-    if (!suggestions.length) return
+    if (event.key === 'Escape') { setOpen(false); setActiveIndex(-1); return }
+    if (!options.length) return
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault()
       const direction = event.key === 'ArrowDown' ? 1 : -1
-      setActiveIndex((current) => current < 0 ? (direction > 0 ? 0 : suggestions.length - 1) : (current + direction + suggestions.length) % suggestions.length)
+      setOpen(true)
+      setActiveIndex((current) => current < 0 ? (direction > 0 ? 0 : options.length - 1) : (current + direction + options.length) % options.length)
     } else if (event.key === 'Enter' && activeIndex >= 0) {
-      event.preventDefault(); choose(suggestions[activeIndex])
+      event.preventDefault(); choose(options[activeIndex])
     }
   }
 
-  const showResults = query.length >= 2 && !loading
-  return <form className="public-search-form disease-live-search" role="search" onSubmit={(event) => { event.preventDefault(); if (query) onSearch(query) }}>
+  const showResults = open && !loading && (query.length === 0 || query.length >= 2)
+  return <form className="public-search-form disease-live-search" role="search" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false) }} onSubmit={(event) => { event.preventDefault(); if (query) onSearch(query) }}>
     <label htmlFor={inputId}>Search for a condition</label>
-    <div className="public-search-control"><Search size={21} aria-hidden="true" /><input id={inputId} type="search" role="combobox" aria-autocomplete="list" aria-controls={listId} aria-expanded={showResults} aria-activedescendant={activeIndex >= 0 ? `${listId}-${activeIndex}` : undefined} value={value} onChange={(event) => { setValue(event.target.value); if (event.target.value.trim().length < 2) { setSuggestions([]); setLoading(false) } }} onKeyDown={handleKeyDown} placeholder="Search conditions..." autoComplete="off" /><button type="submit" className="primary-button" disabled={!query}>Search</button></div>
+    <div className="public-search-control"><Search size={21} aria-hidden="true" /><input id={inputId} type="search" role="combobox" aria-autocomplete="list" aria-controls={listId} aria-expanded={showResults} aria-activedescendant={activeIndex >= 0 ? `${listId}-${activeIndex}` : undefined} value={value} onFocus={() => setOpen(true)} onClick={() => setOpen(true)} onChange={(event) => { const nextValue = event.target.value; setValue(nextValue); setOpen(true); setActiveIndex(-1); if (nextValue.trim().length < 2) { setSuggestions([]); setLoading(false) } }} onKeyDown={handleKeyDown} placeholder="Search conditions..." autoComplete="off" /><button type="submit" className="primary-button" disabled={!query}>Search</button></div>
     {loading && <small className="disease-suggestion-status" role="status">Searching...</small>}
-    {showResults && <div id={listId} className="disease-suggestions" role="listbox" aria-label="Condition suggestions">{suggestions.length ? suggestions.map((suggestion, index) => <button id={`${listId}-${index}`} key={suggestion.entity_id} type="button" role="option" aria-selected={index === activeIndex} className={index === activeIndex ? 'active' : ''} onMouseEnter={() => setActiveIndex(index)} onClick={() => choose(suggestion)}><strong>{sentenceCase(suggestion.name)}</strong><small>Condition</small></button>) : <p>No matching condition found.</p>}</div>}
+    {showResults && <div id={listId} className="disease-suggestions" role="listbox" aria-label="Condition suggestions"><div className="disease-suggestions-heading">{query ? 'Results' : 'Suggested conditions'}</div>{options.length ? options.map((suggestion, index) => <button id={`${listId}-${index}`} key={suggestion.entity_id} type="button" role="option" aria-selected={index === activeIndex} className={index === activeIndex ? 'active' : ''} onMouseEnter={() => setActiveIndex(index)} onClick={() => choose(suggestion)}><strong>{sentenceCase(suggestion.name)}</strong>{query && <small>Condition</small>}</button>) : <p>No matching condition found.</p>}</div>}
   </form>
 }
 

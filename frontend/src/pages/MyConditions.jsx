@@ -16,12 +16,13 @@ import {
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getJson } from '../lib/api.js'
+import { VERIFIED_CONDITION_STARTERS } from '../lib/conditionStarters.js'
 import './PublicProduct.css'
 import './MyConditions.css'
 
 const STORAGE_KEY = 'cheers.my-conditions.v1'
 const MAX_CONDITIONS = 10
-const SEARCH_DELAY_MS = 180
+const SEARCH_DELAY_MS = 250
 
 function compactCondition(condition) {
   if (
@@ -106,6 +107,8 @@ function ConditionAutocomplete({ selection, savedIds, onSelect, disabled }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [activeIndex, setActiveIndex] = useState(-1)
+  const showingStarters = !query.trim()
+  const options = showingStarters ? VERIFIED_CONDITION_STARTERS : results
 
   const closeMenu = useCallback(() => {
     requestIdRef.current += 1
@@ -219,13 +222,13 @@ function ConditionAutocomplete({ selection, savedIds, onSelect, disabled }) {
             } else if (event.key === 'ArrowDown') {
               event.preventDefault()
               setOpen(true)
-              if (results.length) setActiveIndex((current) => Math.min(current + 1, results.length - 1))
+              if (options.length) setActiveIndex((current) => Math.min(current + 1, options.length - 1))
             } else if (event.key === 'ArrowUp') {
               event.preventDefault()
-              if (results.length) setActiveIndex((current) => current <= 0 ? results.length - 1 : current - 1)
+              if (options.length) setActiveIndex((current) => current <= 0 ? options.length - 1 : current - 1)
             } else if (event.key === 'Enter' && open && activeIndex >= 0) {
               event.preventDefault()
-              choose(results[activeIndex])
+              choose(options[activeIndex])
             }
           }}
           placeholder="Type part of a condition name, such as diab"
@@ -244,14 +247,10 @@ function ConditionAutocomplete({ selection, savedIds, onSelect, disabled }) {
 
       {open && !selection && (
         <div id={listboxId} className="my-conditions-suggestions" role="listbox" aria-label="Condition suggestions">
-          {!query.trim() ? (
-            <div className="my-conditions-suggestion-message">
-              <strong>Browse conditions</strong>
-              <span>Type part of a condition name to search existing CHEERS disease entities.</span>
-            </div>
-          ) : error ? (
+          <div className="my-conditions-suggestions-heading">{showingStarters ? 'Suggested conditions' : 'Results'}</div>
+          {error ? (
             <div className="my-conditions-suggestion-message is-error" role="alert">{error}</div>
-          ) : results.length ? results.map((condition, index) => {
+          ) : options.length ? options.map((condition, index) => {
             const saved = savedIds.has(condition.entity_id)
             return (
               <button

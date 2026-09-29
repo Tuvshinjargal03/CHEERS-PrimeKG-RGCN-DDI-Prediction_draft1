@@ -1,7 +1,7 @@
 import { Search, X } from 'lucide-react'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { getJson } from '../lib/api.js'
-import { medicineDisplayName } from '../lib/medicineNames.js'
+import { medicineDisplayName, VERIFIED_MEDICINE_STARTERS } from '../lib/medicineNames.js'
 
 const PAGE_SIZE = 50
 const SEARCH_DELAY_MS = 180
@@ -27,6 +27,8 @@ export default function DrugAutocomplete({
   const [searchError, setSearchError] = useState('')
   const [hasMore, setHasMore] = useState(false)
   const [activeIndex, setActiveIndex] = useState(-1)
+  const showingStarters = !query.trim()
+  const options = showingStarters ? VERIFIED_MEDICINE_STARTERS : results
 
   const closeMenu = useCallback(() => {
     requestId.current += 1
@@ -126,7 +128,7 @@ export default function DrugAutocomplete({
   }
 
   function loadMore() {
-    if (selection || loading || !hasMore) return
+    if (selection || showingStarters || loading || !hasMore) return
     fetchPage(query.trim(), results.length, true)
   }
 
@@ -182,21 +184,21 @@ export default function DrugAutocomplete({
             if (event.key === 'ArrowDown') {
               event.preventDefault()
               if (!open) setOpen(true)
-              if (results.length) {
-                setActiveIndex((current) => Math.min(current + 1, results.length - 1))
+              if (options.length) {
+                setActiveIndex((current) => Math.min(current + 1, options.length - 1))
               }
               return
             }
             if (event.key === 'ArrowUp') {
               event.preventDefault()
-              if (results.length) {
-                setActiveIndex((current) => current <= 0 ? results.length - 1 : current - 1)
+              if (options.length) {
+                setActiveIndex((current) => current <= 0 ? options.length - 1 : current - 1)
               }
               return
             }
             if (event.key === 'Enter' && open && activeIndex >= 0) {
               event.preventDefault()
-              choose(results[activeIndex])
+              choose(options[activeIndex])
             }
           }}
         />
@@ -231,10 +233,11 @@ export default function DrugAutocomplete({
             <div className="autocomplete-empty error" role="alert">
               {searchError}
             </div>
-          ) : results.length ? (
+          ) : options.length ? (
             <>
-              {results.map((item, index) => {
-                const annotation = getOptionAnnotation?.(item)
+              <div className="autocomplete-menu-heading">{showingStarters ? 'Suggested medicines' : 'Results'}</div>
+              {options.map((item, index) => {
+                const annotation = showingStarters ? null : getOptionAnnotation?.(item)
                 const displayName = medicineDisplayName(item)
                 return (
                   <button
@@ -250,7 +253,7 @@ export default function DrugAutocomplete({
                   >
                     <span className="autocomplete-option-name" title={item.name}>{displayName}</span>
                     <small className="autocomplete-option-details">
-                      {displayName !== item.name && <span className="autocomplete-option-id">{item.name}</span>}
+                      {!showingStarters && displayName !== item.name && <span className="autocomplete-option-id">{item.name}</span>}
                       {annotation && (
                         <em className={annotation.available ? 'available' : 'unavailable'}>
                           {annotation.label}

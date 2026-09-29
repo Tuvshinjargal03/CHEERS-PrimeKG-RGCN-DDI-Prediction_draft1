@@ -2445,6 +2445,13 @@ textarea:focus-visible {
   margin-bottom: 26px;
 }
 
+.autocomplete-menu-heading {
+  padding: 6px 10px 5px;
+  color: #667085;
+  font-size: 11px;
+  font-weight: 800;
+}
+
 .predictor-heading-kicker {
   display: flex;
   min-width: 0;

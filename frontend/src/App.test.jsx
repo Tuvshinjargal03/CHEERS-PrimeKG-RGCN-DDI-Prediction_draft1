@@ -42,20 +42,24 @@ describe('CHEERS application shell', () => {
     expect(exploreMenu.getAllByRole('link').map((link) => link.textContent)).toEqual([
       'Medicines',
       'Diseases',
-      'Compare two medicines',
-      'Explore one medicine',
+      'Graph Explorer',
+      'Subgraph Explorer',
     ])
     expect(exploreMenu.getByRole('link', { name: 'Medicines' })).toHaveAttribute('href', '#/medicines')
     expect(exploreMenu.getByRole('link', { name: 'Diseases' })).toHaveAttribute('href', '#/diseases')
-    expect(exploreMenu.getByRole('link', { name: 'Compare two medicines' })).toHaveAttribute('href', '#/graph')
-    expect(exploreMenu.getByRole('link', { name: 'Explore one medicine' })).toHaveAttribute('href', '#/subgraph')
+    expect(exploreMenu.getByRole('link', { name: 'Graph Explorer' })).toHaveAttribute('href', '#/graph')
+    expect(exploreMenu.getByRole('link', { name: 'Subgraph Explorer' })).toHaveAttribute('href', '#/subgraph')
+    expect(exploreMenu.queryByText('Compare two medicines')).not.toBeInTheDocument()
+    expect(exploreMenu.queryByText('Explore one medicine')).not.toBeInTheDocument()
 
     await user.click(nav.getByRole('button', { name: 'Research' }))
     expect(nav.getByRole('link', { name: 'Overview' })).toHaveAttribute('href', '#/research')
-    expect(nav.getByRole('link', { name: 'Detailed Results' })).toHaveAttribute('href', '#/experiments')
+    expect(nav.getByRole('link', { name: 'Experiments' })).toHaveAttribute('href', '#/experiments')
     expect(nav.getByRole('link', { name: 'Relation Analysis' })).toHaveAttribute('href', '#/relations')
     expect(nav.getByRole('link', { name: 'Methodology' })).toHaveAttribute('href', '#/methodology')
     expect(nav.getByRole('link', { name: 'DDI Predictor' })).toHaveAttribute('href', '#/predictor')
+    expect(nav.queryByText('Detailed Results')).not.toBeInTheDocument()
+    expect(nav.queryByText('Research Predictor')).not.toBeInTheDocument()
   })
 
   it.each(['Explore', 'Research'])('preserves keyboard, Escape and outside-click behavior for %s', async (group) => {
@@ -82,8 +86,8 @@ describe('CHEERS application shell', () => {
   it.each([
     ['/medicines/DB00682', 'Medicines'],
     ['/diseases/5148', 'Diseases'],
-    ['/graph', 'Compare two medicines'],
-    ['/subgraph', 'Explore one medicine'],
+    ['/graph', 'Graph Explorer'],
+    ['/subgraph', 'Subgraph Explorer'],
   ])('keeps Explore expanded and the destination active on %s', async (path, label) => {
     window.location.hash = `#${path}`
     render(<App />)

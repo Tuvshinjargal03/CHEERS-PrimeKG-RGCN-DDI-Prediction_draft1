@@ -41,8 +41,8 @@ const navigationGroups = [
     items: [
       { path: '/medicines', label: 'Medicines', icon: Pill },
       { path: '/diseases', label: 'Diseases', icon: HeartPulse },
-      { path: '/graph', label: 'Compare two medicines', icon: Network },
-      { path: '/subgraph', label: 'Explore one medicine', icon: Share2 },
+      { path: '/graph', label: 'Graph Explorer', icon: Network },
+      { path: '/subgraph', label: 'Subgraph Explorer', icon: Share2 },
     ],
   },
   {
@@ -50,7 +50,7 @@ const navigationGroups = [
     icon: BarChart3,
     items: [
       { path: '/research', label: 'Overview', icon: BarChart3 },
-      { path: '/experiments', label: 'Detailed Results', icon: BarChart3 },
+      { path: '/experiments', label: 'Experiments', icon: BarChart3 },
       { path: '/relations', label: 'Relation Analysis', icon: GitBranch },
       { path: '/methodology', label: 'Methodology', icon: FlaskConical },
       { path: '/predictor', label: 'DDI Predictor', icon: Search },
