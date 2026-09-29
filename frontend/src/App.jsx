@@ -234,12 +234,6 @@ function AppShell() {
           })}
         </nav>
 
-        <div className="sidebar-footer">
-          <NavLink className="sidebar-scope-link" to="/research">
-            <FlaskConical size={15} aria-hidden="true" />
-            <span>Research-backed information</span>
-          </NavLink>
-        </div>
       </aside>
 
       <main id="main-content" ref={mainContentRef} className="main-content" tabIndex={-1}>

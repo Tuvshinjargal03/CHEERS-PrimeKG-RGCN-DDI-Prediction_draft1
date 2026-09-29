@@ -98,7 +98,9 @@ describe('My Health dashboard', () => {
     save(SAVED_MEDICINES_STORAGE_KEY, [METFORMIN]);
     save(CONDITIONS_KEY, [DIABETES]);
     renderPage();
-    await user.type(screen.getByRole('textbox', { name: 'Question about a saved item' }), 'Metformin side effects?');
+    const question = screen.getByRole('textbox', { name: 'Question' });
+    expect(question).toHaveAttribute('placeholder', 'Ask about one of your saved medicines or conditions...');
+    await user.type(question, 'Metformin side effects?');
     await user.click(screen.getByRole('button', { name: 'Ask CHEERS' }));
     expect(screen.getByLabelText('Current location')).toHaveTextContent('/search?q=Metformin%20side%20effects%3F');
     expect(screen.getByLabelText('Current location')).not.toHaveTextContent('diabetes');

@@ -64,7 +64,11 @@ describe('DDI Predictor research workflow', () => {
 
     const action = screen.getByRole('button', { name: 'Run R-GCN ranking' })
     expect(action).toBeDisabled()
-    expect(screen.getByText('Optional label scan')).toBeVisible()
+    expect(screen.getByText('Scan a medicine label')).toBeVisible()
+    expect(screen.getByText('Use your camera or an image to help find a medicine name.')).toBeVisible()
+    expect(screen.queryByText(/does not identify a medicine clinically/i)).not.toBeInTheDocument()
+    const headingMeta = screen.getByText('RESEARCH MODEL').parentElement
+    expect(within(headingMeta).getByRole('link', { name: '← Research overview' })).toBeVisible()
     expect(screen.getByText(/does not mean there is no interaction/i)).toBeVisible()
 
     await userEvent.click(screen.getByRole('button', { name: 'Choose Warfarin' }))

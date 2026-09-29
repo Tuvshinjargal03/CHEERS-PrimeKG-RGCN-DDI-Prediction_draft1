@@ -34,6 +34,7 @@ describe('CHEERS application shell', () => {
     expect(nav.queryByRole('link', { name: 'My Conditions' })).not.toBeInTheDocument()
     expect(nav.queryByRole('link', { name: 'Medicines' })).not.toBeInTheDocument()
     expect(nav.queryByRole('button', { name: 'Browse' })).not.toBeInTheDocument()
+    expect(screen.queryByText('Research-backed information')).not.toBeInTheDocument()
 
     const exploreTrigger = nav.getByRole('button', { name: 'Explore' })
     await user.click(exploreTrigger)
