@@ -2,11 +2,11 @@ import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { getJson } from '../lib/api.js'
+import { getJson, postJson } from '../lib/api.js'
 import Home from './Home.jsx'
 import PublicSearch from './PublicSearch.jsx'
 
-vi.mock('../lib/api.js', () => ({ getJson: vi.fn() }))
+vi.mock('../lib/api.js', () => ({ getJson: vi.fn(), postJson: vi.fn() }))
 
 const BASE = {
   original_query: '',
@@ -54,6 +54,7 @@ function renderSearch(entry = '/search?q=warfarin') {
 describe('public Home', () => {
   beforeEach(() => {
     getJson.mockReset()
+    postJson.mockReset()
   })
 
   it('presents the public hero and three primary actions', () => {
@@ -69,7 +70,8 @@ describe('public Home', () => {
     expect(within(primary).getAllByRole('heading', { level: 3 })).toHaveLength(3)
     expect(within(primary).queryByRole('link', { name: /Predictor/ })).not.toBeInTheDocument()
     const research = screen.getByRole('region', { name: 'Research & advanced tools' })
-    expect(within(research).getByRole('link', { name: 'DDI Predictor' })).toHaveAttribute('href', '/predictor')
+    expect(within(research).getByRole('link', { name: 'Research overview' })).toHaveAttribute('href', '/research')
+    expect(within(research).getByRole('link', { name: 'Research Predictor' })).toHaveAttribute('href', '/predictor')
   })
 
   it('submits the smart-search query without parsing it on Home', async () => {
@@ -99,6 +101,7 @@ describe('public Home', () => {
 describe('deterministic public-search routing', () => {
   beforeEach(() => {
     getJson.mockReset()
+    postJson.mockReset()
   })
 
   afterEach(() => {
@@ -371,7 +374,7 @@ describe('deterministic public-search routing', () => {
     expect(pairHeading.closest('section')).toHaveClass('is-warning')
     expect(screen.getAllByText('The retrieved FDA label information includes an interaction warning for this pair.')).toHaveLength(1)
     expect(screen.getByLabelText('Retrieved source counts')).toHaveTextContent('FDA label mentions16')
-    expect(screen.getByLabelText('Retrieved source counts')).toHaveTextContent('PubMed records5')
+    expect(screen.getByLabelText('Retrieved source counts')).toHaveTextContent('Research articles5PubMed')
     expect(screen.getByRole('link', { name: /Check Medicines/ })).toHaveAttribute(
       'href',
       '/check?drug_a_id=DB00682&drug_b_id=DB01050',
@@ -402,6 +405,57 @@ describe('deterministic public-search routing', () => {
     expect(screen.getByRole('link', { name: 'Check Medicines' })).toHaveAttribute('href', '/check?drug_a_id=DB00331')
     expect(screen.getByRole('link', { name: 'Original source' })).toHaveAttribute('href', '/medicines/DB00331?section=uses')
     expect(screen.getByTestId('location')).toHaveTextContent('/search?q=what%20does%20metformin%20do')
+  })
+
+  it('renders the deterministic answer before an optional AI explanation arrives', async () => {
+    let resolveExplanation
+    postJson.mockReturnValue(new Promise((resolve) => { resolveExplanation = resolve }))
+    getJson.mockResolvedValue({
+      ...BASE,
+      intent: 'drug_information',
+      recognized_entities: [METFORMIN],
+      ai_explanation_eligible: true,
+    })
+
+    renderSearch('/search?q=what%20does%20metformin%20do')
+
+    expect(await screen.findByText(/CHEERS recognized Metformin/)).toBeVisible()
+    expect(postJson).toHaveBeenCalledWith(
+      '/api/public/explain',
+      { query: 'what does metformin do' },
+      { timeoutMs: 15000 },
+    )
+
+    await act(async () => {
+      resolveExplanation({
+        ...BASE,
+        intent: 'drug_information',
+        recognized_entities: [METFORMIN],
+        explanation: {
+          status: 'answered',
+          short_answer: 'A later grounded explanation.',
+          key_points: [],
+          what_we_cannot_conclude: 'This is not personalized medical advice.',
+          sources_used: ['FDA label'],
+        },
+      })
+    })
+    expect(await screen.findByText('A later grounded explanation.')).toBeVisible()
+  })
+
+  it('keeps the deterministic answer when optional explanation fails', async () => {
+    postJson.mockRejectedValue(new Error('provider unavailable'))
+    getJson.mockResolvedValue({
+      ...BASE,
+      intent: 'drug_information',
+      recognized_entities: [METFORMIN],
+      ai_explanation_eligible: true,
+    })
+
+    renderSearch('/search?q=what%20does%20metformin%20do')
+
+    expect(await screen.findByText(/CHEERS recognized Metformin/)).toBeVisible()
+    expect(screen.queryByText(/provider unavailable/i)).not.toBeInTheDocument()
   })
 
   it('renders the cleaned Metformin side-effect answer without raw FDA references', async () => {
@@ -542,7 +596,8 @@ describe('deterministic public-search routing', () => {
     expect(screen.getAllByText('Aspirin').length).toBeGreaterThan(0)
     expect(screen.getByLabelText('Medicines in this pair')).toHaveTextContent('Acetylsalicylic acid')
     expect(screen.getByLabelText('Medicines in this pair')).not.toHaveTextContent('DB00945')
-    expect(screen.getByText(/DB00945/).closest('details')).toHaveTextContent('Why this answer?')
+    const explanationDetails = screen.getByText('Why this answer?').closest('details')
+    expect(explanationDetails).not.toHaveTextContent('DB00945')
     expect(screen.getByLabelText('Sources checked')).toHaveTextContent('FDA label')
     expect(screen.getByLabelText('Sources checked')).toHaveTextContent('PubMed')
   })

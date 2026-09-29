@@ -2,6 +2,7 @@ import { Camera, FileImage, LoaderCircle, RotateCcw, ScanText, Trash2, X } from 
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { postJson } from '../lib/api.js'
+import { medicineDisplayName } from '../lib/medicineNames.js'
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024
 const MATCH_LIMIT = 10
@@ -17,7 +18,7 @@ function getLocalOcrAssetPaths(baseUrl = import.meta.env.BASE_URL) {
 
 const MATCH_LABELS = {
   exact_name_in_text: 'Exact label match',
-  exact_drugbank_id: 'Exact DrugBank ID match',
+  exact_drugbank_id: 'Exact database ID match',
   possible_text_match: 'Possible text match',
 }
 
@@ -552,7 +553,7 @@ export default function MedicineLabelScanner({ targetLabel, onDrugSelect, disabl
         {detectedText && (
           <details className="scanner-detected-text">
             <summary>Detected text</summary>
-            <p>OCR output may contain errors. Review it before selecting a supported drug.</p>
+            <p>Results should be checked before continuing.</p>
             <label>
               <span>Text read from the image</span>
               <textarea
@@ -584,9 +585,9 @@ export default function MedicineLabelScanner({ targetLabel, onDrugSelect, disabl
                   className="scanner-match"
                   key={`${match.entity_id}-${match.node_id}`}
                   onClick={() => chooseMatch(match)}
-                  aria-label={`Select ${match.name}, ${match.entity_id}, ${MATCH_LABELS[match.match_type] || 'Possible text match'}`}
+                  aria-label={`Select ${medicineDisplayName(match)}, ${MATCH_LABELS[match.match_type] || 'Possible text match'}`}
                 >
-                  <span><strong>{match.name}</strong><small>{match.entity_id}</small></span>
+                  <span><strong>{medicineDisplayName(match)}</strong>{medicineDisplayName(match) !== match.name && <small>{match.name}</small>}</span>
                   <em>{MATCH_LABELS[match.match_type] || 'Possible text match'}</em>
                 </button>
               ))}

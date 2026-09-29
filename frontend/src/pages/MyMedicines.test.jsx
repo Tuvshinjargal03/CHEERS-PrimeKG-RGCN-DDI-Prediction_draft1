@@ -115,7 +115,7 @@ describe('My Medicines', () => {
     expect(screen.getByRole('link', { name: 'View in My Health' })).toHaveAttribute('href', '/my-health')
     const selected = screen.getByRole('list', { name: 'Saved medicines' })
     expect(within(selected).getByText('Warfarin').tagName).toBe('STRONG')
-    expect(within(selected).getByText('DB00682').tagName).toBe('SMALL')
+    expect(within(selected).queryByText('DB00682')).not.toBeInTheDocument()
     expect(screen.getByRole('checkbox', { name: 'Include Warfarin in combination review' })).toBeChecked()
     await waitFor(() => {
       expect(JSON.parse(window.localStorage.getItem(SAVED_MEDICINES_STORAGE_KEY))).toEqual([
@@ -442,11 +442,11 @@ describe('My Medicines', () => {
     await user.click(screen.getByRole('button', { name: 'Check combinations' }))
 
     const actions = await screen.findByRole('navigation', {
-      name: 'Actions for Warfarin and Acetylsalicylic acid',
+      name: 'Actions for Warfarin and Aspirin',
     })
     expect(within(actions).getByRole('link', { name: 'Review pair' })).toHaveAttribute(
       'href',
-      '/search?q=Warfarin%20with%20Acetylsalicylic%20acid',
+      '/search?q=Warfarin%20with%20Aspirin',
     )
     expect(within(actions).getByRole('link', { name: 'Open Medicine Checker' })).toHaveAttribute(
       'href',

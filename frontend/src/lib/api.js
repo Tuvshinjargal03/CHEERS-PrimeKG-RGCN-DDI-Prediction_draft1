@@ -133,8 +133,9 @@ export function clearGetJsonCache(path) {
   pendingGets.clear()
 }
 
-export function postJson(path, body) {
+export function postJson(path, body, options = {}) {
   return apiRequest(path, {
+    ...options,
     method: 'POST',
     body: JSON.stringify(body),
   })

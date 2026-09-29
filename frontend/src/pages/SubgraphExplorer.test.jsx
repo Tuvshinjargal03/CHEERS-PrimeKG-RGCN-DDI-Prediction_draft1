@@ -117,7 +117,8 @@ describe('SubgraphExplorer navigation', () => {
       </MemoryRouter>,
     )
 
-    expect(await screen.findByText('context unavailable')).toBeVisible()
+    expect(await screen.findByText('Research connections could not be loaded. Please try again.')).toBeVisible()
+    expect(screen.queryByText('context unavailable')).not.toBeInTheDocument()
     const selection = screen.getByTestId('selected-drug')
     expect(selection).not.toHaveTextContent('DB00331')
     expect(selection).toHaveAttribute('data-entity-id', 'DB00331')

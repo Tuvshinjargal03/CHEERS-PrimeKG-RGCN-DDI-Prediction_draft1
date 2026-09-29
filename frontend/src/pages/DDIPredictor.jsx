@@ -1,9 +1,10 @@
 import { AlertCircle, ArrowRight, LoaderCircle, Network, Search } from 'lucide-react'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import DrugAutocomplete from '../components/DrugAutocomplete.jsx'
 import MedicineLabelScanner from '../components/MedicineLabelScanner.jsx'
 import { postJson } from '../lib/api.js'
+import { medicineDisplayName } from '../lib/medicineNames.js'
 
 function destination(path, query, candidate, score) {
   const params = new URLSearchParams({
@@ -43,8 +44,8 @@ export default function DDIPredictor() {
         top_k: Number(topK),
       })
       setResult(payload)
-    } catch (requestError) {
-      setError(requestError.message || 'Prediction could not be completed.')
+    } catch {
+      setError('Research ranking is temporarily unavailable. Try again.')
     } finally {
       setLoading(false)
     }
@@ -53,9 +54,11 @@ export default function DDIPredictor() {
   return (
     <section className="page predictor-page">
       <div className="page-heading">
-        <span className="eyebrow">Verified exported G3 runtime</span>
-        <h1>DDI Predictor</h1>
-        <p>Use the deployed G3 seed-44 research model to rank eligible, unobserved PrimeKG <em>synergistic interaction</em> candidate links.</p>
+        <Link className="research-back-link" to="/research">← Research overview</Link>
+        <span className="eyebrow">RESEARCH MODEL</span>
+        <h1>DDI Research Predictor</h1>
+        <p>Explore how the trained CHEERS research model ranks possible drug-drug interaction links.</p>
+        <p><strong>The model gives each eligible pair a research ranking score.</strong> This is not a probability, safety score, interaction severity, or medical recommendation.</p>
       </div>
 
       <form className="predictor-form" onSubmit={submit}>
@@ -66,9 +69,9 @@ export default function DDIPredictor() {
         </div>
         <div className="drug-selection-field">
           <span className="predictor-step-label">1. Choose query medicine</span>
-          <DrugAutocomplete label="Medicine name or DrugBank ID" selection={drug} onSelect={selectDrug} />
+          <DrugAutocomplete label="Medicine name" selection={drug} onSelect={selectDrug} />
           <div className="predictor-scanner-helper">
-            <span>Optional label-text helper</span>
+            <span>Optional label scan</span>
             <MedicineLabelScanner targetLabel="Query medicine" onDrugSelect={selectDrug} />
             <small>Reads printed label text to help select a supported medicine; it does not identify a medicine clinically.</small>
           </div>
@@ -86,11 +89,22 @@ export default function DDIPredictor() {
         </button>
       </form>
 
+      <details className="predictor-model-details">
+        <summary>Model details</summary>
+        <ul>
+          <li>Graph version: G3 (combined context)</li>
+          <li>Training run: seed 44</li>
+          <li>Architecture: 2-layer R-GCN with 128-dimensional embeddings</li>
+          <li>Decoder: symmetric DistMult-style DDI scorer</li>
+          <li>The web demo uses the exported saved model verified against the offline model.</li>
+        </ul>
+      </details>
+
       {error && <div className="inline-alert error predictor-state" role="alert"><AlertCircle size={20} />{error}</div>}
       {loading && (
         <div className="empty-feature-state predictor-state" role="status" aria-live="polite">
           <LoaderCircle className="spin" size={28} />
-          <div><strong>Ranking candidate links…</strong><p>The verified G3 model is evaluating eligible unobserved candidates.</p></div>
+          <div><strong>Ranking possible interaction links…</strong><p>The research model is evaluating eligible pairs not observed in the training graph.</p></div>
         </div>
       )}
       {!result && !loading && !error && (
@@ -98,7 +112,7 @@ export default function DDIPredictor() {
           <Search size={28} />
           <div>
             <strong>Select a query medicine to begin.</strong>
-            <p>The model ranks eligible candidate links after filtering known positive links. Returned candidates are unobserved in that known positive set, not confirmed non-interactions. This output is for research only.</p>
+            <p>The model ranks eligible possible interaction links after excluding known positive links. Returned pairs were not observed in the training graph; that does not mean there is no interaction. This output is for research only.</p>
           </div>
         </div>
       )}
@@ -110,16 +124,16 @@ export default function DDIPredictor() {
             <h2>Prediction overview</h2>
           </div>
           <div className="prediction-summary">
-            <div className="prediction-summary-primary"><span>Query</span><strong>{result.query.name}</strong><small>{result.query.entity_id}</small></div>
-            <div><span>Model / runtime</span><strong>{result.model.graph} R-GCN</strong><small>Seed {result.model.seed}{result.model.best_epoch != null ? ` · epoch ${result.model.best_epoch}` : ''}</small></div>
-            <div><span>Candidate space</span><strong>{result.candidate_drug_count.toLocaleString()} drugs</strong><small>{result.known_positive_candidates_filtered.toLocaleString()} known positive candidates filtered{result.available_unobserved_candidates != null ? ` · ${result.available_unobserved_candidates.toLocaleString()} eligible unobserved` : ''}</small></div>
-            <div><span>Returned candidates</span><strong>{result.predictions.length}</strong><small>ranked unobserved candidate links</small></div>
+            <div className="prediction-summary-primary"><span>Query</span><strong>{medicineDisplayName(result.query)}</strong><small>{result.query.entity_id}</small></div>
+            <div><span>Model used</span><strong>Saved trained model</strong><small>See Model details</small></div>
+            <div><span>Candidate space</span><strong>{result.candidate_drug_count.toLocaleString()} drugs</strong><small>{result.known_positive_candidates_filtered.toLocaleString()} known training-graph links excluded{result.available_unobserved_candidates != null ? ` · ${result.available_unobserved_candidates.toLocaleString()} eligible pairs not observed in training` : ''}</small></div>
+            <div><span>Returned candidates</span><strong>{result.predictions.length}</strong><small>ranked possible interaction links</small></div>
           </div>
 
           <div className="section-block predictor-results-block">
             <div className="section-title predictor-results-heading">
-              <div><span className="eyebrow">Model ranking</span><h2>Ranked candidate links</h2></div>
-              <p>Scores are only comparable for ranking candidates produced by this model query; they are not calibrated clinical probabilities.</p>
+              <div><span className="eyebrow">Model ranking</span><h2>Ranked possible interaction links</h2></div>
+              <p>Higher scores mean the model ranks the possible link more strongly relative to other eligible candidates. The value is not a medical risk or probability.</p>
             </div>
             <div className="predictor-follow-up-note" aria-label="How to interpret follow-up views">
               <p><strong>Graph context</strong> shows graph relationships. It does not validate the prediction or prove causation or interaction.</p>
@@ -130,8 +144,8 @@ export default function DDIPredictor() {
                 {result.predictions.map((candidate) => (
                   <article key={candidate.entity_id} className="prediction-row">
                     <span className="rank-badge">#{candidate.rank}</span>
-                    <div className="prediction-drug"><strong>{candidate.name}</strong><small>DrugBank · {candidate.entity_id}</small></div>
-                    <div className="score-block"><span>Raw model score</span><strong>{Number(candidate.raw_score).toFixed(4)}</strong></div>
+                    <div className="prediction-drug"><strong>{medicineDisplayName(candidate)}</strong>{medicineDisplayName(candidate) !== candidate.name && <small>{candidate.name}</small>}<small>DrugBank · {candidate.entity_id}</small><small>Not observed in the training graph</small></div>
+                    <div className="score-block"><span>Research ranking score</span><strong>{Number(candidate.raw_score).toFixed(4)}</strong></div>
                     <div className="prediction-actions">
                       <button type="button" className="secondary-button" onClick={() => navigate(destination('/graph', result.query, candidate, candidate.raw_score))}><Network size={16} />Graph context</button>
                       <button type="button" className="text-action" onClick={() => navigate(destination('/evidence', result.query, candidate, candidate.raw_score))}>Review evidence<ArrowRight size={15} /></button>

@@ -254,6 +254,15 @@ class DrugTextMatchRequest(BaseModel):
     )
 
 
+class PublicExplainRequest(BaseModel):
+    query: str = Field(
+        ...,
+        min_length=1,
+        max_length=200,
+        description="The original Ask CHEERS query to explain from server-side evidence.",
+    )
+
+
 # ============================================================
 # Utility
 # ============================================================
@@ -824,7 +833,21 @@ def public_search(
     ),
 ):
     """Resolve a short query to source-grounded, non-personalized information."""
-    return app.state.public_search.search(q)
+    return app.state.public_search.search(
+        q,
+        include_explanation=False,
+        include_external_evidence=False,
+    )
+
+
+@app.post("/api/public/explain")
+def public_explain(request: PublicExplainRequest):
+    """Optionally enhance an already-rendered deterministic search result."""
+    return app.state.public_search.search(
+        request.query,
+        include_explanation=True,
+        include_external_evidence=True,
+    )
 
 
 @app.get("/api/public/medicine")
@@ -867,6 +890,15 @@ def public_disease_information(
         return app.state.disease_information.get_disease_information(disease_id)
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=exc.args[0])
+
+
+@app.get("/api/public/disease-suggestions")
+def public_disease_suggestions(
+    q: str = Query(default="", max_length=200),
+    limit: int = Query(default=6, ge=1, le=6),
+):
+    """Return fast deterministic disease suggestions from loaded local data."""
+    return app.state.public_search.disease_suggestions(q, limit=limit)
 
 
 # ============================================================

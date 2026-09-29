@@ -27,6 +27,7 @@ import {
   SAVED_MEDICINES_STORAGE_KEY,
 } from '../lib/myMedicines.js'
 import { derivePairReviewStatus } from '../lib/pairStatus.js'
+import { medicineDisplayName } from '../lib/medicineNames.js'
 import './PublicProduct.css'
 import './MyMedicines.css'
 
@@ -112,7 +113,9 @@ function PairResultCard({ result, index }) {
   const papers = evidence?.literature?.papers
   const labelCount = failed ? null : Array.isArray(labelItems) ? labelItems.length : 0
   const paperCount = failed ? null : Array.isArray(papers) ? papers.length : 0
-  const question = `${pair.drugA.name} with ${pair.drugB.name}`
+  const drugAName = medicineDisplayName(pair.drugA)
+  const drugBName = medicineDisplayName(pair.drugB)
+  const question = `${drugAName} with ${drugBName}`
 
   return (
     <article className={`my-medicines-pair-card is-${status.key}`}>
@@ -120,7 +123,7 @@ function PairResultCard({ result, index }) {
         <span className="my-medicines-status-icon"><StatusIcon status={status.key} /></span>
         <div>
           <span>Combination {index + 1}</span>
-          <h3>{pair.drugA.name} <b aria-hidden="true">+</b> {pair.drugB.name}</h3>
+          <h3>{drugAName} <b aria-hidden="true">+</b> {drugBName}</h3>
         </div>
         <strong className="my-medicines-status-label">{status.title}</strong>
       </div>
@@ -132,7 +135,7 @@ function PairResultCard({ result, index }) {
         </p>
       )}
 
-      <div className="my-medicines-source-counts" aria-label={`Retrieved source counts for ${pair.drugA.name} and ${pair.drugB.name}`}>
+      <div className="my-medicines-source-counts" aria-label={`Retrieved source counts for ${drugAName} and ${drugBName}`}>
         <div>
           <FileSearch size={17} aria-hidden="true" />
           <strong>{labelCount ?? '—'}</strong>
@@ -141,11 +144,11 @@ function PairResultCard({ result, index }) {
         <div>
           <BookOpen size={17} aria-hidden="true" />
           <strong>{paperCount ?? '—'}</strong>
-          <span>PubMed {paperCount === 1 ? 'record' : 'records'}</span>
+          <span>Research {paperCount === 1 ? 'article' : 'articles'} <small>PubMed</small></span>
         </div>
       </div>
 
-      <nav className="my-medicines-pair-actions" aria-label={`Actions for ${pair.drugA.name} and ${pair.drugB.name}`}>
+      <nav className="my-medicines-pair-actions" aria-label={`Actions for ${drugAName} and ${drugBName}`}>
         <Link to={`/search?q=${encodeURIComponent(question)}`}>Review pair</Link>
         <Link to={`/check?${params}`}>Open Medicine Checker</Link>
         <Link to={`/evidence?${params}`}>Review evidence</Link>
@@ -330,7 +333,7 @@ export default function MyMedicines() {
             label="Search medicine"
             selection={pendingMedicine}
             onSelect={setPendingMedicine}
-            placeholder="Search by medicine name or DrugBank ID"
+            placeholder="Search by medicine name"
             disabled={checking || atLimit}
           />
           <button
@@ -383,13 +386,13 @@ export default function MyMedicines() {
                       onChange={() => toggleReviewMedicine(medicine.entity_id)}
                       aria-label={`Include ${medicine.name} in combination review`}
                     />
-                    <span><strong>{medicine.name}</strong><small>{medicine.entity_id}</small></span>
+                    <span><strong>{medicineDisplayName(medicine)}</strong>{medicineDisplayName(medicine) !== medicine.name && <small>{medicine.name}</small>}</span>
                   </label>
                   <button
                     type="button"
                     onClick={() => removeMedicine(medicine.entity_id)}
                     disabled={checking}
-                    aria-label={`Remove ${medicine.name}`}
+                    aria-label={`Remove ${medicineDisplayName(medicine)}`}
                   >
                     <X size={15} aria-hidden="true" />
                   </button>

@@ -5,6 +5,10 @@ from __future__ import annotations
 import json
 import os
 import re
+import hashlib
+import time
+from collections import OrderedDict
+from threading import Lock
 from urllib.request import Request
 
 from src.gemini_query_interpreter import (
@@ -15,12 +19,51 @@ from src.gemini_query_interpreter import (
 
 MAX_EVIDENCE_CHARS = 6_000
 MAX_ITEM_CHARS = 700
+SUMMARY_CACHE_TTL_SECONDS = 60 * 60
+SUMMARY_CACHE_MAX_ENTRIES = 128
+SUMMARIZER_VERSION = "1"
 
 
 class GeminiEvidenceSummarizer:
     def __init__(self, api_key=None, timeout_seconds=6.0):
         self.api_key = api_key if api_key is not None else os.getenv("GEMINI_API_KEY")
         self.timeout_seconds = timeout_seconds
+        self._cache = OrderedDict()
+        self._cache_lock = Lock()
+
+    @staticmethod
+    def _cache_key(question, bounded):
+        stable_input = json.dumps(
+            {
+                "version": SUMMARIZER_VERSION,
+                "question": " ".join(str(question).casefold().split()),
+                "evidence": bounded,
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        return hashlib.sha256(stable_input.encode("utf-8")).hexdigest()
+
+    def _cached(self, key):
+        now = time.monotonic()
+        with self._cache_lock:
+            cached = self._cache.get(key)
+            if cached is None:
+                return None
+            timestamp, value = cached
+            if now - timestamp >= SUMMARY_CACHE_TTL_SECONDS:
+                self._cache.pop(key, None)
+                return None
+            self._cache.move_to_end(key)
+            return dict(value)
+
+    def _store(self, key, value):
+        with self._cache_lock:
+            self._cache[key] = (time.monotonic(), dict(value))
+            self._cache.move_to_end(key)
+            while len(self._cache) > SUMMARY_CACHE_MAX_ENTRIES:
+                self._cache.popitem(last=False)
 
     @staticmethod
     def bound_evidence(evidence):
@@ -87,6 +130,10 @@ class GeminiEvidenceSummarizer:
         bounded = self.bound_evidence(evidence)
         if not bounded:
             return None
+        cache_key = self._cache_key(question, bounded)
+        cached = self._cached(cache_key)
+        if cached is not None:
+            return cached
         instruction = (
             "Explain only the supplied evidence in simple everyday English. Do not add "
             "facts from general knowledge. Do not prescribe, recommend a dose or treatment, "
@@ -140,9 +187,15 @@ class GeminiEvidenceSummarizer:
             result = self._validate(json.loads(text))
             if result is not None:
                 result["model_used"] = model_used
+                self._store(cache_key, result)
             return result
         except Exception:
             return None
 
 
-__all__ = ["GeminiEvidenceSummarizer", "MAX_EVIDENCE_CHARS"]
+__all__ = [
+    "GeminiEvidenceSummarizer",
+    "MAX_EVIDENCE_CHARS",
+    "SUMMARY_CACHE_MAX_ENTRIES",
+    "SUMMARY_CACHE_TTL_SECONDS",
+]

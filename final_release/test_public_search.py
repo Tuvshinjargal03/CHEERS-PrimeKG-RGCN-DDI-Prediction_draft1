@@ -183,6 +183,36 @@ class PublicSearchTests(unittest.TestCase):
         self.assertIn("FDA label", summarizer.calls[0][1])
         self.assertIn("PubMed", summarizer.calls[0][1])
 
+    def test_fast_search_does_not_wait_for_external_sources_or_summarizer(self):
+        class FailingLabels:
+            def get_pair_evidence(self, **_kwargs):
+                raise AssertionError("external label lookup must not run")
+
+        class FailingLiterature:
+            def search_pair(self, **_kwargs):
+                raise AssertionError("PubMed lookup must not run")
+
+        search = PublicSearchService(
+            project_dir=ROOT,
+            label_evidence_service=FailingLabels(),
+            literature_service=FailingLiterature(),
+            evidence_summarizer=FixtureEvidenceSummarizer(
+                error=AssertionError("Gemini summarizer must not run")
+            ),
+        )
+        payload = search.search(
+            "warfarin aspirin together?",
+            include_explanation=False,
+            include_external_evidence=False,
+        )
+        self.assertEqual(payload["intent"], "drug_pair_question")
+        self.assertEqual(
+            [entity["entity_id"] for entity in payload["recognized_entities"]],
+            ["DB00682", "DB00945"],
+        )
+        self.assertTrue(payload["ai_explanation_eligible"])
+        self.assertNotIn("explanation", payload)
+
     def test_summarizer_failure_keeps_safe_deterministic_pair_explanation(self):
         self.use_summarizer(FixtureEvidenceSummarizer(error=TimeoutError()))
         payload = self.search.search("can i take fluoxymesterone with icosapent")
@@ -385,6 +415,7 @@ class PublicSearchTests(unittest.TestCase):
             ("what is ibuprofen for", "drug_information", "DB01050"),
             ("tell me metformin side effects", "drug_side_effects", "DB00331"),
             ("what are the side effects of metformin", "drug_side_effects", "DB00331"),
+            ("side effects of metphormin", "drug_side_effects", "DB00331"),
         )
         interpreter = FixtureQueryInterpreter(error=AssertionError("unexpected call"))
         self.use_interpreter(interpreter)
@@ -393,6 +424,16 @@ class PublicSearchTests(unittest.TestCase):
                 payload = self.search.search(query)
                 self.assertEqual(payload["intent"], intent)
                 self.assertEqual(payload["recognized_entities"][0]["entity_id"], entity_id)
+        self.assertEqual(interpreter.calls, [])
+
+    def test_common_medicine_and_symptom_wording_stays_general(self):
+        interpreter = FixtureQueryInterpreter(error=AssertionError("unexpected call"))
+        self.use_interpreter(interpreter)
+        payload = self.search.search("does ibuprofen help pain")
+        self.assertEqual(payload["intent"], "general_symptom_or_treatment_question")
+        self.assertEqual(payload["recognized_entities"][0]["entity_id"], "DB01050")
+        self.assertEqual(payload["topic"], "pain")
+        self.assertNotIn("disease", str(payload["recognized_entities"]).casefold())
         self.assertEqual(interpreter.calls, [])
 
     def test_whats_diabetes_returns_choices_without_interpreter(self):
@@ -483,6 +524,38 @@ class PublicSearchTests(unittest.TestCase):
         self.assertTrue(
             any("diabetes" in item["name"].casefold() for item in candidates)
         )
+
+    def test_disease_suggestions_are_bounded_and_prioritize_common_matches(self):
+        payload = self.search.disease_suggestions("diab")
+        names = [item["name"].casefold() for item in payload["suggestions"]]
+        self.assertLessEqual(len(names), 6)
+        self.assertEqual(names[:4], [
+            "diabetes mellitus (disease)",
+            "type 2 diabetes mellitus",
+            "type 1 diabetes mellitus",
+            "gestational diabetes",
+        ])
+        self.assertTrue(all(item["entity_type"] == "disease" for item in payload["suggestions"]))
+
+    def test_disease_suggestions_rank_exact_then_conservative_typo(self):
+        exact = self.search.disease_suggestions("type 2 diabetes mellitus")
+        self.assertEqual(exact["suggestions"][0]["entity_id"], "5148")
+        self.assertEqual(exact["suggestions"][0]["match_type"], "exact_canonical_name")
+        typo = self.search.disease_suggestions("diabetis")
+        self.assertIn("diabetes", typo["suggestions"][0]["name"].casefold())
+        self.assertEqual(
+            self.search.disease_suggestions("banana spaceship")["suggestions"], []
+        )
+
+    def test_disease_suggestions_do_not_use_optional_services(self):
+        interpreter = FixtureQueryInterpreter(error=AssertionError("Gemini must not run"))
+        summarizer = FixtureEvidenceSummarizer(error=AssertionError("Gemini must not run"))
+        self.use_interpreter(interpreter)
+        self.use_summarizer(summarizer)
+        payload = self.search.disease_suggestions("diab")
+        self.assertTrue(payload["suggestions"])
+        self.assertEqual(interpreter.calls, [])
+        self.assertEqual(summarizer.calls, [])
 
     def test_exact_canonical_name_outranks_containing_name(self):
         search = object.__new__(PublicSearchService)
@@ -637,6 +710,24 @@ class PublicSearchTests(unittest.TestCase):
         ):
             result = summarizer.summarize("question", {"FDA label": ["evidence"]})
         self.assertEqual(result["model_used"], GEMINI_FALLBACK_MODEL)
+
+    def test_identical_grounded_summary_is_reused_from_bounded_cache(self):
+        summary = {
+            "status": "answered",
+            "short_answer": "A short grounded explanation.",
+            "key_points": ["One retrieved point."],
+            "what_we_cannot_conclude": "This is not a safety conclusion.",
+            "sources_used": ["FDA label"],
+        }
+        summarizer = GeminiEvidenceSummarizer(api_key="test-key")
+        with patch(
+            "src.gemini_evidence_summarizer.open_with_model_fallback",
+            return_value=(GeminiJsonResponse(summary), GEMINI_PRIMARY_MODEL),
+        ) as request:
+            first = summarizer.summarize("question", {"FDA label": ["evidence"]})
+            second = summarizer.summarize("question", {"FDA label": ["evidence"]})
+        self.assertEqual(first, second)
+        self.assertEqual(request.call_count, 1)
 
     def test_approved_disease_description(self):
         payload = self.search.search("what is type 2 diabetes mellitus")
@@ -1143,6 +1234,8 @@ class PublicSearchTests(unittest.TestCase):
                 if isinstance(decorator.args[0], ast.Constant):
                     routes.add(decorator.args[0].value)
         self.assertIn("/api/public/search", routes)
+        self.assertIn("/api/public/explain", routes)
+        self.assertIn("/api/public/disease-suggestions", routes)
 
     @unittest.skipUnless(
         importlib.util.find_spec("fastapi") and importlib.util.find_spec("numpy"),
@@ -1156,11 +1249,43 @@ class PublicSearchTests(unittest.TestCase):
             response = client.get(
                 "/api/public/search", params={"q": "warfarin interactions"}
             )
+            summarizer = FixtureEvidenceSummarizer(result={
+                "status": "answered",
+                "short_answer": "A later grounded explanation.",
+                "key_points": [],
+                "what_we_cannot_conclude": "This is not personalized medical advice.",
+                "sources_used": ["FDA label"],
+            })
+            with patch.object(
+                app.state.public_search,
+                "drug_information_service",
+                FixtureDrugInformationService(),
+            ), patch.object(
+                app.state.public_search,
+                "evidence_summarizer",
+                summarizer,
+            ):
+                initial = client.get(
+                    "/api/public/search", params={"q": "what does metformin do"}
+                )
+                enhanced = client.post(
+                    "/api/public/explain",
+                    json={"query": "what does metformin do"},
+                )
         self.assertEqual(response.status_code, 200, response.text)
         payload = response.json()
         self.assertEqual(payload["intent"], "drug_interactions")
         self.assertEqual(payload["recognized_entities"][0]["entity_id"], "DB00682")
         self.assertNotIn("conclusion", payload)
+        self.assertEqual(initial.status_code, 200, initial.text)
+        self.assertNotIn("explanation", initial.json())
+        self.assertTrue(initial.json()["ai_explanation_eligible"])
+        self.assertEqual(enhanced.status_code, 200, enhanced.text)
+        self.assertEqual(
+            enhanced.json()["explanation"]["short_answer"],
+            "A later grounded explanation.",
+        )
+        self.assertEqual(len(summarizer.calls), 1)
 
 
 if __name__ == "__main__":

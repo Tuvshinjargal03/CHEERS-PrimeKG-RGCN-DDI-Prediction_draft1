@@ -120,19 +120,23 @@ function ConditionAutocomplete({ selection, savedIds, onSelect, disabled }) {
     if (!normalizedQuery) return undefined
 
     let requestId = null
+    const controller = new AbortController()
     const timer = window.setTimeout(async () => {
       requestId = requestIdRef.current + 1
       requestIdRef.current = requestId
       setLoading(true)
       setError('')
       try {
-        const payload = await getJson(`/api/public/search?q=${encodeURIComponent(normalizedQuery)}`)
+        const payload = await getJson(
+          `/api/public/disease-suggestions?q=${encodeURIComponent(normalizedQuery)}&limit=6`,
+          { cache: false, signal: controller.signal },
+        )
         if (requestIdRef.current !== requestId) return
-        setResults(diseaseCandidates(payload))
-      } catch (requestError) {
+        setResults(diseaseCandidates({ recognized_entities: payload?.suggestions || [] }))
+      } catch {
         if (requestIdRef.current !== requestId) return
         setResults([])
-        setError(requestError.message || 'Condition search could not be completed.')
+        setError('Condition search could not be completed. Please try again.')
       } finally {
         if (requestIdRef.current === requestId) setLoading(false)
       }
@@ -140,6 +144,7 @@ function ConditionAutocomplete({ selection, savedIds, onSelect, disabled }) {
 
     return () => {
       window.clearTimeout(timer)
+      controller.abort()
       if (requestId !== null && requestIdRef.current === requestId) requestIdRef.current += 1
     }
   }, [open, query, selection])
@@ -235,7 +240,7 @@ function ConditionAutocomplete({ selection, savedIds, onSelect, disabled }) {
         )}
       </div>
 
-      {selection && <small className="my-conditions-selection-meta">Selected CHEERS condition · {selection.entity_id}</small>}
+      {selection && <small className="my-conditions-selection-meta">Selected condition: {selection.name}</small>}
 
       {open && !selection && (
         <div id={listboxId} className="my-conditions-suggestions" role="listbox" aria-label="Condition suggestions">
@@ -260,7 +265,7 @@ function ConditionAutocomplete({ selection, savedIds, onSelect, disabled }) {
                 onMouseEnter={() => setActiveIndex(index)}
                 onClick={() => choose(condition)}
               >
-                <span><strong>{condition.name}</strong><small>{condition.entity_id}</small></span>
+                <span><strong>{condition.name}</strong></span>
                 {saved && <em>Saved</em>}
               </button>
             )
@@ -288,12 +293,12 @@ function ConditionCard({ condition, onRemove }) {
       (result) => {
         if (active) setRequest({ conditionId: condition.entity_id, payload: result, error: '' })
       },
-      (requestError) => {
+      () => {
         if (active) {
           setRequest({
             conditionId: condition.entity_id,
             payload: null,
-            error: requestError.message || 'Condition information could not be loaded.',
+            error: 'Condition information could not be loaded. Please try again.',
           })
         }
       },
@@ -323,7 +328,6 @@ function ConditionCard({ condition, onRemove }) {
         <div>
           <span>Saved condition</span>
           <h3>{condition.name}</h3>
-          <small>{condition.entity_id}</small>
         </div>
         <button type="button" onClick={() => onRemove(condition.entity_id)} aria-label={`Remove ${condition.name}`}>
           <X size={16} aria-hidden="true" />
@@ -489,7 +493,7 @@ export default function MyConditions() {
         ) : (
           <div className="my-conditions-empty">
             <HeartPulse size={25} aria-hidden="true" />
-            <div><strong>Save a condition to organize its available CHEERS information.</strong><p>Use Browse conditions above to find a canonical disease entity, then open its details, typed medicine relationships, nutrition information when available, and My Health connections.</p></div>
+            <div><strong>Save a condition to organize its available CHEERS information.</strong><p>Use Find a condition above, then open its details, medicine relationships, nutrition information when available, and My Health connections.</p></div>
           </div>
         )}
       </section>

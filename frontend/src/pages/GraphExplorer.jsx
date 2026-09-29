@@ -7,6 +7,7 @@ import EntityDetailsPanel from '../components/EntityDetailsPanel.jsx'
 import MedicineLabelScanner from '../components/MedicineLabelScanner.jsx'
 import { G3_CONTEXT_CANDIDATE_IDS } from '../data/g3ContextCandidateIds.js'
 import { drugContextEndpoint, getJson, pairEndpoint, resolveDrug } from '../lib/api.js'
+import { medicineDisplayName } from '../lib/medicineNames.js'
 import './GraphExplorerAvailability.css'
 
 const DEFAULT_SHARED_NODES = 15
@@ -253,12 +254,12 @@ export default function GraphExplorer() {
         setDrugA(resolvedA)
         setDrugB(resolvedB)
         if ((initialAId && !resolvedA) || (initialBId && !resolvedB)) {
-          setError('One of the requested DrugBank identifiers could not be resolved.')
+          setError('One of the requested medicines could not be found.')
         }
       })
-      .catch((requestError) => {
+      .catch(() => {
         if (active && contextRequestId.current === requestId) {
-          setError(requestError.message || 'The requested pair could not be resolved.')
+          setError('The requested medicines could not be loaded. Please try again.')
         }
       })
       .finally(() => {
@@ -448,9 +449,9 @@ export default function GraphExplorer() {
             if (contextRequestId.current === requestId) setSuggestionsLoading(false)
           })
       }
-    } catch (requestError) {
+    } catch {
       if (contextRequestId.current === requestId) {
-        setError(requestError.message || 'Research connections could not be loaded.')
+        setError('Research connections could not be loaded. Please try again.')
       }
     } finally {
       if (contextRequestId.current === requestId) setLoading(false)
@@ -461,10 +462,10 @@ export default function GraphExplorer() {
     <section className="page graph-page">
       <div className="page-heading">
         <span className="eyebrow">Supporting biomedical context</span>
-        <h1>Graph Explorer</h1>
+        <h1>Compare two medicines</h1>
         <p>
-          Explore shared gene/protein and disease associations available in the
-          available exported knowledge-graph data. These relationships are not a causal explanation
+          Explore shared gene/protein and disease associations in the available
+          knowledge-graph data. These relationships are not a causal explanation
           of a model score and do not establish clinical safety or harm.
         </p>
       </div>
@@ -472,13 +473,13 @@ export default function GraphExplorer() {
       <form className="pair-form graph-pair-form" onSubmit={loadContext}>
         <div className="graph-form-heading">
           <span className="eyebrow">Pair selection</span>
-          <h2>Choose two drugs</h2>
-          <p>Search for each medicine first. Both need available exported knowledge-graph data for this pair view.</p>
+          <h2>Choose two medicines</h2>
+          <p>Choose two medicines to see shared biomedical relationships in the available research data.</p>
         </div>
         <div className="drug-selection-field">
           <DrugAutocomplete label="Drug A" selection={drugA} onSelect={selectDrugA} disabled={resolving} getOptionAnnotation={g3ContextAnnotation} />
           <div className="graph-scanner-helper">
-            <span>Optional label-text helper</span>
+            <span>Scan a medicine label</span>
             <MedicineLabelScanner targetLabel="Drug A" onDrugSelect={selectDrugA} disabled={resolving} />
           </div>
           <ContextAvailability drug={drugA} available={drugAHasContext} />
@@ -486,7 +487,7 @@ export default function GraphExplorer() {
         <div className="drug-selection-field">
           <DrugAutocomplete label="Drug B" selection={drugB} onSelect={selectDrugB} disabled={resolving} getOptionAnnotation={g3ContextAnnotation} />
           <div className="graph-scanner-helper">
-            <span>Optional label-text helper</span>
+            <span>Scan a medicine label</span>
             <MedicineLabelScanner targetLabel="Drug B" onDrugSelect={selectDrugB} disabled={resolving} />
           </div>
           <ContextAvailability drug={drugB} available={drugBHasContext} />
@@ -528,7 +529,7 @@ export default function GraphExplorer() {
             <h2>Shared context overview</h2>
           </div>
           <div className="graph-pair-summary" aria-label="Selected pair summary">
-            <div><span>Selected pair</span><strong>{context.drug_a.drug_name} + {context.drug_b.drug_name}</strong></div>
+            <div><span>Selected pair</span><strong>{medicineDisplayName(context.drug_a.drug_name)} + {medicineDisplayName(context.drug_b.drug_name)}</strong></div>
             <p>{context.shared.total > displayedCount ? `Showing ${displayedCount} of ${context.shared.total.toLocaleString()} shared context entities` : `Showing all ${displayedCount.toLocaleString()} shared context entities`}</p>
           </div>
           <div className="context-metrics graph-context-metrics">
@@ -541,7 +542,7 @@ export default function GraphExplorer() {
           <div className="subgraph-workspace">
           <article className="graph-card graph-pair-card subgraph-graph-card">
             <div className="graph-toolbar">
-              <div><span className="eyebrow">Shared biomedical relationships</span><h2>{context.drug_a.drug_name} + {context.drug_b.drug_name}</h2></div>
+              <div><span className="eyebrow">Shared biomedical relationships</span><h2>{medicineDisplayName(context.drug_a.drug_name)} + {medicineDisplayName(context.drug_b.drug_name)}</h2></div>
               <div className="graph-controls" aria-label="Graph controls">
                 <button type="button" title="Zoom in" onClick={() => cyRef.current?.zoom({ level: cyRef.current.zoom() * 1.2, renderedPosition: { x: 360, y: 230 } })} aria-label="Zoom in"><Plus size={17} /></button>
                 <button type="button" title="Zoom out" onClick={() => cyRef.current?.zoom({ level: cyRef.current.zoom() / 1.2, renderedPosition: { x: 360, y: 230 } })} aria-label="Zoom out"><Minus size={17} /></button>
@@ -561,7 +562,7 @@ export default function GraphExplorer() {
               <strong>Relations in displayed subgraph</strong>
               <div>{displayedRelations.map((relation) => <span key={relation}>{relation}</span>)}</div>
             </div>
-            <div ref={containerRef} className={`cytoscape-canvas ${displayLimit > DEFAULT_SHARED_NODES ? 'expanded' : ''}`} role="img" aria-label={`Interactive knowledge-graph relationships for ${context.drug_a.drug_name} and ${context.drug_b.drug_name}`} />
+            <div ref={containerRef} className={`cytoscape-canvas ${displayLimit > DEFAULT_SHARED_NODES ? 'expanded' : ''}`} role="img" aria-label={`Interactive knowledge-graph relationships for ${medicineDisplayName(context.drug_a.drug_name)} and ${medicineDisplayName(context.drug_b.drug_name)}`} />
             {context.shared.total > displayedCount && <p className="graph-limit-note">Showing {displayedCount} of {context.shared.total.toLocaleString()} shared entities returned by the context endpoint to reduce visual clutter. Omitted entities are not considered less important.</p>}
             {!context.shared.total && <div className="graph-empty-overlay">No direct shared research connections were found for this pair.</div>}
           </article>
@@ -594,7 +595,7 @@ export default function GraphExplorer() {
                       key={`${suggestion.anchor_drug_id}:${suggestion.candidate_drug_id}`}
                       className="context-detail-card"
                     >
-                      <h3>{suggestion.anchor_drug_name} + {suggestion.candidate_drug_name}</h3>
+                      <h3>{medicineDisplayName(suggestion.anchor_drug_name)} + {medicineDisplayName(suggestion.candidate_drug_name)}</h3>
                       <div className="relation-chip-list">
                         <span>Shared entities <b>{suggestion.shared.total.toLocaleString()}</b></span>
                         <span>Gene / protein <b>{suggestion.shared.gene_protein_count.toLocaleString()}</b></span>
@@ -621,7 +622,7 @@ export default function GraphExplorer() {
           <div className="individual-context-grid">
             {[[context.drug_a, countsA], [context.drug_b, countsB]].map(([drug, counts]) => (
               <article key={drug.drug_id} className="context-detail-card">
-                <span>Total research connections for this medicine</span><h3>{drug.drug_name}</h3><strong>{drug.total_context_edges.toLocaleString()} relationships</strong>
+                <span>Total research connections for this medicine</span><h3>{medicineDisplayName(drug.drug_name)}</h3><strong>{drug.total_context_edges.toLocaleString()} relationships</strong>
                 <div className="relation-chip-list">{counts.map(([relation, count]) => <span key={relation}>{relationLabel(relation)} <b>{count.toLocaleString()}</b></span>)}</div>
               </article>
             ))}
@@ -630,7 +631,7 @@ export default function GraphExplorer() {
           <div className="workflow-actions">
             <div>
               <BookOpen size={20} />
-              <p><strong>Continue with independent external evidence</strong><span>Review openFDA label excerpts and PubMed records. This evidence does not validate knowledge-graph relationships or an R-GCN prediction.</span></p>
+              <p><strong>Continue with independent external evidence</strong><span>Review official label excerpts and PubMed research articles. This evidence does not validate knowledge-graph relationships or an R-GCN prediction.</span></p>
             </div>
             <button type="button" className="primary-button" onClick={() => navigate(evidenceDestination(context, navigationScore))}>
               Review evidence<ArrowRight size={16} />

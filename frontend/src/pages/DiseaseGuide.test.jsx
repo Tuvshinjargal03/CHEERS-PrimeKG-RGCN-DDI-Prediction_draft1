@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -94,10 +94,56 @@ describe('DiseaseGuide', () => {
     getJson.mockReset()
   })
 
+  it('debounces live suggestions, hides IDs, and opens the selected condition', async () => {
+    const user = userEvent.setup()
+    getJson.mockResolvedValue({
+      query: 'diab',
+      suggestions: [{ name: 'type 2 diabetes mellitus', entity_id: '5148', entity_type: 'disease', match_type: 'canonical_name_substring' }],
+    })
+    renderGuide('/diseases')
+    const input = screen.getByRole('combobox', { name: /search for a condition/i })
+
+    await user.type(input, 'd')
+    expect(getJson).not.toHaveBeenCalled()
+    await user.type(input, 'iab')
+    expect(getJson).not.toHaveBeenCalled()
+    await waitFor(() => expect(getJson).toHaveBeenCalledWith('/api/public/disease-suggestions?q=diab&limit=6', expect.objectContaining({ cache: false })))
+    const option = (await screen.findByText('Type 2 diabetes mellitus')).closest('button')
+    expect(option).not.toHaveTextContent('5148')
+    await user.click(option)
+    expect(screen.getByTestId('location')).toHaveTextContent('/diseases/5148')
+  })
+
+  it('does not let an older suggestion response replace the current query', async () => {
+    const user = userEvent.setup()
+    const resolvers = []
+    getJson.mockImplementation(() => new Promise((resolve) => resolvers.push(resolve)))
+    renderGuide('/diseases')
+    const input = screen.getByRole('combobox')
+    await user.type(input, 'dia')
+    await waitFor(() => expect(getJson).toHaveBeenCalledTimes(1))
+    await user.type(input, 'b')
+    await waitFor(() => expect(getJson).toHaveBeenCalledTimes(2))
+    await act(async () => resolvers[1]({ suggestions: [{ name: 'type 2 diabetes mellitus', entity_id: '5148' }] }))
+    expect(await screen.findByText('Type 2 diabetes mellitus')).toBeVisible()
+    await act(async () => resolvers[0]({ suggestions: [{ name: 'obsolete condition', entity_id: 'old' }] }))
+    expect(screen.queryByText('Obsolete condition')).not.toBeInTheDocument()
+  })
+
+  it('shows a compact no-match state while preserving normal form submission', async () => {
+    const user = userEvent.setup()
+    getJson.mockResolvedValue({ query: 'zzzz', suggestions: [] })
+    renderGuide('/diseases')
+    await user.type(screen.getByRole('combobox'), 'zzzz')
+    expect(await screen.findByText('No matching condition found.')).toBeVisible()
+    await user.click(screen.getByRole('button', { name: 'Search' }))
+    expect(screen.getByTestId('location')).toHaveTextContent('/search?q=zzzz')
+  })
+
   it('routes a disease search through the deterministic public-search contract', async () => {
     const user = userEvent.setup()
     renderGuide('/diseases')
-    await user.type(screen.getByRole('searchbox', { name: /search for a disease/i }), 'type 2 diabetes')
+    await user.type(screen.getByRole('combobox', { name: /search for a condition/i }), 'type 2 diabetes')
     await user.click(screen.getByRole('button', { name: 'Search' }))
     expect(screen.getByTestId('location')).toHaveTextContent('/search?q=type%202%20diabetes')
   })
@@ -130,7 +176,7 @@ describe('DiseaseGuide', () => {
     getJson.mockResolvedValue(APPROVED)
     renderGuide('/diseases/5148')
 
-    const indicationSection = await screen.findByRole('heading', { name: 'Medicines associated through indication' })
+    const indicationSection = await screen.findByRole('heading', { name: 'Medicines with an indication relationship' })
     const indicationContainer = indicationSection.closest('section')
     expect(within(indicationContainer).getByText('Metformin')).toBeVisible()
     expect(within(indicationContainer).queryByText('Warfarin')).not.toBeInTheDocument()
@@ -249,7 +295,7 @@ describe('DiseaseGuide', () => {
     })
     renderGuide('/diseases/5015?section=nutrition-lifestyle')
 
-    expect(await screen.findByRole('heading', { name: 'Medicines associated through indication' })).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Medicines with an indication relationship' })).toBeVisible()
     expect(screen.queryByRole('link', { name: 'Nutrition & lifestyle' })).not.toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Nutrition & lifestyle' })).not.toBeInTheDocument()
     expect(screen.queryByText('General source-backed nutrition context.')).not.toBeInTheDocument()

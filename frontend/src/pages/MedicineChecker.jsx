@@ -19,6 +19,7 @@ import MedicineLabelScanner from '../components/MedicineLabelScanner.jsx'
 import { G3_CONTEXT_CANDIDATE_IDS } from '../data/g3ContextCandidateIds.js'
 import { getJson, pairEndpoint, resolveDrug } from '../lib/api.js'
 import { derivePairReviewStatus } from '../lib/pairStatus.js'
+import { medicineDisplayName } from '../lib/medicineNames.js'
 import './PublicProduct.css'
 
 const CONTEXT_IDS = new Set(G3_CONTEXT_CANDIDATE_IDS)
@@ -72,8 +73,8 @@ export default function MedicineChecker() {
           setEvidenceError('One of the requested medicine identifiers could not be found.')
         }
       })
-      .catch((error) => {
-        if (active) setEvidenceError(error.message || 'The requested medicines could not be loaded.')
+      .catch(() => {
+        if (active) setEvidenceError('The requested medicines could not be loaded. Please try again.')
       })
       .finally(() => {
         if (active) setResolving(false)
@@ -137,7 +138,7 @@ export default function MedicineChecker() {
     if (evidenceResult.status === 'fulfilled') {
       setEvidence(evidenceResult.value)
     } else {
-      setEvidenceError(evidenceResult.reason?.message || 'The checked sources could not be retrieved.')
+      setEvidenceError('The checked sources could not be retrieved. Please try again.')
     }
 
     if (contextResult.status === 'fulfilled') {
@@ -164,7 +165,7 @@ export default function MedicineChecker() {
           <div>
             <span className="eyebrow">Medicine pair</span>
             <h2>Which medicines would you like to check?</h2>
-            <p>Search by medicine name or DrugBank ID. Label scanning is an optional text-selection helper.</p>
+            <p>Search by a medicine name. You can also scan a label to help find it.</p>
           </div>
           <span className="product-step-badge">2 medicines</span>
         </div>
@@ -174,7 +175,7 @@ export default function MedicineChecker() {
             <div className="checker-field-step"><span>1</span><strong>Choose the first medicine</strong></div>
             <DrugAutocomplete label="First medicine" selection={drugA} onSelect={selectA} disabled={loading || resolving} />
             <div className="checker-scanner-helper">
-              <small>Optional label-text helper</small>
+              <small>Scan a medicine label</small>
               <MedicineLabelScanner targetLabel="First medicine" onDrugSelect={selectA} disabled={loading || resolving} />
             </div>
           </div>
@@ -183,7 +184,7 @@ export default function MedicineChecker() {
             <div className="checker-field-step"><span>2</span><strong>Choose the second medicine</strong></div>
             <DrugAutocomplete label="Second medicine" selection={drugB} onSelect={selectB} disabled={loading || resolving} />
             <div className="checker-scanner-helper">
-              <small>Optional label-text helper</small>
+              <small>Scan a medicine label</small>
               <MedicineLabelScanner targetLabel="Second medicine" onDrugSelect={selectB} disabled={loading || resolving} />
             </div>
           </div>
@@ -226,9 +227,9 @@ export default function MedicineChecker() {
             </div>
             <div>
               <div className="checker-result-pair" aria-label="Checked medicine pair">
-                <strong>{drugA?.name}</strong>
+                <strong>{medicineDisplayName(drugA)}</strong>
                 <b aria-hidden="true">+</b>
-                <strong>{drugB?.name}</strong>
+                <strong>{medicineDisplayName(drugB)}</strong>
               </div>
               <span>Checked-source status</span>
               <h2>{status.title}</h2>
@@ -244,7 +245,7 @@ export default function MedicineChecker() {
             </article>
             <article>
               <BookOpen size={18} aria-hidden="true" />
-              <div><strong>{evidence ? papers.length : '—'}</strong><span>Related PubMed records</span><small>{evidenceError ? 'Source unavailable' : 'Retrieved result'}</small></div>
+              <div><strong>{evidence ? papers.length : '—'}</strong><span>Research articles</span><small>PubMed · {evidenceError ? 'Source unavailable' : 'Retrieved result'}</small></div>
             </article>
             <article>
               <Network size={18} aria-hidden="true" />
@@ -307,7 +308,7 @@ export default function MedicineChecker() {
                         {validSourceUrl(paper.url, 'pubmed.ncbi.nlm.nih.gov') && <a href={paper.url} target="_blank" rel="noopener noreferrer">PMID {paper.pmid} <ExternalLink size={13} /></a>}
                       </article>
                     ))}
-                    <p className="product-count-note">{papers.length} related {papers.length === 1 ? 'record' : 'records'} retrieved.</p>
+                    <p className="product-count-note">{papers.length} related research {papers.length === 1 ? 'article' : 'articles'} retrieved.</p>
                     {papers.length > 3 && (
                       <button type="button" className="product-inline-button" onClick={() => setShowAllPapers((current) => !current)}>
                         {showAllPapers ? 'Show fewer' : `View all ${papers.length}`}
@@ -315,7 +316,7 @@ export default function MedicineChecker() {
                     )}
                   </div>
                 ) : (
-                  <div className="product-card-empty"><strong>No related PubMed record retrieved.</strong><p>This is not a systematic literature review.</p></div>
+                  <div className="product-card-empty"><strong>No related PubMed research article retrieved.</strong><p>This is not a systematic literature review.</p></div>
                 )}
                 {papers.length > 0 && <p className="checker-source-boundary">This PubMed search is not a systematic literature review.</p>}
               </article>
@@ -348,7 +349,7 @@ export default function MedicineChecker() {
       )}
 
       <p className="product-page-boundary">
-        <CheckCircle2 size={15} /> CHEERS is a research and information prototype, not clinical decision support.
+        <CheckCircle2 size={15} /> CHEERS helps you explore medicine information. It does not replace advice from a healthcare professional.
       </p>
     </section>
   )

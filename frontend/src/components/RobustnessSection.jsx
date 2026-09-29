@@ -83,10 +83,7 @@ function RobustnessSection() {
           </div>
           <span>{primaryInternal.scope}</span>
         </div>
-        <p>
-          G3 achieved the strongest overall five-seed mean internal performance,
-          although its gains over G0 were modest.
-        </p>
+        <p>The robustness views below keep the controlled internal result separate from exploratory and stress-test evidence.</p>
         <div className="robustness-primary-metrics">
           <div><span>G0 MRR</span><strong>{fixed(primaryByModel.G0.MRR)}</strong><small>± {fixed(primaryByModel.G0.MRRSD)}</small></div>
           <div><span>G3 MRR</span><strong>{fixed(primaryByModel.G3.MRR)}</strong><small>± {fixed(primaryByModel.G3.MRRSD)}</small></div>

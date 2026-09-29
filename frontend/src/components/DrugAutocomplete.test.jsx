@@ -34,17 +34,15 @@ describe('DrugAutocomplete', () => {
     getJson.mockReset()
   })
 
-  it('opens an empty browse, renders suggestions, and selects a result', async () => {
+  it('opens with useful guidance without loading an arbitrary alphabetical browse', async () => {
     const user = userEvent.setup()
     getJson.mockResolvedValue(searchResponse([ASPIRIN]))
-    const { input, onSelect } = renderAutocomplete()
+    const { input } = renderAutocomplete()
 
     await user.click(input)
 
-    expect(await screen.findByRole('option', { name: /Aspirin/ })).toBeVisible()
-    expect(getJson).toHaveBeenCalledWith('/api/drugs/search?q=&limit=50&offset=0')
-    await user.click(screen.getByRole('option', { name: /Aspirin/ }))
-    expect(onSelect).toHaveBeenCalledWith(ASPIRIN)
+    expect(screen.getByText('Type a medicine name to search.')).toBeVisible()
+    expect(getJson).not.toHaveBeenCalled()
   })
 
   it('accepts and searches a one-character query', async () => {
@@ -162,7 +160,7 @@ describe('DrugAutocomplete', () => {
     const option = await screen.findByRole('option', { name: new RegExp(LONG_CANONICAL_NAME.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')) })
     expect(option).toHaveAccessibleName(expect.stringContaining(LONG_CANONICAL_NAME.name))
     expect(within(option).getByText(LONG_CANONICAL_NAME.name)).toHaveAttribute('title', LONG_CANONICAL_NAME.name)
-    expect(within(option).getByText('DrugBank · DB08496')).toBeVisible()
+    expect(within(option).queryByText(/DB08496/)).not.toBeInTheDocument()
     expect(within(option).getByText('Research connections available')).toBeVisible()
   })
 })

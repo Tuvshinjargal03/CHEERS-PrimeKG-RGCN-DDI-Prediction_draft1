@@ -6,6 +6,7 @@ import DrugAutocomplete from '../components/DrugAutocomplete.jsx'
 import EntityDetailsPanel from '../components/EntityDetailsPanel.jsx'
 import MedicineLabelScanner from '../components/MedicineLabelScanner.jsx'
 import { drugContextEndpoint, getJson } from '../lib/api.js'
+import { medicineDisplayName } from '../lib/medicineNames.js'
 
 const PAGE_SIZE = 50
 const RELATIONS = [
@@ -228,15 +229,22 @@ export default function SubgraphExplorer() {
       }
       const canonicalDrug = {
         ...targetDrug,
-        name: payload.center.name,
+        name: medicineDisplayName(payload.center.name),
+      }
+      const displayPayload = {
+        ...payload,
+        center: { ...payload.center, name: medicineDisplayName(payload.center.name) },
+        neighbors: payload.neighbors.map((neighbor) => neighbor.entity_type === 'drug'
+          ? { ...neighbor, name: medicineDisplayName(neighbor.name) }
+          : neighbor),
       }
       setDrug(canonicalDrug)
       setExploredDrug(canonicalDrug)
-      setData(payload)
-      setNeighbors(payload.neighbors)
+      setData(displayPayload)
+      setNeighbors(displayPayload.neighbors)
       setSelected(null)
-    } catch (requestError) {
-      if (requestId.current === currentRequest) setError(requestError.message || 'Research connections could not be loaded.')
+    } catch {
+      if (requestId.current === currentRequest) setError('Research connections could not be loaded. Please try again.')
     } finally {
       if (requestId.current === currentRequest) {
         setLoading(false)
@@ -323,8 +331,8 @@ export default function SubgraphExplorer() {
     <section className="page subgraph-page">
       <div className="page-heading">
         <span className="eyebrow">Medicine research connections</span>
-        <h1>Subgraph Explorer</h1>
-        <p>Explore the available one-hop knowledge-graph neighborhood around one selected medicine.</p>
+        <h1>Explore one medicine</h1>
+        <p>See genes, proteins, diseases, and medicines connected in the knowledge graph.</p>
       </div>
 
       <aside className="subgraph-scope-note"><AlertCircle size={20} /><p><strong>Research context</strong>This view shows available knowledge-graph relationships. Drug–drug edges are training-set relationships. The graph is descriptive context, not a causal model explanation or clinical safety assessment.</p></aside>
@@ -333,19 +341,18 @@ export default function SubgraphExplorer() {
         <div className="subgraph-form-heading">
           <span className="eyebrow">Medicine selection</span>
           <h2>Choose one center medicine</h2>
-          <p>Search by medicine name or DrugBank ID. Label scanning is an optional text-selection helper.</p>
+          <p>Search by a medicine name to explore its nearby research connections.</p>
         </div>
         <div className="drug-selection-field">
           <DrugAutocomplete label="Center medicine" selection={drug} onSelect={selectDrug} />
           <div className="subgraph-scanner-helper">
-            <span>Optional label-text helper</span>
+            <span>Scan a medicine label</span>
             <MedicineLabelScanner targetLabel="Medicine" onDrugSelect={selectDrug} />
-            <small>Reads printed label text to help select a supported medicine; it is not authoritative medicine identification.</small>
           </div>
         </div>
         <button type="submit" className="primary-button" disabled={!drug || loading}>
           {loading ? <LoaderCircle className="spin" size={18} /> : <Share2 size={18} />}
-          {loading ? 'Fetching research connections…' : 'Explore subgraph'}
+          {loading ? 'Fetching research connections…' : 'Explore connections'}
         </button>
       </form>
 
@@ -358,7 +365,7 @@ export default function SubgraphExplorer() {
           <div className="subgraph-result-heading">
             <span className="eyebrow">Filtered knowledge-graph neighborhood</span>
             <h2>{data.center.name}</h2>
-            <p>{data.center.entity_id} · {neighbors.length ? `Showing ${rangeStart.toLocaleString()}–${rangeEnd.toLocaleString()} of ${totalNeighbors.toLocaleString()} matching neighbors` : 'No matching neighbors are currently displayed'}</p>
+            <p>{neighbors.length ? `Showing ${rangeStart.toLocaleString()}–${rangeEnd.toLocaleString()} of ${totalNeighbors.toLocaleString()} matching neighbors` : 'No matching neighbors are currently displayed'}</p>
           </div>
           <div className="subgraph-metrics">
             <article><span>Matching neighbors</span><strong>{data.counts.total_neighbors.toLocaleString()}</strong><small>under active filters</small></article>

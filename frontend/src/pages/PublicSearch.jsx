@@ -15,7 +15,7 @@ import {
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import PublicSearchBox from '../components/PublicSearchBox.jsx'
-import { getJson } from '../lib/api.js'
+import { getJson, postJson } from '../lib/api.js'
 import { publicSearchDestination } from '../lib/publicSearchRouting.js'
 import './PublicSearch.css'
 
@@ -54,6 +54,7 @@ const NATURAL_QUESTION_EXAMPLES = [
 ]
 
 const PUBLIC_SEARCH_TIMEOUT_MS = 65_000
+const PUBLIC_EXPLANATION_TIMEOUT_MS = 15_000
 const SLOW_SEARCH_NOTICE_MS = 10_000
 
 const DESTINATION_DETAILS = {
@@ -178,7 +179,7 @@ function DrugInformationState({ entity }) {
       <div>
         <h2 id="drug-information-status">Medicine information available</h2>
         <p>
-          CHEERS recognized {entity.name} ({entity.entity_id}). Open its medicine
+          CHEERS recognized {displayEntityName(entity)}. Open its medicine
           profile to review available official label information and related connections.
         </p>
         <div className="public-answer-actions">
@@ -400,7 +401,7 @@ function PairQuestionAnswer({ answer, explanation, entities = [] }) {
           <div><span>FDA label mentions</span><strong>{counts.label_mentions}</strong></div>
         )}
         {Number.isFinite(counts.pubmed_records) && (
-          <div><span>PubMed records</span><strong>{counts.pubmed_records}</strong></div>
+          <div><span>Research articles</span><strong>{counts.pubmed_records}</strong><small>PubMed</small></div>
         )}
       </div>
       {(explanation?.what_we_cannot_conclude || answer.safety_note) && (
@@ -476,10 +477,10 @@ function WhyThisAnswer({ data, entities }) {
       <div>
         {entities.map((entity) => (
           <p key={`${entity.entity_type}-${entity.entity_id}`}>
-            <strong>{displayEntityName(entity)}</strong> · {entity.entity_id} · {entityLabel(entity)}
+            <strong>{displayEntityName(entity)}</strong> · {entityLabel(entity)}
           </p>
         ))}
-        {counts && <p>FDA label mentions: {counts.label_mentions} · PubMed records: {counts.pubmed_records}</p>}
+        {counts && <p>FDA label mentions: {counts.label_mentions} · PubMed research articles: {counts.pubmed_records}</p>}
         {data.available_modules?.includes('pair_graph_context') && <p>Knowledge-graph relationships are available separately.</p>}
         <p>Research-model rankings are separate from FDA, PubMed, and knowledge-graph information.</p>
       </div>
@@ -758,7 +759,7 @@ export default function PublicSearch() {
     getJson(`/api/public/search?q=${encodeURIComponent(query)}`, {
       timeoutMs: PUBLIC_SEARCH_TIMEOUT_MS,
     }).then(
-      async (payload) => {
+      (payload) => {
         if (active) {
           clearTimeout(slowNoticeId)
           setSlowSearchQuery('')
@@ -770,18 +771,29 @@ export default function PublicSearch() {
               foodLifestyleStatus: null,
             })
           } else {
-            let nextFoodLifestyleStatus = null
+            setRequest({
+              query,
+              data: payload,
+              error: '',
+              foodLifestyleStatus: null,
+            })
+            const destination = publicSearchDestination(payload)
+            if (destination) {
+              navigate(destination, { replace: true })
+              return
+            }
+
             const medicine = payload.recognized_entities?.[0]
             if (
               payload.intent === 'drug_food_lifestyle'
               && medicine?.entity_type === 'drug'
             ) {
-              try {
-                const medicinePayload = await getJson(
+              getJson(
                   `/api/public/medicine?drug_id=${encodeURIComponent(medicine.entity_id)}`,
-                )
+              ).then((medicinePayload) => {
                 const information = medicinePayload?.label_information
                   ?.food_lifestyle_information
+                let nextFoodLifestyleStatus = 'unavailable'
                 if (information?.status === 'available') {
                   nextFoodLifestyleStatus = information.topics?.some(
                     (item) => item.topic === payload.topic,
@@ -794,19 +806,32 @@ export default function PublicSearch() {
                     ? information.status
                     : 'unavailable'
                 }
-              } catch {
-                nextFoodLifestyleStatus = 'unavailable'
-              }
+                if (!active) return
+                setRequest((current) => current.query === query
+                  ? { ...current, foodLifestyleStatus: nextFoodLifestyleStatus }
+                  : current)
+              }, () => {
+                if (!active) return
+                setRequest((current) => current.query === query
+                  ? { ...current, foodLifestyleStatus: 'unavailable' }
+                  : current)
+              })
             }
-            if (!active) return
-            setRequest({
-              query,
-              data: payload,
-              error: '',
-              foodLifestyleStatus: nextFoodLifestyleStatus,
-            })
-            const destination = publicSearchDestination(payload)
-            if (destination) navigate(destination, { replace: true })
+
+            if (payload.ai_explanation_eligible) {
+              postJson(
+                '/api/public/explain',
+                { query },
+                { timeoutMs: PUBLIC_EXPLANATION_TIMEOUT_MS },
+              ).then((enhanced) => {
+                if (!active || !enhanced || typeof enhanced.intent !== 'string') return
+                setRequest((current) => current.query === query
+                  ? { ...current, data: enhanced }
+                  : current)
+              }, () => {
+                // The deterministic result remains visible when AI or sources fail.
+              })
+            }
           }
         }
       },

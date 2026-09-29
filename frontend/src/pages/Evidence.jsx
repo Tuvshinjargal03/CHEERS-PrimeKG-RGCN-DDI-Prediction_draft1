@@ -4,6 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import DrugAutocomplete from '../components/DrugAutocomplete.jsx'
 import MedicineLabelScanner from '../components/MedicineLabelScanner.jsx'
 import { getJson, pairEndpoint, resolveDrug } from '../lib/api.js'
+import { medicineDisplayName } from '../lib/medicineNames.js'
 
 const SECTION_NAMES = {
   drug_interactions: 'Drug interactions',
@@ -122,11 +123,11 @@ export default function Evidence() {
         setDrugA(resolvedA)
         setDrugB(resolvedB)
         if ((initialAId && !resolvedA) || (initialBId && !resolvedB)) {
-          setError('One of the requested DrugBank identifiers could not be resolved.')
+          setError('One of the requested medicines could not be found.')
         }
       })
-      .catch((requestError) => {
-        if (active) setError(requestError.message || 'The requested pair could not be resolved.')
+      .catch(() => {
+        if (active) setError('The requested medicines could not be loaded. Please try again.')
       })
       .finally(() => {
         if (active) setResolving(false)
@@ -164,8 +165,8 @@ export default function Evidence() {
     setShowAllExcerpts(false)
     try {
       setData(await getJson(pairEndpoint('/api/evidence/pair', drugA.entity_id, drugB.entity_id)))
-    } catch (requestError) {
-      setError(requestError.message || 'External evidence could not be retrieved.')
+    } catch {
+      setError('External evidence could not be retrieved. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -185,18 +186,15 @@ export default function Evidence() {
     <section className="page evidence-page">
       <div className="page-heading">
         <span className="eyebrow">Independent external sources</span>
-        <h1>Evidence</h1>
-        <p>
-          Review openFDA label text and related PubMed records retrieved
-          independently from the R-GCN ranking score.
-        </p>
+        <h1>Medicine pair sources</h1>
+        <p>Review official medicine information and related research articles for two medicines.</p>
       </div>
 
       <form className="pair-form evidence-pair-form" onSubmit={loadEvidence}>
         <div className="evidence-form-heading">
-          <span className="eyebrow">Evidence query</span>
-          <h2>Choose two drugs</h2>
-          <p>Select a pair to retrieve independent openFDA and PubMed information.</p>
+          <span className="eyebrow">Medicine pair</span>
+          <h2>Choose two medicines</h2>
+          <p>Check official information and related research articles.</p>
         </div>
         <div className="drug-selection-field">
           <DrugAutocomplete label="Drug A" selection={drugA} onSelect={selectDrugA} disabled={resolving || loading} />
@@ -213,7 +211,7 @@ export default function Evidence() {
       </form>
 
       {error && <div className="inline-alert error evidence-page-state" role="alert"><AlertCircle size={20} />{error}</div>}
-      {loading && <div className="empty-feature-state evidence-page-state" role="status" aria-live="polite"><LoaderCircle className="spin" size={28} /><div><strong>Retrieving external sources…</strong><p>openFDA label information and PubMed records are being retrieved independently.</p></div></div>}
+      {loading && <div className="empty-feature-state evidence-page-state" role="status" aria-live="polite"><LoaderCircle className="spin" size={28} /><div><strong>Retrieving external sources…</strong><p>Official label information and PubMed research articles are being retrieved independently.</p></div></div>}
       {!data && !loading && !error && <div className="empty-feature-state evidence-page-state"><BookOpen size={28} /><div><strong>Choose a drug pair.</strong><p>FDA label and PubMed retrieval will remain visibly separate from model output.</p></div></div>}
 
       {data && (
@@ -223,14 +221,12 @@ export default function Evidence() {
             <div className="evidence-pair-display">
               <article>
                 <span>Drug A</span>
-                <strong>{drugA?.name}</strong>
-                <small>{drugA?.entity_id}</small>
+                <strong>{medicineDisplayName(drugA)}</strong>
               </article>
               <span className="evidence-pair-connector" aria-hidden="true">+</span>
               <article>
                 <span>Drug B</span>
-                <strong>{drugB?.name}</strong>
-                <small>{drugB?.entity_id}</small>
+                <strong>{medicineDisplayName(drugB)}</strong>
               </article>
             </div>
             <div className="evidence-query-actions">
@@ -248,10 +244,10 @@ export default function Evidence() {
             </article>
             <article className="external-source-card">
               <span>Independent external information</span>
-              <h2>openFDA + PubMed</h2>
+              <h2>What we found</h2>
               <div className="evidence-source-counts">
                 <div><strong>{evidenceItems.length.toLocaleString()}</strong><span>label excerpts</span></div>
-                <div><strong>{papers.length.toLocaleString()}</strong><span>PubMed records</span></div>
+                <div><strong>{papers.length.toLocaleString()}</strong><span>Research articles</span></div>
               </div>
               <p>openFDA and PubMed information is retrieved independently of the R-GCN model. It was not used as model input, does not explain the model score, and does not validate or prove a predicted drug–drug interaction.</p>
             </article>
@@ -273,11 +269,11 @@ export default function Evidence() {
 
           <div className="evidence-record-heading">
             <span className="eyebrow">Retrieved sources</span>
-            <h2>Evidence records</h2>
+            <h2>Sources</h2>
           </div>
           <div className="evidence-grid">
-            <article className="evidence-panel">
-              <div className="panel-title"><FileSearch size={21} /><div><span>Source: openFDA Drug Label</span><h2>Explicit label mentions</h2></div></div>
+            <article className="evidence-panel" hidden={!evidenceItems.length}>
+              <div className="panel-title"><FileSearch size={21} /><div><span>FDA label</span><h2>Official label matches</h2></div></div>
               {evidenceItems.length ? (
                 <div>
                   <div className="evidence-items">
@@ -306,8 +302,8 @@ export default function Evidence() {
               )}
             </article>
 
-            <article className="evidence-panel">
-              <div className="panel-title"><BookOpen size={21} /><div><span>Source: PubMed</span><h2>Related literature</h2></div></div>
+            <article className="evidence-panel" hidden={!papers.length}>
+              <div className="panel-title"><BookOpen size={21} /><div><span>PubMed</span><h2>Research articles</h2></div></div>
               {papers.length ? (
                 <div className="paper-list">
                   {papers.map((paper) => {
@@ -316,10 +312,17 @@ export default function Evidence() {
                   })}
                 </div>
               ) : (
-                <div className={`source-state ${literature?.status === 'error' ? 'error' : ''}`}><strong>{literature?.status === 'error' ? 'PubMed literature could not be retrieved.' : 'No related PubMed records were retrieved.'}</strong><p>Unavailable or empty retrieval does not indicate safety, absence of a DDI, or absence of relevant literature.</p></div>
+                <div className={`source-state ${literature?.status === 'error' ? 'error' : ''}`}><strong>{literature?.status === 'error' ? 'PubMed research articles could not be retrieved.' : 'No related PubMed research articles were retrieved.'}</strong><p>Unavailable or empty retrieval does not indicate safety, absence of a DDI, or absence of relevant literature.</p></div>
               )}
             </article>
           </div>
+
+          {!evidenceItems.length && !papers.length && (
+            <div className="source-state">
+              <strong>No source matches were available from this check.</strong>
+              <p>This does not establish that the pair is safe or that no interaction or relevant literature exists.</p>
+            </div>
+          )}
 
           <aside className="limitations-card"><AlertCircle size={21} /><div><strong>Retrieval and interpretation limitations</strong><ul>{limitations.map((item) => <li key={item}>{item}</li>)}</ul></div></aside>
         </>

@@ -1,6 +1,7 @@
 import { Search, X } from 'lucide-react'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { getJson } from '../lib/api.js'
+import { medicineDisplayName } from '../lib/medicineNames.js'
 
 const PAGE_SIZE = 50
 const SEARCH_DELAY_MS = 180
@@ -9,7 +10,7 @@ export default function DrugAutocomplete({
   label,
   selection,
   onSelect,
-  placeholder = 'Search by drug name or DrugBank ID',
+  placeholder = 'Search by medicine name',
   disabled = false,
   getOptionAnnotation,
 }) {
@@ -75,9 +76,10 @@ export default function DrugAutocomplete({
     if (selection || !open) return undefined
 
     const trimmed = query.trim()
+    if (!trimmed) return undefined
     const timer = window.setTimeout(
       () => fetchPage(trimmed, 0, false),
-      trimmed ? SEARCH_DELAY_MS : 0,
+      SEARCH_DELAY_MS,
     )
 
     return () => window.clearTimeout(timer)
@@ -107,7 +109,7 @@ export default function DrugAutocomplete({
 
   function openBrowseMenu() {
     if (selection || disabled) return
-    setLoading(true)
+    setLoading(Boolean(query.trim()))
     setOpen(true)
   }
 
@@ -135,7 +137,7 @@ export default function DrugAutocomplete({
     setHasMore(false)
     setSearchError('')
     setActiveIndex(-1)
-    setLoading(true)
+    setLoading(false)
     setOpen(true)
     onSelect(null)
     window.setTimeout(() => inputRef.current?.focus(), 0)
@@ -149,7 +151,7 @@ export default function DrugAutocomplete({
         <input
           ref={inputRef}
           id={inputId}
-          value={selection?.name || query}
+          value={selection ? medicineDisplayName(selection) : query}
           placeholder={placeholder}
           disabled={disabled}
           autoComplete="off"
@@ -167,7 +169,7 @@ export default function DrugAutocomplete({
             setHasMore(false)
             setSearchError('')
             setActiveIndex(-1)
-            setLoading(true)
+            setLoading(Boolean(nextQuery.trim()))
             setOpen(true)
           }}
           onFocus={openBrowseMenu}
@@ -208,7 +210,8 @@ export default function DrugAutocomplete({
 
       {selection && (
         <span className="selection-meta">
-          Selected: {selection.name} · {selection.entity_id}
+          Selected: {medicineDisplayName(selection)}
+          {medicineDisplayName(selection) !== selection.name ? ` · ${selection.name}` : ''}
         </span>
       )}
 
@@ -232,6 +235,7 @@ export default function DrugAutocomplete({
             <>
               {results.map((item, index) => {
                 const annotation = getOptionAnnotation?.(item)
+                const displayName = medicineDisplayName(item)
                 return (
                   <button
                     id={`${inputId}-option-${index}`}
@@ -244,9 +248,9 @@ export default function DrugAutocomplete({
                     onMouseEnter={() => setActiveIndex(index)}
                     onClick={() => choose(item)}
                   >
-                    <span className="autocomplete-option-name" title={item.name}>{item.name}</span>
+                    <span className="autocomplete-option-name" title={item.name}>{displayName}</span>
                     <small className="autocomplete-option-details">
-                      <span className="autocomplete-option-id">DrugBank · {item.entity_id}</span>
+                      {displayName !== item.name && <span className="autocomplete-option-id">{item.name}</span>}
                       {annotation && (
                         <em className={annotation.available ? 'available' : 'unavailable'}>
                           {annotation.label}
@@ -260,7 +264,7 @@ export default function DrugAutocomplete({
             </>
           ) : (
             <div className="autocomplete-empty">
-              {loading ? 'Loading drugs…' : 'No matching drugs found.'}
+              {loading ? 'Loading medicines…' : query.trim() ? 'No matching medicines found.' : 'Type a medicine name to search.'}
             </div>
           )}
         </div>

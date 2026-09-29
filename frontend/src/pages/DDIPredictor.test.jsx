@@ -64,8 +64,8 @@ describe('DDI Predictor research workflow', () => {
 
     const action = screen.getByRole('button', { name: 'Run R-GCN ranking' })
     expect(action).toBeDisabled()
-    expect(screen.getByText('Optional label-text helper')).toBeVisible()
-    expect(screen.getByText(/not confirmed non-interactions/i)).toBeVisible()
+    expect(screen.getByText('Optional label scan')).toBeVisible()
+    expect(screen.getByText(/does not mean there is no interaction/i)).toBeVisible()
 
     await userEvent.click(screen.getByRole('button', { name: 'Choose Warfarin' }))
     expect(screen.getByText('Selected: Warfarin · DB00682')).toBeVisible()
@@ -83,9 +83,10 @@ describe('DDI Predictor research workflow', () => {
     renderPredictor()
     await selectAndRun('5')
 
-    expect(screen.getByRole('status')).toHaveTextContent('Ranking candidate links')
-    rejectRequest(new Error('Runtime unavailable'))
-    expect(await screen.findByRole('alert')).toHaveTextContent('Runtime unavailable')
+    expect(screen.getByRole('status')).toHaveTextContent('Ranking possible interaction links')
+    rejectRequest(new Error('HTTP 503 Runtime unavailable'))
+    expect(await screen.findByRole('alert')).toHaveTextContent('Research ranking is temporarily unavailable. Try again.')
+    expect(screen.getByRole('alert')).not.toHaveTextContent(/HTTP|runtime/i)
   })
 
   it('renders metadata, raw ranked output, and interpretation boundaries', async () => {
@@ -94,15 +95,18 @@ describe('DDI Predictor research workflow', () => {
     await selectAndRun()
 
     expect(await screen.findByText('Prediction overview')).toBeVisible()
-    expect(screen.getByText('G3 R-GCN')).toBeVisible()
-    expect(screen.getByText('Seed 44 · epoch 120')).toBeVisible()
+    expect(screen.getByText('Saved trained model')).toBeVisible()
+    await userEvent.click(screen.getByText('Model details'))
+    expect(screen.getByText('Graph version: G3 (combined context)')).toBeVisible()
+    expect(screen.getByText('Training run: seed 44')).toBeVisible()
     expect(screen.getByText('7,957 drugs')).toBeVisible()
-    expect(screen.getByText(/12 known positive candidates filtered/)).toBeVisible()
+    expect(screen.getByText(/12 known training-graph links excluded/)).toBeVisible()
     expect(screen.getByText('#1')).toBeVisible()
     expect(screen.getByText('Aspirin')).toBeVisible()
     expect(screen.getByText('DrugBank · DB00945')).toBeVisible()
     expect(screen.getByText('2.3457')).toBeVisible()
-    expect(screen.getByText(/not calibrated clinical probabilities/i)).toBeVisible()
+    expect(screen.getByText('Not observed in the training graph')).toBeVisible()
+    expect(screen.getByText(/not a medical risk or probability/i)).toBeVisible()
     expect(screen.getByText('Backend research disclaimer remains visible.')).toBeVisible()
 
     const followUp = screen.getByLabelText('How to interpret follow-up views')
@@ -110,7 +114,9 @@ describe('DDI Predictor research workflow', () => {
     expect(followUp).toHaveTextContent('independent FDA/PubMed information')
     expect(followUp).toHaveTextContent('does not validate, modify, or calibrate the R-GCN score')
 
-    const page = screen.getByRole('heading', { name: 'DDI Predictor' }).closest('section')
+    const page = screen.getByRole('heading', { name: 'DDI Research Predictor' }).closest('section')
+    expect(page).not.toHaveTextContent('Verified exported G3 runtime')
+    expect(page.querySelector('.page-heading')).not.toHaveTextContent(/seed 44|checkpoint|runtime/i)
     expect(page).not.toHaveTextContent(/interaction probability|clinical risk score|best model|superior model|most accurate model|proven strongest model/i)
     expect(within(page).queryByText(/^(safe|unsafe)$/i)).not.toBeInTheDocument()
   })

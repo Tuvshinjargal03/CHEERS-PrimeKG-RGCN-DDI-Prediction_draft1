@@ -8,6 +8,7 @@ import unicodedata
 from pathlib import Path
 
 import numpy as np
+from src.medicine_names import DRUG_NAME_ALIASES
 
 
 class DDIPredictor:
@@ -139,12 +140,13 @@ class DDIPredictor:
         """Return deterministic candidate rows for browsing or text search."""
         query = str(query).strip()
         query_folded = query.casefold()
+        canonical_query = DRUG_NAME_ALIASES.get(query_folded, query_folded)
 
         if query_folded:
             matches = [
                 row
                 for row in self.drug_metadata
-                if query_folded in row["entity_name"].casefold()
+                if canonical_query in row["entity_name"].casefold()
                 or row["entity_id"].casefold() == query_folded
             ]
         else:
@@ -155,11 +157,11 @@ class DDIPredictor:
             entity_id_folded = row["entity_id"].casefold()
             if not query_folded:
                 return 0
-            if name_folded == query_folded:
+            if name_folded == canonical_query:
                 return 0
             if entity_id_folded == query_folded:
                 return 1
-            if name_folded.startswith(query_folded):
+            if name_folded.startswith(canonical_query):
                 return 2
             return 3
 

@@ -71,7 +71,7 @@ describe('Experiments networking', () => {
     expect(screen.queryByText(/strongest overall performance/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/statistically superior/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/significant improvement/i)).not.toBeInTheDocument()
-    expect(screen.getByText(/Classification metrics are unavailable/)).toBeVisible()
+    expect(screen.getByText(/Classification metrics could not be loaded\. Please try again\./)).toBeVisible()
     expect(screen.getByText(/Primary ranking results remain available/)).toBeVisible()
 
     await waitFor(() => {

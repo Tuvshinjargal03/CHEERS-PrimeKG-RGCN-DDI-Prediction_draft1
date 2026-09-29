@@ -18,6 +18,7 @@ from urllib.parse import urlencode
 
 from src.disease_information import DiseaseInformationService
 from src.entity_metadata import EntityMetadataStore
+from src.medicine_names import DRUG_NAME_ALIASES
 
 
 SUPPORTED_INTENTS = frozenset(
@@ -64,6 +65,7 @@ MEDICINES_FOR_DISEASE_PREFIXES = (
 DRUG_FOR_DISEASE_PATTERNS = (
     re.compile(r"^can i use (?P<drug>.+?) for (?P<disease>.+)$"),
     re.compile(r"^is (?P<drug>.+?) used for (?P<disease>.+)$"),
+    re.compile(r"^does (?P<drug>.+?) help(?: with)? (?P<disease>.+)$"),
     re.compile(r"^does (?P<drug>.+?) treat (?P<disease>.+)$"),
     re.compile(r"^is (?P<drug>.+?) for (?P<disease>.+)$"),
     re.compile(r"^(?P<drug>.+?) for (?P<disease>.+)$"),
@@ -100,7 +102,6 @@ UNSUPPORTED_DIET_PATTERNS = (
     re.compile(r"^weight loss plan(?: for me)?$"),
 )
 MAX_AMBIGUOUS_MATCHES = 20
-DRUG_NAME_ALIASES = {"aspirin": "acetylsalicylic acid"}
 GENERIC_SYMPTOM_TERMS = frozenset(
     {"pain", "headache", "fever", "nausea", "cough", "dizziness", "fatigue"}
 )
@@ -108,6 +109,7 @@ NATURAL_SINGLE_ENTITY_PATTERNS = (
     ("drug_side_effects", ("drug",), re.compile(r"^(?:tell me(?: about)? )?(?P<entity>.+?) side efects$")),
     ("drug_side_effects", ("drug",), re.compile(r"^tell me (?P<entity>.+?) side effects$")),
     ("drug_side_effects", ("drug",), re.compile(r"^what are the side effects of (?P<entity>.+)$")),
+    ("drug_side_effects", ("drug",), re.compile(r"^side effects of (?P<entity>.+)$")),
     ("drug_information", ("drug",), re.compile(r"^what does (?P<entity>.+?) do$")),
     ("drug_information", ("drug",), re.compile(r"^what is (?P<entity>.+?) used for$")),
     ("drug_information", ("drug",), re.compile(r"^what is (?P<entity>.+?) for$")),
@@ -304,6 +306,54 @@ class PublicSearchService:
                 )
         matches.sort(key=lambda item: (-item[0], item[1], item[2]["entity_id"]))
         return matches
+
+    def disease_suggestions(self, query, limit=6):
+        """Return bounded deterministic disease matches from the loaded inventory."""
+        fragment = normalize_query(query)
+        bounded_limit = max(1, min(int(limit), 6))
+        if len(fragment) < 2:
+            return {"query": fragment, "suggestions": []}
+
+        diabetes_priority = {
+            "diabetes mellitus disease": 0,
+            "type 2 diabetes mellitus": 1,
+            "type 1 diabetes mellitus": 2,
+            "gestational diabetes": 3,
+        }
+        ranked = []
+        for disease in self.diseases:
+            name = disease["normalized_name"]
+            match_type = None
+            priority = None
+            detail = 0
+            if name == fragment:
+                match_type, priority = "exact_canonical_name", 0
+            elif fragment.startswith("diab") and name in diabetes_priority:
+                match_type, priority, detail = "common_topic_match", 1, diabetes_priority[name]
+            elif name.startswith(fragment):
+                match_type, priority = "canonical_name_prefix", 2
+            else:
+                fuzzy_score = self._fuzzy_score(disease, fragment)
+                if fuzzy_score >= FUZZY_MIN_SCORE:
+                    match_type, priority, detail = "close_fuzzy_name", 3, -fuzzy_score
+                elif fragment in name:
+                    match_type, priority = "canonical_name_substring", 4
+            if match_type is not None:
+                ranked.append((priority, detail, len(name), name, disease, match_type))
+
+        ranked.sort(key=lambda item: item[:4] + (item[4]["entity_id"],))
+        return {
+            "query": fragment,
+            "suggestions": [
+                {
+                    "name": disease["name"],
+                    "entity_id": disease["entity_id"],
+                    "entity_type": "disease",
+                    "match_type": match_type,
+                }
+                for _, _, _, _, disease, match_type in ranked[:bounded_limit]
+            ],
+        }
 
     def _resolve_fragment(self, fragment, entity_types=None):
         allowed = set(entity_types or ("drug", "disease"))
@@ -884,7 +934,9 @@ class PublicSearchService:
         )
         return answer
 
-    def _drug_pair_question_answer(self, drug_a, drug_b):
+    def _drug_pair_question_answer(
+        self, drug_a, drug_b, include_external_evidence=True
+    ):
         answer = {
             "answer_type": "insufficient_information",
             "direct_answer": "Not enough information",
@@ -909,7 +961,11 @@ class PublicSearchService:
                 "retrieved evidence does not establish safety."
             ),
         }
-        if self.label_evidence_service is None or self.literature_service is None:
+        if (
+            not include_external_evidence
+            or self.label_evidence_service is None
+            or self.literature_service is None
+        ):
             return answer
 
         try:
@@ -954,7 +1010,14 @@ class PublicSearchService:
             )
         return answer
 
-    def _resolved_response(self, original_query, normalized_query, intent, matches):
+    def _resolved_response(
+        self,
+        original_query,
+        normalized_query,
+        intent,
+        matches,
+        include_external_evidence=True,
+    ):
         response = self._base_response(original_query, normalized_query, intent)
         response["recognized_entities"] = [
             self._serialize_entity(entity, match_type) for entity, match_type in matches
@@ -1109,9 +1172,23 @@ class PublicSearchService:
                     }
                 )
             if intent == "drug_pair_question":
-                answer = self._drug_pair_question_answer(drug_a, drug_b)
+                answer = self._drug_pair_question_answer(
+                    drug_a,
+                    drug_b,
+                    include_external_evidence=include_external_evidence,
+                )
+                if not include_external_evidence:
+                    answer["supporting_text"] = (
+                        "CHEERS recognized both medicines. Source details can load separately."
+                    )
+                    answer["source_scope"] = (
+                        "FDA label and PubMed source details load separately."
+                    )
                 response["answer"] = answer
-                if answer["answer_type"] == "insufficient_information":
+                if (
+                    include_external_evidence
+                    and answer["answer_type"] == "insufficient_information"
+                ):
                     response["unavailable_modules"].append(
                         {
                             "module": "drug_pair_question_answer",
@@ -1124,7 +1201,7 @@ class PublicSearchService:
                     )
         return response
 
-    def _search_deterministic(self, query):
+    def _search_deterministic(self, query, include_external_evidence=True):
         original_query = str(query)
         normalized = normalize_query(original_query)
         if not normalized:
@@ -1370,7 +1447,11 @@ class PublicSearchService:
                 )
                 return response
             return self._resolved_response(
-                original_query, normalized, pair_intent, pair
+                original_query,
+                normalized,
+                pair_intent,
+                pair,
+                include_external_evidence=include_external_evidence,
             )
 
         if has_side_effect_intent or has_interaction_intent:
@@ -1685,10 +1766,42 @@ class PublicSearchService:
         response["explanation"] = explanation or fallback
         return response
 
-    def search(self, query):
-        deterministic = self._search_deterministic(query)
+    @staticmethod
+    def _explanation_eligible(response):
+        if response.get("ambiguous_matches"):
+            return False
+        intent = response.get("intent")
+        if intent in {"drug_pair_question", "drug_side_effects", "drug_for_disease"}:
+            return True
+        if intent != "drug_information" or not response.get("recognized_entities"):
+            return False
+        entity = response["recognized_entities"][0]
+        query = response.get("normalized_query", "")
+        return query not in {
+            normalize_query(entity.get("name", "")),
+            normalize_query(entity.get("entity_id", "")),
+        }
+
+    def search(
+        self,
+        query,
+        *,
+        include_explanation=True,
+        include_external_evidence=True,
+    ):
+        deterministic = self._search_deterministic(
+            query,
+            include_external_evidence=include_external_evidence,
+        )
         if deterministic["intent"] != "unknown" or self.query_interpreter is None:
-            return self._with_explanation(query, deterministic)
+            deterministic["ai_explanation_eligible"] = self._explanation_eligible(
+                deterministic
+            )
+            return (
+                self._with_explanation(query, deterministic)
+                if include_explanation
+                else deterministic
+            )
 
         try:
             interpretation = self.query_interpreter.interpret(query)
@@ -1730,12 +1843,18 @@ class PublicSearchService:
             response = deterministic
         else:
             response = self._search_deterministic(
-                self._interpreted_query(interpretation)
+                self._interpreted_query(interpretation),
+                include_external_evidence=include_external_evidence,
             )
             response["original_query"] = str(query)
             response["normalized_query"] = normalize_query(query)
         response["ai_interpretation"] = self._ai_metadata("used", interpretation)
-        return self._with_explanation(query, response)
+        response["ai_explanation_eligible"] = self._explanation_eligible(response)
+        return (
+            self._with_explanation(query, response)
+            if include_explanation
+            else response
+        )
 
 
 __all__ = ["PublicSearchService", "SUPPORTED_INTENTS", "normalize_query"]

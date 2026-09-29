@@ -18,6 +18,7 @@ import DrugAutocomplete from '../components/DrugAutocomplete.jsx'
 import MedicineLabelScanner from '../components/MedicineLabelScanner.jsx'
 import { G3_CONTEXT_CANDIDATE_IDS } from '../data/g3ContextCandidateIds.js'
 import { getJson } from '../lib/api.js'
+import { medicineDisplayName } from '../lib/medicineNames.js'
 import './PublicProduct.css'
 
 const CONTEXT_IDS = new Set(G3_CONTEXT_CANDIDATE_IDS)
@@ -81,6 +82,34 @@ const MEDICINE_EXAMPLES = [
   { name: 'Ibuprofen', id: 'DB01050' },
 ]
 const MAX_INLINE_LABEL_CHARS = 2_500
+function cleanLabelPoints(entries, limit = 3) {
+  const points = []
+  const signatures = []
+  for (const entry of entries) {
+    let text = String(entry.text || '')
+      .replace(/\[\s*see\b.*?\]/gi, ' ')
+      .replace(/\(\s*\d+(?:\.\d+)*\s*\)/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+    for (let sentence of text.split(/(?<=[.!?])\s+/)) {
+      sentence = sentence
+        .replace(/^(?:warnings?|adverse reactions?|indications and usage)\s*:?\s*/i, '')
+        .trim()
+      if (!sentence || sentence.length < 18 || sentence.length > 240) continue
+      if (/see boxed warning|to report suspected|www\.fda\.gov|table \d|call 1-800/i.test(sentence)) continue
+      const signature = new Set(sentence.toLocaleLowerCase().match(/[a-z0-9]+/g) || [])
+      const duplicate = signatures.some((prior) => {
+        const overlap = [...signature].filter((word) => prior.has(word)).length
+        return overlap / Math.min(signature.size, prior.size) >= 0.75
+      })
+      if (duplicate) continue
+      points.push(sentence.replace(/[.!?]*$/, '.'))
+      signatures.push(signature)
+      if (points.length === limit) return points
+    }
+  }
+  return points
+}
 
 function productClassification(record) {
   return record.product_classification || {
@@ -175,17 +204,17 @@ function MedicineLanding({ onSelect }) {
     <section className="page product-page medicine-guide-page">
       <header className="product-page-header">
         <span className="eyebrow">Medicine guide</span>
-        <h1>Explore a medicine</h1>
+        <h1>Find a medicine</h1>
         <p>Find available uses, side effects, warnings, interactions, and related conditions.</p>
       </header>
       <div className="product-input-panel medicine-landing-search">
         <div className="medicine-landing-primary">
-          <span className="eyebrow">Primary search</span>
-          <strong>Search by medicine name or DrugBank ID</strong>
+          <span className="eyebrow">Medicine search</span>
+          <strong>Search by a medicine name.</strong>
         </div>
         <DrugAutocomplete label="Medicine" selection={null} onSelect={onSelect} />
         <div className="medicine-landing-secondary">
-          <div><span>Optional label-text helper</span><small>Reads printed label text to help select a supported medicine; it does not identify a medicine clinically.</small></div>
+          <div><span>Scan a medicine label</span><small>Use your camera or an image to help find the medicine name.</small></div>
           <MedicineLabelScanner targetLabel="Medicine" onDrugSelect={onSelect} />
         </div>
         <div className="product-example-row">
@@ -208,47 +237,21 @@ function MedicineLanding({ onSelect }) {
 
 function LabelSection({ labelInformation, sectionKey }) {
   const entries = sectionEntries(labelInformation, sectionKey)
+  const points = cleanLabelPoints(entries)
   const title = SECTIONS.find(([key]) => key === sectionKey)?.[1] || 'Label information'
+
+  if (!points.length) return null
 
   return (
     <section className="medicine-content-panel" aria-labelledby={`medicine-${sectionKey}-heading`}>
       <div className="medicine-content-heading">
         <span className="public-quick-icon"><FileText size={20} /></span>
-        <div><span className="eyebrow">Official label text</span><h2 id={`medicine-${sectionKey}-heading`}>{title}</h2></div>
+        <div><span className="eyebrow">Official medicine information</span><h2 id={`medicine-${sectionKey}-heading`}>{title}</h2></div>
       </div>
-      {entries.length ? (
-        <div className="medicine-label-entries">
-          {entries.map((entry) => {
-            const entryKey = `${entry.recordIndex}-${entry.section}-${entry.valueIndex}`
-            const classification = productClassification(entry.record)
-            const ingredients = classification.active_ingredients || []
-            return (
-              <article className="medicine-label-entry" key={entryKey}>
-                <header className="medicine-label-record-heading">
-                  <div>
-                    <span className={`medicine-product-badge is-${classification.category}`}>{classification.label}</span>
-                    <h3>{productName(entry.record, entry.recordIndex)}</h3>
-                  </div>
-                  <span className="medicine-source-badge">openFDA</span>
-                </header>
-                <div className="medicine-label-section-meta">
-                  <strong>{LABELS[entry.section] || entry.section}</strong>
-                  <small>{entry.record.spl_set_id ? `SPL ${entry.record.spl_set_id}` : `Label record ${entry.recordIndex + 1}`}</small>
-                </div>
-                {ingredients.length > 0 && (
-                  <p className="medicine-ingredient-line"><strong>Active ingredients:</strong> {ingredients.join(', ')}</p>
-                )}
-                <ExpandableLabelText previewText={entry.text} fullText={entry.full_text} labelUrl={officialLabelUrl(entry.record.spl_set_id)} />
-              </article>
-            )
-          })}
-        </div>
-      ) : (
-        <div className="product-card-empty medicine-section-empty">
-          <strong>No {title.toLowerCase()} section was retrieved.</strong>
-          <p>The current checked label records do not contain this section. This is not a medical conclusion.</p>
-        </div>
-      )}
+      <ul className="medicine-summary-points">
+        {points.map((point) => <li key={point}>{point}</li>)}
+      </ul>
+      <p className="medicine-summary-source"><span className="medicine-source-badge">FDA label</span> Full text remains available under Official source.</p>
     </section>
   )
 }
@@ -347,7 +350,7 @@ function RelatedDiseases({ context, contextError }) {
     <section className="medicine-content-panel" aria-labelledby="related-diseases-heading">
       <div className="medicine-content-heading">
         <span className="public-quick-icon"><Network size={20} /></span>
-        <div><span className="eyebrow">Knowledge-graph context</span><h2 id="related-diseases-heading">Related diseases</h2></div>
+        <div><span className="eyebrow">Research connections</span><h2 id="related-diseases-heading">Related diseases</h2></div>
       </div>
       <p className="medicine-context-intro">These are descriptive relationships recorded in the current graph data. They do not establish diagnosis, causation, or that this medicine is appropriate for a disease.</p>
       {relationships.length ? (
@@ -375,7 +378,7 @@ function SourceRecords({ labelInformation }) {
     <section className="medicine-content-panel" aria-labelledby="medicine-sources-heading">
       <div className="medicine-content-heading">
         <span className="public-quick-icon"><BookOpen size={20} /></span>
-        <div><span className="eyebrow">Source details</span><h2 id="medicine-sources-heading">Official label records</h2></div>
+        <div><span className="eyebrow">Source details</span><h2 id="medicine-sources-heading">Official source</h2></div>
       </div>
       <div className="medicine-source-groups">
         {PRODUCT_GROUPS.map(([category, heading]) => {
@@ -468,37 +471,71 @@ export default function MedicineGuide() {
   const [searchParams] = useSearchParams()
   const requestedSection = searchParams.get('section') || 'overview'
   const activeSection = SECTIONS.some(([key]) => key === requestedSection) ? requestedSection : 'overview'
-  const [request, setRequest] = useState({ drugId: '', payload: null, context: null, error: '', contextError: '' })
+  const [request, setRequest] = useState({
+    drugId: '', payload: null, context: null, error: '', contextError: '', contextLoading: false,
+  })
   const requestIsCurrent = request.drugId === drugId
   const payload = requestIsCurrent ? request.payload : null
   const context = requestIsCurrent ? request.context : null
   const error = requestIsCurrent ? request.error : ''
   const contextError = requestIsCurrent ? request.contextError : ''
-  const loading = Boolean(drugId) && !requestIsCurrent
+  const contextLoading = requestIsCurrent && request.contextLoading
+  const loading = Boolean(drugId) && (!requestIsCurrent || (!payload && !error))
 
   useEffect(() => {
     if (!drugId) return undefined
     let active = true
     const contextSupported = CONTEXT_IDS.has(drugId.toUpperCase())
-    Promise.allSettled([
-      getJson(`/api/public/medicine?drug_id=${encodeURIComponent(drugId)}`),
-      contextSupported
-        ? getJson(`/api/context/drug?drug_id=${encodeURIComponent(drugId)}`)
-        : Promise.resolve(null),
-    ]).then(([medicineResult, contextResult]) => {
-      if (!active) return
-      setRequest({
-        drugId,
-        payload: medicineResult.status === 'fulfilled' ? medicineResult.value : null,
-        context: contextResult.status === 'fulfilled' ? contextResult.value : null,
-        error: medicineResult.status === 'rejected'
-          ? medicineResult.reason?.message || 'Medicine information could not be loaded.'
-          : '',
-        contextError: contextResult.status === 'rejected'
-          ? contextResult.reason?.message || 'Related disease context could not be loaded.'
-          : '',
-      })
-    })
+    const initialRequest = {
+      drugId,
+      payload: null,
+      context: null,
+      error: '',
+      contextError: '',
+      contextLoading: contextSupported,
+    }
+
+    getJson(`/api/public/medicine?drug_id=${encodeURIComponent(drugId)}`).then(
+      (result) => {
+        if (active) {
+          setRequest((current) => ({
+            ...(current.drugId === drugId ? current : initialRequest),
+            payload: result,
+          }))
+        }
+      },
+      () => {
+        if (active) {
+          setRequest((current) => ({
+            ...(current.drugId === drugId ? current : initialRequest),
+            error: 'Medicine information could not be loaded. Please try again.',
+          }))
+        }
+      },
+    )
+
+    if (contextSupported) {
+      getJson(`/api/context/drug?drug_id=${encodeURIComponent(drugId)}`).then(
+        (result) => {
+          if (active) {
+            setRequest((current) => ({
+              ...(current.drugId === drugId ? current : initialRequest),
+              context: result,
+              contextLoading: false,
+            }))
+          }
+        },
+        () => {
+          if (active) {
+            setRequest((current) => ({
+              ...(current.drugId === drugId ? current : initialRequest),
+              contextError: 'Research connections could not be loaded. Please try again.',
+              contextLoading: false,
+            }))
+          }
+        },
+      )
+    }
     return () => {
       active = false
     }
@@ -519,11 +556,24 @@ export default function MedicineGuide() {
   }[labelStatus]
   const contextStatusText = context
     ? 'Research connections retrieved'
+    : contextLoading
+      ? 'Loading research connectionsâ€¦'
     : contextError
       ? 'Research connections unavailable'
       : contextSupported
         ? 'No research connections returned'
         : 'No exported knowledge-graph data for this medicine'
+  const canonicalName = drug?.drug_name
+  const displayName = medicineDisplayName(canonicalName)
+  const overviewPoint = cleanLabelPoints(sectionEntries(labelInformation, 'uses'), 1)[0]
+  const visibleSections = SECTIONS.filter(([key]) => {
+    if (key === 'overview') return true
+    if (LABEL_GROUPS[key]) return cleanLabelPoints(sectionEntries(labelInformation, key)).length > 0
+    if (key === 'food-lifestyle') return labelInformation?.food_lifestyle_information?.status === 'available'
+    if (key === 'related-diseases') return Boolean(context?.context?.disease?.relationships?.length)
+    if (key === 'sources') return Boolean(labelInformation?.records?.length)
+    return false
+  })
 
   return (
     <section className="page product-page medicine-profile-page">
@@ -531,8 +581,14 @@ export default function MedicineGuide() {
         <div>
           <Link className="product-back-link" to="/medicines">← Medicine guide</Link>
           <span className="eyebrow">Medicine profile</span>
-          <h1>{drug?.drug_name || 'Medicine information'}</h1>
-          <p><span>DrugBank ID</span> {drug?.drug_id || drugId}</p>
+          <h1>{displayName || 'Medicine information'}</h1>
+          {displayName && canonicalName && displayName !== canonicalName && <p>{canonicalName}</p>}
+          {overviewPoint && <p className="medicine-profile-summary">{overviewPoint}</p>}
+          <details className="medicine-technical-details">
+            <summary>Technical details</summary>
+            <p><span>DrugBank ID</span> {drug?.drug_id || drugId}</p>
+            {canonicalName && <p><span>Database name</span> {canonicalName}</p>}
+          </details>
           {!loading && payload && (
             <div className="medicine-profile-status" aria-label="Medicine information source status">
               {labelStatusText && <span><FileText size={14} />{labelStatusText}</span>}
@@ -550,8 +606,9 @@ export default function MedicineGuide() {
                 drug_name: drug.drug_name,
               }).toString()}`}
             >
-              <Network size={17} /> Explore graph
+              <Network size={17} /> Research connections
             </Link>
+            {labelInformation?.records?.length > 0 && <Link className="secondary-button" to={`/medicines/${encodeURIComponent(drug.drug_id)}?section=sources`}><BookOpen size={17} /> Official source</Link>}
           </div>
         )}
       </header>
@@ -561,14 +618,8 @@ export default function MedicineGuide() {
 
       {!loading && !error && payload && (
         <>
-          <div className="medicine-section-guide">
-            <strong>Choose an information section</strong>
-            <span>Official label: Uses, Side effects, Warnings, Interactions, Food & lifestyle</span>
-            <span>Research connections: Related diseases</span>
-            <span>Provenance: Sources</span>
-          </div>
           <nav className="medicine-section-nav" aria-label="Medicine information sections">
-            {SECTIONS.map(([key, label]) => (
+            {visibleSections.map(([key, label]) => (
               <Link
                 key={key}
                 className={activeSection === key ? 'active' : ''}
@@ -582,7 +633,7 @@ export default function MedicineGuide() {
           </nav>
 
           {labelStatus === 'error' && activeSection !== 'food-lifestyle' && (
-            <div className="product-source-error" role="alert"><AlertCircle size={20} /><span>{labelInformation.error || 'openFDA label information is unavailable.'}</span></div>
+            <div className="product-source-error" role="alert"><AlertCircle size={20} /><span>Official label information is temporarily unavailable. Please try again.</span></div>
           )}
           {labelStatus === 'no_matches' && !['food-lifestyle', 'related-diseases'].includes(activeSection) && (
             <div className="product-empty-state"><Info size={24} /><div><strong>No openFDA label record was retrieved.</strong><p>This does not mean the medicine has no uses, side effects, warnings, or interactions.</p></div></div>
@@ -599,8 +650,7 @@ export default function MedicineGuide() {
           <aside className="medicine-source-boundary">
             <Search size={19} />
             <div>
-              <p>{payload.safety_note || 'Official label information is presented for source review, not personalized medical advice.'}</p>
-              <p>CHEERS organizes available source material and research connections. It does not diagnose or provide personalized treatment or nutrition advice, and it is not clinical decision support. Knowledge-graph relationships are descriptive context, not causation or R-GCN predictions, and missing relationships do not mean no biological relationship exists.</p>
+              <p>Official label information is general information, not personalized medical advice.</p>
             </div>
           </aside>
         </>
