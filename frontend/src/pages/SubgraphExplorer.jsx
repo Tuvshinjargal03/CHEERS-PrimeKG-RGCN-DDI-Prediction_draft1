@@ -6,6 +6,7 @@ import DrugAutocomplete from '../components/DrugAutocomplete.jsx'
 import EntityDetailsPanel from '../components/EntityDetailsPanel.jsx'
 import MedicineLabelScanner from '../components/MedicineLabelScanner.jsx'
 import { drugContextEndpoint, getJson } from '../lib/api.js'
+import { medicineDisplayName } from '../lib/medicineNames.js'
 
 const PAGE_SIZE = 50
 const RELATIONS = [
@@ -228,12 +229,19 @@ export default function SubgraphExplorer() {
       }
       const canonicalDrug = {
         ...targetDrug,
-        name: payload.center.name,
+        name: medicineDisplayName(payload.center.name),
+      }
+      const displayPayload = {
+        ...payload,
+        center: { ...payload.center, name: medicineDisplayName(payload.center.name) },
+        neighbors: payload.neighbors.map((neighbor) => neighbor.entity_type === 'drug'
+          ? { ...neighbor, name: medicineDisplayName(neighbor.name) }
+          : neighbor),
       }
       setDrug(canonicalDrug)
       setExploredDrug(canonicalDrug)
-      setData(payload)
-      setNeighbors(payload.neighbors)
+      setData(displayPayload)
+      setNeighbors(displayPayload.neighbors)
       setSelected(null)
     } catch {
       if (requestId.current === currentRequest) setError('Research connections could not be loaded. Please try again.')
@@ -357,7 +365,7 @@ export default function SubgraphExplorer() {
           <div className="subgraph-result-heading">
             <span className="eyebrow">Filtered knowledge-graph neighborhood</span>
             <h2>{data.center.name}</h2>
-            <p>{data.center.entity_id} · {neighbors.length ? `Showing ${rangeStart.toLocaleString()}–${rangeEnd.toLocaleString()} of ${totalNeighbors.toLocaleString()} matching neighbors` : 'No matching neighbors are currently displayed'}</p>
+            <p>{neighbors.length ? `Showing ${rangeStart.toLocaleString()}–${rangeEnd.toLocaleString()} of ${totalNeighbors.toLocaleString()} matching neighbors` : 'No matching neighbors are currently displayed'}</p>
           </div>
           <div className="subgraph-metrics">
             <article><span>Matching neighbors</span><strong>{data.counts.total_neighbors.toLocaleString()}</strong><small>under active filters</small></article>

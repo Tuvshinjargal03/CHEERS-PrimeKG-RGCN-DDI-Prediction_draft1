@@ -19,6 +19,12 @@ describe('Research overview', () => {
     })
 
     ;['0.5273', '0.5310', '0.5268', '0.5342'].forEach((value) => expect(screen.getByText(value)).toBeVisible())
+    ;[
+      'Mean 0.527284 ± 0.006373',
+      'Mean 0.530969 ± 0.007414',
+      'Mean 0.526776 ± 0.007482',
+      'Mean 0.534209 ± 0.006288',
+    ].forEach((value) => expect(screen.getByText(value)).toBeVisible())
     expect(screen.getByText('Highest observed mean')).toBeVisible()
     expect(screen.getByText(/difference from G0 was small and was not statistically conclusive/i)).toBeVisible()
     expect(screen.getByText('+0.006924')).toBeVisible()

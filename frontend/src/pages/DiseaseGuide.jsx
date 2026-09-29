@@ -12,6 +12,7 @@ import {
 import { useEffect, useId, useRef, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { getJson } from '../lib/api.js'
+import { medicineDisplayName } from '../lib/medicineNames.js'
 import './PublicSearch.css'
 import './PublicProduct.css'
 
@@ -121,7 +122,8 @@ function MedicineRelationshipCard({ item, indication = false }) {
         <span className={`disease-relation-badge ${indication ? 'is-indication' : ''}`}>
           {relationLabel(item.relation)}
         </span>
-        <h3>{item.drug_name}</h3>
+        <h3>{medicineDisplayName(item.drug_name)}</h3>
+        {medicineDisplayName(item.drug_name) !== item.drug_name && <small>{item.drug_name}</small>}
         <p>{relationLabel(item.relation)} in the available data</p>
       </div>
       <div className="disease-medicine-actions">

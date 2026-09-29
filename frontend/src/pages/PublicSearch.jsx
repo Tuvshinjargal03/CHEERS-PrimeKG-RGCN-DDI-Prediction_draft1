@@ -179,7 +179,7 @@ function DrugInformationState({ entity }) {
       <div>
         <h2 id="drug-information-status">Medicine information available</h2>
         <p>
-          CHEERS recognized {entity.name} ({entity.entity_id}). Open its medicine
+          CHEERS recognized {displayEntityName(entity)}. Open its medicine
           profile to review available official label information and related connections.
         </p>
         <div className="public-answer-actions">
@@ -477,7 +477,7 @@ function WhyThisAnswer({ data, entities }) {
       <div>
         {entities.map((entity) => (
           <p key={`${entity.entity_type}-${entity.entity_id}`}>
-            <strong>{displayEntityName(entity)}</strong> · {entity.entity_id} · {entityLabel(entity)}
+            <strong>{displayEntityName(entity)}</strong> · {entityLabel(entity)}
           </p>
         ))}
         {counts && <p>FDA label mentions: {counts.label_mentions} · PubMed research articles: {counts.pubmed_records}</p>}

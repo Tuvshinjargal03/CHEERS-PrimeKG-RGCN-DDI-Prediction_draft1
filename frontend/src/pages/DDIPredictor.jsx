@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import DrugAutocomplete from '../components/DrugAutocomplete.jsx'
 import MedicineLabelScanner from '../components/MedicineLabelScanner.jsx'
 import { postJson } from '../lib/api.js'
+import { medicineDisplayName } from '../lib/medicineNames.js'
 
 function destination(path, query, candidate, score) {
   const params = new URLSearchParams({
@@ -123,7 +124,7 @@ export default function DDIPredictor() {
             <h2>Prediction overview</h2>
           </div>
           <div className="prediction-summary">
-            <div className="prediction-summary-primary"><span>Query</span><strong>{result.query.name}</strong><small>{result.query.entity_id}</small></div>
+            <div className="prediction-summary-primary"><span>Query</span><strong>{medicineDisplayName(result.query)}</strong><small>{result.query.entity_id}</small></div>
             <div><span>Model used</span><strong>Saved trained model</strong><small>See Model details</small></div>
             <div><span>Candidate space</span><strong>{result.candidate_drug_count.toLocaleString()} drugs</strong><small>{result.known_positive_candidates_filtered.toLocaleString()} known training-graph links excluded{result.available_unobserved_candidates != null ? ` · ${result.available_unobserved_candidates.toLocaleString()} eligible pairs not observed in training` : ''}</small></div>
             <div><span>Returned candidates</span><strong>{result.predictions.length}</strong><small>ranked possible interaction links</small></div>
@@ -143,7 +144,7 @@ export default function DDIPredictor() {
                 {result.predictions.map((candidate) => (
                   <article key={candidate.entity_id} className="prediction-row">
                     <span className="rank-badge">#{candidate.rank}</span>
-                    <div className="prediction-drug"><strong>{candidate.name}</strong><small>DrugBank · {candidate.entity_id}</small><small>Not observed in the training graph</small></div>
+                    <div className="prediction-drug"><strong>{medicineDisplayName(candidate)}</strong>{medicineDisplayName(candidate) !== candidate.name && <small>{candidate.name}</small>}<small>DrugBank · {candidate.entity_id}</small><small>Not observed in the training graph</small></div>
                     <div className="score-block"><span>Research ranking score</span><strong>{Number(candidate.raw_score).toFixed(4)}</strong></div>
                     <div className="prediction-actions">
                       <button type="button" className="secondary-button" onClick={() => navigate(destination('/graph', result.query, candidate, candidate.raw_score))}><Network size={16} />Graph context</button>

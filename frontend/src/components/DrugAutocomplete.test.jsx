@@ -34,17 +34,15 @@ describe('DrugAutocomplete', () => {
     getJson.mockReset()
   })
 
-  it('opens an empty browse, renders suggestions, and selects a result', async () => {
+  it('opens with useful guidance without loading an arbitrary alphabetical browse', async () => {
     const user = userEvent.setup()
     getJson.mockResolvedValue(searchResponse([ASPIRIN]))
-    const { input, onSelect } = renderAutocomplete()
+    const { input } = renderAutocomplete()
 
     await user.click(input)
 
-    expect(await screen.findByRole('option', { name: /Aspirin/ })).toBeVisible()
-    expect(getJson).toHaveBeenCalledWith('/api/drugs/search?q=&limit=50&offset=0')
-    await user.click(screen.getByRole('option', { name: /Aspirin/ }))
-    expect(onSelect).toHaveBeenCalledWith(ASPIRIN)
+    expect(screen.getByText('Type a medicine name to search.')).toBeVisible()
+    expect(getJson).not.toHaveBeenCalled()
   })
 
   it('accepts and searches a one-character query', async () => {

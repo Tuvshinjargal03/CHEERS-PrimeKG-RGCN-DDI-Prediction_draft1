@@ -18,6 +18,7 @@ from urllib.parse import urlencode
 
 from src.disease_information import DiseaseInformationService
 from src.entity_metadata import EntityMetadataStore
+from src.medicine_names import DRUG_NAME_ALIASES
 
 
 SUPPORTED_INTENTS = frozenset(
@@ -64,6 +65,7 @@ MEDICINES_FOR_DISEASE_PREFIXES = (
 DRUG_FOR_DISEASE_PATTERNS = (
     re.compile(r"^can i use (?P<drug>.+?) for (?P<disease>.+)$"),
     re.compile(r"^is (?P<drug>.+?) used for (?P<disease>.+)$"),
+    re.compile(r"^does (?P<drug>.+?) help(?: with)? (?P<disease>.+)$"),
     re.compile(r"^does (?P<drug>.+?) treat (?P<disease>.+)$"),
     re.compile(r"^is (?P<drug>.+?) for (?P<disease>.+)$"),
     re.compile(r"^(?P<drug>.+?) for (?P<disease>.+)$"),
@@ -100,7 +102,6 @@ UNSUPPORTED_DIET_PATTERNS = (
     re.compile(r"^weight loss plan(?: for me)?$"),
 )
 MAX_AMBIGUOUS_MATCHES = 20
-DRUG_NAME_ALIASES = {"aspirin": "acetylsalicylic acid"}
 GENERIC_SYMPTOM_TERMS = frozenset(
     {"pain", "headache", "fever", "nausea", "cough", "dizziness", "fatigue"}
 )
@@ -108,6 +109,7 @@ NATURAL_SINGLE_ENTITY_PATTERNS = (
     ("drug_side_effects", ("drug",), re.compile(r"^(?:tell me(?: about)? )?(?P<entity>.+?) side efects$")),
     ("drug_side_effects", ("drug",), re.compile(r"^tell me (?P<entity>.+?) side effects$")),
     ("drug_side_effects", ("drug",), re.compile(r"^what are the side effects of (?P<entity>.+)$")),
+    ("drug_side_effects", ("drug",), re.compile(r"^side effects of (?P<entity>.+)$")),
     ("drug_information", ("drug",), re.compile(r"^what does (?P<entity>.+?) do$")),
     ("drug_information", ("drug",), re.compile(r"^what is (?P<entity>.+?) used for$")),
     ("drug_information", ("drug",), re.compile(r"^what is (?P<entity>.+?) for$")),

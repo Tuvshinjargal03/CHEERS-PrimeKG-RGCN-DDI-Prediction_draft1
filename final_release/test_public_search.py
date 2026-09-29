@@ -415,6 +415,7 @@ class PublicSearchTests(unittest.TestCase):
             ("what is ibuprofen for", "drug_information", "DB01050"),
             ("tell me metformin side effects", "drug_side_effects", "DB00331"),
             ("what are the side effects of metformin", "drug_side_effects", "DB00331"),
+            ("side effects of metphormin", "drug_side_effects", "DB00331"),
         )
         interpreter = FixtureQueryInterpreter(error=AssertionError("unexpected call"))
         self.use_interpreter(interpreter)
@@ -423,6 +424,16 @@ class PublicSearchTests(unittest.TestCase):
                 payload = self.search.search(query)
                 self.assertEqual(payload["intent"], intent)
                 self.assertEqual(payload["recognized_entities"][0]["entity_id"], entity_id)
+        self.assertEqual(interpreter.calls, [])
+
+    def test_common_medicine_and_symptom_wording_stays_general(self):
+        interpreter = FixtureQueryInterpreter(error=AssertionError("unexpected call"))
+        self.use_interpreter(interpreter)
+        payload = self.search.search("does ibuprofen help pain")
+        self.assertEqual(payload["intent"], "general_symptom_or_treatment_question")
+        self.assertEqual(payload["recognized_entities"][0]["entity_id"], "DB01050")
+        self.assertEqual(payload["topic"], "pain")
+        self.assertNotIn("disease", str(payload["recognized_entities"]).casefold())
         self.assertEqual(interpreter.calls, [])
 
     def test_whats_diabetes_returns_choices_without_interpreter(self):

@@ -19,6 +19,7 @@ import MedicineLabelScanner from '../components/MedicineLabelScanner.jsx'
 import { G3_CONTEXT_CANDIDATE_IDS } from '../data/g3ContextCandidateIds.js'
 import { getJson, pairEndpoint, resolveDrug } from '../lib/api.js'
 import { derivePairReviewStatus } from '../lib/pairStatus.js'
+import { medicineDisplayName } from '../lib/medicineNames.js'
 import './PublicProduct.css'
 
 const CONTEXT_IDS = new Set(G3_CONTEXT_CANDIDATE_IDS)
@@ -226,9 +227,9 @@ export default function MedicineChecker() {
             </div>
             <div>
               <div className="checker-result-pair" aria-label="Checked medicine pair">
-                <strong>{drugA?.name}</strong>
+                <strong>{medicineDisplayName(drugA)}</strong>
                 <b aria-hidden="true">+</b>
-                <strong>{drugB?.name}</strong>
+                <strong>{medicineDisplayName(drugB)}</strong>
               </div>
               <span>Checked-source status</span>
               <h2>{status.title}</h2>

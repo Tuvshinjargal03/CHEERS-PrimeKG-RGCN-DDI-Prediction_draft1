@@ -76,9 +76,10 @@ export default function DrugAutocomplete({
     if (selection || !open) return undefined
 
     const trimmed = query.trim()
+    if (!trimmed) return undefined
     const timer = window.setTimeout(
       () => fetchPage(trimmed, 0, false),
-      trimmed ? SEARCH_DELAY_MS : 0,
+      SEARCH_DELAY_MS,
     )
 
     return () => window.clearTimeout(timer)
@@ -108,7 +109,7 @@ export default function DrugAutocomplete({
 
   function openBrowseMenu() {
     if (selection || disabled) return
-    setLoading(true)
+    setLoading(Boolean(query.trim()))
     setOpen(true)
   }
 
@@ -136,7 +137,7 @@ export default function DrugAutocomplete({
     setHasMore(false)
     setSearchError('')
     setActiveIndex(-1)
-    setLoading(true)
+    setLoading(false)
     setOpen(true)
     onSelect(null)
     window.setTimeout(() => inputRef.current?.focus(), 0)
@@ -168,7 +169,7 @@ export default function DrugAutocomplete({
             setHasMore(false)
             setSearchError('')
             setActiveIndex(-1)
-            setLoading(true)
+            setLoading(Boolean(nextQuery.trim()))
             setOpen(true)
           }}
           onFocus={openBrowseMenu}
@@ -263,7 +264,7 @@ export default function DrugAutocomplete({
             </>
           ) : (
             <div className="autocomplete-empty">
-              {loading ? 'Loading drugs…' : 'No matching drugs found.'}
+              {loading ? 'Loading medicines…' : query.trim() ? 'No matching medicines found.' : 'Type a medicine name to search.'}
             </div>
           )}
         </div>

@@ -109,6 +109,8 @@ describe('Evidence retrieved-evidence summary', () => {
 
     const summary = await retrieveEvidence(user)
 
+    expect(document.querySelector('.evidence-pair-display')).not.toHaveTextContent('DB00682')
+    expect(document.querySelector('.evidence-pair-display')).not.toHaveTextContent('DB00945')
     expect(within(summary).getByText('openFDA returned label records for both medicines.')).toBeVisible()
     expect(within(summary).getByText('Warfarin: label records retrieved. 2 label record(s) examined.')).toBeVisible()
     expect(within(summary).getByText('Aspirin: label records retrieved. 3 label record(s) examined.')).toBeVisible()

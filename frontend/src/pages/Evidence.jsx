@@ -4,6 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import DrugAutocomplete from '../components/DrugAutocomplete.jsx'
 import MedicineLabelScanner from '../components/MedicineLabelScanner.jsx'
 import { getJson, pairEndpoint, resolveDrug } from '../lib/api.js'
+import { medicineDisplayName } from '../lib/medicineNames.js'
 
 const SECTION_NAMES = {
   drug_interactions: 'Drug interactions',
@@ -220,14 +221,12 @@ export default function Evidence() {
             <div className="evidence-pair-display">
               <article>
                 <span>Drug A</span>
-                <strong>{drugA?.name}</strong>
-                <small>{drugA?.entity_id}</small>
+                <strong>{medicineDisplayName(drugA)}</strong>
               </article>
               <span className="evidence-pair-connector" aria-hidden="true">+</span>
               <article>
                 <span>Drug B</span>
-                <strong>{drugB?.name}</strong>
-                <small>{drugB?.entity_id}</small>
+                <strong>{medicineDisplayName(drugB)}</strong>
               </article>
             </div>
             <div className="evidence-query-actions">
