@@ -33,7 +33,7 @@ function SavedItemsPanel({ kind, items, onRemove, showAddAction }) {
   const title = isMedicine ? 'My medicines' : 'My conditions';
   const manageRoute = isMedicine ? '/my-medicines' : '/my-conditions';
   return (
-    <section className="my-health-panel" aria-labelledby={`my-${kind}s-heading`}>
+    <section className={`my-health-panel ${items.length ? '' : 'is-empty'}`} aria-labelledby={`my-${kind}s-heading`}>
       <div className="my-health-panel__heading">
         <div><span className="my-health-panel__icon" aria-hidden="true">{isMedicine ? <Pill size={20} /> : <HeartPulse size={20} />}</span><h2 id={`my-${kind}s-heading`}>{title}</h2></div>
         <span className="my-health-count" aria-label={`${items.length} saved ${kind}${items.length === 1 ? '' : 's'}`}>{items.length}</span>
@@ -96,11 +96,10 @@ export default function MyHealth() {
     if (question.trim()) navigate(`/search?q=${encodeURIComponent(question.trim())}`);
   }
 
-  const hasSavedItems = savedMedicines.length > 0 || savedConditions.length > 0;
   const hasReviewCards = medicinePairs.length > 0 || medicineConditions.length > 0 || savedMedicines.length === 1 || savedConditions.length === 1;
 
   return (
-    <main className="my-health-page">
+    <main className="page my-health-page">
       <header className="my-health-header">
         <p className="eyebrow">PERSONAL DASHBOARD</p><h1>My Health</h1>
         <p className="my-health-header__summary">Keep your medicines and conditions together so CHEERS can organize relevant information for you.</p>
@@ -108,19 +107,12 @@ export default function MyHealth() {
         <details className="my-health-storage-details"><summary>How saving works</summary><p>Your saved medicines and conditions stay in this browser unless you remove them or clear browser data.</p></details>
       </header>
 
-      {!hasSavedItems ? (
-        <section className="my-health-empty-state" aria-labelledby="my-health-empty-heading">
-          <div><h2 id="my-health-empty-heading">Add medicines or conditions to keep useful information together.</h2><div className="my-health-empty-actions"><Link className="primary-button" to="/my-medicines"><Plus size={17} aria-hidden="true" /> Add medicine</Link><Link className="secondary-button" to="/my-conditions"><Plus size={17} aria-hidden="true" /> Add condition</Link></div></div>
-          <div className="my-health-empty-help"><h3>What you can do here</h3><ul><li>Review saved medicines together</li><li>Open medicine and condition information faster</li><li>Ask CHEERS about saved items</li></ul></div>
-        </section>
-      ) : null}
-
       <div className="my-health-saved-grid">
-        <SavedItemsPanel kind="medicine" items={savedMedicines} showAddAction={hasSavedItems} onRemove={(id) => removeSavedItem(SAVED_MEDICINES_STORAGE_KEY, setSavedMedicines, id)} />
-        <SavedItemsPanel kind="condition" items={savedConditions} showAddAction={hasSavedItems} onRemove={(id) => removeSavedItem(SAVED_CONDITIONS_STORAGE_KEY, setSavedConditions, id)} />
+        <SavedItemsPanel kind="medicine" items={savedMedicines} showAddAction onRemove={(id) => removeSavedItem(SAVED_MEDICINES_STORAGE_KEY, setSavedMedicines, id)} />
+        <SavedItemsPanel kind="condition" items={savedConditions} showAddAction onRemove={(id) => removeSavedItem(SAVED_CONDITIONS_STORAGE_KEY, setSavedConditions, id)} />
       </div>
 
-      <section className="my-health-reviews" aria-labelledby="things-to-review-heading" aria-live="polite">
+      <section className={`my-health-reviews ${hasReviewCards ? '' : 'is-empty'}`} aria-labelledby="things-to-review-heading" aria-live="polite">
         <div className="my-health-section-heading"><div><p className="eyebrow">SAVED INFORMATION</p><h2 id="things-to-review-heading">Things to review</h2><p>Open useful CHEERS information based on the items you saved.</p></div><BookOpen size={25} aria-hidden="true" /></div>
         {hasReviewCards ? (
           <div className="my-health-review-groups">
@@ -133,7 +125,7 @@ export default function MyHealth() {
             {savedMedicines.length === 1 ? <div className="my-health-review-group"><h3>Learn more about {medicineDisplayName(savedMedicines[0])}</h3><div className="my-health-inline-actions"><Link to={`/medicines/${encodeURIComponent(savedMedicines[0].entity_id)}`}>View uses</Link><Link to={`/search?q=${encodeURIComponent(`${medicineDisplayName(savedMedicines[0])} side effects`)}`}>View side effects</Link></div></div> : null}
             {savedConditions.length === 1 ? <div className="my-health-review-group"><h3>Learn more about {savedConditions[0].name}</h3><div className="my-health-inline-actions"><Link to={`/diseases/${encodeURIComponent(savedConditions[0].entity_id)}`}>View condition information</Link></div></div> : null}
           </div>
-        ) : <p className="my-health-reviews__empty">Save a medicine or condition to see useful review actions here.</p>}
+        ) : <p className="my-health-reviews__empty">Add a medicine or condition to see useful review options.</p>}
       </section>
 
       <section className="my-health-ask" aria-labelledby="ask-saved-items-heading"><span className="my-health-ask__icon" aria-hidden="true"><MessageCircleQuestion size={23} /></span><div><h2 id="ask-saved-items-heading">Ask CHEERS</h2><p>Include a saved medicine or condition name in your question. Saved items are not attached automatically.</p><form onSubmit={askCheers} className="my-health-ask__form"><label htmlFor="saved-items-question">Question</label><input id="saved-items-question" value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="Ask about one of your saved medicines or conditions..." /><button className="primary-button" type="submit" disabled={!question.trim()}>Ask CHEERS</button></form></div></section>

@@ -94,6 +94,30 @@ describe('DiseaseGuide', () => {
     getJson.mockReset()
   })
 
+  it('shows verified condition starters on empty focus and restores them after clearing', async () => {
+    const user = userEvent.setup()
+    getJson.mockResolvedValue({
+      query: 'diab',
+      suggestions: [{ name: 'type 2 diabetes mellitus', entity_id: '5148', entity_type: 'disease' }],
+    })
+    renderGuide('/diseases')
+    const input = screen.getByRole('combobox', { name: /search for a condition/i })
+
+    await user.click(input)
+    const starters = screen.getByRole('listbox', { name: 'Condition suggestions' })
+    expect(within(starters).getByText('Suggested conditions')).toBeVisible()
+    expect(within(starters).getAllByRole('option').map((option) => option.textContent)).toEqual([
+      'Diabetes mellitus', 'Type 2 diabetes mellitus', 'Asthma', 'Gout',
+    ])
+    expect(starters).not.toHaveTextContent(/5015|5148|4979|5393/)
+    expect(getJson).not.toHaveBeenCalled()
+
+    await user.type(input, 'diab')
+    expect(await screen.findByText('Results')).toBeVisible()
+    await user.clear(input)
+    expect(screen.getByText('Suggested conditions')).toBeVisible()
+  })
+
   it('debounces live suggestions, hides IDs, and opens the selected condition', async () => {
     const user = userEvent.setup()
     getJson.mockResolvedValue({

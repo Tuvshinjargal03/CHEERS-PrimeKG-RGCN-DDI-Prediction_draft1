@@ -113,6 +113,13 @@
   cursor: pointer;
 }
 
+.my-conditions-suggestions-heading {
+  padding: 7px 10px 5px;
+  color: #777c8d;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
 .my-conditions-suggestions > button:hover,
 .my-conditions-suggestions > button:focus-visible,
 .my-conditions-suggestions > button.is-active {
