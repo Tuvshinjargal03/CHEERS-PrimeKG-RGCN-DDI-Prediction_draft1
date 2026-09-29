@@ -13,11 +13,17 @@ class DrugSearchQualityTests(unittest.TestCase):
             {"entity_name": "Warfarin", "entity_id": "DB00682", "node_id": 4},
         ]
 
-    def test_verified_common_name_returns_the_canonical_aspirin_entity_first(self):
-        results, total = self.predictor.search_drug_page("aspirin", limit=10)
-        self.assertEqual(total, 1)
-        self.assertEqual(results[0]["entity_id"], "DB00945")
-        self.assertEqual(results[0]["name"], "Acetylsalicylic acid")
+    def test_verified_common_name_prefixes_return_aspirin_first(self):
+        for query in ("asp", "aspi", "aspir", "aspirin"):
+            with self.subTest(query=query):
+                results, total = self.predictor.search_drug_page(query, limit=10)
+                self.assertEqual(total, 3)
+                self.assertEqual(results[0]["entity_id"], "DB00945")
+                self.assertEqual(results[0]["name"], "Acetylsalicylic acid")
+                self.assertEqual(
+                    {result["entity_id"] for result in results[1:]},
+                    {"DB13612", "DB12445"},
+                )
 
     def test_exact_canonical_search_behavior_is_preserved(self):
         results, total = self.predictor.search_drug_page("Warfarin", limit=10)
