@@ -41,8 +41,8 @@ const navigationGroups = [
     items: [
       { path: '/medicines', label: 'Medicines', icon: Pill },
       { path: '/diseases', label: 'Diseases', icon: HeartPulse },
-      { path: '/graph', label: 'Graph Explorer', icon: Network },
-      { path: '/subgraph', label: 'Subgraph Explorer', icon: Share2 },
+      { path: '/graph', label: 'Compare two medicines', icon: Network },
+      { path: '/subgraph', label: 'Explore one medicine', icon: Share2 },
     ],
   },
   {

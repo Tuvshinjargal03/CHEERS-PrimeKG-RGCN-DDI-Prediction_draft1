@@ -68,14 +68,14 @@ function Experiments() {
       if (rankingResult.status === 'fulfilled') {
         setRanking(rankingResult.value)
       } else {
-        setError(rankingResult.reason?.message || 'Experiment data could not be loaded.')
+        setError('Experiment data could not be loaded. Please try again.')
       }
 
       if (classificationResult.status === 'fulfilled') {
         setClassification(classificationResult.value)
       } else {
         setClassificationError(
-          classificationResult.reason?.message || 'Classification metrics could not be loaded.',
+          'Classification metrics could not be loaded. Please try again.',
         )
       }
       setLoading(false)

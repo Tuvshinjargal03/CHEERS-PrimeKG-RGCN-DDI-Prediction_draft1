@@ -166,7 +166,8 @@ describe('MedicineChecker', () => {
     await choosePairAndSubmit(user)
 
     expect(await screen.findByText('Not enough information')).toBeVisible()
-    expect(screen.getByRole('alert')).toHaveTextContent('Sources are temporarily unavailable.')
+    expect(screen.getByRole('alert')).toHaveTextContent('The checked sources could not be retrieved. Please try again.')
+    expect(screen.getByRole('alert')).not.toHaveTextContent('Sources are temporarily unavailable.')
     expect(screen.getByText(/4 shared connections found/)).toBeVisible()
     expect(screen.getByText('FDA label mentions').parentElement).toHaveTextContent('—FDA label mentionsSource unavailable')
   })

@@ -133,7 +133,8 @@ describe('MedicineGuide', () => {
     expect(screen.getByRole('link', { name: 'Related diseases' })).toHaveAttribute('title', 'Knowledge-graph context')
     expect(screen.getByText(/does not mean complete medical coverage/i)).toBeVisible()
     expect(screen.getByText(/Missing information is not proof of safety/i)).toBeVisible()
-    expect(screen.getByText(/does not replace advice from a healthcare professional/i)).toBeVisible()
+    expect(screen.getByText(/not personalized medical advice/i)).toBeVisible()
+    expect(screen.getAllByText(/not personalized medical advice/i)).toHaveLength(1)
     expect(screen.getByText(/1 label record reviewed · 4 label sections available/)).toBeVisible()
   })
 
@@ -413,6 +414,7 @@ describe('MedicineGuide', () => {
         : Promise.resolve(CONTEXT)
     ))
     renderGuide('/medicines/DB00331')
-    expect(await screen.findByRole('alert')).toHaveTextContent('Medicine source unavailable.')
+    expect(await screen.findByRole('alert')).toHaveTextContent('Medicine information could not be loaded. Please try again.')
+    expect(screen.queryByText('Medicine source unavailable.')).not.toBeInTheDocument()
   })
 })

@@ -235,8 +235,8 @@ export default function SubgraphExplorer() {
       setData(payload)
       setNeighbors(payload.neighbors)
       setSelected(null)
-    } catch (requestError) {
-      if (requestId.current === currentRequest) setError(requestError.message || 'Research connections could not be loaded.')
+    } catch {
+      if (requestId.current === currentRequest) setError('Research connections could not be loaded. Please try again.')
     } finally {
       if (requestId.current === currentRequest) {
         setLoading(false)

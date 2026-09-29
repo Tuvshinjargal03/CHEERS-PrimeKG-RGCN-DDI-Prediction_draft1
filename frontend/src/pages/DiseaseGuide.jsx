@@ -211,12 +211,12 @@ export default function DiseaseGuide() {
       (result) => {
         if (active) setRequest({ diseaseId, payload: result, error: '' })
       },
-      (requestError) => {
+      () => {
         if (active) {
           setRequest({
             diseaseId,
             payload: null,
-            error: requestError.message || 'Disease information could not be loaded.',
+            error: 'Disease information could not be loaded. Please try again.',
           })
         }
       },

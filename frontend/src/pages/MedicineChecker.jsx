@@ -72,8 +72,8 @@ export default function MedicineChecker() {
           setEvidenceError('One of the requested medicine identifiers could not be found.')
         }
       })
-      .catch((error) => {
-        if (active) setEvidenceError(error.message || 'The requested medicines could not be loaded.')
+      .catch(() => {
+        if (active) setEvidenceError('The requested medicines could not be loaded. Please try again.')
       })
       .finally(() => {
         if (active) setResolving(false)
@@ -137,7 +137,7 @@ export default function MedicineChecker() {
     if (evidenceResult.status === 'fulfilled') {
       setEvidence(evidenceResult.value)
     } else {
-      setEvidenceError(evidenceResult.reason?.message || 'The checked sources could not be retrieved.')
+      setEvidenceError('The checked sources could not be retrieved. Please try again.')
     }
 
     if (contextResult.status === 'fulfilled') {

@@ -256,9 +256,9 @@ export default function GraphExplorer() {
           setError('One of the requested medicines could not be found.')
         }
       })
-      .catch((requestError) => {
+      .catch(() => {
         if (active && contextRequestId.current === requestId) {
-          setError(requestError.message || 'The requested pair could not be resolved.')
+          setError('The requested medicines could not be loaded. Please try again.')
         }
       })
       .finally(() => {
@@ -448,9 +448,9 @@ export default function GraphExplorer() {
             if (contextRequestId.current === requestId) setSuggestionsLoading(false)
           })
       }
-    } catch (requestError) {
+    } catch {
       if (contextRequestId.current === requestId) {
-        setError(requestError.message || 'Research connections could not be loaded.')
+        setError('Research connections could not be loaded. Please try again.')
       }
     } finally {
       if (contextRequestId.current === requestId) setLoading(false)

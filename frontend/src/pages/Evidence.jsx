@@ -125,8 +125,8 @@ export default function Evidence() {
           setError('One of the requested medicines could not be found.')
         }
       })
-      .catch((requestError) => {
-        if (active) setError(requestError.message || 'The requested pair could not be resolved.')
+      .catch(() => {
+        if (active) setError('The requested medicines could not be loaded. Please try again.')
       })
       .finally(() => {
         if (active) setResolving(false)
@@ -164,8 +164,8 @@ export default function Evidence() {
     setShowAllExcerpts(false)
     try {
       setData(await getJson(pairEndpoint('/api/evidence/pair', drugA.entity_id, drugB.entity_id)))
-    } catch (requestError) {
-      setError(requestError.message || 'External evidence could not be retrieved.')
+    } catch {
+      setError('External evidence could not be retrieved. Please try again.')
     } finally {
       setLoading(false)
     }

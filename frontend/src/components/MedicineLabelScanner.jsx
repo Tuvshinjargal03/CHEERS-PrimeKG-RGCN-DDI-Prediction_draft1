@@ -2,6 +2,7 @@ import { Camera, FileImage, LoaderCircle, RotateCcw, ScanText, Trash2, X } from 
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { postJson } from '../lib/api.js'
+import { medicineDisplayName } from '../lib/medicineNames.js'
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024
 const MATCH_LIMIT = 10
@@ -584,9 +585,9 @@ export default function MedicineLabelScanner({ targetLabel, onDrugSelect, disabl
                   className="scanner-match"
                   key={`${match.entity_id}-${match.node_id}`}
                   onClick={() => chooseMatch(match)}
-                  aria-label={`Select ${match.name}, ${match.entity_id}, ${MATCH_LABELS[match.match_type] || 'Possible text match'}`}
+                  aria-label={`Select ${medicineDisplayName(match)}, ${MATCH_LABELS[match.match_type] || 'Possible text match'}`}
                 >
-                  <span><strong>{match.name}</strong><small>{match.entity_id}</small></span>
+                  <span><strong>{medicineDisplayName(match)}</strong>{medicineDisplayName(match) !== match.name && <small>{match.name}</small>}</span>
                   <em>{MATCH_LABELS[match.match_type] || 'Possible text match'}</em>
                 </button>
               ))}

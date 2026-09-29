@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, BookOpen, HeartPulse, MessageCircleQuestion, Pill, Plus, ShieldCheck, Stethoscope, Trash2 } from 'lucide-react';
 import { MAX_SAVED_MEDICINES, SAVED_MEDICINES_STORAGE_KEY, generateUniqueMedicinePairs } from '../lib/myMedicines';
+import { medicineDisplayName } from '../lib/medicineNames.js';
 import './MyHealth.css';
 
 const SAVED_CONDITIONS_STORAGE_KEY = 'cheers.my-conditions.v1';
@@ -27,10 +28,6 @@ function readSavedSelections(storageKey, limit) {
   }
 }
 
-function displayMedicineName(medicine) {
-  return medicine.name.toLowerCase() === 'acetylsalicylic acid' ? 'Aspirin' : medicine.name;
-}
-
 function SavedItemsPanel({ kind, items, onRemove, showAddAction }) {
   const isMedicine = kind === 'medicine';
   const title = isMedicine ? 'My medicines' : 'My conditions';
@@ -44,7 +41,7 @@ function SavedItemsPanel({ kind, items, onRemove, showAddAction }) {
       {items.length ? (
         <ul className="my-health-saved-list">
           {items.map((item) => {
-            const displayName = isMedicine ? displayMedicineName(item) : item.name;
+            const displayName = isMedicine ? medicineDisplayName(item) : item.name;
             const route = isMedicine ? `/medicines/${encodeURIComponent(item.entity_id)}` : `/diseases/${encodeURIComponent(item.entity_id)}`;
             return (
               <li key={item.entity_id} className="my-health-saved-card">
@@ -128,18 +125,18 @@ export default function MyHealth() {
         {hasReviewCards ? (
           <div className="my-health-review-groups">
             {medicinePairs.length ? <div className="my-health-review-group"><h3>Review your saved medicine pairs</h3><div className="my-health-review-grid">
-              {medicinePairs.slice(0, showMorePairs ? EXPANDED_REVIEW_COUNT : INITIAL_REVIEW_COUNT).map(({ drugA, drugB }) => <ReviewCard key={`${drugA.entity_id}-${drugB.entity_id}`} icon={Pill} title={`${displayMedicineName(drugA)} + ${displayMedicineName(drugB)}`} description="Review these two saved medicines together." action="Review together" to={`/check?drug_a_id=${encodeURIComponent(drugA.entity_id)}&drug_b_id=${encodeURIComponent(drugB.entity_id)}`} />)}
+              {medicinePairs.slice(0, showMorePairs ? EXPANDED_REVIEW_COUNT : INITIAL_REVIEW_COUNT).map(({ drugA, drugB }) => <ReviewCard key={`${drugA.entity_id}-${drugB.entity_id}`} icon={Pill} title={`${medicineDisplayName(drugA)} + ${medicineDisplayName(drugB)}`} description="Review these two saved medicines together." action="Review together" to={`/check?drug_a_id=${encodeURIComponent(drugA.entity_id)}&drug_b_id=${encodeURIComponent(drugB.entity_id)}`} />)}
             </div>{medicinePairs.length > INITIAL_REVIEW_COUNT ? <button className="my-health-more-button" type="button" onClick={() => setShowMorePairs((value) => !value)} aria-expanded={showMorePairs}>{showMorePairs ? 'Show fewer' : 'View more'}</button> : null}</div> : null}
             {medicineConditions.length ? <div className="my-health-review-group"><h3>Explore medicines and conditions</h3><div className="my-health-review-grid">
-              {medicineConditions.slice(0, showMoreRelationships ? EXPANDED_REVIEW_COUNT : INITIAL_REVIEW_COUNT).map(({ medicine, condition }) => <ReviewCard key={`${medicine.entity_id}-${condition.entity_id}`} icon={Stethoscope} title={`${displayMedicineName(medicine)} + ${condition.name}`} description="View available relationship information in CHEERS." action="Explore relationship information" to={`/search?q=${encodeURIComponent(`${displayMedicineName(medicine)} and ${condition.name}`)}`} />)}
+              {medicineConditions.slice(0, showMoreRelationships ? EXPANDED_REVIEW_COUNT : INITIAL_REVIEW_COUNT).map(({ medicine, condition }) => <ReviewCard key={`${medicine.entity_id}-${condition.entity_id}`} icon={Stethoscope} title={`${medicineDisplayName(medicine)} + ${condition.name}`} description="View available relationship information in CHEERS." action="Explore relationship information" to={`/search?q=${encodeURIComponent(`${medicineDisplayName(medicine)} and ${condition.name}`)}`} />)}
             </div>{medicineConditions.length > INITIAL_REVIEW_COUNT ? <button className="my-health-more-button" type="button" onClick={() => setShowMoreRelationships((value) => !value)} aria-expanded={showMoreRelationships}>{showMoreRelationships ? 'Show fewer' : 'View more'}</button> : null}</div> : null}
-            {savedMedicines.length === 1 ? <div className="my-health-review-group"><h3>Learn more about {displayMedicineName(savedMedicines[0])}</h3><div className="my-health-inline-actions"><Link to={`/medicines/${encodeURIComponent(savedMedicines[0].entity_id)}`}>View uses</Link><Link to={`/search?q=${encodeURIComponent(`${displayMedicineName(savedMedicines[0])} side effects`)}`}>View side effects</Link></div></div> : null}
+            {savedMedicines.length === 1 ? <div className="my-health-review-group"><h3>Learn more about {medicineDisplayName(savedMedicines[0])}</h3><div className="my-health-inline-actions"><Link to={`/medicines/${encodeURIComponent(savedMedicines[0].entity_id)}`}>View uses</Link><Link to={`/search?q=${encodeURIComponent(`${medicineDisplayName(savedMedicines[0])} side effects`)}`}>View side effects</Link></div></div> : null}
             {savedConditions.length === 1 ? <div className="my-health-review-group"><h3>Learn more about {savedConditions[0].name}</h3><div className="my-health-inline-actions"><Link to={`/diseases/${encodeURIComponent(savedConditions[0].entity_id)}`}>View condition information</Link></div></div> : null}
           </div>
         ) : <p className="my-health-reviews__empty">Save a medicine or condition to see useful review actions here.</p>}
       </section>
 
-      <section className="my-health-ask" aria-labelledby="ask-saved-items-heading"><span className="my-health-ask__icon" aria-hidden="true"><MessageCircleQuestion size={23} /></span><div><h2 id="ask-saved-items-heading">Ask about my saved items</h2><p>Ask a question using the name of a saved medicine or condition. Only your question is sent to Ask CHEERS.</p><form onSubmit={askCheers} className="my-health-ask__form"><label className="sr-only" htmlFor="saved-items-question">Question about a saved item</label><input id="saved-items-question" value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="Ask about one of your saved medicines or conditions..." /><button className="primary-button" type="submit" disabled={!question.trim()}>Ask CHEERS</button></form></div></section>
+      <section className="my-health-ask" aria-labelledby="ask-saved-items-heading"><span className="my-health-ask__icon" aria-hidden="true"><MessageCircleQuestion size={23} /></span><div><h2 id="ask-saved-items-heading">Ask CHEERS</h2><p>Include a saved medicine or condition name in your question. Saved items are not attached automatically.</p><form onSubmit={askCheers} className="my-health-ask__form"><label className="sr-only" htmlFor="saved-items-question">Question about a saved item</label><input id="saved-items-question" value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="Ask about one of your saved medicines or conditions..." /><button className="primary-button" type="submit" disabled={!question.trim()}>Ask CHEERS</button></form></div></section>
       <p className="my-health-boundary">CHEERS can organize information around your saved medicines and conditions, but it does not diagnose or choose treatment for you.</p>
     </main>
   );

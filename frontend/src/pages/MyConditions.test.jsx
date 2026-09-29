@@ -25,9 +25,7 @@ const INFLUENZA = {
 
 function searchPayload(condition) {
   return {
-    intent: 'disease_information',
-    recognized_entities: [condition],
-    ambiguous_matches: [],
+    suggestions: [condition],
   }
 }
 
@@ -63,7 +61,7 @@ function diseasePayload(
 
 function installApiFixtures() {
   getJson.mockImplementation((path) => {
-    if (path.startsWith('/api/public/search')) {
+    if (path.startsWith('/api/public/disease-suggestions')) {
       const query = decodeURIComponent(path.split('q=')[1] || '').toLocaleLowerCase()
       if (query.includes('gout')) return Promise.resolve(searchPayload(GOUT))
       if (query.includes('influenza')) return Promise.resolve(searchPayload(INFLUENZA))
@@ -115,9 +113,12 @@ describe('My Conditions', () => {
     expect(screen.getByRole('link', { name: 'View in My Health' })).toHaveAttribute('href', '/my-health')
     const card = conditionCard(DIABETES.name)
     expect(within(card).getByRole('heading', { level: 3, name: DIABETES.name })).toBeVisible()
-    expect(within(card).getByText('5148').tagName).toBe('SMALL')
+    expect(within(card).queryByText('5148')).not.toBeInTheDocument()
     expect(within(card).getByRole('link', { name: 'View condition' })).toHaveAttribute('href', '/diseases/5148')
-    expect(getJson).toHaveBeenCalledWith('/api/public/search?q=diab')
+    expect(getJson).toHaveBeenCalledWith(
+      '/api/public/disease-suggestions?q=diab&limit=6',
+      expect.objectContaining({ cache: false, signal: expect.any(AbortSignal) }),
+    )
     await waitFor(() => {
       expect(JSON.parse(window.localStorage.getItem('cheers.my-conditions.v1'))).toEqual([
         { entity_id: '5148', name: 'type 2 diabetes mellitus' },
@@ -213,7 +214,8 @@ describe('My Conditions', () => {
     })
     renderPage()
 
-    expect(await within(conditionCard(GOUT.name)).findByRole('alert')).toHaveTextContent('source unavailable')
+    expect(await within(conditionCard(GOUT.name)).findByRole('alert')).toHaveTextContent('Condition information could not be loaded. Please try again.')
+    expect(within(conditionCard(GOUT.name)).queryByText('source unavailable')).not.toBeInTheDocument()
     expect(await within(conditionCard(DIABETES.name)).findByText('47')).toBeVisible()
     expect(document.querySelectorAll('.my-conditions-card')).toHaveLength(2)
   })

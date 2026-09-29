@@ -147,7 +147,8 @@ describe('GraphExplorer context availability', () => {
     getJson.mockRejectedValueOnce(new Error('Context API unavailable.'))
     await userEvent.click(screen.getByRole('button', { name: 'Explore pair' }))
 
-    expect(await screen.findByText('Context API unavailable.')).toHaveClass('inline-alert', 'error')
+    expect(await screen.findByText('Research connections could not be loaded. Please try again.')).toHaveClass('inline-alert', 'error')
+    expect(screen.queryByText('Context API unavailable.')).not.toBeInTheDocument()
     expect(getJson).toHaveBeenLastCalledWith('/api/context/pair?drug_a_id=DB00682&drug_b_id=DB00945')
     expect(suggestionRequests()).toHaveLength(0)
   })

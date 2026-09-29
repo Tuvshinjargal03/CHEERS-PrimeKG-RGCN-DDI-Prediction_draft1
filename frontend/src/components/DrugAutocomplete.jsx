@@ -1,8 +1,7 @@
 import { Search, X } from 'lucide-react'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { getJson } from '../lib/api.js'
-
-const VERIFIED_DISPLAY_NAMES = { 'Acetylsalicylic acid': 'Aspirin' }
+import { medicineDisplayName } from '../lib/medicineNames.js'
 
 const PAGE_SIZE = 50
 const SEARCH_DELAY_MS = 180
@@ -151,7 +150,7 @@ export default function DrugAutocomplete({
         <input
           ref={inputRef}
           id={inputId}
-          value={selection?.name || query}
+          value={selection ? medicineDisplayName(selection) : query}
           placeholder={placeholder}
           disabled={disabled}
           autoComplete="off"
@@ -210,7 +209,8 @@ export default function DrugAutocomplete({
 
       {selection && (
         <span className="selection-meta">
-          Selected: {selection.name} · {selection.entity_id}
+          Selected: {medicineDisplayName(selection)}
+          {medicineDisplayName(selection) !== selection.name ? ` · ${selection.name}` : ''}
         </span>
       )}
 
@@ -234,7 +234,7 @@ export default function DrugAutocomplete({
             <>
               {results.map((item, index) => {
                 const annotation = getOptionAnnotation?.(item)
-                const displayName = item.display_name || VERIFIED_DISPLAY_NAMES[item.name] || item.name
+                const displayName = medicineDisplayName(item)
                 return (
                   <button
                     id={`${inputId}-option-${index}`}

@@ -19,7 +19,7 @@ export default function Methodology() {
       .then(([experimentResult, classificationResult, modelResult, relationResult]) => {
         if (!active) return
         if (experimentResult.status === 'rejected') {
-          setError(experimentResult.reason?.message || 'Primary experiment methodology could not be loaded.')
+          setError('Primary experiment methodology could not be loaded. Please try again.')
           return
         }
         setData({
@@ -29,9 +29,9 @@ export default function Methodology() {
           relationAnalysis: relationResult.status === 'fulfilled' ? relationResult.value : null,
         })
         setSourceErrors({
-          classification: classificationResult.status === 'rejected' ? classificationResult.reason?.message || 'Classification methodology is unavailable.' : '',
-          model: modelResult.status === 'rejected' ? modelResult.reason?.message || 'Model metadata is unavailable.' : '',
-          relationAnalysis: relationResult.status === 'rejected' ? relationResult.reason?.message || 'Relation-analysis methodology is unavailable.' : '',
+          classification: classificationResult.status === 'rejected' ? 'Classification methodology is unavailable.' : '',
+          model: modelResult.status === 'rejected' ? 'Model metadata is unavailable.' : '',
+          relationAnalysis: relationResult.status === 'rejected' ? 'Relation-analysis methodology is unavailable.' : '',
         })
       })
     return () => {

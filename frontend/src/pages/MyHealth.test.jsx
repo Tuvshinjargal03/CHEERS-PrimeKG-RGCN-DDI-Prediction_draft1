@@ -27,7 +27,8 @@ describe('My Health dashboard', () => {
     expect(screen.getByRole('heading', { name: 'My medicines' })).toBeVisible();
     expect(screen.getByRole('heading', { name: 'My conditions' })).toBeVisible();
     expect(screen.getByRole('heading', { name: 'Things to review' })).toBeVisible();
-    expect(screen.getByRole('heading', { name: 'Ask about my saved items' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Ask CHEERS' })).toBeVisible();
+    expect(screen.getByText('Saved items are not attached automatically.', { exact: false })).toBeVisible();
     expect(document.body).not.toHaveTextContent(/saved context|health context/i);
   });
 

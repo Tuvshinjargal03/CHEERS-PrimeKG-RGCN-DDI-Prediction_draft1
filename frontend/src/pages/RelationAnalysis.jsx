@@ -26,7 +26,7 @@ export default function RelationAnalysis() {
     let active = true
     getJson('/api/relation-analysis')
       .then((payload) => { if (active) setData(payload) })
-      .catch((requestError) => { if (active) setError(requestError.message || 'Relation results could not be loaded.') })
+      .catch(() => { if (active) setError('Relation results could not be loaded. Please try again.') })
       .finally(() => { if (active) setLoading(false) })
     return () => { active = false }
   }, [])

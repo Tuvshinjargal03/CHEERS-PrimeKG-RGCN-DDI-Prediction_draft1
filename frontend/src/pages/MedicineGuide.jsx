@@ -18,6 +18,7 @@ import DrugAutocomplete from '../components/DrugAutocomplete.jsx'
 import MedicineLabelScanner from '../components/MedicineLabelScanner.jsx'
 import { G3_CONTEXT_CANDIDATE_IDS } from '../data/g3ContextCandidateIds.js'
 import { getJson } from '../lib/api.js'
+import { medicineDisplayName } from '../lib/medicineNames.js'
 import './PublicProduct.css'
 
 const CONTEXT_IDS = new Set(G3_CONTEXT_CANDIDATE_IDS)
@@ -81,12 +82,6 @@ const MEDICINE_EXAMPLES = [
   { name: 'Ibuprofen', id: 'DB01050' },
 ]
 const MAX_INLINE_LABEL_CHARS = 2_500
-const DISPLAY_NAME_ALIASES = { 'Acetylsalicylic acid': 'Aspirin' }
-
-function medicineDisplayName(name) {
-  return DISPLAY_NAME_ALIASES[name] || name
-}
-
 function cleanLabelPoints(entries, limit = 3) {
   const points = []
   const signatures = []
@@ -509,11 +504,11 @@ export default function MedicineGuide() {
           }))
         }
       },
-      (requestError) => {
+      () => {
         if (active) {
           setRequest((current) => ({
             ...(current.drugId === drugId ? current : initialRequest),
-            error: requestError?.message || 'Medicine information could not be loaded.',
+            error: 'Medicine information could not be loaded. Please try again.',
           }))
         }
       },
@@ -530,11 +525,11 @@ export default function MedicineGuide() {
             }))
           }
         },
-        (requestError) => {
+        () => {
           if (active) {
             setRequest((current) => ({
               ...(current.drugId === drugId ? current : initialRequest),
-              contextError: requestError?.message || 'Related disease context could not be loaded.',
+              contextError: 'Research connections could not be loaded. Please try again.',
               contextLoading: false,
             }))
           }
@@ -638,7 +633,7 @@ export default function MedicineGuide() {
           </nav>
 
           {labelStatus === 'error' && activeSection !== 'food-lifestyle' && (
-            <div className="product-source-error" role="alert"><AlertCircle size={20} /><span>{labelInformation.error || 'openFDA label information is unavailable.'}</span></div>
+            <div className="product-source-error" role="alert"><AlertCircle size={20} /><span>Official label information is temporarily unavailable. Please try again.</span></div>
           )}
           {labelStatus === 'no_matches' && !['food-lifestyle', 'related-diseases'].includes(activeSection) && (
             <div className="product-empty-state"><Info size={24} /><div><strong>No openFDA label record was retrieved.</strong><p>This does not mean the medicine has no uses, side effects, warnings, or interactions.</p></div></div>
@@ -655,8 +650,7 @@ export default function MedicineGuide() {
           <aside className="medicine-source-boundary">
             <Search size={19} />
             <div>
-              <p>{payload.safety_note || 'Official label information is presented for source review, not personalized medical advice.'}</p>
-              <p>CHEERS helps you explore medicine and health information. It does not replace advice from a healthcare professional.</p>
+              <p>Official label information is general information, not personalized medical advice.</p>
             </div>
           </aside>
         </>

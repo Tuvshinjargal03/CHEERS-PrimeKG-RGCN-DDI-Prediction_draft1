@@ -41,13 +41,13 @@ describe('CHEERS application shell', () => {
     expect(exploreMenu.getAllByRole('link').map((link) => link.textContent)).toEqual([
       'Medicines',
       'Diseases',
-      'Graph Explorer',
-      'Subgraph Explorer',
+      'Compare two medicines',
+      'Explore one medicine',
     ])
     expect(exploreMenu.getByRole('link', { name: 'Medicines' })).toHaveAttribute('href', '#/medicines')
     expect(exploreMenu.getByRole('link', { name: 'Diseases' })).toHaveAttribute('href', '#/diseases')
-    expect(exploreMenu.getByRole('link', { name: 'Graph Explorer' })).toHaveAttribute('href', '#/graph')
-    expect(exploreMenu.getByRole('link', { name: 'Subgraph Explorer' })).toHaveAttribute('href', '#/subgraph')
+    expect(exploreMenu.getByRole('link', { name: 'Compare two medicines' })).toHaveAttribute('href', '#/graph')
+    expect(exploreMenu.getByRole('link', { name: 'Explore one medicine' })).toHaveAttribute('href', '#/subgraph')
 
     await user.click(nav.getByRole('button', { name: 'Research' }))
     expect(nav.getByRole('link', { name: 'Overview' })).toHaveAttribute('href', '#/research')
@@ -81,8 +81,8 @@ describe('CHEERS application shell', () => {
   it.each([
     ['/medicines/DB00682', 'Medicines'],
     ['/diseases/5148', 'Diseases'],
-    ['/graph', 'Graph Explorer'],
-    ['/subgraph', 'Subgraph Explorer'],
+    ['/graph', 'Compare two medicines'],
+    ['/subgraph', 'Explore one medicine'],
   ])('keeps Explore expanded and the destination active on %s', async (path, label) => {
     window.location.hash = `#${path}`
     render(<App />)
