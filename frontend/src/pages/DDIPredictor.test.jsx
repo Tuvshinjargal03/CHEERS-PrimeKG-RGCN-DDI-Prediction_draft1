@@ -8,8 +8,8 @@ import { postJson } from '../lib/api.js'
 vi.mock('../lib/api.js', () => ({ postJson: vi.fn() }))
 
 vi.mock('../components/DrugAutocomplete.jsx', () => ({
-  default: ({ label, selection, onSelect }) => (
-    <div>
+  default: ({ label, selection, onSelect, searchScope }) => (
+    <div data-testid="predictor-medicine-selector" data-search-scope={searchScope}>
       <span>{label}</span>
       <button type="button" onClick={() => onSelect({ name: 'Warfarin', entity_id: 'DB00682', node_id: 1 })}>
         Choose Warfarin
@@ -68,7 +68,9 @@ describe('DDI Predictor research workflow', () => {
     expect(screen.getByText('Use your camera or an image to help find a medicine name.')).toBeVisible()
     expect(screen.queryByText(/does not identify a medicine clinically/i)).not.toBeInTheDocument()
     const headingMeta = screen.getByText('RESEARCH MODEL').parentElement
+    expect(headingMeta).toHaveClass('research-heading-meta')
     expect(within(headingMeta).getByRole('link', { name: '← Research overview' })).toBeVisible()
+    expect(screen.getByTestId('predictor-medicine-selector')).toHaveAttribute('data-search-scope', 'predictor')
     expect(screen.getByText(/does not mean there is no interaction/i)).toBeVisible()
 
     await userEvent.click(screen.getByRole('button', { name: 'Choose Warfarin' }))
@@ -111,6 +113,7 @@ describe('DDI Predictor research workflow', () => {
     expect(screen.getByText('2.3457')).toBeVisible()
     expect(screen.getByText('Not observed in the training graph')).toBeVisible()
     expect(screen.getByText(/not a medical risk or probability/i)).toBeVisible()
+    await userEvent.click(screen.getByText('Interpretation notes'))
     expect(screen.getByText('Backend research disclaimer remains visible.')).toBeVisible()
 
     const followUp = screen.getByLabelText('How to interpret follow-up views')

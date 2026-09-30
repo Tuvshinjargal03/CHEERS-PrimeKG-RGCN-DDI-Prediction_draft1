@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -116,7 +116,7 @@ describe('My Conditions', () => {
     expect(within(card).queryByText('5148')).not.toBeInTheDocument()
     expect(within(card).getByRole('link', { name: 'View condition' })).toHaveAttribute('href', '/diseases/5148')
     expect(getJson).toHaveBeenCalledWith(
-      '/api/public/disease-suggestions?q=diab&limit=6',
+      '/api/public/disease-suggestions?q=diab&limit=50&offset=0',
       expect.objectContaining({ cache: false, signal: expect.any(AbortSignal) }),
     )
     await waitFor(() => {
@@ -231,25 +231,48 @@ describe('My Conditions', () => {
     expect(screen.queryByText(/recommended medicines|best treatment|you should take/i)).not.toBeInTheDocument()
   })
 
-  it('shows verified starters on empty focus and restores them after clearing', async () => {
+  it('loads the disease inventory on empty focus and restores browse mode after clearing', async () => {
     const user = userEvent.setup()
     installApiFixtures()
     renderPage()
 
     await user.click(screen.getByRole('combobox', { name: 'Search condition' }))
     const listbox = screen.getByRole('listbox', { name: 'Condition suggestions' })
-    expect(within(listbox).getByText('Suggested conditions')).toBeVisible()
-    expect(within(listbox).getAllByRole('option').map((option) => option.textContent)).toEqual([
-      'Diabetes mellitus', 'Type 2 diabetes mellitus', 'Asthma', 'Gout',
-    ])
-    expect(listbox).not.toHaveTextContent(/5015|5148|4979|5393/)
-    expect(getJson).not.toHaveBeenCalled()
+    expect(await within(listbox).findByText('All conditions')).toBeVisible()
+    expect(await within(listbox).findByRole('option', { name: /type 2 diabetes mellitus/ })).toBeVisible()
+    expect(listbox).not.toHaveTextContent('5148')
+    expect(getJson).toHaveBeenCalledWith(
+      '/api/public/disease-suggestions?q=&limit=50&offset=0',
+      expect.objectContaining({ cache: false, signal: expect.any(AbortSignal) }),
+    )
 
     const input = screen.getByRole('combobox', { name: 'Search condition' })
     await user.type(input, 'diab')
     expect(await screen.findByText('Results')).toBeVisible()
     await user.clear(input)
-    expect(screen.getByText('Suggested conditions')).toBeVisible()
+    expect(await screen.findByText('All conditions')).toBeVisible()
+  })
+
+  it('appends another disease inventory page near the end of the dropdown', async () => {
+    getJson
+      .mockResolvedValueOnce({ suggestions: [DIABETES], has_more: true })
+      .mockResolvedValueOnce({ suggestions: [GOUT], has_more: false })
+    renderPage()
+    const input = screen.getByRole('combobox', { name: 'Search condition' })
+    fireEvent.focus(input)
+    const listbox = await screen.findByRole('listbox', { name: 'Condition suggestions' })
+    expect(await within(listbox).findByRole('option', { name: /type 2 diabetes mellitus/ })).toBeVisible()
+    Object.defineProperties(listbox, {
+      scrollHeight: { configurable: true, value: 200 },
+      scrollTop: { configurable: true, value: 150 },
+      clientHeight: { configurable: true, value: 50 },
+    })
+    fireEvent.scroll(listbox)
+    expect(await within(listbox).findByRole('option', { name: /gout/ })).toBeVisible()
+    expect(getJson).toHaveBeenLastCalledWith(
+      '/api/public/disease-suggestions?q=&limit=50&offset=1',
+      expect.objectContaining({ cache: false, signal: expect.any(AbortSignal) }),
+    )
   })
 
   it('supports keyboard suggestion selection and Escape closing', async () => {

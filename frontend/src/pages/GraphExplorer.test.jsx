@@ -131,6 +131,8 @@ describe('GraphExplorer context availability', () => {
     await selectDrug(drugAInput, 'Warfarin')
     await selectDrug(drugBInput, 'Aspirin')
 
+    expect(getJson).toHaveBeenCalledWith(expect.stringContaining('scope=context'))
+
     expect(screen.getAllByText('Research connections available')).toHaveLength(2)
     expect(screen.getAllByText('Scan a medicine label')).toHaveLength(2)
     expect(screen.getByRole('button', { name: 'Explore pair' })).toBeEnabled()
@@ -223,6 +225,7 @@ describe('GraphExplorer context availability', () => {
     expect(screen.getByRole('button', { name: 'Zoom out' })).toHaveAttribute('title', 'Zoom out')
     expect(screen.getByRole('button', { name: 'Fit graph to view' })).toHaveAttribute('title', 'Fit graph to view')
     expect(screen.getByText(/does not validate knowledge-graph relationships or an R-GCN prediction/i)).toBeVisible()
+    await userEvent.click(screen.getByText('Interpretation notes'))
     expect(screen.getByText(/does not prove a DDI, causation, safety, or harm/i)).toBeVisible()
   })
 
@@ -307,13 +310,14 @@ describe('GraphExplorer context availability', () => {
     expect(screen.getByText(`Destination: ${path}?drug_a_id=DB00682&drug_b_id=DB00945`)).toBeVisible()
   })
 
-  it('labels autocomplete results with context availability only on this page', async () => {
+  it('requests only context-eligible autocomplete results without unavailable-row clutter', async () => {
     renderExplorer()
     const [drugAInput] = screen.getAllByRole('combobox')
 
     fireEvent.change(drugAInput, { target: { value: 'drug' } })
 
-    expect(await screen.findAllByText('No research connections')).toHaveLength(2)
-    expect(screen.getAllByText('Research connections')).toHaveLength(3)
+    await waitFor(() => expect(getJson).toHaveBeenCalledWith('/api/drugs/search?q=drug&limit=50&offset=0&scope=context'))
+    expect(screen.queryByText('No research connections')).not.toBeInTheDocument()
+    expect(screen.queryByText('Research connections')).not.toBeInTheDocument()
   })
 })

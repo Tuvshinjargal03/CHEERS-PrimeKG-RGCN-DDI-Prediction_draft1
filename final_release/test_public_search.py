@@ -537,6 +537,36 @@ class PublicSearchTests(unittest.TestCase):
         ])
         self.assertTrue(all(item["entity_type"] == "disease" for item in payload["suggestions"]))
 
+    def test_disease_inventory_browse_is_paginated_and_deterministic(self):
+        first = self.search.disease_suggestions("", limit=2, offset=0)
+        second = self.search.disease_suggestions("", limit=2, offset=2)
+        self.assertEqual(first["offset"], 0)
+        self.assertEqual(first["limit"], 2)
+        self.assertEqual(first["total_matching"], len(self.search.diseases))
+        self.assertEqual(first["has_more"], len(self.search.diseases) > 2)
+        self.assertEqual(len(first["suggestions"]), 2)
+        self.assertEqual(len(second["suggestions"]), 2)
+        self.assertTrue(
+            set(item["entity_id"] for item in first["suggestions"]).isdisjoint(
+                item["entity_id"] for item in second["suggestions"]
+            )
+        )
+        combined = first["suggestions"] + second["suggestions"]
+        self.assertEqual(
+            [item["name"].casefold() for item in combined],
+            sorted(item["name"].casefold() for item in combined),
+        )
+
+    def test_typed_disease_matches_are_ranked_before_pagination(self):
+        full = self.search.disease_suggestions("diab", limit=50, offset=0)
+        first = self.search.disease_suggestions("diab", limit=2, offset=0)
+        second = self.search.disease_suggestions("diab", limit=2, offset=2)
+        self.assertEqual(
+            first["suggestions"] + second["suggestions"],
+            full["suggestions"][:4],
+        )
+        self.assertEqual(first["total_matching"], full["total_matching"])
+
     def test_disease_suggestions_rank_exact_then_conservative_typo(self):
         exact = self.search.disease_suggestions("type 2 diabetes mellitus")
         self.assertEqual(exact["suggestions"][0]["entity_id"], "5148")

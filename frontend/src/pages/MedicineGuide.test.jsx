@@ -8,7 +8,7 @@ import MedicineGuide from './MedicineGuide.jsx'
 const METFORMIN = { name: 'Metformin', entity_id: 'DB00331', node_id: 331 }
 
 vi.mock('../components/DrugAutocomplete.jsx', () => ({
-  default: ({ onSelect }) => <button type="button" onClick={() => onSelect(METFORMIN)}>Choose Metformin</button>,
+  default: ({ onSelect, searchScope = 'all' }) => <button type="button" data-search-scope={searchScope} onClick={() => onSelect(METFORMIN)}>Choose Metformin</button>,
 }))
 vi.mock('../components/MedicineLabelScanner.jsx', () => ({ default: () => null }))
 vi.mock('../lib/api.js', () => ({ getJson: vi.fn() }))
@@ -115,6 +115,7 @@ describe('MedicineGuide', () => {
     expect(screen.getByText('Scan a medicine label')).toBeVisible()
     expect(screen.getByText(/camera or an image/i)).toBeVisible()
     expect(screen.getByText('Try an example')).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Choose Metformin' })).toHaveAttribute('data-search-scope', 'all')
     await user.click(screen.getByRole('button', { name: 'Choose Metformin' }))
     expect(screen.getByTestId('location')).toHaveTextContent('/medicines/DB00331')
   })

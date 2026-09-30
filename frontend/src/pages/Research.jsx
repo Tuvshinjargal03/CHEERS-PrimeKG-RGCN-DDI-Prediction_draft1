@@ -21,6 +21,11 @@ const RELATIONS = [
   ['Contraindication', '-0.003817'], ['Off-label', '-0.012625'],
 ]
 
+function scrollToResearchSection(event, sectionId) {
+  event.preventDefault()
+  document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
 export default function Research() {
   return (
     <main className="page research-page">
@@ -33,7 +38,7 @@ export default function Research() {
       </header>
 
       <nav className="research-section-nav" aria-label="Research overview sections">
-        <a href="#research-comparison">Comparison</a><a href="#research-result">Main result</a><a href="#research-relations">Relations</a><a href="#research-method">Method</a><a href="#research-tools">Tools</a>
+        <a href="#research-comparison" onClick={(event) => scrollToResearchSection(event, 'research-comparison')}>Comparison</a><a href="#research-result" onClick={(event) => scrollToResearchSection(event, 'research-result')}>Main result</a><a href="#research-relations" onClick={(event) => scrollToResearchSection(event, 'research-relations')}>Relations</a><a href="#research-method" onClick={(event) => scrollToResearchSection(event, 'research-method')}>Method</a><a href="#research-tools" onClick={(event) => scrollToResearchSection(event, 'research-tools')}>Tools</a>
       </nav>
 
       <section id="research-comparison" className="research-story-section" aria-labelledby="research-comparison-title">
