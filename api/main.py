@@ -973,6 +973,11 @@ def search_drugs(
         "has_more":
             offset + len(results) < total_matching,
 
+        "common_results":
+            predictor.common_drugs(eligible_entity_ids)
+            if not normalized_query and offset == 0
+            else [],
+
         "results":
             results,
     }

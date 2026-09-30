@@ -15,8 +15,8 @@ const LONG_CANONICAL_NAME = {
   node_id: 103,
 }
 
-function searchResponse(results, hasMore = false) {
-  return { results, has_more: hasMore }
+function searchResponse(results, hasMore = false, commonResults = []) {
+  return { results, has_more: hasMore, common_results: commonResults }
 }
 
 function renderAutocomplete(onSelect = vi.fn(), props = {}) {
@@ -47,6 +47,22 @@ describe('DrugAutocomplete', () => {
     expect(within(listbox).getByText('All medicines')).toBeVisible()
     expect(within(listbox).getByRole('option', { name: /Aspirin/ })).toBeVisible()
     expect(getJson).toHaveBeenCalledWith('/api/drugs/search?q=&limit=50&offset=0')
+  })
+
+  it('pins verified common medicines before the complete inventory without duplicates', async () => {
+    getJson.mockResolvedValue(searchResponse(
+      [CANONICAL_ASPIRIN, AMPICILLIN, LONG_CANONICAL_NAME],
+      false,
+      [CANONICAL_ASPIRIN],
+    ))
+    const { input } = renderAutocomplete()
+    fireEvent.focus(input)
+    const listbox = await screen.findByRole('listbox')
+    const headings = within(listbox).getAllByText(/Common medicines|All medicines/)
+    expect(headings.map((heading) => heading.textContent)).toEqual(['Common medicines', 'All medicines'])
+    expect(await within(listbox).findAllByRole('option', { name: /Aspirin/ })).toHaveLength(1)
+    expect(within(listbox).getByText('Acetylsalicylic acid')).toBeVisible()
+    expect(within(listbox).getAllByRole('option')).toHaveLength(3)
   })
 
   it('resets typed search pagination and returns to browse mode when cleared', async () => {
@@ -169,13 +185,14 @@ describe('DrugAutocomplete', () => {
 
   it('applies a research scope to empty browse, typed search, and pagination', async () => {
     getJson
-      .mockResolvedValueOnce(searchResponse([CANONICAL_ASPIRIN], true))
+      .mockResolvedValueOnce(searchResponse([CANONICAL_ASPIRIN], true, [CANONICAL_ASPIRIN]))
       .mockResolvedValueOnce(searchResponse([AMPICILLIN], false))
       .mockResolvedValueOnce(searchResponse([CANONICAL_ASPIRIN], false))
     const { input } = renderAutocomplete(vi.fn(), { searchScope: 'context' })
     fireEvent.focus(input)
     const listbox = await screen.findByRole('listbox')
     expect(getJson).toHaveBeenCalledWith('/api/drugs/search?q=&limit=50&offset=0&scope=context')
+    expect(await within(listbox).findAllByRole('option', { name: /Aspirin/ })).toHaveLength(1)
     Object.defineProperties(listbox, {
       scrollHeight: { configurable: true, value: 200 },
       scrollTop: { configurable: true, value: 150 },
