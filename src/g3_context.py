@@ -140,6 +140,11 @@ class G3ContextStore:
                     )
                 entity["relations"].add(relation)
 
+    @property
+    def candidate_drug_ids(self):
+        """Return the supported DrugBank IDs in the exported context data."""
+        return frozenset(drug["drug_id"] for drug in self._drugs.values())
+
     @staticmethod
     def _entity_sort_key(entity):
         return (

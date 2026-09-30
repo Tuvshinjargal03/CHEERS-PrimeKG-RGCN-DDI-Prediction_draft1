@@ -307,12 +307,11 @@ class PublicSearchService:
         matches.sort(key=lambda item: (-item[0], item[1], item[2]["entity_id"]))
         return matches
 
-    def disease_suggestions(self, query, limit=6):
-        """Return bounded deterministic disease matches from the loaded inventory."""
+    def disease_suggestions(self, query, limit=6, offset=0):
+        """Return one deterministic page of disease inventory matches."""
         fragment = normalize_query(query)
-        bounded_limit = max(1, min(int(limit), 6))
-        if len(fragment) < 2:
-            return {"query": fragment, "suggestions": []}
+        bounded_limit = max(1, min(int(limit), 50))
+        bounded_offset = max(0, int(offset))
 
         diabetes_priority = {
             "diabetes mellitus disease": 0,
@@ -326,7 +325,9 @@ class PublicSearchService:
             match_type = None
             priority = None
             detail = 0
-            if name == fragment:
+            if not fragment:
+                match_type, priority = "inventory_browse", 0
+            elif name == fragment:
                 match_type, priority = "exact_canonical_name", 0
             elif fragment.startswith("diab") and name in diabetes_priority:
                 match_type, priority, detail = "common_topic_match", 1, diabetes_priority[name]
@@ -341,9 +342,18 @@ class PublicSearchService:
             if match_type is not None:
                 ranked.append((priority, detail, len(name), name, disease, match_type))
 
-        ranked.sort(key=lambda item: item[:4] + (item[4]["entity_id"],))
+        if fragment:
+            ranked.sort(key=lambda item: item[:4] + (item[4]["entity_id"],))
+        else:
+            ranked.sort(key=lambda item: (item[3], item[4]["entity_id"]))
+        total_matching = len(ranked)
+        page = ranked[bounded_offset:bounded_offset + bounded_limit]
         return {
             "query": fragment,
+            "offset": bounded_offset,
+            "limit": bounded_limit,
+            "total_matching": total_matching,
+            "has_more": bounded_offset + len(page) < total_matching,
             "suggestions": [
                 {
                     "name": disease["name"],
@@ -351,7 +361,7 @@ class PublicSearchService:
                     "entity_type": "disease",
                     "match_type": match_type,
                 }
-                for _, _, _, _, disease, match_type in ranked[:bounded_limit]
+                for _, _, _, _, disease, match_type in page
             ],
         }
 

@@ -16,13 +16,13 @@ import {
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getJson } from '../lib/api.js'
-import { VERIFIED_CONDITION_STARTERS } from '../lib/conditionStarters.js'
 import './PublicProduct.css'
 import './MyConditions.css'
 
 const STORAGE_KEY = 'cheers.my-conditions.v1'
 const MAX_CONDITIONS = 10
 const SEARCH_DELAY_MS = 250
+const DISEASE_PAGE_SIZE = 50
 
 function compactCondition(condition) {
   if (
@@ -101,56 +101,68 @@ function ConditionAutocomplete({ selection, savedIds, onSelect, disabled }) {
   const rootRef = useRef(null)
   const inputRef = useRef(null)
   const requestIdRef = useRef(0)
+  const controllerRef = useRef(null)
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [activeIndex, setActiveIndex] = useState(-1)
-  const showingStarters = !query.trim()
-  const options = showingStarters ? VERIFIED_CONDITION_STARTERS : results
+  const [hasMore, setHasMore] = useState(false)
+  const options = results
 
   const closeMenu = useCallback(() => {
     requestIdRef.current += 1
+    controllerRef.current?.abort()
     setOpen(false)
     setLoading(false)
     setActiveIndex(-1)
   }, [])
 
+  const fetchPage = useCallback(async (searchQuery, offset, append) => {
+    const requestId = requestIdRef.current + 1
+    requestIdRef.current = requestId
+    controllerRef.current?.abort()
+    const controller = new AbortController()
+    controllerRef.current = controller
+    setLoading(true)
+    setError('')
+    try {
+      const payload = await getJson(
+        `/api/public/disease-suggestions?q=${encodeURIComponent(searchQuery)}&limit=${DISEASE_PAGE_SIZE}&offset=${offset}`,
+        { cache: false, signal: controller.signal },
+      )
+      if (requestIdRef.current !== requestId) return
+      const nextResults = diseaseCandidates({ recognized_entities: payload?.suggestions || [] })
+      setResults((current) => {
+        if (!append) return nextResults
+        const seen = new Set(current.map((item) => item.entity_id))
+        return [...current, ...nextResults.filter((item) => !seen.has(item.entity_id))]
+      })
+      setHasMore(Boolean(payload?.has_more))
+      setOpen(true)
+    } catch {
+      if (requestIdRef.current !== requestId || controller.signal.aborted) return
+      if (!append) setResults([])
+      setHasMore(false)
+      setError('Condition search could not be completed. Please try again.')
+    } finally {
+      if (requestIdRef.current === requestId) setLoading(false)
+    }
+  }, [])
+
   useEffect(() => {
     if (!open || selection) return undefined
     const normalizedQuery = query.trim()
-    if (!normalizedQuery) return undefined
-
-    let requestId = null
-    const controller = new AbortController()
-    const timer = window.setTimeout(async () => {
-      requestId = requestIdRef.current + 1
-      requestIdRef.current = requestId
-      setLoading(true)
-      setError('')
-      try {
-        const payload = await getJson(
-          `/api/public/disease-suggestions?q=${encodeURIComponent(normalizedQuery)}&limit=6`,
-          { cache: false, signal: controller.signal },
-        )
-        if (requestIdRef.current !== requestId) return
-        setResults(diseaseCandidates({ recognized_entities: payload?.suggestions || [] }))
-      } catch {
-        if (requestIdRef.current !== requestId) return
-        setResults([])
-        setError('Condition search could not be completed. Please try again.')
-      } finally {
-        if (requestIdRef.current === requestId) setLoading(false)
-      }
-    }, SEARCH_DELAY_MS)
+    const timer = window.setTimeout(
+      () => fetchPage(normalizedQuery, 0, false),
+      normalizedQuery ? SEARCH_DELAY_MS : 0,
+    )
 
     return () => {
       window.clearTimeout(timer)
-      controller.abort()
-      if (requestId !== null && requestIdRef.current === requestId) requestIdRef.current += 1
     }
-  }, [open, query, selection])
+  }, [fetchPage, open, query, selection])
 
   useEffect(() => {
     if (!open) return undefined
@@ -168,9 +180,11 @@ function ConditionAutocomplete({ selection, savedIds, onSelect, disabled }) {
   function choose(condition) {
     if (savedIds.has(condition.entity_id)) return
     requestIdRef.current += 1
+    controllerRef.current?.abort()
     onSelect(condition)
     setQuery('')
     setResults([])
+    setHasMore(false)
     setOpen(false)
     setLoading(false)
     setError('')
@@ -179,9 +193,11 @@ function ConditionAutocomplete({ selection, savedIds, onSelect, disabled }) {
 
   function clear() {
     requestIdRef.current += 1
+    controllerRef.current?.abort()
     onSelect(null)
     setQuery('')
     setResults([])
+    setHasMore(false)
     setOpen(true)
     setLoading(false)
     setError('')
@@ -209,8 +225,10 @@ function ConditionAutocomplete({ selection, savedIds, onSelect, disabled }) {
           onChange={(event) => {
             if (selection) onSelect(null)
             requestIdRef.current += 1
+            controllerRef.current?.abort()
             setQuery(event.target.value)
             setResults([])
+            setHasMore(false)
             setError('')
             setActiveIndex(-1)
             setLoading(Boolean(event.target.value.trim()))
@@ -246,8 +264,8 @@ function ConditionAutocomplete({ selection, savedIds, onSelect, disabled }) {
       {selection && <small className="my-conditions-selection-meta">Selected condition: {selection.name}</small>}
 
       {open && !selection && (
-        <div id={listboxId} className="my-conditions-suggestions" role="listbox" aria-label="Condition suggestions">
-          <div className="my-conditions-suggestions-heading">{showingStarters ? 'Suggested conditions' : 'Results'}</div>
+        <div id={listboxId} className="my-conditions-suggestions" role="listbox" aria-label="Condition suggestions" onScroll={(event) => { const menu = event.currentTarget; if (!loading && hasMore && menu.scrollHeight - menu.scrollTop - menu.clientHeight < 80) fetchPage(query.trim(), results.length, true) }}>
+          <div className="my-conditions-suggestions-heading">{query.trim() ? 'Results' : 'All conditions'}</div>
           {error ? (
             <div className="my-conditions-suggestion-message is-error" role="alert">{error}</div>
           ) : options.length ? options.map((condition, index) => {
@@ -273,6 +291,7 @@ function ConditionAutocomplete({ selection, savedIds, onSelect, disabled }) {
               {loading ? 'Searching CHEERS conditions…' : 'No matching CHEERS condition found. Try another part of the name.'}
             </div>
           )}
+          {options.length > 0 && loading ? <div className="my-conditions-suggestion-message">Loading more conditions...</div> : null}
         </div>
       )}
     </div>
@@ -355,7 +374,6 @@ function ConditionCard({ condition, onRemove }) {
               An approved short description is not currently available in CHEERS.
             </p>
           )}
-
           <div className="my-conditions-facts" aria-label={`Available information for ${condition.name}`}>
             <div>
               <BookOpen size={17} aria-hidden="true" />

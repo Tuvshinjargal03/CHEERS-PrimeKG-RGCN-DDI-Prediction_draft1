@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, BookOpen, HeartPulse, MessageCircleQuestion, Pill, Plus, ShieldCheck, Stethoscope, Trash2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, BookOpen, HeartPulse, Pill, Plus, ShieldCheck, Stethoscope, Trash2 } from 'lucide-react';
 import { MAX_SAVED_MEDICINES, SAVED_MEDICINES_STORAGE_KEY, generateUniqueMedicinePairs } from '../lib/myMedicines';
 import { medicineDisplayName } from '../lib/medicineNames.js';
 import './MyHealth.css';
@@ -70,12 +70,10 @@ function ReviewCard({ icon: Icon, title, description, action, to }) {
 }
 
 export default function MyHealth() {
-  const navigate = useNavigate();
   const [savedMedicines, setSavedMedicines] = useState(() => readSavedSelections(SAVED_MEDICINES_STORAGE_KEY, MAX_SAVED_MEDICINES));
   const [savedConditions, setSavedConditions] = useState(() => readSavedSelections(SAVED_CONDITIONS_STORAGE_KEY, MAX_CONDITIONS));
   const [showMorePairs, setShowMorePairs] = useState(false);
   const [showMoreRelationships, setShowMoreRelationships] = useState(false);
-  const [question, setQuestion] = useState('');
   const medicinePairs = useMemo(() => generateUniqueMedicinePairs(savedMedicines), [savedMedicines]);
   const medicineConditions = useMemo(() => savedMedicines.flatMap((medicine) => savedConditions.map((condition) => ({ medicine, condition }))), [savedMedicines, savedConditions]);
 
@@ -89,11 +87,6 @@ export default function MyHealth() {
       }
       return next;
     });
-  }
-
-  function askCheers(event) {
-    event.preventDefault();
-    if (question.trim()) navigate(`/search?q=${encodeURIComponent(question.trim())}`);
   }
 
   const hasReviewCards = medicinePairs.length > 0 || medicineConditions.length > 0 || savedMedicines.length === 1 || savedConditions.length === 1;
@@ -128,7 +121,6 @@ export default function MyHealth() {
         ) : <p className="my-health-reviews__empty">Add a medicine or condition to see useful review options.</p>}
       </section>
 
-      <section className="my-health-ask" aria-labelledby="ask-saved-items-heading"><span className="my-health-ask__icon" aria-hidden="true"><MessageCircleQuestion size={23} /></span><div><h2 id="ask-saved-items-heading">Ask CHEERS</h2><p>Include a saved medicine or condition name in your question. Saved items are not attached automatically.</p><form onSubmit={askCheers} className="my-health-ask__form"><label htmlFor="saved-items-question">Question</label><input id="saved-items-question" value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="Ask about one of your saved medicines or conditions..." /><button className="primary-button" type="submit" disabled={!question.trim()}>Ask CHEERS</button></form></div></section>
       <p className="my-health-boundary">CHEERS can organize information around your saved medicines and conditions, but it does not diagnose or choose treatment for you.</p>
     </main>
   );

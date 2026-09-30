@@ -1,7 +1,13 @@
 import { render, screen, within } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
-import { describe, expect, it } from 'vitest'
+import userEvent from '@testing-library/user-event'
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
+import { describe, expect, it, vi } from 'vitest'
 import Research from './Research.jsx'
+
+function LocationProbe() {
+  const location = useLocation()
+  return <output aria-label="Current route">{location.pathname}</output>
+}
 
 describe('Research overview', () => {
   it('explains the project question, graph variants, and exact five-seed result', () => {
@@ -46,5 +52,26 @@ describe('Research overview', () => {
     expect(screen.getByRole('link', { name: /Relation analysis/ })).toHaveAttribute('href', '/relations')
     expect(screen.getByRole('link', { name: /Methodology/ })).toHaveAttribute('href', '/methodology')
     expect(screen.getByRole('link', { name: /Research Predictor/ })).toHaveAttribute('href', '/predictor')
+  })
+
+  it('scrolls every overview section link without changing the HashRouter route', async () => {
+    const user = userEvent.setup()
+    render(
+      <MemoryRouter initialEntries={['/research']}>
+        <Routes>
+          <Route path="/research" element={<><Research /><LocationProbe /></>} />
+          <Route path="*" element={<p>Page not found</p>} />
+        </Routes>
+      </MemoryRouter>,
+    )
+    const links = within(screen.getByRole('navigation', { name: 'Research overview sections' })).getAllByRole('link')
+    const scrollIntoView = vi.spyOn(Element.prototype, 'scrollIntoView').mockImplementation(() => {})
+    for (const link of links) {
+      scrollIntoView.mockClear()
+      await user.click(link)
+      expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' })
+      expect(screen.getByLabelText('Current route')).toHaveTextContent('/research')
+      expect(screen.queryByText('Page not found')).not.toBeInTheDocument()
+    }
   })
 })

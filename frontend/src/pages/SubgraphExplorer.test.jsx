@@ -19,7 +19,7 @@ vi.mock('../lib/api.js', () => ({
   getJson: vi.fn(),
 }))
 vi.mock('../components/DrugAutocomplete.jsx', () => ({
-  default: ({ selection }) => <output data-testid="selected-drug" data-entity-id={selection?.entity_id || ''}>{selection?.name || ''}</output>,
+  default: ({ selection, searchScope }) => <output data-testid="selected-drug" data-search-scope={searchScope} data-entity-id={selection?.entity_id || ''}>{selection?.name || ''}</output>,
 }))
 vi.mock('../components/MedicineLabelScanner.jsx', () => ({ default: () => null }))
 
@@ -132,6 +132,7 @@ describe('SubgraphExplorer navigation', () => {
     )
 
     expect(screen.getByTestId('selected-drug')).toHaveTextContent('')
+    expect(screen.getByTestId('selected-drug')).toHaveAttribute('data-search-scope', 'context')
     expect(screen.getByText(/select one medicine to view its one-hop/i)).toBeVisible()
     expect(getJson).not.toHaveBeenCalled()
   })
@@ -155,6 +156,7 @@ describe('SubgraphExplorer navigation', () => {
     expect(screen.getByText('Center drug')).toBeVisible()
     expect(screen.getAllByText(/Gene \/ protein/i).length).toBeGreaterThan(0)
     expect(screen.getByRole('button', { name: 'Fit graph to view' })).toHaveAttribute('title', 'Fit graph to view')
+    await userEvent.click(screen.getByText('Interpretation notes'))
     expect(screen.getByText(/Graph associations do not prove causation, a drug interaction, safety, or harm/i)).toBeVisible()
 
     await userEvent.click(screen.getByRole('button', { name: 'Next 50' }))

@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor, within } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -94,28 +94,46 @@ describe('DiseaseGuide', () => {
     getJson.mockReset()
   })
 
-  it('shows verified condition starters on empty focus and restores them after clearing', async () => {
+  it('loads bounded inventory on empty focus and restores browse mode after clearing', async () => {
     const user = userEvent.setup()
     getJson.mockResolvedValue({
-      query: 'diab',
+      query: '',
+      has_more: false,
       suggestions: [{ name: 'type 2 diabetes mellitus', entity_id: '5148', entity_type: 'disease' }],
     })
     renderGuide('/diseases')
     const input = screen.getByRole('combobox', { name: /search for a condition/i })
 
     await user.click(input)
-    const starters = screen.getByRole('listbox', { name: 'Condition suggestions' })
-    expect(within(starters).getByText('Suggested conditions')).toBeVisible()
-    expect(within(starters).getAllByRole('option').map((option) => option.textContent)).toEqual([
-      'Diabetes mellitus', 'Type 2 diabetes mellitus', 'Asthma', 'Gout',
-    ])
-    expect(starters).not.toHaveTextContent(/5015|5148|4979|5393/)
-    expect(getJson).not.toHaveBeenCalled()
+    const listbox = screen.getByRole('listbox', { name: 'Condition suggestions' })
+    expect(await within(listbox).findByText('All conditions')).toBeVisible()
+    expect(await within(listbox).findByRole('option', { name: /Type 2 diabetes mellitus/ })).toBeVisible()
+    expect(listbox).not.toHaveTextContent('5148')
+    expect(getJson).toHaveBeenCalledWith('/api/public/disease-suggestions?q=&limit=50&offset=0', expect.objectContaining({ cache: false }))
 
     await user.type(input, 'diab')
     expect(await screen.findByText('Results')).toBeVisible()
     await user.clear(input)
-    expect(screen.getByText('Suggested conditions')).toBeVisible()
+    expect(await screen.findByText('All conditions')).toBeVisible()
+  })
+
+  it('appends the next disease inventory page on scroll', async () => {
+    getJson
+      .mockResolvedValueOnce({ suggestions: [{ name: 'asthma', entity_id: '4979' }], has_more: true })
+      .mockResolvedValueOnce({ suggestions: [{ name: 'gout', entity_id: '5393' }], has_more: false })
+    renderGuide('/diseases')
+    const input = screen.getByRole('combobox')
+    fireEvent.focus(input)
+    const listbox = screen.getByRole('listbox')
+    expect(await within(listbox).findByText('Asthma')).toBeVisible()
+    Object.defineProperties(listbox, {
+      scrollHeight: { configurable: true, value: 200 },
+      scrollTop: { configurable: true, value: 150 },
+      clientHeight: { configurable: true, value: 50 },
+    })
+    fireEvent.scroll(listbox)
+    expect(await within(listbox).findByText('Gout')).toBeVisible()
+    expect(getJson).toHaveBeenLastCalledWith('/api/public/disease-suggestions?q=&limit=50&offset=1', expect.objectContaining({ cache: false }))
   })
 
   it('debounces live suggestions, hides IDs, and opens the selected condition', async () => {
@@ -127,11 +145,9 @@ describe('DiseaseGuide', () => {
     renderGuide('/diseases')
     const input = screen.getByRole('combobox', { name: /search for a condition/i })
 
-    await user.type(input, 'd')
+    fireEvent.change(input, { target: { value: 'diab' } })
     expect(getJson).not.toHaveBeenCalled()
-    await user.type(input, 'iab')
-    expect(getJson).not.toHaveBeenCalled()
-    await waitFor(() => expect(getJson).toHaveBeenCalledWith('/api/public/disease-suggestions?q=diab&limit=6', expect.objectContaining({ cache: false })))
+    await waitFor(() => expect(getJson).toHaveBeenCalledWith('/api/public/disease-suggestions?q=diab&limit=50&offset=0', expect.objectContaining({ cache: false })))
     const option = (await screen.findByText('Type 2 diabetes mellitus')).closest('button')
     expect(option).not.toHaveTextContent('5148')
     await user.click(option)
@@ -139,14 +155,13 @@ describe('DiseaseGuide', () => {
   })
 
   it('does not let an older suggestion response replace the current query', async () => {
-    const user = userEvent.setup()
     const resolvers = []
     getJson.mockImplementation(() => new Promise((resolve) => resolvers.push(resolve)))
     renderGuide('/diseases')
     const input = screen.getByRole('combobox')
-    await user.type(input, 'dia')
+    fireEvent.change(input, { target: { value: 'dia' } })
     await waitFor(() => expect(getJson).toHaveBeenCalledTimes(1))
-    await user.type(input, 'b')
+    fireEvent.change(input, { target: { value: 'diab' } })
     await waitFor(() => expect(getJson).toHaveBeenCalledTimes(2))
     await act(async () => resolvers[1]({ suggestions: [{ name: 'type 2 diabetes mellitus', entity_id: '5148' }] }))
     expect(await screen.findByText('Type 2 diabetes mellitus')).toBeVisible()

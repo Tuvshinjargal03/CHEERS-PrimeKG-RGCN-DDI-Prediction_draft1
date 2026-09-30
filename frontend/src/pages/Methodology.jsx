@@ -1,7 +1,13 @@
 import { AlertCircle, Database, GitCompareArrows, Layers3, LoaderCircle, Target } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import ResearchNotes from '../components/ResearchNotes.jsx'
 import { getJson } from '../lib/api.js'
+
+function scrollToMethodologySection(event, sectionId) {
+  event.preventDefault()
+  document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
 
 export default function Methodology() {
   const [data, setData] = useState(null)
@@ -47,8 +53,10 @@ export default function Methodology() {
   return (
     <section className="page">
       <div className="page-heading">
-        <Link className="research-back-link" to="/research">← See Research overview</Link>
-        <span className="eyebrow">Controlled research design</span>
+        <div className="research-heading-meta">
+          <Link className="research-back-link" to="/research">← See Research overview</Link>
+          <span className="eyebrow">Controlled research design</span>
+        </div>
         <h1>Methodology</h1>
         <p>
           A fixed-split comparison isolates how PrimeKG graph composition affects
@@ -58,15 +66,15 @@ export default function Methodology() {
       </div>
 
       <nav className="experiment-section-nav" aria-label="Methodology sections">
-        <a href="#method-data">Data preparation</a>
-        <a href="#method-variants">Graph variants</a>
-        <a href="#method-model">R-GCN model</a>
-        <a href="#method-training">Training</a>
-        <a href="#method-evaluation">Evaluation</a>
+        <a href="#method-data" onClick={(event) => scrollToMethodologySection(event, 'method-data')}>Data preparation</a>
+        <a href="#method-variants" onClick={(event) => scrollToMethodologySection(event, 'method-variants')}>Graph variants</a>
+        <a href="#method-model" onClick={(event) => scrollToMethodologySection(event, 'method-model')}>R-GCN model</a>
+        <a href="#method-training" onClick={(event) => scrollToMethodologySection(event, 'method-training')}>Training</a>
+        <a href="#method-evaluation" onClick={(event) => scrollToMethodologySection(event, 'method-evaluation')}>Evaluation</a>
         <Link to="/experiments">Five-seed comparison</Link>
-        <a href="#method-relation">Relation ablation</a>
-        <a href="#method-external">External exploration</a>
-        <a href="#method-limitations">Limitations</a>
+        <a href="#method-relation" onClick={(event) => scrollToMethodologySection(event, 'method-relation')}>Relation ablation</a>
+        <a href="#method-external" onClick={(event) => scrollToMethodologySection(event, 'method-external')}>External exploration</a>
+        <a href="#method-limitations" onClick={(event) => scrollToMethodologySection(event, 'method-limitations')}>Limitations</a>
       </nav>
 
       {!data && !error && <div className="experiment-state"><LoaderCircle className="spin" size={26} />Loading methodology metadata…</div>}
@@ -126,7 +134,7 @@ export default function Methodology() {
             </div>
           </div>
 
-          <aside id="method-limitations" className="limitations-card"><AlertCircle size={21} /><div><strong>Interpretation boundaries</strong><ul><li>Sampled unobserved pairs are not confirmed non-interactions.</li><li>Raw model scores are ranking values, not probabilities or clinical risk estimates.</li><li>Five seeds provide robustness evidence; statistical significance is not claimed.</li><li>This research prototype does not establish whether a drug pair is safe, dangerous, beneficial, or harmful.</li></ul></div></aside>
+          <ResearchNotes id="method-limitations" summary="Key limits on how the experimental results should be read."><ul><li>Sampled unobserved pairs are not confirmed non-interactions.</li><li>Raw model scores are ranking values, not probabilities or clinical risk estimates.</li><li>Statistical superiority was not established from the five-seed comparison.</li><li>CHEERS is a research prototype, not clinical decision support, and does not establish whether a drug pair is safe, dangerous, beneficial, or harmful.</li></ul></ResearchNotes>
         </>
       )}
     </section>

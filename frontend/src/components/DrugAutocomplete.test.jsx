@@ -19,12 +19,13 @@ function searchResponse(results, hasMore = false) {
   return { results, has_more: hasMore }
 }
 
-function renderAutocomplete(onSelect = vi.fn()) {
+function renderAutocomplete(onSelect = vi.fn(), props = {}) {
   render(
     <DrugAutocomplete
       label="Query drug"
       selection={null}
       onSelect={onSelect}
+      {...props}
     />,
   )
   return { input: screen.getByRole('combobox', { name: 'Query drug' }), onSelect }
@@ -35,37 +36,34 @@ describe('DrugAutocomplete', () => {
     getJson.mockReset()
   })
 
-  it('opens with verified starter medicines without loading an arbitrary backend browse', async () => {
+  it('loads the first bounded inventory page on empty focus', async () => {
     const user = userEvent.setup()
     getJson.mockResolvedValue(searchResponse([ASPIRIN]))
     const { input } = renderAutocomplete()
 
     await user.click(input)
 
-    const listbox = screen.getByRole('listbox')
-    expect(within(listbox).getByText('Suggested medicines')).toBeVisible()
-    expect(within(listbox).getAllByRole('option').map((option) => option.textContent)).toEqual([
-      'Metformin', 'Aspirin', 'Warfarin', 'Ibuprofen',
-    ])
-    expect(listbox).not.toHaveTextContent(/DB00331|DB00945|DB00682|DB01050|Acetylsalicylic acid/)
-    expect(getJson).not.toHaveBeenCalled()
+    const listbox = await screen.findByRole('listbox')
+    expect(within(listbox).getByText('All medicines')).toBeVisible()
+    expect(within(listbox).getByRole('option', { name: /Aspirin/ })).toBeVisible()
+    expect(getJson).toHaveBeenCalledWith('/api/drugs/search?q=&limit=50&offset=0')
   })
 
-  it('selects the verified Aspirin starter and restores starters after clearing typed text', async () => {
+  it('resets typed search pagination and returns to browse mode when cleared', async () => {
     const user = userEvent.setup()
-    getJson.mockResolvedValue(searchResponse([AMPICILLIN]))
-    const { input, onSelect } = renderAutocomplete()
+    getJson.mockImplementation((path) => Promise.resolve(
+      path.includes('q=amp') ? searchResponse([AMPICILLIN]) : searchResponse([ASPIRIN]),
+    ))
+    const { input } = renderAutocomplete()
 
     await user.click(input)
-    await user.click(screen.getByRole('option', { name: 'Aspirin' }))
-    expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({ entity_id: 'DB00945' }))
-
-    onSelect.mockClear()
+    await screen.findByRole('option', { name: /Aspirin/ })
     fireEvent.change(input, { target: { value: 'amp' } })
-    expect(await screen.findByText('Results')).toBeVisible()
-    fireEvent.change(input, { target: { value: '' } })
-    expect(screen.getByText('Suggested medicines')).toBeVisible()
+    expect(await screen.findByRole('option', { name: /Ampicillin/ })).toBeVisible()
     expect(getJson).toHaveBeenCalledWith('/api/drugs/search?q=amp&limit=50&offset=0')
+    fireEvent.change(input, { target: { value: '' } })
+    expect(await screen.findByText('All medicines')).toBeVisible()
+    await waitFor(() => expect(getJson).toHaveBeenLastCalledWith('/api/drugs/search?q=&limit=50&offset=0'))
   })
 
   it('accepts and searches a one-character query', async () => {
@@ -148,12 +146,12 @@ describe('DrugAutocomplete', () => {
     await waitFor(() => expect(screen.queryByRole('option', { name: /Aspirin/ })).not.toBeInTheDocument())
   })
 
-  it('appends the next page without replacing existing results', async () => {
+  it('appends the next empty-query inventory page without replacing existing results', async () => {
     getJson
       .mockResolvedValueOnce(searchResponse([ASPIRIN], true))
       .mockResolvedValueOnce(searchResponse([AMPICILLIN], false))
     const { input } = renderAutocomplete()
-    fireEvent.change(input, { target: { value: 'a' } })
+    fireEvent.focus(input)
     const listbox = await screen.findByRole('listbox')
     await within(listbox).findByRole('option', { name: /Aspirin/ })
     Object.defineProperties(listbox, {
@@ -166,7 +164,30 @@ describe('DrugAutocomplete', () => {
 
     expect(await within(listbox).findByRole('option', { name: /Ampicillin/ })).toBeVisible()
     expect(within(listbox).getByRole('option', { name: /Aspirin/ })).toBeVisible()
-    expect(getJson).toHaveBeenLastCalledWith('/api/drugs/search?q=a&limit=50&offset=1')
+    expect(getJson).toHaveBeenLastCalledWith('/api/drugs/search?q=&limit=50&offset=1')
+  })
+
+  it('applies a research scope to empty browse, typed search, and pagination', async () => {
+    getJson
+      .mockResolvedValueOnce(searchResponse([CANONICAL_ASPIRIN], true))
+      .mockResolvedValueOnce(searchResponse([AMPICILLIN], false))
+      .mockResolvedValueOnce(searchResponse([CANONICAL_ASPIRIN], false))
+    const { input } = renderAutocomplete(vi.fn(), { searchScope: 'context' })
+    fireEvent.focus(input)
+    const listbox = await screen.findByRole('listbox')
+    expect(getJson).toHaveBeenCalledWith('/api/drugs/search?q=&limit=50&offset=0&scope=context')
+    Object.defineProperties(listbox, {
+      scrollHeight: { configurable: true, value: 200 },
+      scrollTop: { configurable: true, value: 150 },
+      clientHeight: { configurable: true, value: 50 },
+    })
+    fireEvent.scroll(listbox)
+    await within(listbox).findByRole('option', { name: /Ampicillin/ })
+    expect(getJson).toHaveBeenCalledWith('/api/drugs/search?q=&limit=50&offset=1&scope=context')
+
+    fireEvent.change(input, { target: { value: 'aspirin' } })
+    await screen.findByRole('option', { name: /Aspirin/ })
+    expect(getJson).toHaveBeenCalledWith('/api/drugs/search?q=aspirin&limit=50&offset=0&scope=context')
   })
 
   it('does not add availability annotations unless the optional prop is supplied', async () => {

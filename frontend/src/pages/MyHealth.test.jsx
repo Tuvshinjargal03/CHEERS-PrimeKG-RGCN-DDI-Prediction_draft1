@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter, useLocation } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { SAVED_MEDICINES_STORAGE_KEY } from '../lib/myMedicines.js';
 import MyHealth from './MyHealth.jsx';
@@ -11,13 +11,12 @@ const WARFARIN = { entity_id: 'DB00682', name: 'Warfarin' };
 const DIABETES = { entity_id: '5148', name: 'Type 2 diabetes mellitus' };
 
 function save(key, items) { window.localStorage.setItem(key, JSON.stringify(items)); }
-function LocationProbe() { const location = useLocation(); return <output aria-label="Current location">{location.pathname}{location.search}</output>; }
-function renderPage() { return render(<MemoryRouter><MyHealth /><LocationProbe /></MemoryRouter>); }
+function renderPage() { return render(<MemoryRouter><MyHealth /></MemoryRouter>); }
 
 describe('My Health dashboard', () => {
   beforeEach(() => window.localStorage.clear());
 
-  it('shows a useful empty state while keeping all four dashboard sections visible', () => {
+  it('shows a useful empty state without the removed Ask CHEERS section', () => {
     renderPage();
     expect(screen.getByRole('heading', { name: 'My Health' })).toBeVisible();
     expect(screen.getByText('Saved on this device.')).toBeVisible();
@@ -28,13 +27,12 @@ describe('My Health dashboard', () => {
     expect(within(conditions).getByRole('link', { name: 'Add condition' })).toHaveAttribute('href', '/my-conditions');
     expect(screen.getByRole('heading', { name: 'Things to review' })).toBeVisible();
     expect(screen.getByText('Add a medicine or condition to see useful review options.')).toBeVisible();
-    expect(screen.getByRole('heading', { name: 'Ask CHEERS' })).toBeVisible();
-    expect(screen.getByText('Saved items are not attached automatically.', { exact: false })).toBeVisible();
+    expect(screen.queryByRole('heading', { name: 'Ask CHEERS' })).not.toBeInTheDocument();
     const savedGrid = document.querySelector('.my-health-saved-grid');
     expect(savedGrid.querySelectorAll('.my-health-panel.is-empty')).toHaveLength(2);
     expect(savedGrid.nextElementSibling).toHaveClass('my-health-reviews');
     expect(document.querySelector('.my-health-page')).toHaveClass('page');
-    expect(screen.getByRole('textbox', { name: 'Question' })).toHaveAttribute('placeholder', 'Ask about one of your saved medicines or conditions...');
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
     expect(document.body).not.toHaveTextContent(/saved context|health context/i);
   });
 
@@ -100,16 +98,4 @@ describe('My Health dashboard', () => {
     expect(screen.getByText('No conditions saved yet.')).toBeVisible();
   });
 
-  it('sends only the explicitly entered question to Ask CHEERS', async () => {
-    const user = userEvent.setup();
-    save(SAVED_MEDICINES_STORAGE_KEY, [METFORMIN]);
-    save(CONDITIONS_KEY, [DIABETES]);
-    renderPage();
-    const question = screen.getByRole('textbox', { name: 'Question' });
-    expect(question).toHaveAttribute('placeholder', 'Ask about one of your saved medicines or conditions...');
-    await user.type(question, 'Metformin side effects?');
-    await user.click(screen.getByRole('button', { name: 'Ask CHEERS' }));
-    expect(screen.getByLabelText('Current location')).toHaveTextContent('/search?q=Metformin%20side%20effects%3F');
-    expect(screen.getByLabelText('Current location')).not.toHaveTextContent('diabetes');
-  });
 });

@@ -13,6 +13,7 @@ import {
 import { AlertCircle, CheckCircle2, LoaderCircle } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import InfoTooltip from '../components/InfoTooltip.jsx'
+import ResearchNotes from '../components/ResearchNotes.jsx'
 import RobustnessSection, { RobustnessLimitations } from '../components/RobustnessSection.jsx'
 import { getJson } from '../lib/api.js'
 
@@ -158,8 +159,10 @@ function Experiments() {
   return (
     <section className="page experiments-page">
       <div className="page-heading">
-        <Link className="research-back-link" to="/research">← Back to Research overview</Link>
-        <span className="eyebrow">Evaluation</span>
+        <div className="research-heading-meta">
+          <Link className="research-back-link" to="/research">← Back to Research overview</Link>
+          <span className="eyebrow">Evaluation</span>
+        </div>
         <h1>Detailed experimental results</h1>
         <p>
           Full five-seed results for G0–G3. MRR and Hits@K are the
@@ -384,6 +387,7 @@ function Experiments() {
           <span className="eyebrow">Interpretation &amp; limitations</span>
           <h2>Evaluation notes and scientific boundaries</h2>
         </div>
+        <ResearchNotes summary="The ranking comparison is descriptive and the output is not clinical guidance.">
         <div className="experiment-limitations-layout">
           <section className="experiment-limitations-group">
             <h3>Scientific boundaries</h3>
@@ -400,6 +404,7 @@ function Experiments() {
             </div>
           </section>
         </div>
+        </ResearchNotes>
       </section>
     </section>
   )

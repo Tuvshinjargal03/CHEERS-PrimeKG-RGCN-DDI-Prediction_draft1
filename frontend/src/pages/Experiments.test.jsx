@@ -63,6 +63,8 @@ describe('Experiments networking', () => {
     )
 
     expect(await screen.findByText('G3 had the highest five-seed mean MRR')).toBeVisible()
+    const headingMeta = screen.getByText('Evaluation').closest('.research-heading-meta')
+    expect(headingMeta).toContainElement(screen.getByRole('link', { name: /Back to Research overview/ }))
     expect(screen.getByText(/observed mean MRR difference from G0 was small/i)).toBeVisible()
     expect(screen.getByText(/statistical superiority was not established/i)).toBeVisible()
     expect(screen.getByText(/higher paired G3 MRR in each seed; descriptive only/i)).toBeVisible()
@@ -73,6 +75,9 @@ describe('Experiments networking', () => {
     expect(screen.queryByText(/significant improvement/i)).not.toBeInTheDocument()
     expect(screen.getByText(/Classification metrics could not be loaded\. Please try again\./)).toBeVisible()
     expect(screen.getByText(/Primary ranking results remain available/)).toBeVisible()
+    const notes = screen.getByText('Interpretation notes').closest('details')
+    expect(notes).not.toHaveAttribute('open')
+    expect(notes).toHaveTextContent(/ranking comparison is descriptive/i)
 
     await waitFor(() => {
       expect(getJson).toHaveBeenCalledTimes(2)

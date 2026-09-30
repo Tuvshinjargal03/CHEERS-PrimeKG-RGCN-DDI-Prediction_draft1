@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import DrugAutocomplete from '../components/DrugAutocomplete.jsx'
 import MedicineLabelScanner from '../components/MedicineLabelScanner.jsx'
+import ResearchNotes from '../components/ResearchNotes.jsx'
 import { postJson } from '../lib/api.js'
 import { medicineDisplayName } from '../lib/medicineNames.js'
 
@@ -54,7 +55,7 @@ export default function DDIPredictor() {
   return (
     <section className="page predictor-page">
       <div className="page-heading">
-        <div className="predictor-heading-kicker">
+        <div className="research-heading-meta">
           <Link className="research-back-link" to="/research">← Research overview</Link>
           <span className="eyebrow">RESEARCH MODEL</span>
         </div>
@@ -71,7 +72,7 @@ export default function DDIPredictor() {
         </div>
         <div className="drug-selection-field">
           <span className="predictor-step-label">1. Choose query medicine</span>
-          <DrugAutocomplete label="Medicine name" selection={drug} onSelect={selectDrug} />
+          <DrugAutocomplete label="Medicine name" selection={drug} onSelect={selectDrug} searchScope="predictor" />
           <div className="predictor-scanner-helper">
             <span>Scan a medicine label</span>
             <MedicineLabelScanner targetLabel="Query medicine" onDrugSelect={selectDrug} />
@@ -158,14 +159,12 @@ export default function DDIPredictor() {
             ) : <div className="inline-alert">No available candidate links were returned.</div>}
           </div>
 
-          <aside className="safety-notice">
-            <AlertCircle size={21} />
+          <ResearchNotes summary="Model output is a research ranking, not a clinical conclusion.">
             <div>
-              <strong>Research prototype: ranking output only</strong>
               <p>{result.disclaimer}</p>
               <p>The target relation is PrimeKG “synergistic interaction”. This output is not clinical decision support or diagnosis/treatment advice. A high score does not establish interaction severity or safety, and a missing or low-ranked candidate is not proof of no interaction.</p>
             </div>
-          </aside>
+          </ResearchNotes>
         </>
       )}
     </section>

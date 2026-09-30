@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Bar, BarChart, CartesianGrid, Cell, ErrorBar, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import InfoTooltip from '../components/InfoTooltip.jsx'
+import ResearchNotes from '../components/ResearchNotes.jsx'
 import { getJson } from '../lib/api.js'
 
 const FAMILY_COLORS = { 'Drug-Gene/Protein': '#6941c6', 'Drug-Disease': '#1570ef' }
@@ -41,8 +42,10 @@ export default function RelationAnalysis() {
   return (
     <section className="page relation-analysis-page">
       <div className="page-heading">
-        <Link className="research-back-link" to="/research">← See Research overview</Link>
-        <span className="eyebrow">Verified five-seed follow-up · v1</span>
+        <div className="research-heading-meta">
+          <Link className="research-back-link" to="/research">← See Research overview</Link>
+          <span className="eyebrow">Verified five-seed follow-up · v1</span>
+        </div>
         <h1>Detailed relation analysis</h1>
         <p>What happened when individual relation types were examined? Each variant keeps the G0 DDI-only backbone and adds one biomedical relation plus its reverse edges. Paired ΔMRR compares every run with the matching G0 training seed on the same fixed split.</p>
       </div>
@@ -112,11 +115,9 @@ export default function RelationAnalysis() {
             <div className="relation-legend">{Object.entries(FAMILY_COLORS).map(([family, color]) => <span key={family}><i style={{ background: color }} />{family}</span>)}</div>
           </article>
 
-          <article className="interpretation-card relation-interpretation-card">
-            <span className="eyebrow">Scientific interpretation</span>
-            <h2>Descriptive effects vary by relation and seed</h2>
+          <ResearchNotes className="relation-interpretation-card" summary="Descriptive effects vary by relation and seed; every paired interval includes zero.">
             <ul><li><strong>Target</strong> has the largest mean improvement and wins in four of five paired seeds.</li><li>Carrier, indication, and transporter have smaller positive means; enzyme, contraindication, and off-label use have unfavorable means.</li><li>Every 95% paired interval includes zero, so no relation has an established improvement.</li><li>The off-label result retains the unfavorable seed 44 run rather than selectively excluding it.</li></ul>
-          </article>
+          </ResearchNotes>
         </section>
 
         <section id="relation-details" className="relation-major-section">
@@ -153,7 +154,7 @@ export default function RelationAnalysis() {
             <span className="eyebrow">Interpretation / limitations</span>
             <h2>Statistical scope and implementation boundaries</h2>
           </div>
-          <aside className="limitations-card relation-limitations-card"><AlertCircle size={21} /><div><strong>Coverage and implementation lineage</strong><ul><li>{data.caveat}</li><li>{data.classification_note}</li><li>{data.implementation_lineage}</li></ul></div></aside>
+          <ResearchNotes className="relation-limitations-card" summary="Coverage and implementation details for the verified analysis."><ul><li>{data.caveat}</li><li>{data.classification_note}</li><li>{data.implementation_lineage}</li></ul></ResearchNotes>
         </section>
       </>}
     </section>

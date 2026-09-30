@@ -5,6 +5,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import DrugAutocomplete from '../components/DrugAutocomplete.jsx'
 import EntityDetailsPanel from '../components/EntityDetailsPanel.jsx'
 import MedicineLabelScanner from '../components/MedicineLabelScanner.jsx'
+import ResearchNotes from '../components/ResearchNotes.jsx'
 import { G3_CONTEXT_CANDIDATE_IDS } from '../data/g3ContextCandidateIds.js'
 import { drugContextEndpoint, getJson, pairEndpoint, resolveDrug } from '../lib/api.js'
 import { medicineDisplayName } from '../lib/medicineNames.js'
@@ -16,14 +17,6 @@ const G3_CONTEXT_CANDIDATE_ID_SET = new Set(G3_CONTEXT_CANDIDATE_IDS)
 
 function hasVerifiedG3Context(drug) {
   return Boolean(drug?.entity_id && G3_CONTEXT_CANDIDATE_ID_SET.has(drug.entity_id.toUpperCase()))
-}
-
-function g3ContextAnnotation(drug) {
-  const available = hasVerifiedG3Context(drug)
-  return {
-    available,
-    label: available ? 'Research connections' : 'No research connections',
-  }
 }
 
 function ContextAvailability({ drug, available }) {
@@ -477,7 +470,7 @@ export default function GraphExplorer() {
           <p>Choose two medicines to see shared biomedical relationships in the available research data.</p>
         </div>
         <div className="drug-selection-field">
-          <DrugAutocomplete label="Drug A" selection={drugA} onSelect={selectDrugA} disabled={resolving} getOptionAnnotation={g3ContextAnnotation} />
+          <DrugAutocomplete label="Drug A" selection={drugA} onSelect={selectDrugA} disabled={resolving} searchScope="context" />
           <div className="graph-scanner-helper">
             <span>Scan a medicine label</span>
             <MedicineLabelScanner targetLabel="Drug A" onDrugSelect={selectDrugA} disabled={resolving} />
@@ -485,7 +478,7 @@ export default function GraphExplorer() {
           <ContextAvailability drug={drugA} available={drugAHasContext} />
         </div>
         <div className="drug-selection-field">
-          <DrugAutocomplete label="Drug B" selection={drugB} onSelect={selectDrugB} disabled={resolving} getOptionAnnotation={g3ContextAnnotation} />
+          <DrugAutocomplete label="Drug B" selection={drugB} onSelect={selectDrugB} disabled={resolving} searchScope="context" />
           <div className="graph-scanner-helper">
             <span>Scan a medicine label</span>
             <MedicineLabelScanner targetLabel="Drug B" onDrugSelect={selectDrugB} disabled={resolving} />
@@ -641,14 +634,12 @@ export default function GraphExplorer() {
             </Link>
           </div>
 
-          <aside className="safety-notice">
-            <AlertCircle size={21} />
+          <ResearchNotes summary="Graph relationships provide context; they do not prove interaction or causation.">
             <div>
-              <strong>Interpretation boundary</strong>
               <p>{context.interpretation}</p>
               <p>Shared or missing knowledge-graph information does not prove a DDI, causation, safety, or harm, and it does not explain or validate an R-GCN score. CHEERS is a research and information prototype, not clinical decision support.</p>
             </div>
-          </aside>
+          </ResearchNotes>
         </>
       )}
     </section>

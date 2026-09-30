@@ -9,10 +9,9 @@ import {
   Search,
   Utensils,
 } from 'lucide-react'
-import { useEffect, useId, useRef, useState } from 'react'
+import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { getJson } from '../lib/api.js'
-import { VERIFIED_CONDITION_STARTERS } from '../lib/conditionStarters.js'
 import { medicineDisplayName } from '../lib/medicineNames.js'
 import './PublicSearch.css'
 import './PublicProduct.css'
@@ -24,6 +23,7 @@ const RELATION_LABELS = {
 }
 const DISEASE_EXAMPLES = ['type 2 diabetes mellitus', 'asthma']
 const DEFAULT_INDICATION_LIMIT = 10
+const DISEASE_PAGE_SIZE = 50
 
 function sentenceCase(value) {
   const text = String(value || '')
@@ -37,39 +37,64 @@ function relationLabel(value) {
 function DiseaseSearch({ onSearch, onSelect }) {
   const inputId = useId()
   const listId = `${inputId}-suggestions`
-  const sequenceRef = useRef(0)
+  const requestIdRef = useRef(0)
+  const controllerRef = useRef(null)
+  const menuRef = useRef(null)
   const [value, setValue] = useState('')
   const [suggestions, setSuggestions] = useState([])
   const [activeIndex, setActiveIndex] = useState(-1)
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
+  const [hasMore, setHasMore] = useState(false)
   const query = value.trim()
-  const options = query ? suggestions : VERIFIED_CONDITION_STARTERS
+  const options = suggestions
+
+  const fetchPage = useCallback(async (searchQuery, offset, append) => {
+    const requestId = requestIdRef.current + 1
+    requestIdRef.current = requestId
+    controllerRef.current?.abort()
+    const controller = new AbortController()
+    controllerRef.current = controller
+    setLoading(true)
+    try {
+      const payload = await getJson(
+        `/api/public/disease-suggestions?q=${encodeURIComponent(searchQuery)}&limit=${DISEASE_PAGE_SIZE}&offset=${offset}`,
+        { cache: false, signal: controller.signal },
+      )
+      if (requestIdRef.current !== requestId) return
+      const nextSuggestions = payload?.suggestions || []
+      setSuggestions((current) => {
+        if (!append) return nextSuggestions
+        const seen = new Set(current.map((item) => item.entity_id))
+        return [...current, ...nextSuggestions.filter((item) => !seen.has(item.entity_id))]
+      })
+      setHasMore(Boolean(payload?.has_more))
+      setOpen(true)
+    } catch {
+      if (requestIdRef.current !== requestId || controller.signal.aborted) return
+      if (!append) setSuggestions([])
+      setHasMore(false)
+    } finally {
+      if (requestIdRef.current === requestId) setLoading(false)
+    }
+  }, [])
 
   useEffect(() => {
-    const sequence = ++sequenceRef.current
-    if (query.length < 2) return undefined
-    const controller = new AbortController()
+    if (!open) return undefined
     const timer = setTimeout(() => {
-      setLoading(true)
-      getJson(`/api/public/disease-suggestions?q=${encodeURIComponent(query)}&limit=6`, { cache: false, signal: controller.signal }).then((payload) => {
-        if (sequence !== sequenceRef.current) return
-        setSuggestions(payload?.suggestions || [])
-        setActiveIndex(-1)
-        setLoading(false)
-      }, () => {
-        if (sequence !== sequenceRef.current) return
-        setSuggestions([])
-        setActiveIndex(-1)
-        setLoading(false)
-      })
-    }, 250)
-    return () => { clearTimeout(timer); controller.abort() }
-  }, [query])
+      fetchPage(query, 0, false)
+    }, query ? 250 : 0)
+    return () => clearTimeout(timer)
+  }, [fetchPage, open, query])
 
-  function choose(suggestion) { setSuggestions([]); setOpen(false); onSelect(suggestion) }
+  function choose(suggestion) { requestIdRef.current += 1; controllerRef.current?.abort(); setSuggestions([]); setOpen(false); onSelect(suggestion) }
+  function closeMenu() { requestIdRef.current += 1; controllerRef.current?.abort(); setOpen(false); setLoading(false); setActiveIndex(-1) }
+  function loadMore() {
+    if (loading || !hasMore) return
+    fetchPage(query, suggestions.length, true)
+  }
   function handleKeyDown(event) {
-    if (event.key === 'Escape') { setOpen(false); setActiveIndex(-1); return }
+    if (event.key === 'Escape') { closeMenu(); return }
     if (!options.length) return
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault()
@@ -81,12 +106,12 @@ function DiseaseSearch({ onSearch, onSelect }) {
     }
   }
 
-  const showResults = open && !loading && (query.length === 0 || query.length >= 2)
-  return <form className="public-search-form disease-live-search" role="search" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false) }} onSubmit={(event) => { event.preventDefault(); if (query) onSearch(query) }}>
+  const showResults = open
+  return <form className="public-search-form disease-live-search" role="search" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) closeMenu() }} onSubmit={(event) => { event.preventDefault(); if (query) onSearch(query) }}>
     <label htmlFor={inputId}>Search for a condition</label>
-    <div className="public-search-control"><Search size={21} aria-hidden="true" /><input id={inputId} type="search" role="combobox" aria-autocomplete="list" aria-controls={listId} aria-expanded={showResults} aria-activedescendant={activeIndex >= 0 ? `${listId}-${activeIndex}` : undefined} value={value} onFocus={() => setOpen(true)} onClick={() => setOpen(true)} onChange={(event) => { const nextValue = event.target.value; setValue(nextValue); setOpen(true); setActiveIndex(-1); if (nextValue.trim().length < 2) { setSuggestions([]); setLoading(false) } }} onKeyDown={handleKeyDown} placeholder="Search conditions..." autoComplete="off" /><button type="submit" className="primary-button" disabled={!query}>Search</button></div>
+    <div className="public-search-control"><Search size={21} aria-hidden="true" /><input id={inputId} type="search" role="combobox" aria-autocomplete="list" aria-controls={listId} aria-expanded={showResults} aria-activedescendant={activeIndex >= 0 ? `${listId}-${activeIndex}` : undefined} value={value} onFocus={() => setOpen(true)} onClick={() => setOpen(true)} onChange={(event) => { requestIdRef.current += 1; controllerRef.current?.abort(); setValue(event.target.value); setSuggestions([]); setHasMore(false); setOpen(true); setActiveIndex(-1); setLoading(true) }} onKeyDown={handleKeyDown} placeholder="Search conditions..." autoComplete="off" /><button type="submit" className="primary-button" disabled={!query}>Search</button></div>
     {loading && <small className="disease-suggestion-status" role="status">Searching...</small>}
-    {showResults && <div id={listId} className="disease-suggestions" role="listbox" aria-label="Condition suggestions"><div className="disease-suggestions-heading">{query ? 'Results' : 'Suggested conditions'}</div>{options.length ? options.map((suggestion, index) => <button id={`${listId}-${index}`} key={suggestion.entity_id} type="button" role="option" aria-selected={index === activeIndex} className={index === activeIndex ? 'active' : ''} onMouseEnter={() => setActiveIndex(index)} onClick={() => choose(suggestion)}><strong>{sentenceCase(suggestion.name)}</strong>{query && <small>Condition</small>}</button>) : <p>No matching condition found.</p>}</div>}
+    {showResults && <div ref={menuRef} id={listId} className="disease-suggestions" role="listbox" aria-label="Condition suggestions" onScroll={(event) => { const menu = event.currentTarget; if (menu.scrollHeight - menu.scrollTop - menu.clientHeight < 80) loadMore() }}><div className="disease-suggestions-heading">{query ? 'Results' : 'All conditions'}</div>{options.length ? options.map((suggestion, index) => <button id={`${listId}-${index}`} key={suggestion.entity_id} type="button" role="option" aria-selected={index === activeIndex} className={index === activeIndex ? 'active' : ''} onMouseEnter={() => setActiveIndex(index)} onClick={() => choose(suggestion)}><strong>{sentenceCase(suggestion.name)}</strong>{query && <small>Condition</small>}</button>) : <p>{loading ? 'Loading conditions...' : 'No matching condition found.'}</p>}{options.length > 0 && loading ? <p>Loading more conditions...</p> : null}</div>}
   </form>
 }
 

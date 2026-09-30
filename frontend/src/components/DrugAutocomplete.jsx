@@ -1,7 +1,7 @@
 import { Search, X } from 'lucide-react'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { getJson } from '../lib/api.js'
-import { medicineDisplayName, VERIFIED_MEDICINE_STARTERS } from '../lib/medicineNames.js'
+import { medicineDisplayName } from '../lib/medicineNames.js'
 
 const PAGE_SIZE = 50
 const SEARCH_DELAY_MS = 180
@@ -13,6 +13,7 @@ export default function DrugAutocomplete({
   placeholder = 'Search by medicine name',
   disabled = false,
   getOptionAnnotation,
+  searchScope = 'all',
 }) {
   const inputId = useId()
   const listboxId = `${inputId}-listbox`
@@ -27,8 +28,7 @@ export default function DrugAutocomplete({
   const [searchError, setSearchError] = useState('')
   const [hasMore, setHasMore] = useState(false)
   const [activeIndex, setActiveIndex] = useState(-1)
-  const showingStarters = !query.trim()
-  const options = showingStarters ? VERIFIED_MEDICINE_STARTERS : results
+  const options = results
 
   const closeMenu = useCallback(() => {
     requestId.current += 1
@@ -49,6 +49,7 @@ export default function DrugAutocomplete({
         limit: String(PAGE_SIZE),
         offset: String(offset),
       })
+      if (searchScope !== 'all') params.set('scope', searchScope)
       const data = await getJson(`/api/drugs/search?${params.toString()}`)
       if (requestId.current !== currentRequest) return
 
@@ -72,16 +73,15 @@ export default function DrugAutocomplete({
     } finally {
       if (requestId.current === currentRequest) setLoading(false)
     }
-  }, [])
+  }, [searchScope])
 
   useEffect(() => {
     if (selection || !open) return undefined
 
     const trimmed = query.trim()
-    if (!trimmed) return undefined
     const timer = window.setTimeout(
       () => fetchPage(trimmed, 0, false),
-      SEARCH_DELAY_MS,
+      trimmed ? SEARCH_DELAY_MS : 0,
     )
 
     return () => window.clearTimeout(timer)
@@ -111,7 +111,7 @@ export default function DrugAutocomplete({
 
   function openBrowseMenu() {
     if (selection || disabled) return
-    setLoading(Boolean(query.trim()))
+    setLoading(true)
     setOpen(true)
   }
 
@@ -128,7 +128,7 @@ export default function DrugAutocomplete({
   }
 
   function loadMore() {
-    if (selection || showingStarters || loading || !hasMore) return
+    if (selection || loading || !hasMore) return
     fetchPage(query.trim(), results.length, true)
   }
 
@@ -235,9 +235,9 @@ export default function DrugAutocomplete({
             </div>
           ) : options.length ? (
             <>
-              <div className="autocomplete-menu-heading">{showingStarters ? 'Suggested medicines' : 'Results'}</div>
+              <div className="autocomplete-menu-heading">{query.trim() ? 'Results' : 'All medicines'}</div>
               {options.map((item, index) => {
-                const annotation = showingStarters ? null : getOptionAnnotation?.(item)
+                const annotation = getOptionAnnotation?.(item)
                 const displayName = medicineDisplayName(item)
                 return (
                   <button
@@ -253,7 +253,7 @@ export default function DrugAutocomplete({
                   >
                     <span className="autocomplete-option-name" title={item.name}>{displayName}</span>
                     <small className="autocomplete-option-details">
-                      {!showingStarters && displayName !== item.name && <span className="autocomplete-option-id">{item.name}</span>}
+                      {displayName !== item.name && <span className="autocomplete-option-id">{item.name}</span>}
                       {annotation && (
                         <em className={annotation.available ? 'available' : 'unavailable'}>
                           {annotation.label}

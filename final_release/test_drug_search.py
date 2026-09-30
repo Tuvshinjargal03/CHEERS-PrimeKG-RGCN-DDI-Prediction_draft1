@@ -30,6 +30,47 @@ class DrugSearchQualityTests(unittest.TestCase):
         self.assertEqual(total, 1)
         self.assertEqual(results[0]["entity_id"], "DB00682")
 
+    def test_research_browse_orders_verified_names_first(self):
+        results, total = self.predictor.search_drug_page(
+            "",
+            limit=4,
+            common_names_first=True,
+        )
+        self.assertEqual(total, 4)
+        self.assertEqual(results[0]["entity_id"], "DB00945")
+        self.assertEqual(
+            [result["name"] for result in results[1:]],
+            ["Carbaspirin calcium", "Nitroaspirin", "Warfarin"],
+        )
+
+    def test_eligible_inventory_is_filtered_before_pagination_and_search(self):
+        eligible_ids = {"DB00945", "DB00682"}
+        first, total = self.predictor.search_drug_page(
+            "",
+            limit=1,
+            offset=0,
+            eligible_entity_ids=eligible_ids,
+            common_names_first=True,
+        )
+        second, second_total = self.predictor.search_drug_page(
+            "",
+            limit=1,
+            offset=1,
+            eligible_entity_ids=eligible_ids,
+            common_names_first=True,
+        )
+        excluded, excluded_total = self.predictor.search_drug_page(
+            "nitro",
+            limit=10,
+            eligible_entity_ids=eligible_ids,
+        )
+        self.assertEqual(total, 2)
+        self.assertEqual(second_total, 2)
+        self.assertEqual(first[0]["entity_id"], "DB00945")
+        self.assertEqual(second[0]["entity_id"], "DB00682")
+        self.assertEqual(excluded, [])
+        self.assertEqual(excluded_total, 0)
+
 
 if __name__ == "__main__":
     unittest.main()

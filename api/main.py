@@ -895,10 +895,11 @@ def public_disease_information(
 @app.get("/api/public/disease-suggestions")
 def public_disease_suggestions(
     q: str = Query(default="", max_length=200),
-    limit: int = Query(default=6, ge=1, le=6),
+    limit: int = Query(default=6, ge=1, le=50),
+    offset: int = Query(default=0, ge=0),
 ):
     """Return fast deterministic disease suggestions from loaded local data."""
-    return app.state.public_search.disease_suggestions(q, limit=limit)
+    return app.state.public_search.disease_suggestions(q, limit=limit, offset=offset)
 
 
 # ============================================================
@@ -926,20 +927,36 @@ def search_drugs(
         default=0,
         ge=0,
     ),
+
+    scope: str = Query(
+        default="all",
+        pattern="^(all|predictor|context)$",
+        description="Optional feature eligibility scope.",
+    ),
 ):
 
     predictor = app.state.predictor
     normalized_query = q.strip()
+    eligible_entity_ids = (
+        app.state.context_store.candidate_drug_ids
+        if scope == "context"
+        else None
+    )
 
     results, total_matching = predictor.search_drug_page(
         query=normalized_query,
         limit=limit,
         offset=offset,
+        eligible_entity_ids=eligible_entity_ids,
+        common_names_first=scope != "all",
     )
 
     return {
         "query":
             normalized_query,
+
+        "scope":
+            scope,
 
         "count":
             len(results),

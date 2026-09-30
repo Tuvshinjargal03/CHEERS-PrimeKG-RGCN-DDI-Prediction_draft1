@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom'
 import DrugAutocomplete from '../components/DrugAutocomplete.jsx'
 import EntityDetailsPanel from '../components/EntityDetailsPanel.jsx'
 import MedicineLabelScanner from '../components/MedicineLabelScanner.jsx'
+import ResearchNotes from '../components/ResearchNotes.jsx'
 import { drugContextEndpoint, getJson } from '../lib/api.js'
 import { medicineDisplayName } from '../lib/medicineNames.js'
 
@@ -344,7 +345,7 @@ export default function SubgraphExplorer() {
           <p>Search by a medicine name to explore its nearby research connections.</p>
         </div>
         <div className="drug-selection-field">
-          <DrugAutocomplete label="Center medicine" selection={drug} onSelect={selectDrug} />
+          <DrugAutocomplete label="Center medicine" selection={drug} onSelect={selectDrug} searchScope="context" />
           <div className="subgraph-scanner-helper">
             <span>Scan a medicine label</span>
             <MedicineLabelScanner targetLabel="Medicine" onDrugSelect={selectDrug} />
@@ -408,7 +409,7 @@ export default function SubgraphExplorer() {
           )}
 
           <div className="subgraph-relation-summary"><strong>Filtered relationship counts</strong><div>{RELATIONS.filter(([value]) => data.counts.by_relation[value] > 0).map(([value, label]) => <span key={value}>{label} <b>{data.counts.by_relation[value].toLocaleString()}</b></span>)}</div></div>
-          <aside className="safety-notice"><AlertCircle size={21} /><div><strong>Interpretation boundary</strong><p>{data.interpretation}</p><p>Graph associations do not prove causation, a drug interaction, safety, or harm. Absence from this page or after filtering is not proof of no relationship. DDI edges are recorded graph relationships, not current R-GCN ranking output, and this view does not explain or validate a model score. CHEERS is a research and information prototype, not clinical decision support.</p></div></aside>
+          <ResearchNotes summary="Graph relationships provide context; they do not prove interaction or causation."><p>{data.interpretation}</p><p>Graph associations do not prove causation, a drug interaction, safety, or harm. Absence from this page or after filtering is not proof of no relationship. DDI edges are recorded graph relationships, not current R-GCN ranking output, and this view does not explain or validate a model score. CHEERS is a research and information prototype, not clinical decision support.</p></ResearchNotes>
         </>
       )}
     </section>

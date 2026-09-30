@@ -136,7 +136,12 @@ class DDIPredictor:
         if len(set(metadata_node_ids.tolist())) != self.CANDIDATE_DRUG_COUNT:
             raise ValueError("Drug node IDs are not unique.")
 
-    def _matching_drugs(self, query):
+    def _matching_drugs(
+        self,
+        query,
+        eligible_entity_ids=None,
+        common_names_first=False,
+    ):
         """Return deterministic candidate rows for browsing or text search."""
         query = str(query).strip()
         query_folded = query.casefold()
@@ -146,16 +151,32 @@ class DDIPredictor:
             if alias.startswith(query_folded)
         } if query_folded else set()
 
+        eligible_ids = (
+            {str(entity_id).casefold() for entity_id in eligible_entity_ids}
+            if eligible_entity_ids is not None
+            else None
+        )
+        inventory = [
+            row for row in self.drug_metadata
+            if eligible_ids is None
+            or row["entity_id"].casefold() in eligible_ids
+        ]
+
         if query_folded:
             matches = [
                 row
-                for row in self.drug_metadata
+                for row in inventory
                 if query_folded in row["entity_name"].casefold()
                 or row["entity_name"].casefold() in alias_targets
                 or row["entity_id"].casefold() == query_folded
             ]
         else:
-            matches = list(self.drug_metadata)
+            matches = list(inventory)
+
+        common_canonical_names = {
+            canonical_name.casefold()
+            for canonical_name in DRUG_NAME_ALIASES.values()
+        }
 
         def match_priority(row):
             name_folded = row["entity_name"].casefold()
@@ -175,6 +196,7 @@ class DDIPredictor:
         matches.sort(
             key=lambda row: (
                 match_priority(row),
+                0 if common_names_first and row["entity_name"].casefold() in common_canonical_names else 1,
                 row["entity_name"].casefold(),
                 row["entity_id"].casefold(),
                 int(row["node_id"]),
@@ -182,9 +204,20 @@ class DDIPredictor:
         )
         return matches
 
-    def search_drug_page(self, query, limit=20, offset=0):
+    def search_drug_page(
+        self,
+        query,
+        limit=20,
+        offset=0,
+        eligible_entity_ids=None,
+        common_names_first=False,
+    ):
         """Return one bounded page plus the total number of matching drugs."""
-        matches = self._matching_drugs(query)
+        matches = self._matching_drugs(
+            query,
+            eligible_entity_ids=eligible_entity_ids,
+            common_names_first=common_names_first,
+        )
         offset = max(0, int(offset))
         limit = max(0, int(limit))
         page = matches[offset:offset + limit]
