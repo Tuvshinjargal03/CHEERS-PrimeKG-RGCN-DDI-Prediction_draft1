@@ -71,6 +71,13 @@ class DrugSearchQualityTests(unittest.TestCase):
         self.assertEqual(excluded, [])
         self.assertEqual(excluded_total, 0)
 
+    def test_common_drugs_use_verified_alias_targets_and_respect_scope(self):
+        all_common = self.predictor.common_drugs()
+        scoped_common = self.predictor.common_drugs({"DB00682"})
+        self.assertEqual([item["entity_id"] for item in all_common], ["DB00945"])
+        self.assertEqual(all_common[0]["name"], "Acetylsalicylic acid")
+        self.assertEqual(scoped_common, [])
+
 
 if __name__ == "__main__":
     unittest.main()

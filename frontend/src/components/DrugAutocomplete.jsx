@@ -1,5 +1,5 @@
 import { Search, X } from 'lucide-react'
-import { useCallback, useEffect, useId, useRef, useState } from 'react'
+import { Fragment, useCallback, useEffect, useId, useRef, useState } from 'react'
 import { getJson } from '../lib/api.js'
 import { medicineDisplayName } from '../lib/medicineNames.js'
 
@@ -23,12 +23,16 @@ export default function DrugAutocomplete({
   const menuRef = useRef(null)
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
+  const [commonResults, setCommonResults] = useState([])
+  const [nextOffset, setNextOffset] = useState(0)
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
   const [searchError, setSearchError] = useState('')
   const [hasMore, setHasMore] = useState(false)
   const [activeIndex, setActiveIndex] = useState(-1)
-  const options = results
+  const commonIds = new Set(commonResults.map((item) => `${item.entity_id}-${item.node_id}`))
+  const inventoryResults = results.filter((item) => !commonIds.has(`${item.entity_id}-${item.node_id}`))
+  const options = query.trim() ? results : [...commonResults, ...inventoryResults]
 
   const closeMenu = useCallback(() => {
     requestId.current += 1
@@ -54,6 +58,8 @@ export default function DrugAutocomplete({
       if (requestId.current !== currentRequest) return
 
       const nextResults = data.results || []
+      if (!searchQuery && !append) setCommonResults(data.common_results || [])
+      if (searchQuery) setCommonResults([])
       setResults((current) => {
         if (!append) return nextResults
         const seen = new Set(current.map((item) => `${item.entity_id}-${item.node_id}`))
@@ -63,6 +69,7 @@ export default function DrugAutocomplete({
         ]
       })
       setHasMore(Boolean(data.has_more))
+      setNextOffset(offset + nextResults.length)
       setOpen(true)
     } catch {
       if (requestId.current !== currentRequest) return
@@ -120,6 +127,8 @@ export default function DrugAutocomplete({
     onSelect(item)
     setQuery('')
     setResults([])
+    setCommonResults([])
+    setNextOffset(0)
     setHasMore(false)
     setSearchError('')
     setActiveIndex(-1)
@@ -129,13 +138,15 @@ export default function DrugAutocomplete({
 
   function loadMore() {
     if (selection || loading || !hasMore) return
-    fetchPage(query.trim(), results.length, true)
+    fetchPage(query.trim(), nextOffset, true)
   }
 
   function clear() {
     requestId.current += 1
     setQuery('')
     setResults([])
+    setCommonResults([])
+    setNextOffset(0)
     setHasMore(false)
     setSearchError('')
     setActiveIndex(-1)
@@ -168,6 +179,8 @@ export default function DrugAutocomplete({
             requestId.current += 1
             setQuery(nextQuery)
             setResults([])
+            setCommonResults([])
+            setNextOffset(0)
             setHasMore(false)
             setSearchError('')
             setActiveIndex(-1)
@@ -235,11 +248,14 @@ export default function DrugAutocomplete({
             </div>
           ) : options.length ? (
             <>
-              <div className="autocomplete-menu-heading">{query.trim() ? 'Results' : 'All medicines'}</div>
+              <div className="autocomplete-menu-heading">{query.trim() ? 'Results' : commonResults.length ? 'Common medicines' : 'All medicines'}</div>
               {options.map((item, index) => {
                 const annotation = getOptionAnnotation?.(item)
                 const displayName = medicineDisplayName(item)
+                const beginsInventory = !query.trim() && commonResults.length > 0 && index === commonResults.length
                 return (
+                  <Fragment key={`${item.entity_id}-${item.node_id}`}>
+                  {beginsInventory && <div className="autocomplete-menu-heading">All medicines</div>}
                   <button
                     id={`${inputId}-option-${index}`}
                     type="button"
@@ -247,7 +263,6 @@ export default function DrugAutocomplete({
                     aria-selected={index === activeIndex}
                     data-option-index={index}
                     className={index === activeIndex ? 'active' : ''}
-                    key={`${item.entity_id}-${item.node_id}`}
                     onMouseEnter={() => setActiveIndex(index)}
                     onClick={() => choose(item)}
                   >
@@ -261,8 +276,10 @@ export default function DrugAutocomplete({
                       )}
                     </small>
                   </button>
+                  </Fragment>
                 )
               })}
+              {!query.trim() && commonResults.length > 0 && inventoryResults.length === 0 && <div className="autocomplete-menu-heading">All medicines</div>}
               {loading && <div className="autocomplete-empty">Loading drugs…</div>}
             </>
           ) : (

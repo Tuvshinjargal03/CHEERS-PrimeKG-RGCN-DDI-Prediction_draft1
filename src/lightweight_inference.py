@@ -234,6 +234,35 @@ class DDIPredictor:
             len(matches),
         )
 
+    def common_drugs(self, eligible_entity_ids=None):
+        """Return repository-verified common-name medicines in scope."""
+        eligible_ids = (
+            {str(entity_id).casefold() for entity_id in eligible_entity_ids}
+            if eligible_entity_ids is not None
+            else None
+        )
+        common_canonical_names = {
+            canonical_name.casefold()
+            for canonical_name in DRUG_NAME_ALIASES.values()
+        }
+        rows = [
+            row for row in self.drug_metadata
+            if row["entity_name"].casefold() in common_canonical_names
+            and (
+                eligible_ids is None
+                or row["entity_id"].casefold() in eligible_ids
+            )
+        ]
+        rows.sort(key=lambda row: (row["entity_name"].casefold(), row["entity_id"].casefold()))
+        return [
+            {
+                "name": row["entity_name"],
+                "entity_id": row["entity_id"],
+                "node_id": row["node_id"],
+            }
+            for row in rows
+        ]
+
     def search_drugs(self, query, limit=20, offset=0):
         """Compatibility wrapper returning only the requested result rows."""
         results, _ = self.search_drug_page(
